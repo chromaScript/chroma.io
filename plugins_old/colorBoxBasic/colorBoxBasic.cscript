@@ -1,0 +1,5 @@
+array num darkGrey = {0.25, 0.25, 0.25, 1.0};
+array num midGrey = {0.33, 0.33, 0.33, 1.0};
+array num slideGrey = {0.52, 0.52, 0.52, 1.0};
+array num lightGrey = {0.82, 0.82, 0.82, 1.0};
+

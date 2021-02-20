@@ -1,0 +1,7 @@
+<NAME=Color Box Basic>
+<VERSION=1.0>
+<ABOUT=chroma.IO Color Box Basic>
+<NAMESPACE=colorBoxBasic>
+<LAYOUT_PATH=colorBoxBasic.layout>
+<STYLE_PATH=colorBoxBasic.style>
+<SCRIPT_PATH=colorBoxBasic.cscript>

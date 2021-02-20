@@ -1,0 +1,7 @@
+<NAME=Tool Settings Full>
+<VERSION=1.0>
+<ABOUT=chroma.IO Tool Settings Full>
+<NAMESPACE=toolSettingsFull>
+<LAYOUT_PATH=toolSettingsFull.layout>
+<STYLE_PATH=toolSettingsFull.style>
+<SCRIPT_PATH=toolSettingsFull.cscript>

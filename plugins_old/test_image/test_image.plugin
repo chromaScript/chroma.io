@@ -1,0 +1,6 @@
+<NAME=Test Image>
+<VERSION=1.0>
+<ABOUT=Testing image for setting up layout parsing and element creation>
+<NAMESPACE=test_image>
+<LAYOUT_PATH=test_image.layout>
+<STYLE_PATH=test_image.style>

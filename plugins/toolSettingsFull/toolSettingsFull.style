@@ -1,0 +1,25 @@
+#tsf_wrapper {
+	min-width: $tsf_minWidth$;
+	width: 220;
+	min-height: $tsf_minHeight$;
+	height: 250;
+	overflow-Y: auto;
+	background-color: $global::lowMidGrey$;
+	box-shadow-color: black;
+	box-shadow-size: 3, 3;
+	//position: relative;
+}
+
+#tsf_body {
+	width: inherit;
+	height: 180;
+	//background-color: $global::lowMidGrey$;
+}
+
+.tsf_text {
+	dimensions: 8, 16;
+	float: right;
+	margin-right: 1;
+	background-texture: "textures/T_arrows_D.png";
+	background-color-alpha: 1;
+}

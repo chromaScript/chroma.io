@@ -1,0 +1,51 @@
+// --------- BEGIN PLUGIN DATA DUMP --------- //
+PLUGIN::NAME=Brush Settings HUD
+PLUGIN::VERSION=1.0
+PLUGIN::ABOUT=chroma.IO Brush Settings HUD
+PLUGIN::NAMESPACE=brushSettingsHUD
+PLUGIN::PLUGIN_PATH="D:\\a.Work Files\\e.Project Files\\a.20.11.15 - chroma.io\\chroma.io\\chroma.io\\plugins\\brushSettingsHUD"
+PLUGIN::STYLE_PATH="brushSettingsHUD.style"
+PLUGIN::LAYOUT_PATH="brushSettingsHUD.layout"
+PLUGIN::SCRIPT_PATH="brushSettingsHUD.cscript"
+
+PLUGIN::NAME=Color Picker HUD
+PLUGIN::VERSION=1.0
+PLUGIN::ABOUT=chroma.IO Color Picker HUD
+PLUGIN::NAMESPACE=colorHUD
+PLUGIN::PLUGIN_PATH="D:\\a.Work Files\\e.Project Files\\a.20.11.15 - chroma.io\\chroma.io\\chroma.io\\plugins\\colorpickerHUD"
+PLUGIN::STYLE_PATH="colhud.style"
+PLUGIN::LAYOUT_PATH="colhud.layout"
+PLUGIN::SCRIPT_PATH="colhud.cscript"
+
+PLUGIN::NAME=HSL Sliders
+PLUGIN::VERSION=1.0
+PLUGIN::ABOUT=chroma.IO HSL Sliders
+PLUGIN::NAMESPACE=hslSliders
+PLUGIN::PLUGIN_PATH="D:\\a.Work Files\\e.Project Files\\a.20.11.15 - chroma.io\\chroma.io\\chroma.io\\plugins\\hslSliders"
+PLUGIN::STYLE_PATH="hslSliders.style"
+PLUGIN::LAYOUT_PATH="hslSliders.layout"
+PLUGIN::SCRIPT_PATH="hslSliders.cscript"
+
+PLUGIN::NAME=Main Menu
+PLUGIN::VERSION=1.0
+PLUGIN::ABOUT=chroma.IO Main Menu
+PLUGIN::NAMESPACE=mainMenu
+PLUGIN::PLUGIN_PATH="D:\\a.Work Files\\e.Project Files\\a.20.11.15 - chroma.io\\chroma.io\\chroma.io\\plugins\\mainMenu"
+PLUGIN::STYLE_PATH="mainMenu.style"
+PLUGIN::LAYOUT_PATH="mainMenu.layout"
+PLUGIN::SCRIPT_PATH="mainMenu.cscript"
+PLUGIN::SCRIPT_PATH="mainMenu_extra.cscript"
+PLUGIN::SCRIPT_PATH="mainMenu_bonus.cscript"
+
+PLUGIN::NAME=Tool Settings Full
+PLUGIN::VERSION=1.0
+PLUGIN::ABOUT=chroma.IO Tool Settings Full
+PLUGIN::NAMESPACE=toolSettingsFull
+PLUGIN::PLUGIN_PATH="D:\\a.Work Files\\e.Project Files\\a.20.11.15 - chroma.io\\chroma.io\\chroma.io\\plugins\\toolSettingsFull"
+PLUGIN::STYLE_PATH="toolSettingsFull.style"
+PLUGIN::LAYOUT_PATH="toolSettingsFull.layout"
+PLUGIN::SCRIPT_PATH="toolSettingsFull.cscript"
+
+// --------- END PLUGIN DATA DUMP --------- //
+// --------- BEGIN STYLE DATA DUMP --------- //
+// --------- END STYLE DATA DUMP --------- //

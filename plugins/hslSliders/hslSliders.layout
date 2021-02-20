@@ -1,0 +1,79 @@
+<ROOT id="hslSliders" defaultPosition="15,804">
+<V_BOX id="wrapper" ondragstart="moveSliders(0)" ondrag="moveSliders(1)">
+	<H_BOX id="tabWrapper">
+		<H_BOX id="hslSliders_tab">
+			<TEXT class="tabText" value="HSL SLIDERS" ></TEXT>
+		</H_BOX>
+		<H_BOX class="tabButton"></H_BOX>
+	</H_BOX>
+	<V_BOX id="body">
+		<H_BOX id="colorBoxWrapper">
+			<GRADIENT_BOX id="colorBox">
+				<GRADIENT_BOX id="blackBox"
+					ondragstart="dragGraph(0, 0)" 
+					ondrag="dragGraph(1, 0)" 
+					ondragend="dragGraph(2, 0)">
+					<H_BOX id="colorSlideBox" class="graphBox">
+						<H_BOX class="graphInnerBox">
+							<IMAGE id="colorBoxBox" class="graphColor"></IMAGE>
+						</H_BOX>
+					</H_BOX>
+				</GRADIENT_BOX>
+			</GRADIENT_BOX>
+		</H_BOX>
+		<H_BOX id="bodyWrapper">
+			<V_BOX id="leftContainer">
+				<V_BOX class="colorContainer">
+					<H_BOX id="bgColor"></H_BOX>
+					<H_BOX id="fgColor"></H_BOX>
+				</V_BOX>
+				<H_BOX class="buttonContainer">
+					<IMAGE id="resetColor"></IMAGE>
+					<IMAGE id="swapColor"></IMAGE>
+				</H_BOX>
+			</V_BOX>
+			<V_BOX id="rightContainer">
+				// HUE SLIDER
+				<H_BOX class="linSliderWrapper">
+					<H_BOX class="slideTitle"><TEXT class="slideText" value="H:"></TEXT></H_BOX>
+					<H_BOX class="slideWrapper"
+					ondragstart="dragSlider(0, 0)" 
+					ondrag="dragSlider(1, 0)" 
+					ondragend="dragSlider(2, 0)">
+						<H_BOX class="slideLine"></H_BOX>
+						<H_BOX id="hueSlideBox" class="slideBox">
+							<IMAGE id="hueColorBox" class="slideColor, hueBox"></IMAGE>
+						</H_BOX>
+					</H_BOX>
+				</H_BOX>
+				// SATURATION SLIDER
+				<H_BOX class="linSliderWrapper">
+					<H_BOX class="slideTitle"><TEXT class="slideText" value="S:"></TEXT></H_BOX>
+					<H_BOX class="slideWrapper"
+						ondragstart="dragSlider(0, 1)" 
+						ondrag="dragSlider(1, 1)" 
+						ondragend="dragSlider(2, 1)">
+						<H_BOX class="slideLine"></H_BOX>
+						<H_BOX id="satSlideBox" class="slideBox">
+							<IMAGE id="satColorBox" class="slideColor"></IMAGE>
+						</H_BOX>
+					</H_BOX>
+				</H_BOX>
+				// LUMINANCE SLIDER
+				<H_BOX class="linSliderWrapper">
+					<H_BOX class="slideTitle"><TEXT class="slideText" value="L:"></TEXT></H_BOX>
+					<H_BOX class="slideWrapper"
+						ondragstart="dragSlider(0, 2)" 
+						ondrag="dragSlider(1, 2)" 
+						ondragend="dragSlider(2, 2)">
+						<H_BOX class="slideLine"></H_BOX>
+						<H_BOX id="valSlideBox" class="slideBox">
+							<IMAGE id="valColorBox" class="slideColor, valBox"></IMAGE>
+						</H_BOX>
+					</H_BOX>
+				</H_BOX>
+			</V_BOX>
+		</H_BOX>
+	</V_BOX>
+</V_BOX>
+</ROOT>

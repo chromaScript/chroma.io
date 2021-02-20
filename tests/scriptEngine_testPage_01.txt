@@ -1,0 +1,625 @@
+num function fiboSeq(num n)
+{
+	if (n <= 2) 
+	{ 
+		return n; 
+	}
+	return fiboSeq(n - 2) + fiboSeq(n - 1);
+}
+
+print (fiboSeq(10)); print "";
+
+print "start native fibonacci() recursion test @ n = 20";
+num fibStart = clock();
+print fibonacci(20);
+num fibEnd = clock();
+
+num function testF(num fw)
+{
+	if (fw <= 2)
+	{
+		return fw;
+	}
+	return testF(fw - 1) + testF(fw - 2);
+}
+
+print "start testF() recursion test @ n = 20";
+num testFStart = clock();
+print testF(20);
+num testFEnd = clock();
+print "script testF() recursion test, 20 cycles results, time = "; print testFEnd - testFStart;
+print "";
+print "native fibonacci() recursion test, 20 cycles results, time = "; print fibEnd - fibStart;
+print "";
+print "native time - script time = "; print (fibEnd - fibStart) - (testFEnd - testFStart);
+
+
+num function testB(num n)
+{
+	if (n > 5)
+	{
+		print true;
+		return 700;
+	}
+	else
+	{
+		print false;
+	}
+	print "eof";
+	return 230;
+} 
+
+print testB(8); print "";
+print testB(2); print "";
+
+num function testC(num b)
+{
+	print b;
+	if (b > 10) { return 830; }
+	return testC(b + 1);
+}
+
+print testC(0); print "";
+
+string function makeString(string input1, string input2)
+{
+	return input1 + " " + input2;
+}
+
+string function makeSentence(array string stringArr)
+{
+	string output = "";
+	foreach (string s : stringArr)
+	{
+		output += s + " ";
+	}
+	return output;
+}
+
+print makeString("Hello", "world.");
+print makeSentence({"My", "name", "is", "Fred."});
+
+class Grain
+{
+	num data = 5;
+	string name = "name";
+	num function getData()
+	{
+		return data;
+	}
+}
+
+class Bread inherit Grain
+{
+	string kind = "kind";
+	Bread(string kind)
+	{
+		this.kind = kind;
+		this.name = "bread";
+	}
+	bool function guessMyKind(string kind)
+	{
+		if (this.kind == kind)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	string function toString()
+	{
+		return kind + " " + name;
+	}
+}
+
+Bread rye = Bread("Rye");
+print rye.guessMyKind("Rye");
+print rye.toString();
+print rye.kind + " " + rye.name; 
+print rye.data;
+print "";
+
+if (5 < 10)
+{
+	print true;
+}
+if (10 < 5)
+{
+
+}
+else
+{
+	print false;
+}
+if (5 > 10) {}
+else if (5 > 6) {}
+else if (5 > 4.5)
+{
+	print true;
+}
+else {}
+print "";
+
+num j = 11; num k = 96; num l = 5; num m = 24; num n = 29; num o = 65; num p = 45;
+array num numObjList = {j, k, l, m, n, o, p}; print numObjList;
+foreach (num i : numObjList)
+{
+	i = i + 4;
+	print i;
+} print numObjList; print "";
+
+for (num i = 0; i < 7; i++)
+{
+	if (i < 3)
+	{
+		numObjList[i] -= 15;
+	}
+	else
+	{
+		numObjList[i] += 5;
+	}
+	print numObjList[i];
+} print numObjList; print "";
+
+
+array num numList = {23, 12, 5, 56, 1, 45, 96, 34, 2}; print numList;
+
+foreach (num i : numList)
+{
+	i = i + 4;
+	print i;
+} print "";
+
+print numList; print "";
+
+for (num i = 0; i < 10; i++)
+{
+	print i;
+} print "";
+
+try
+{
+	num test = test + 5;
+}
+catch
+{
+	print "Caught error.";
+} print "";
+
+num z = 0;
+while (z < 5)
+{
+	num p = 1;
+	z = z + p;
+	print z;
+	break;
+} print "";
+
+while (z < 10)
+{
+	num p = 1;
+	z = z + p;
+	print z;
+} print "";
+
+
+{
+	num blockNo = 84;
+	print blockNo;
+}
+
+num a = 5; print a;
+num b = a; print {a, b};
+num c = a + b; print {a, b, c};
+b = c; print {a, b, c};
+print "";
+
+array num numArr = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+array bool boolArr = {true, false, true, true};
+array string stringArr = {"banana", "orange", "apple", "strawberry"};
+print numArr; print boolArr; print stringArr; print "";
+
+bool comparison = false; print comparison;
+comparison = 5 > 0 || 5 < 1; print comparison;
+comparison = 5 < 0 || 5 < 1; print comparison;
+comparison = 5 > 0 && 5 > 1; print comparison;
+comparison = 5 > 0 && 5 > 6; print comparison;
+print ""; 
+
+comparison = 5 < 10; print comparison;
+comparison = 5 > 10; print comparison;
+comparison = 5 <= 5; print comparison;
+comparison = 5 <= 4.8; print comparison;
+comparison = 5 <= 5.5; print comparison;
+comparison = 5 >= 5; print comparison;
+comparison = 5 >= 5.2; print comparison;
+comparison = 5 >= 4.5; print comparison;
+print "";
+
+comparison = ?(num)5; print comparison;
+comparison = ?(string)5; print comparison;
+comparison = ?(string)"orange"; print comparison;
+comparison = ?(bool)true; print comparison;
+comparison = ?(bool)false; print comparison;
+comparison = ?(vec2)({4, 5}); print comparison;
+comparison = ?(vec3)({4, 5, 6}); print comparison;
+comparison = ?(vec4)({4, 5, 6, 7}); print comparison;
+print "";
+
+vec2 coordinate = ({1, 2});
+vec3 position = ({1, 2, 3});
+vec4 normal = ({1, 2, 3, 4});
+print coordinate; print position; print normal; print "";
+
+num d = 5++; print d;
+d = d--; print d;
+d = -d; print d;
+bool falsify = !true; print falsify;
+print "";
+
+comparison = 5 ~=(2.999) 8; print comparison;
+comparison = 5 ~=(3) 8; print comparison;
+comparison = 5 ~=(3.001) 8; print comparison;
+print "";
+
+string main = "Hello " + "world."; print main;
+num e = 5 + 5; print e;
+e += 5 * 5; print e;
+e *= 5 / 5; print e;
+e -= 5 ** 5; print e;
+e /= 5 % 5; print e;
+print "";
+
+array num numVars = {a, b, c, d, e}; print numVars;
+numVars[2] = 65; print numVars;
+print a; print b; print c; print d; print e;
+
+string ab = "apple";
+string ac = "orange";
+string ad = "banana";
+string ae = "strawberry";
+array string stringVars = {ab, ac, ad, ae}; print stringVars;
+stringVars[1] = "apple"; stringVars[2] = "apple"; stringVars[3] = "apple"; print stringVars;
+print ab; print ac; print ad; print ae; print "";
+
+num abs = 5 + 5; print abs;
+string address = "street" + " " + "zipcode"; print address; print "";
+
+class Atom
+{
+	string name; // Warning issued
+	array Atom myAtoms;
+	array num atomicNumbers = { 5, 4, 1, 10};
+	Atom(string name, array num aNums)
+	{
+		this.name = name;
+		this.atomicNumbers = aNums;
+		print aNums;
+		print this.atomicNumbers; print "";
+	}
+	num function getNumber(num index, Atom lookup)
+	{
+		return lookup.atomicNumbers[index];
+	}
+	cast<num>
+	{
+		return atomicNumbers[2];
+	}
+	cast<array num>
+	{
+		return atomicNumbers;
+	}
+	cast<array Atom>
+	{
+		return myAtoms;
+	}
+}
+
+Atom aluminum = Atom("copper", {5, 6, 1, 0}); print aluminum.atomicNumbers; print "";
+array Atom fetchAtoms = <array Atom>aluminum;
+num alumNum = <num>aluminum;
+array num alumNumbers = <array num>aluminum;
+
+array Atom atoms = {
+	Atom("nitrogen", {1, 6, 45}), 
+	Atom("helium", {5, 2, 8}), 
+	Atom("sodium", {0, 3, 4, 1})};
+
+for (num i = 0; i < 3; i++)
+{
+	print atoms[i].atomicNumbers;
+} print "";
+
+foreach (Atom atom : atoms)
+{
+	num i = atom.atomicNumbers[0];
+	print i;
+	print atom.atomicNumbers;
+}
+
+
+
+class Element
+{
+	num myNum = 0;
+	Atom myAtom = Atom("misc", {0, 4, 1, 8, 986});
+	Element(num index)
+	{
+		myNum = index;
+		print "Created new element.";
+	}
+	string function myType()
+	{
+		return "carbon";
+	}
+	num function myNumber()
+	{
+		return myNum;
+	}
+	Atom function getAtom()
+	{
+		return myAtom;
+	}
+}
+
+class Molecule inherit Element
+{
+	string formula;
+	Molecule(string formula)
+	{
+		this.myNum = 4;
+		this.formula = formula;
+		this.myAtom.atomicNumbers[2] = 5;
+		print formula;
+	}
+	string function myFormula()
+	{
+		return formula;
+	}
+	num function mole()
+	{
+		return 112315;
+	}
+}
+
+Element carbon = Element(3);
+Molecule water = Molecule("h2o");
+
+num waterNum = water.myNumber(); print waterNum;
+string waterString = water.myFormula(); print waterString;
+num waterAtomNum = water.getAtom().getNumber(4, water.myAtom); print waterAtomNum;
+
+num carbonAtomNumber = carbon.getAtom().getNumber(4, carbon.myAtom); print carbonAtomNumber;
+num otherAtomNumber = carbon.getAtom().atomicNumbers[4]; print otherAtomNumber;
+string carbonType = carbon.myType(); print carbonType;
+print "";
+
+foreach (num i : carbon.getAtom().atomicNumbers)
+{
+	print i;
+}
+
+array num function getDates(num year)
+{
+	array num dates;
+	return dates;
+}
+
+num today = getDates(2004)[4];
+num tomorrow = getDates(2004)[4]++;
+
+num function getTime(num date);
+
+num function getTime(num date)
+{
+	num time = 5;
+	return time;
+}
+
+num time = getTime(5);
+
+Shape polygon;
+Shape decagon = polygon;
+string sides = "yes";
+Shape circle = Shape(5, 4);
+
+class Shape
+{
+	num sides;
+	num area;
+	Shape(num numSides, num shapeArea)
+	{
+		
+	}
+	num function myArea()
+	{
+		return 4;
+	}
+	num function myCorners()
+	{
+		return 6;
+	}
+}
+
+class Rectangle inherit Shape
+{
+	num function myDiagonal()
+	{
+		if (true)
+		{
+			return 5;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+}
+
+class Diamond inherit Rectangle
+{
+	num function myAngle()
+	{
+		if (true)
+		{
+			return 5;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+}
+
+{
+	{
+		num k = 4;
+	}
+}
+
+if (true)
+{
+	num i = 5;
+}
+else if (false)
+{
+	num i = 123;
+}
+else if (true)
+{
+	{
+		num i = 567;
+	}
+}
+else
+{
+	num i = 789;
+}
+
+while (true)
+{
+	num i = 10;
+	print "apple";
+	break;
+}
+
+try
+{
+	num i = 5;
+	print 0;
+}
+catch
+{
+	string error = "error occured";
+	print "error";
+}
+
+for (num i = 0; i < 10; i++)
+{
+	print i ** 2;
+}
+
+string function myType();
+
+string function global::myType()
+{
+	return "stone";
+}
+
+string function myOtherType()
+{
+	return "granite";
+}
+
+global::foo::bar::myVar;
+foo::bar::myVar;
+
+namespace foo
+{
+	namespace bar
+	{
+		num myVar = 5;
+		num function getMyVar()
+		{
+			return myVar;
+		}
+	}
+}
+
+num ozr = 12398; print ozr;
+num pw = 45; print pw;
+num r = foo::bar::myVar; print r;
+num q = p; print q;
+num anq = 5; print anq;
+num brz = global::foo::bar::getMyVar(); print brz;
+print "";
+
+string bagel = "blueberry"; print bagel;
+
+string function fruit() // Expect 1 return statement
+{
+	// Top-level nested function, expects 1 return statement
+	
+	string function vegi()
+	{
+		return "tomato";
+	}
+	
+	if (true)
+	{
+		return "raspberry";
+	}
+	else
+	{
+		return "blackberry";
+	}
+	
+	
+	if (true)
+	{
+		return "apple";
+	}
+	else if (true)
+	{
+		return "strawberry";
+	}
+	else if (true)
+	{
+		return "blueberry";
+	}
+	else
+	{
+		// Double nested function, expects 1 return statement
+		
+		string function tuber()
+		{
+			return "potato";
+		}
+		
+		print tuber();
+		
+		if (true)
+		{
+			return "kiwi";
+		}
+		else if (true)
+		{
+			return "peach";
+		}
+		else
+		{
+			return "fruit";
+		}
+	}
+}
+
+print ""; print "start math loop test";
+print clock();
+for (num i = 0; i < 240; i++)
+{
+	num j = i ** 4 / 6 + 2;
+}
+print clock(); print "end math loop test";
+print "";

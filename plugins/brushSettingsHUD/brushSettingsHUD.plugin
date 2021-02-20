@@ -1,0 +1,7 @@
+<NAME=Brush Settings HUD>
+<VERSION=1.0>
+<ABOUT=chroma.IO Brush Settings HUD>
+<NAMESPACE=brushSettingsHUD>
+<LAYOUT_PATH=brushSettingsHUD.layout>
+<STYLE_PATH=brushSettingsHUD.style>
+<SCRIPT_PATH=brushSettingsHUD.cscript>

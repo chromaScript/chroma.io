@@ -1,0 +1,28 @@
+void pickerCallback(array num color, bool isBG)
+{
+	app.ui.getWidget_byID("colhud_under").setProperty("fill-color", color);
+}
+
+void startHUD(num xpos, num ypos)
+{
+	app.ui.getWidget_byID("colorpickerHUD").setProperty("visibility", "show");
+	app.ui.getWidget_byID("colorpickerHUD").setPosition(xpos, ypos);
+}
+
+void moveHUD(num xpos, num ypos)
+{
+	app.ui.getWidget_byID("colorpickerHUD").setPosition(xpos, ypos);
+}
+
+void endHUD(num xpos, num ypos)
+{
+	app.ui.getWidget_byID("colorpickerHUD").setProperty("visibility", "hide");
+	app.ui.getWidget_byID("colorpickerHUD").setPosition(xpos, ypos);
+}
+
+bindCallbackEvent("updateFGColor", "pickerHUD_FG", pickerCallback);
+bindCallbackEvent("updateBGColor", "pickerHUD_BG", pickerCallback);
+
+bindCallbackEvent("colorpickStart", "startHUD", startHUD);
+bindCallbackEvent("colorpickMove", "moveHUD", moveHUD);
+bindCallbackEvent("colorpickEnd", "endHUD", endHUD);

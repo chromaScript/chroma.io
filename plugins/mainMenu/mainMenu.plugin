@@ -1,0 +1,7 @@
+<NAME=Main Menu>
+<VERSION=1.0>
+<ABOUT=chroma.IO Main Menu>
+<NAMESPACE=mainMenu>
+<LAYOUT_PATH=mainMenu.layout>
+<STYLE_PATH=mainMenu.style>
+<SCRIPT_PATH=mainMenu.cscript, mainMenu_extra.cscript, mainMenu_bonus.cscript>

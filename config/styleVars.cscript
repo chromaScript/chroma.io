@@ -1,0 +1,59 @@
+array num darkGrey = {0.25, 0.25, 0.25, 1.0};
+array num lowMidGrey = {0.33, 0.33, 0.33, 1.0};
+array num midGrey = {0.52, 0.52, 0.52, 1.0};
+array num highMidGrey = {0.68, 0.68, 0.68, 1.0};
+array num lightGrey = {0.82, 0.82, 0.82, 1.0};
+
+array num resizeOrigin = {0, 0};
+num resizeWidthOriginal = 0;
+num resizeHeightOriginal = 0;
+
+void cursorHand()
+{
+	app.setCursor("hand");
+}
+
+void cursorGrab()
+{
+	app.setCursor("grab");
+}
+
+void cursorPointer()
+{
+	app.setCursor("pointer");
+}
+
+void resizeWidget(num trigger, num select, string id, num minWidth, num minHeight)
+{
+	if (trigger == 0)
+	{
+		cursorGrab();
+		resizeOrigin = getMousePos();
+		resizeWidthOriginal = app.ui.getWidget_byID(id).getProperty("max-width");
+		resizeHeightOriginal = app.ui.getWidget_byID(id).getProperty("max-height");
+		print resizeWidthOriginal; print resizeHeightOriginal;
+	}
+	
+	array num mousePos = getMousePos();
+	if (trigger == 1)
+	{
+		if (select == 0) // Horizontal
+		{
+			app.ui.getWidget_byID(id).setProperty("max-width", clamp(resizeWidthOriginal + (mousePos[0] - resizeOrigin[0]), minWidth, 3500));
+		}
+		else if (select == 1) // Vertical
+		{
+			app.ui.getWidget_byID(id).setProperty("max-height", clamp(resizeHeightOriginal + (mousePos[1] - resizeOrigin[1]), minHeight, 3500));
+		}
+		else if (select == 2) // Corner
+		{
+			app.ui.getWidget_byID(id).setProperty("max-width", clamp(resizeWidthOriginal + (mousePos[0] - resizeOrigin[0]), minWidth, 3500));
+			app.ui.getWidget_byID(id).setProperty("max-height", clamp(resizeHeightOriginal + (mousePos[1] - resizeOrigin[1]), minHeight, 3500));
+		}
+	}
+	
+	if (trigger == 2)
+	{
+		cursorHand();
+	}
+}

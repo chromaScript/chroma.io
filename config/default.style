@@ -1,0 +1,91 @@
+.tabWrapper {
+	width: inherit;
+	background-color: $darkGrey$;
+	height: 28;
+}
+.panelTab {
+	min-width: 30;
+	margin-top: 2;
+	height: 26;
+	overflow-X: auto;
+	background-color: $lowMidGrey$;
+}
+.panelTabText {
+	min-width: 18;
+	min-height: 6;
+	margin-top: 3;
+	margin-left: 8;
+	margin-right: 8;
+	float: left;
+	fill-color: $lightGrey$;
+	font-path: "fonts/BarlowSemiCondensed-Light.ttf";
+	font-size: 16;
+}
+.tabButton {
+	float: right;
+	dimensions: 20, 20;
+	margin-top: 4;
+	margin-right: 6;
+	background-color-alpha: 1;
+	fill-color: $midGrey$;
+	background-texture: "textures/T_menuButton_D.png";
+}
+
+.resizeBarLeft {
+	position: absolute;
+	height: inherit;
+	margin-top: 8;
+	margin-bottom: 4;
+	width: 4;
+}
+.resizeBarRight {
+	position: absolute;
+	height: inherit;
+	width: 4;
+	margin-top: 8;
+	margin-bottom: 4;
+	right: 0;
+}
+.resizeBarBottom {
+	position: absolute;
+	width: inherit;
+	height: 4;
+	margin-left: 4;
+	margin-right: 4;
+	bottom: 0;
+}
+.resizeBarBottomRight {
+	position: absolute;
+	width: 8;
+	height: 8;
+	right: 0;
+	bottom: 0;
+}
+.resizeBarBottomLeft {
+	position: absolute;
+	width: 8;
+	height: 8;
+	left: 0;
+	bottom: 0;
+}
+
+.debugRed {
+	background-color: red;
+	background-color-alpha: 0.2;
+}
+.debugBlue {
+	background-color: blue;
+	background-color-alpha: 0.2;
+}
+.debugGreen {
+	background-color: green;
+	background-color-alpha: 0.2;
+}
+.debugWhite {
+	background-color: white;
+	background-color-alpha: 0.2;
+}
+.debugMagenta {
+	background-color: magenta;
+	background-color-alpha: 0.6;
+}

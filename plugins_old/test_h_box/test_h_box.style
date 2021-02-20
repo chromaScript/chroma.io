@@ -1,0 +1,34 @@
+.imageTestA {
+	dimensions: 80, 80;
+	margin: 4, 4, 4, 4;
+	border: 8, 8, 8, 8;
+	background-color: 0.6, 0.6, 0.6, 1.0;
+	background-texture: "textures/T_testImageA_D.png";
+}
+
+.imageTestB {
+	dimensions: 120, 120;
+	margin: 4, 4, 4, 4;
+	border: 8, 8, 8, 8;
+	background-color: 0.6, 0.6, 0.6, 1.0;
+	background-texture: "textures/T_testImageB_D.png";
+}
+
+.testBoxA {
+	dimensions: 260, 260;
+	position: 0, 0;
+	background-color: 0.2, 0.2, 0.2, 1.0;
+	background-texture: "textures/T_testBoxA_D.png";
+}
+
+.testBoxB {
+	dimensions: 120, 120;
+	background-color: 0.2, 0.2, 0.2, 1.0;
+	background-texture: "textures/T_testImageA_D.png";
+}
+
+.testBoxC {
+	dimensions: 25, 25;
+	background-color: 0.2, 0.2, 0.2, 1.0;
+	background-texture: "textures/T_testImageA_D.png";
+}

@@ -1,0 +1,264 @@
+array num darkGrey = {0.25, 0.25, 0.25, 1.0};
+array num midGrey = {0.33, 0.33, 0.33, 1.0};
+array num slideGrey = {0.52, 0.52, 0.52, 1.0};
+array num lightGrey = {0.82, 0.82, 0.82, 1.0};
+
+num maxHSLLeft = 190;
+num maxColorLeft = 288;
+num maxColorTop = 78;
+num colorOffset = 5;
+num sliderOffset = 32;
+
+num dragStart = 0;
+bool graphBeingDragged = false;
+bool slidersBeingDragged = false;
+bool hueBeingDragged = false;
+bool satBeingDragged = false;
+bool valBeingDragged = false;
+
+num colLeft = 0; num colTop = 0;
+num hueLeft = 0; num hueTempLeft = 0;
+num satLeft = 0; num satTempLeft = 0;
+num valLeft = 0; num valTempLeft = 0;
+
+array num hslBoxOffset = {0, 0}; 
+
+void moveSliders(num select)
+{
+	if (select == 0)
+	{
+		hslBoxOffset = getMousePos_relative();
+	}
+	else if (select == 1)
+	{
+		array num pos = getMousePos();
+		app.ui.getWidget_byID("wrapper").setPosition(pos[0] - hslBoxOffset[0], pos[1] - hslBoxOffset[1]);
+	}
+}
+
+void dragSlider(num select, num index)
+{
+	if (select == 1 || select == 0)
+	{
+		slidersBeingDragged = true;
+		num left = clamp(getMousePos_relative()[0] - 8, 0, maxHSLLeft);
+		
+		// HUE SLIDER BOX
+		if (index == 0)
+		{
+			hueBeingDragged = true;
+			hueLeft = left;
+			array num hueColor = hueByDegree_HSL((hueLeft / maxHSLLeft) * 360);
+			
+			setChildProperty_byID("hueSlideBox", "left", hueLeft);
+			setChildProperty_byType("IMAGE", "background-color", hueColor);
+			
+			app.ui.getWidget_byID("colorBox").setProperty("vertex-2-color", hueColor);
+			app.ui.getWidget_byID("colorBox").setProperty("vertex-3-color", hueColor);
+			
+			app.ui.getWidget_byID("satColorBox").setProperty(
+				"background-color", 
+				saturationByPercentDegree_HSL((maxHSLLeft - satLeft) / maxHSLLeft, (hueLeft / maxHSLLeft) * 360));
+		}
+		
+		// SATURATION SLIDER BOX
+		if (index == 1)
+		{
+			satBeingDragged = true;
+			satLeft = left;
+			array num satColor = saturationByPercentDegree_HSL((maxHSLLeft - satLeft) / maxHSLLeft, (hueLeft / maxHSLLeft) * 360);
+			setChildProperty_byID("satSlideBox", "left", satLeft);
+			setChildProperty_byType("IMAGE", "background-color", satColor);
+		}
+		
+		// VALUE SLIDER BOX
+		if (index == 2)
+		{
+			valBeingDragged = true;
+			valLeft = left;
+			setChildProperty_byID("valSlideBox", "left", valLeft);
+			setChildProperty_byType("IMAGE", "background-color", valueByPercent_HSL(valLeft / maxHSLLeft));
+		}
+		
+		num hue = (hueLeft / maxHSLLeft) * 360;
+		num sat = satLeft / maxHSLLeft;
+		num val = valLeft / maxHSLLeft;
+		
+		array num color = HSL_toRGB(hue, sat, val);
+		app.ui.getWidget_byID("colorBoxBox").setProperty("background-color", color);
+		app.ui.getWidget_byID("fgColor").setProperty("background-color", color);
+		
+		num p1x = -colorOffset;
+		num p1y = ((1 - val) * maxColorTop) - colorOffset;
+		num p2x = 0; num p2y = 0;
+		num maxSatPercent = 0;
+		
+		num valPercent = 1 - val;
+		if (valPercent >= 0.5)
+		{
+			p2x = maxColorLeft - colorOffset;
+			p2y = (((valPercent - 0.5) / 0.5) * maxColorTop) - colorOffset;
+			maxSatPercent = (p2x + colorOffset) / maxColorLeft;
+		}
+		else
+		{
+			p2x = ((valPercent / 0.5) * maxColorLeft) - colorOffset;
+			p2y = -colorOffset;
+			maxSatPercent = (p2x + colorOffset) / maxColorLeft;
+			array num intersect = lineIntersect2D({ p1x, p1y, p2x, p2y}, 
+				{maxColorLeft - colorOffset, -colorOffset, maxColorLeft - colorOffset, maxColorTop - colorOffset});
+			p2x = intersect[0];
+			p2y = intersect[1];
+		}
+		
+		num satGraphPercent = (colLeft + colorOffset) / maxColorLeft;
+		
+		colLeft = p1x + (sat * (p2x - p1x));
+		colTop = clamp(p1y + (sat * (p2y - p1y)), -colorOffset, maxColorTop - colorOffset);
+		
+		app.ui.getWidget_byID("colorSlideBox").setProperty("left", colLeft);
+		app.ui.getWidget_byID("colorSlideBox").setProperty("top", colTop);
+		
+		if (sat > maxSatPercent)
+		{
+			if (satBeingDragged)
+			{
+				valLeft = (1 - (sat * 0.5)) * maxHSLLeft;
+				app.ui.getWidget_byID("valSlideBox").setProperty("left", valLeft);
+				app.ui.getWidget_byID("valColorBox").setProperty("background-color", valueByPercent_HSL(valLeft / maxHSLLeft));
+			}
+			else if (valBeingDragged)
+			{
+				colLeft = clamp((((1 - val) / 0.5) * maxColorLeft) - colorOffset, -colorOffset, maxColorLeft - colorOffset);
+				app.ui.getWidget_byID("colorSlideBox").setProperty("left", colLeft);
+				app.ui.getWidget_byID("colorSlideBox").setProperty("top", -colorOffset);
+				app.ui.getWidget_byID("valColorBox").setProperty("background-color", valueByPercent_HSL(valLeft / maxHSLLeft));
+				valLeft = app.ui.getWidget_byID("valSlideBox").getProperty("left");
+				
+				satLeft = ((colLeft + colorOffset) / maxColorLeft) * maxHSLLeft;
+				array num satColor = saturationByPercentDegree_HSL((maxHSLLeft - satLeft) / maxHSLLeft, (hueLeft / maxHSLLeft) * 360);
+				app.ui.getWidget_byID("satSlideBox").setProperty("left", satLeft);
+				app.ui.getWidget_byID("satColorBox").setProperty("background-color", satColor);
+			}
+		}
+		
+		app.ui.setFGColor_HSL((hueLeft / maxHSLLeft) * 360, (colLeft + colorOffset) / maxColorLeft, valLeft / maxHSLLeft);
+	}
+	else if (select == 2)
+	{
+		hueBeingDragged = false;
+		satBeingDragged = false;
+		valBeingDragged = false;
+		slidersBeingDragged = false;
+	}
+}
+
+void dragGraph(num select, num index)
+{
+	if (select == 1 || select == 0)
+	{
+		graphBeingDragged = true;
+		array num mousePos = getMousePos_relative();
+
+		colLeft = clamp(mousePos[0] - colorOffset, -colorOffset, maxColorLeft - colorOffset);
+		colTop = clamp(mousePos[1] - colorOffset, -colorOffset, maxColorTop - colorOffset);
+		
+		setChildProperty_byID("colorSlideBox", "left", colLeft);
+		setChildProperty_byID("colorSlideBox", "top", colTop);
+		
+		num hue = (hueLeft / maxHSLLeft) * 360;
+		num satPercent = (colLeft + colorOffset) / maxColorLeft;
+		num topPercent = 1 - ((colTop + colorOffset) / maxColorTop);
+		num valPercent = topPercent * (1 - (satPercent / 2));
+		
+		// Set the graph slider box color
+		array num color = HSL_toRGB(hue, satPercent, valPercent);
+		setChildProperty_byType("IMAGE", "background-color", color);
+		
+		// Set the Saturation Slider
+		satLeft = ((colLeft + colorOffset) / maxColorLeft) * maxHSLLeft;
+		array num satColor = saturationByPercentDegree_HSL((maxHSLLeft - satLeft) / maxHSLLeft, (hueLeft / maxHSLLeft) * 360);
+		app.ui.getWidget_byID("satSlideBox").setProperty("left", satLeft);
+		app.ui.getWidget_byID("satColorBox").setProperty("background-color", satColor);
+		
+		// Set the Value Slider
+		valLeft = maxHSLLeft * valPercent;
+		app.ui.getWidget_byID("valSlideBox").setProperty("left", valLeft);
+		app.ui.getWidget_byID("valColorBox").setProperty("background-color", valueByPercent_HSL(valPercent));
+		
+		// Set the actual UI Color
+		app.ui.setFGColor_HSL(hue, satPercent, valPercent);
+	}
+	else if (select == 2)
+	{
+		graphBeingDragged = false;
+		satLeft = app.ui.getWidget_byID("satSlideBox").getProperty("left");
+	}
+}
+
+void hslSliders_globalNotification(array num color, bool isBG)
+{
+	array num inputToHSL = RGB_toHSL(color);
+	if (!isBG)
+	{
+		app.ui.getWidget_byID("fgColor").setProperty("background-color", color);
+		if (!slidersBeingDragged && !graphBeingDragged)
+		{
+			hueLeft = (inputToHSL[0] / 360) * maxHSLLeft;
+			app.ui.getWidget_byID("hueSlideBox").setProperty("left", hueLeft);
+			app.ui.getWidget_byID("hueColorBox").setProperty("background-color", hueByDegree_HSL((hueLeft / maxHSLLeft) * 360));
+			satLeft = inputToHSL[1] * maxHSLLeft;
+			app.ui.getWidget_byID("satSlideBox").setProperty("left", satLeft);
+			app.ui.getWidget_byID("satColorBox").setProperty(
+				"background-color", 
+				saturationByPercentDegree_HSL((maxHSLLeft - satLeft) / maxHSLLeft, (hueLeft / maxHSLLeft) * 360));
+			valLeft = inputToHSL[2] * maxHSLLeft;
+			app.ui.getWidget_byID("valSlideBox").setProperty("left", valLeft);
+			app.ui.getWidget_byID("valColorBox").setProperty("background-color", valueByPercent_HSL(valLeft / maxHSLLeft));
+			
+			num satGraphPercent = (colLeft + colorOffset) / maxColorLeft;
+		
+			num p1x = -colorOffset;
+			num p1y = ((1 - inputToHSL[2]) * maxColorTop) - colorOffset;
+			num p2x = 0; num p2y = 0;
+			num maxSatPercent = 0;
+			
+			num valPercent = 1 - inputToHSL[2];
+			if (valPercent >= 0.5)
+			{
+				p2x = maxColorLeft - colorOffset;
+				p2y = (((valPercent - 0.5) / 0.5) * maxColorTop) - colorOffset;
+				maxSatPercent = (p2x + colorOffset) / maxColorLeft;
+			}
+			else
+			{
+				p2x = ((valPercent / 0.5) * maxColorLeft) - colorOffset;
+				p2y = -colorOffset;
+				maxSatPercent = (p2x + colorOffset) / maxColorLeft;
+				array num intersect = lineIntersect2D({ p1x, p1y, p2x, p2y}, 
+					{maxColorLeft - colorOffset, -colorOffset, maxColorLeft - colorOffset, maxColorTop - colorOffset});
+				p2x = intersect[0];
+				p2y = intersect[1];
+			}
+			
+			colLeft = p1x + (inputToHSL[1] * (p2x - p1x));
+			colTop = clamp(p1y + (inputToHSL[1] * (p2y - p1y)), -colorOffset, maxColorTop - colorOffset);
+			
+			app.ui.getWidget_byID("colorBoxBox").setProperty("background-color", color);
+			app.ui.getWidget_byID("colorSlideBox").setProperty("left", colLeft);
+			app.ui.getWidget_byID("colorSlideBox").setProperty("top", colTop);
+			
+			array num hueColor = hueByDegree_HSL(inputToHSL[0]);
+			app.ui.getWidget_byID("colorBox").setProperty("vertex-2-color", hueColor);
+			app.ui.getWidget_byID("colorBox").setProperty("vertex-3-color", hueColor);
+		}
+	}
+	else
+	{
+		app.ui.getWidget_byID("bgColor").setProperty("background-color", color);
+	}
+}
+
+bindCallbackEvent("updateFGColor", "hslSliders_FG", hslSliders_globalNotification);
+bindCallbackEvent("updateBGColor", "hslSliders_FG", hslSliders_globalNotification);
+

@@ -1,0 +1,203 @@
+#wrapper {
+	dimensions: 300, 222;
+	background-color: $darkGrey$;
+	box-shadow-color: black;
+	box-shadow-size: 3, 3;
+}
+#body {
+	width: inherit;
+	height: 194;
+	background-color: $midGrey$;
+}
+#colorBoxWrapper {
+	width: inherit;
+	height: 86;
+	border-bottom: 4;
+}
+#colorBox {
+	width: 288;
+	height: 78;
+	margin-left: 6;
+	margin-top: 6;
+	vertex-1-color: white;
+	vertex-2-color: red;
+	vertex-3-color: red;
+	vertex-4-color: white;
+}
+#blackBox {
+	width: 288;
+	height: 78;
+	//position: relative;
+	vertex-1-color: 0, 0, 0, 0;
+	vertex-2-color: 0, 0, 0, 0;
+	vertex-3-color: 0, 0, 0, 1;
+	vertex-4-color: 0, 0, 0, 1;
+}
+.graphBox {
+	dimensions: 10, 10;
+	background-color: black;
+	position: absolute;
+	top: $maxColorTop - colorOffset$;
+	left: $0 - colorOffset$;
+}
+.graphInnerBox {
+	dimensions: 8, 8;
+	margin: 1, 1, 1, 1;
+	//position: relative;
+	background-color: white;
+}
+.graphColor {
+	dimensions: 6, 6;
+	margin: 1, 1, 1, 1;
+	//position: relative;
+	background-color: black;
+}
+#bodyWrapper {
+	width: 296;
+	height: 98;
+	margin: 2, 2, 2, 2;
+}
+#leftContainer {
+	width: 56;
+	height: inherit;
+}
+#rightContainer {
+	float: right;
+	width: 240;
+	height: inherit;
+}
+#tabWrapper {
+	width: inherit;
+	height: 28;
+}
+#hslSliders_tab {
+	min-width: 30;
+	margin-top: 2;
+	height: 26;
+	overflow-X: auto;
+	background-color: $midGrey$;
+}
+.colorContainer {
+	//position: relative;
+	margin-top: 2;
+	width: inherit;
+	height: 72;
+	border-bottom: 4;
+}
+.buttonContainer {
+	width: inherit;
+	height: 20;
+}
+#fgColor {
+	position: absolute;
+	margin-left: 2;
+	width: 28;
+	height: 40;
+	background-color: black;
+	box-shadow-size: 2, 2;
+	box-shadow-color: black;
+}
+#bgColor {
+	position: absolute;
+	margin-top: 30;
+	margin-left: 15;
+	width: 30;
+	height: 40;
+	background-color: white;
+}
+#resetColor {
+	float: left;
+	dimensions: 20, 20;
+	margin-left: 4;
+	background-color-alpha: 1;
+	background-texture: "textures/T_resetColors_D.png";
+}
+#swapColor {
+	float: right;
+	dimensions: 20, 20;
+	margin-right: 6;
+	background-color-alpha: 1;
+	background-texture: "textures/T_swapColors_D.png";
+}
+.tabButton {
+	float: right;
+	dimensions: 20, 20;
+	margin-top: 4;
+	margin-right: 6;
+	background-color-alpha: 1;
+	fill-color: $slideGrey$;
+	background-texture: "textures/T_menuButton_D.png";
+}
+.tabText {
+	min-width: 18;
+	min-height: 6;
+	margin-top: 3;
+	margin-left: 8;
+	margin-right: 8;
+	float: left;
+	fill-color: $lightGrey$;
+	font-path: "fonts/BarlowSemiCondensed-Light.ttf";
+	font-size: 16;
+}
+.linSliderWrapper {
+	width: 232;
+	height: 20;
+	margin-top: 10;
+	border-bottom: 10;
+	//background-color: blue;
+	//background-color-alpha: 0.1;
+}
+.slideTitle {
+	width: 24;
+	height: inherit;
+	float: left;
+	//background-color: red;
+	//background-color-alpha: 0.3;
+}
+.slideText {
+	min-width: 8;
+	min-height: 16;
+	float: left;
+	margin-left: 4;
+	fill-color: $lightGrey$;
+	font-path: "fonts/BarlowSemiCondensed-Light.ttf";
+	font-size: 16;
+}
+.slideWrapper {
+	width: 200;
+	height: 20;
+	float: left;
+	//position: relative;
+	//background-color: green;
+	//background-color-alpha: 0.3;
+}
+.slideBox {
+	margin-top: 2;
+	dimensions: 16, 16;
+	background-color: $slideGrey$;
+	position: absolute;
+	left: 0;
+	box-shadow-color: black;
+	box-shadow-size: 2, 2;
+}
+.hueBox {
+	background-color: red;
+}
+
+.valBox {
+	background-color: black;
+}
+.slideColor {
+	dimensions: 12, 12;
+	margin-top: 2;
+	margin-left: 2;
+	background-color: white;
+}
+.slideLine {
+	width: 188;
+	float: left;
+	margin-left: 8;
+	margin-top: 8;
+	height: 4;
+	background-color: $slideGrey$;
+}

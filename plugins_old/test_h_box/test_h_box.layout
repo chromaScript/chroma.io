@@ -1,0 +1,6 @@
+<ROOT id="TestHBox" defaultPosition="50, 150">
+	<H_BOX class="testBoxA">
+		<IMAGE class="imageTestA" name="ImageA" id="001"></IMAGE>
+		<IMAGE class="imageTestB" name="ImageB" id="002"></IMAGE>
+	</H_BOX>
+</ROOT>

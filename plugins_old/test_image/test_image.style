@@ -1,0 +1,7 @@
+.testImageStyle {
+	width: 100;
+	height: 100;
+	anchor: upper-left;
+	background-color: 0.8, 0.6, 0.6, 1.0;
+	background-texture: "textures/T_testImageB_D.png";
+}

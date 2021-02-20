@@ -1,0 +1,44 @@
+<ROOT id="toolSettingsFull" defaultPosition="100,300">
+<V_BOX id="tsf_wrapper">
+	
+	<H_BOX id="tsf_tabWrapper" class="tabWrapper" ondragstart="movePanel(0)" ondrag="movePanel(1)">
+		<H_BOX class="panelTab">
+			<TEXT class="panelTabText" value="TOOL SETTINGS" ></TEXT>
+		</H_BOX>
+		<H_BOX class="tabButton"></H_BOX>
+	</H_BOX>
+	<V_BOX id="tsf_body">
+	
+	</V_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()" 
+		ondragstart="resizeWidget(0, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		class="resizeBarLeft, debugRed"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()" 
+		ondragstart="resizeWidget(0, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		class="resizeBarRight, debugGreen"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 1, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 1, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 1, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"		
+		class="resizeBarBottom, debugBlue"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"		
+		class="resizeBarBottomLeft, debugMagenta"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		class="resizeBarBottomRight, debugMagenta"></H_BOX>
+</V_BOX>
+</ROOT>

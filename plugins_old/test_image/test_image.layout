@@ -1,0 +1,3 @@
+<ROOT id="TestImageA" defaultPosition="500, 400">
+	<IMAGE class="testImageStyle" name="TestImage" id="testImage01" img="textures/T_testImageB_D.png"></IMAGE>
+</ROOT>

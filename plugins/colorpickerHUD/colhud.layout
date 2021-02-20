@@ -1,0 +1,5 @@
+<ROOT id="colorpickerHUD" defaultPosition="0,0">
+<H_BOX id="colhud_under">
+	<IMAGE id="colhud_over"></IMAGE>
+</H_BOX>
+</ROOT>

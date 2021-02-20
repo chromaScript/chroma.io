@@ -1,0 +1,745 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\methods">
+      <UniqueIdentifier>{96ba8c65-df06-4151-ba9a-8a6c2b360d76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\methods">
+      <UniqueIdentifier>{25f516f9-7904-440d-bcb7-eb0f4a002cd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\entities">
+      <UniqueIdentifier>{4d208e16-0589-4e05-9470-3932ae0ecd48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\entities">
+      <UniqueIdentifier>{796acaba-abbb-4fa9-931f-904a725dc24a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Program Info">
+      <UniqueIdentifier>{b2ab826d-7701-4034-b906-0490a0cfa8c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cscript">
+      <UniqueIdentifier>{a1fc5793-d06a-4b1b-8a27-79f2c5a2e170}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cscript">
+      <UniqueIdentifier>{df717bde-e373-47a3-9dee-05bc82b50f27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cstyle">
+      <UniqueIdentifier>{1dd028f1-6fc2-4ddb-b32d-73fcba85fd9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\clayout">
+      <UniqueIdentifier>{679174f5-9615-44af-8f0c-2bb35ca5ee90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\clayout">
+      <UniqueIdentifier>{30ebc823-97ff-41f1-b759-8cb45cc24eb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cstyle">
+      <UniqueIdentifier>{436275cc-5661-4f65-87d3-d2a6061ee574}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Tool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Toolbox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CustomCursor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\loadImageData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\Out_NoOutput.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\Out_PanCamera.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\Out_RotateCamera.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\Out_ZoomCamera.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\WinStylusHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\AdjustmentLayer.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Container.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\DataLayer.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Fragment.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Layer.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Shape.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Stroke.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\VisualEntity.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Filter.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\Out_Fill.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\Out_Gradient.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\Out_Selection.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\Out_Stroke.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Canvas.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\UserInterface.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Widget.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Panel.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Popup.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\HorizontalBox.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Image.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Fonts.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Text.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\VerticalBox.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\ChromaScript.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CLexer.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CToken.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CParser.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CExpr.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CObject.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CStmt.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CInterpreter.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CEnvironment.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CResolver.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CCallable.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CTypeWizard.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CLiteral.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CReturn.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\COptimizerRed.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cstyle\SInterpreter.cpp">
+      <Filter>Source Files\cstyle</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cstyle\SLexer.cpp">
+      <Filter>Source Files\cstyle</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cstyle\SParser.cpp">
+      <Filter>Source Files\cstyle</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cstyle\SProc.cpp">
+      <Filter>Source Files\cstyle</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cstyle\SResolver.cpp">
+      <Filter>Source Files\cstyle</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cstyle\SToken.cpp">
+      <Filter>Source Files\cstyle</Filter>
+    </ClCompile>
+    <ClCompile Include="source\clayout\LLexer.cpp">
+      <Filter>Source Files\clayout</Filter>
+    </ClCompile>
+    <ClCompile Include="source\clayout\LParser.cpp">
+      <Filter>Source Files\clayout</Filter>
+    </ClCompile>
+    <ClCompile Include="source\clayout\LProc.cpp">
+      <Filter>Source Files\clayout</Filter>
+    </ClCompile>
+    <ClCompile Include="source\clayout\LResolver.cpp">
+      <Filter>Source Files\clayout</Filter>
+    </ClCompile>
+    <ClCompile Include="source\clayout\LToken.cpp">
+      <Filter>Source Files\clayout</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cstyle\ChromaStyle.cpp">
+      <Filter>Source Files\cstyle</Filter>
+    </ClCompile>
+    <ClCompile Include="source\clayout\ChromaLayout.cpp">
+      <Filter>Source Files\clayout</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\CCallable_Lib.cpp">
+      <Filter>Source Files\cscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\clayout\LInterpreter.cpp">
+      <Filter>Source Files\clayout</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\WidgetStyle.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\Out_Sampler.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\ColorBox.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\GradientBox.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\HueRadius.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\HueStrip.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\List.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\ListItem.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\TextEntry.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\TileBox.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_Draw.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_Pan.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_Point.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_Rotate.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_Zoom.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ToolSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_Sampler.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_Polygon.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\InputMethod.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_ShapeField.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_RadialField.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_Scanline.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_ShapeDraw.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_ShapeLine.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_PolyLine.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_Vortex.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_Rake.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_Fan.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\In_Lasso.cpp">
+      <Filter>Source Files\methods</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\include\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\structs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\Tool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\Toolbox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\IOClasses.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\loadImageData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\CustomCursor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_NoInput.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Rotate.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\InputMethod.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\Out_NoOutput.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\Out_PanCamera.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\Out_RotateCamera.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\Out_ZoomCamera.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\OutputMethod.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\WinStylusHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\AdjustmentLayer.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Container.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\DataLayer.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Fragment.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Layer.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Shape.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Stroke.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\VisualEntity.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Filter.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Draw.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Lasso.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Line.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\Out_Fill.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\Out_Gradient.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\Out_Selection.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\Out_Stroke.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\SharedHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Canvas.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\UserInterface.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Widget.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Panel.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Popup.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\HorizontalBox.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Image.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Fonts.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Text.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\VerticalBox.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\ChromaScript.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CForward.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CLexer.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CEnums.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CToken.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CParser.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CExpr.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CVisitors.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CObject.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CStmt.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CInterpreter.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CEnvironment.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CResolver.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CCallable.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CTypeWizard.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CLiteral.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CReturn.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\COptimizerRed.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\clayout\LEnums.h">
+      <Filter>Header Files\clayout</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\clayout\LForward.h">
+      <Filter>Header Files\clayout</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\clayout\LLexer.h">
+      <Filter>Header Files\clayout</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\clayout\LParser.h">
+      <Filter>Header Files\clayout</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\clayout\LProc.h">
+      <Filter>Header Files\clayout</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\clayout\LResolver.h">
+      <Filter>Header Files\clayout</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\clayout\LToken.h">
+      <Filter>Header Files\clayout</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\clayout\LVisitors.h">
+      <Filter>Header Files\clayout</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cstyle\SEnums.h">
+      <Filter>Header Files\cstyle</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cstyle\SForward.h">
+      <Filter>Header Files\cstyle</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cstyle\SInterpreter.h">
+      <Filter>Header Files\cstyle</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cstyle\SLexer.h">
+      <Filter>Header Files\cstyle</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cstyle\SParser.h">
+      <Filter>Header Files\cstyle</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cstyle\SProc.h">
+      <Filter>Header Files\cstyle</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cstyle\SResolver.h">
+      <Filter>Header Files\cstyle</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cstyle\SToken.h">
+      <Filter>Header Files\cstyle</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cstyle\SVisitors.h">
+      <Filter>Header Files\cstyle</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cstyle\ChromaStyle.h">
+      <Filter>Header Files\cstyle</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\clayout\ChromaLayout.h">
+      <Filter>Header Files\clayout</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CCallable_Lib.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\Color.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\clayout\LInterpreter.h">
+      <Filter>Header Files\clayout</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\WidgetStyle.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\ToolSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\Out_Sampler.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\ColorBox.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\GradientBox.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\HueRadius.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\HueStrip.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\List.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\ListItem.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\TextEntry.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\TileBox.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Pan.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Point.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Zoom.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Sampler.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Polygon.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_RadialField.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Scanline.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_ShapeDraw.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_ShapeLine.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_ShapeField.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_PolyLine.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Vortex.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Rake.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\In_Fan.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\keys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\shaders\canvasShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\canvasShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\layerShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\layerShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\shardShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\shardShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\widgetShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\textShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\textShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\widgetShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\frameShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\frameShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\compositeShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\compositeShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\compositeFrameShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\compositeFrameShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\debugLineShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\debugLineShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\gradientBoxShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="source\shaders\gradientBoxShader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt">
+      <Filter>Program Info</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

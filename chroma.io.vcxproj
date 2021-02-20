@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{8FF76CE5-DEC5-4D5A-A1B4-F0A7AC18E22B}</ProjectGuid>
+    <RootNamespace>chroma.io</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>chroma.io</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\glm-0.9.9.8\glm;C:\lib_ogl460coreprojects\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\lib_ogl460coreprojects\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\glm-0.9.9.8\glm;C:\lib_ogl460coreprojects\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\lib_ogl460coreprojects\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\glm-0.9.9.8\glm;C:\lib_ogl460coreprojects\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\lib_ogl460coreprojects\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="source\Application.cpp" />
+    <ClCompile Include="source\Camera.cpp" />
+    <ClCompile Include="source\clayout\ChromaLayout.cpp" />
+    <ClCompile Include="source\clayout\LInterpreter.cpp" />
+    <ClCompile Include="source\clayout\LLexer.cpp" />
+    <ClCompile Include="source\clayout\LParser.cpp" />
+    <ClCompile Include="source\clayout\LProc.cpp" />
+    <ClCompile Include="source\clayout\LResolver.cpp" />
+    <ClCompile Include="source\clayout\LToken.cpp" />
+    <ClCompile Include="source\cscript\CCallable.cpp" />
+    <ClCompile Include="source\cscript\CCallable_Lib.cpp" />
+    <ClCompile Include="source\cscript\CEnvironment.cpp" />
+    <ClCompile Include="source\cscript\CExpr.cpp" />
+    <ClCompile Include="source\cscript\CLiteral.cpp" />
+    <ClCompile Include="source\cscript\ChromaScript.cpp" />
+    <ClCompile Include="source\cscript\CInterpreter.cpp" />
+    <ClCompile Include="source\cscript\CLexer.cpp" />
+    <ClCompile Include="source\cscript\CObject.cpp" />
+    <ClCompile Include="source\cscript\COptimizerRed.cpp" />
+    <ClCompile Include="source\cscript\CParser.cpp" />
+    <ClCompile Include="source\cscript\CResolver.cpp" />
+    <ClCompile Include="source\cscript\CReturn.cpp" />
+    <ClCompile Include="source\cscript\CStmt.cpp" />
+    <ClCompile Include="source\cscript\CToken.cpp" />
+    <ClCompile Include="source\cscript\CTypeWizard.cpp" />
+    <ClCompile Include="source\cstyle\ChromaStyle.cpp" />
+    <ClCompile Include="source\cstyle\SInterpreter.cpp" />
+    <ClCompile Include="source\cstyle\SLexer.cpp" />
+    <ClCompile Include="source\cstyle\SParser.cpp" />
+    <ClCompile Include="source\cstyle\SProc.cpp" />
+    <ClCompile Include="source\cstyle\SResolver.cpp" />
+    <ClCompile Include="source\cstyle\SToken.cpp" />
+    <ClCompile Include="source\CustomCursor.cpp" />
+    <ClCompile Include="source\entities\AdjustmentLayer.cpp" />
+    <ClCompile Include="source\entities\Canvas.cpp" />
+    <ClCompile Include="source\entities\ColorBox.cpp" />
+    <ClCompile Include="source\entities\Container.cpp" />
+    <ClCompile Include="source\entities\DataLayer.cpp" />
+    <ClCompile Include="source\entities\Filter.cpp" />
+    <ClCompile Include="source\entities\Fonts.cpp" />
+    <ClCompile Include="source\entities\Fragment.cpp" />
+    <ClCompile Include="source\entities\GradientBox.cpp" />
+    <ClCompile Include="source\entities\HorizontalBox.cpp" />
+    <ClCompile Include="source\entities\HueRadius.cpp" />
+    <ClCompile Include="source\entities\HueStrip.cpp" />
+    <ClCompile Include="source\entities\Image.cpp" />
+    <ClCompile Include="source\entities\Layer.cpp" />
+    <ClCompile Include="source\entities\List.cpp" />
+    <ClCompile Include="source\entities\ListItem.cpp" />
+    <ClCompile Include="source\entities\Panel.cpp" />
+    <ClCompile Include="source\entities\Popup.cpp" />
+    <ClCompile Include="source\entities\Shape.cpp" />
+    <ClCompile Include="source\entities\Stroke.cpp" />
+    <ClCompile Include="source\entities\Text.cpp" />
+    <ClCompile Include="source\entities\TextEntry.cpp" />
+    <ClCompile Include="source\entities\TileBox.cpp" />
+    <ClCompile Include="source\entities\UserInterface.cpp" />
+    <ClCompile Include="source\entities\VerticalBox.cpp" />
+    <ClCompile Include="source\entities\VisualEntity.cpp" />
+    <ClCompile Include="source\entities\Widget.cpp" />
+    <ClCompile Include="source\entities\WidgetStyle.cpp" />
+    <ClCompile Include="source\glad.c" />
+    <ClCompile Include="source\loadImageData.cpp" />
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\methods\InputMethod.cpp" />
+    <ClCompile Include="source\methods\In_Draw.cpp" />
+    <ClCompile Include="source\methods\In_Lasso.cpp" />
+    <ClCompile Include="source\methods\In_Pan.cpp" />
+    <ClCompile Include="source\methods\In_Point.cpp" />
+    <ClCompile Include="source\methods\In_Polygon.cpp" />
+    <ClCompile Include="source\methods\In_PolyLine.cpp" />
+    <ClCompile Include="source\methods\In_Fan.cpp" />
+    <ClCompile Include="source\methods\In_RadialField.cpp" />
+    <ClCompile Include="source\methods\In_Rotate.cpp" />
+    <ClCompile Include="source\methods\In_Sampler.cpp" />
+    <ClCompile Include="source\methods\In_Scanline.cpp" />
+    <ClCompile Include="source\methods\In_ShapeDraw.cpp" />
+    <ClCompile Include="source\methods\In_ShapeField.cpp" />
+    <ClCompile Include="source\methods\In_ShapeLine.cpp" />
+    <ClCompile Include="source\methods\In_Rake.cpp" />
+    <ClCompile Include="source\methods\In_Vortex.cpp" />
+    <ClCompile Include="source\methods\In_Zoom.cpp" />
+    <ClCompile Include="source\methods\Out_Fill.cpp" />
+    <ClCompile Include="source\methods\Out_Gradient.cpp" />
+    <ClCompile Include="source\methods\Out_NoOutput.cpp" />
+    <ClCompile Include="source\methods\Out_PanCamera.cpp" />
+    <ClCompile Include="source\methods\Out_RotateCamera.cpp" />
+    <ClCompile Include="source\methods\Out_Sampler.cpp" />
+    <ClCompile Include="source\methods\Out_Selection.cpp" />
+    <ClCompile Include="source\methods\Out_Stroke.cpp" />
+    <ClCompile Include="source\methods\Out_ZoomCamera.cpp" />
+    <ClCompile Include="source\Shader.cpp" />
+    <ClCompile Include="source\Tool.cpp" />
+    <ClCompile Include="source\Toolbox.cpp" />
+    <ClCompile Include="source\ToolSettings.cpp" />
+    <ClCompile Include="source\WinStylusHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\include\Application.h" />
+    <ClInclude Include="source\include\Camera.h" />
+    <ClInclude Include="source\include\clayout\ChromaLayout.h" />
+    <ClInclude Include="source\include\clayout\LInterpreter.h" />
+    <ClInclude Include="source\include\clayout\LEnums.h" />
+    <ClInclude Include="source\include\clayout\LForward.h" />
+    <ClInclude Include="source\include\clayout\LLexer.h" />
+    <ClInclude Include="source\include\clayout\LParser.h" />
+    <ClInclude Include="source\include\clayout\LProc.h" />
+    <ClInclude Include="source\include\clayout\LResolver.h" />
+    <ClInclude Include="source\include\clayout\LToken.h" />
+    <ClInclude Include="source\include\clayout\LVisitors.h" />
+    <ClInclude Include="source\include\Color.h" />
+    <ClInclude Include="source\include\cscript\CCallable.h" />
+    <ClInclude Include="source\include\cscript\CCallable_Lib.h" />
+    <ClInclude Include="source\include\cscript\CEnums.h" />
+    <ClInclude Include="source\include\cscript\CEnvironment.h" />
+    <ClInclude Include="source\include\cscript\CExpr.h" />
+    <ClInclude Include="source\include\cscript\CLiteral.h" />
+    <ClInclude Include="source\include\cscript\CForward.h" />
+    <ClInclude Include="source\include\cscript\ChromaScript.h" />
+    <ClInclude Include="source\include\cscript\CInterpreter.h" />
+    <ClInclude Include="source\include\cscript\CLexer.h" />
+    <ClInclude Include="source\include\cscript\CObject.h" />
+    <ClInclude Include="source\include\cscript\COptimizerRed.h" />
+    <ClInclude Include="source\include\cscript\CParser.h" />
+    <ClInclude Include="source\include\cscript\CResolver.h" />
+    <ClInclude Include="source\include\cscript\CReturn.h" />
+    <ClInclude Include="source\include\cscript\CStmt.h" />
+    <ClInclude Include="source\include\cscript\CToken.h" />
+    <ClInclude Include="source\include\cscript\CTypeWizard.h" />
+    <ClInclude Include="source\include\cscript\CVisitors.h" />
+    <ClInclude Include="source\include\cstyle\ChromaStyle.h" />
+    <ClInclude Include="source\include\cstyle\SEnums.h" />
+    <ClInclude Include="source\include\cstyle\SForward.h" />
+    <ClInclude Include="source\include\cstyle\SInterpreter.h" />
+    <ClInclude Include="source\include\cstyle\SLexer.h" />
+    <ClInclude Include="source\include\cstyle\SParser.h" />
+    <ClInclude Include="source\include\cstyle\SProc.h" />
+    <ClInclude Include="source\include\cstyle\SResolver.h" />
+    <ClInclude Include="source\include\cstyle\SToken.h" />
+    <ClInclude Include="source\include\cstyle\SVisitors.h" />
+    <ClInclude Include="source\include\CustomCursor.h" />
+    <ClInclude Include="source\include\entities\AdjustmentLayer.h" />
+    <ClInclude Include="source\include\entities\Canvas.h" />
+    <ClInclude Include="source\include\entities\ColorBox.h" />
+    <ClInclude Include="source\include\entities\Container.h" />
+    <ClInclude Include="source\include\entities\DataLayer.h" />
+    <ClInclude Include="source\include\entities\Filter.h" />
+    <ClInclude Include="source\include\entities\Fonts.h" />
+    <ClInclude Include="source\include\entities\Fragment.h" />
+    <ClInclude Include="source\include\entities\GradientBox.h" />
+    <ClInclude Include="source\include\entities\HorizontalBox.h" />
+    <ClInclude Include="source\include\entities\HueRadius.h" />
+    <ClInclude Include="source\include\entities\HueStrip.h" />
+    <ClInclude Include="source\include\entities\Image.h" />
+    <ClInclude Include="source\include\entities\Layer.h" />
+    <ClInclude Include="source\include\entities\List.h" />
+    <ClInclude Include="source\include\entities\ListItem.h" />
+    <ClInclude Include="source\include\entities\Panel.h" />
+    <ClInclude Include="source\include\entities\Popup.h" />
+    <ClInclude Include="source\include\entities\Shape.h" />
+    <ClInclude Include="source\include\entities\Stroke.h" />
+    <ClInclude Include="source\include\entities\Text.h" />
+    <ClInclude Include="source\include\entities\TextEntry.h" />
+    <ClInclude Include="source\include\entities\TileBox.h" />
+    <ClInclude Include="source\include\entities\UserInterface.h" />
+    <ClInclude Include="source\include\entities\VerticalBox.h" />
+    <ClInclude Include="source\include\entities\VisualEntity.h" />
+    <ClInclude Include="source\include\entities\Widget.h" />
+    <ClInclude Include="source\include\entities\WidgetStyle.h" />
+    <ClInclude Include="source\include\IOClasses.h" />
+    <ClInclude Include="source\include\keys.h" />
+    <ClInclude Include="source\include\loadImageData.h" />
+    <ClInclude Include="source\include\math.h" />
+    <ClInclude Include="source\include\methods\InputMethod.h" />
+    <ClInclude Include="source\include\methods\In_Draw.h" />
+    <ClInclude Include="source\include\methods\In_Lasso.h" />
+    <ClInclude Include="source\include\methods\In_Line.h" />
+    <ClInclude Include="source\include\methods\In_NoInput.h" />
+    <ClInclude Include="source\include\methods\In_Pan.h" />
+    <ClInclude Include="source\include\methods\In_Point.h" />
+    <ClInclude Include="source\include\methods\In_Polygon.h" />
+    <ClInclude Include="source\include\methods\In_PolyLine.h" />
+    <ClInclude Include="source\include\methods\In_Fan.h" />
+    <ClInclude Include="source\include\methods\In_RadialField.h" />
+    <ClInclude Include="source\include\methods\In_Rotate.h" />
+    <ClInclude Include="source\include\methods\In_Sampler.h" />
+    <ClInclude Include="source\include\methods\In_Scanline.h" />
+    <ClInclude Include="source\include\methods\In_ShapeDraw.h" />
+    <ClInclude Include="source\include\methods\In_ShapeField.h" />
+    <ClInclude Include="source\include\methods\In_ShapeLine.h" />
+    <ClInclude Include="source\include\methods\In_Rake.h" />
+    <ClInclude Include="source\include\methods\In_Vortex.h" />
+    <ClInclude Include="source\include\methods\In_Zoom.h" />
+    <ClInclude Include="source\include\methods\OutputMethod.h" />
+    <ClInclude Include="source\include\methods\Out_Fill.h" />
+    <ClInclude Include="source\include\methods\Out_Gradient.h" />
+    <ClInclude Include="source\include\methods\Out_NoOutput.h" />
+    <ClInclude Include="source\include\methods\Out_PanCamera.h" />
+    <ClInclude Include="source\include\methods\Out_RotateCamera.h" />
+    <ClInclude Include="source\include\methods\Out_Sampler.h" />
+    <ClInclude Include="source\include\methods\Out_Selection.h" />
+    <ClInclude Include="source\include\methods\Out_Stroke.h" />
+    <ClInclude Include="source\include\methods\Out_ZoomCamera.h" />
+    <ClInclude Include="source\include\Shader.h" />
+    <ClInclude Include="source\include\SharedHelper.h" />
+    <ClInclude Include="source\include\structs.h" />
+    <ClInclude Include="source\include\Tool.h" />
+    <ClInclude Include="source\include\Toolbox.h" />
+    <ClInclude Include="source\include\ToolSettings.h" />
+    <ClInclude Include="source\include\WinStylusHandler.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\shaders\canvasShader.frag" />
+    <None Include="source\shaders\canvasShader.vert" />
+    <None Include="source\shaders\compositeFrameShader.frag" />
+    <None Include="source\shaders\compositeFrameShader.vert" />
+    <None Include="source\shaders\compositeShader.frag" />
+    <None Include="source\shaders\compositeShader.vert" />
+    <None Include="source\shaders\debugLineShader.frag" />
+    <None Include="source\shaders\debugLineShader.vert" />
+    <None Include="source\shaders\frameShader.frag" />
+    <None Include="source\shaders\frameShader.vert" />
+    <None Include="source\shaders\gradientBoxShader.frag" />
+    <None Include="source\shaders\gradientBoxShader.vert" />
+    <None Include="source\shaders\layerShader.frag" />
+    <None Include="source\shaders\layerShader.vert" />
+    <None Include="source\shaders\shardShader.frag" />
+    <None Include="source\shaders\shardShader.vert" />
+    <None Include="source\shaders\textShader.frag" />
+    <None Include="source\shaders\textShader.vert" />
+    <None Include="source\shaders\widgetShader.frag" />
+    <None Include="source\shaders\widgetShader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

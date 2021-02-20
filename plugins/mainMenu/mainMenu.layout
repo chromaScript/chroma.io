@@ -1,0 +1,428 @@
+<ROOT id="MenuTitleBar" defaultPosition="0,0">
+<H_BOX class="mm_titleBar" id="menuTitleBar" >
+	<H_BOX id="mm_menuTextBarWrapper" onblur="toggleMainDrops(true)" onfocus="" onmouseleave="titleHover(1)">
+		// FILE DROP DOWN
+		<V_BOX class="mm_dropMenu" style="margin-left:24;" onmouseenter="titleHover(0)" onclick="toggleMainDrops(false)">
+			<H_BOX class="mm_menuTextWrapper" id="fileButton">
+				<TEXT class="mm_bigText" value="FILE" name="dropText"></TEXT>
+			</H_BOX>
+			<V_BOX class="mm_dropDownWrapperA" onmouseenter="dropHover(1)" name="mainDropWrapper">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_new">
+					<TEXT class="mm_smallText" value="NEW..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_open">
+					<TEXT class="mm_smallText" value="OPEN..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(2)" id="file_openRecent">
+					<TEXT class="mm_smallText" value="OPEN RECENT"></TEXT>
+					<IMAGE class="mm_carrotRight"></IMAGE>
+					<V_BOX id="openRecentWrapper" class="mm_dropDownWrapperB" style="width:220;">
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="file_openRecent01">
+							<TEXT class="mm_smallText" value="C:\Work Files\Paintings\landscape.jpg"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="file_openRecent02">
+							<TEXT class="mm_smallText" value="C:\Work Files\Drawings\designSk..."></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="file_openRecent03">
+							<TEXT class="mm_smallText" value="C:\Work Files\Reference\tank.png"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="file_openRecent04">
+							<TEXT class="mm_smallText" value="C:\Work Files\Paintings\illus01.jpg"></TEXT>
+						</H_BOX>
+					</V_BOX>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_close">
+					<TEXT class="mm_smallText" value="CLOSE"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_closeAll">
+					<TEXT class="mm_smallText" value="CLOSE ALL"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" onclick="app.saveBMP()" id="file_save">
+					<TEXT class="mm_smallText" value="SAVE"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_saveAs">
+					<TEXT class="mm_smallText" value="SAVE AS..."></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX id="testingTest" class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_shortcuts">
+					<TEXT class="mm_smallText" value="SHORTCUTS..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_settings">
+					<TEXT class="mm_smallText" value="SETTINGS..."></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_print">
+					<TEXT class="mm_smallText" value="PRINT..."></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_exit">
+					<TEXT class="mm_smallText" value="EXIT"></TEXT>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+		// EDIT DROP DOWN
+		<V_BOX class="mm_dropMenu" onmouseenter="titleHover(0)" onclick="toggleMainDrops(false)">
+			<H_BOX class="mm_menuTextWrapper" id="editButton">
+				<TEXT class="mm_bigText" value="EDIT" name="dropText"></TEXT>
+			</H_BOX>
+			<V_BOX class="mm_dropDownWrapperA" onmouseenter="dropHover(1)" name="mainDropWrapper">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="edit_undo">
+					<TEXT class="mm_smallText" value="UNDO"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="edit_redo">
+					<TEXT class="mm_smallText" value="REDO"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="edit_toggle">
+					<TEXT class="mm_smallText" value="TOGGLE"></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="edit_cut">
+					<TEXT class="mm_smallText" value="CUT"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="edit_copy">
+					<TEXT class="mm_smallText" value="COPY"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="edit_paste">
+					<TEXT class="mm_smallText" value="PASTE"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="edit_copyMerged">
+					<TEXT class="mm_smallText" value="COPY MERGED"></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="edit_fill">
+					<TEXT class="mm_smallText" value="FILL..."></TEXT>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+		// IMAGE DROP DOWN
+		<V_BOX class="mm_dropMenu" onmouseenter="titleHover(0)" onclick="toggleMainDrops(false)">
+			<H_BOX class="mm_menuTextWrapper" id="imageButton">
+				<TEXT class="mm_bigText" value="IMAGE" name="dropText"></TEXT>
+			</H_BOX>
+			<V_BOX class="mm_dropDownWrapperA" onmouseenter="dropHover(1)" name="mainDropWrapper">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="image_adjustments">
+					<TEXT class="mm_smallText" value="ADJUSTMENTS..."></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="image_imageSize">
+					<TEXT class="mm_smallText" value="IMAGE SIZE"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="image_canvasSize">
+					<TEXT class="mm_smallText" value="CANVAS SIZE"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(2)" id="image_rotateImage">
+					<TEXT class="mm_smallText" value="ROTATE IMAGE"></TEXT>
+					<IMAGE class="mm_carrotRight"></IMAGE>
+					<V_BOX id="rotateImageWrapper" class="mm_dropDownWrapperB" style="width:120;">
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="rotate_90CW">
+							<TEXT class="mm_smallText" value="ROTATE 90"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="rotate_90CCW">
+							<TEXT class="mm_smallText" value="ROTATE -90"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="rotate_180">
+							<TEXT class="mm_smallText" value="ROTATE 180"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="rotate_customAngle">
+							<TEXT class="mm_smallText" value="CUSTOM ANGLE"></TEXT>
+						</H_BOX>
+					</V_BOX>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="image_crop">
+					<TEXT class="mm_smallText" value="CROP"></TEXT>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+		// LAYER DROP DOWN
+		<V_BOX class="mm_dropMenu" onmouseenter="titleHover(0)" onclick="toggleMainDrops(false)">
+			<H_BOX class="mm_menuTextWrapper" id="layerButton">
+				<TEXT class="mm_bigText" value="LAYERS" name="dropText"></TEXT>
+			</H_BOX>
+			<V_BOX class="mm_dropDownWrapperA" onmouseenter="dropHover(1)" name="mainDropWrapper">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="layer_new">
+					<TEXT class="mm_smallText" value="NEW LAYER..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="layer_duplicate">
+					<TEXT class="mm_smallText" value="DUPLICATE"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="layer_delete">
+					<TEXT class="mm_smallText" value="DELETE"></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="layer_rename">
+					<TEXT class="mm_smallText" value="RENAME"></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="layer_group">
+					<TEXT class="mm_smallText" value="GROUP"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="layer_ungroup">
+					<TEXT class="mm_smallText" value="UNGROUP"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="layer_setClipping">
+					<TEXT class="mm_smallText" value="SET CLIPPING"></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="layer_mergeLayers">
+					<TEXT class="mm_smallText" value="MERGE LAYERS"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="layer_mergeVisible">
+					<TEXT class="mm_smallText" value=" MERGE VISIBLE"></TEXT>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+		// TOOLBOX DROP DOWN
+		<V_BOX class="mm_dropMenu" onmouseenter="titleHover(0)" onclick="toggleMainDrops(false)">
+			<H_BOX class="mm_menuTextWrapper" id="toolboxButton">
+				<TEXT class="mm_bigText" value="TOOLBOX" name="dropText"></TEXT>
+			</H_BOX>
+			<V_BOX class="mm_dropDownWrapperA" onmouseenter="dropHover(1)" name="mainDropWrapper">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="toolBox_new">
+					<TEXT class="mm_smallText" value="NEW TOOL..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="toolBox_loadTools">
+					<TEXT class="mm_smallText" value="LOAD TOOLS..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="toolBox_saveTools">
+					<TEXT class="mm_smallText" value="SAVE TOOLS..."></TEXT>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+		// SELECT DROP DOWN
+		<V_BOX class="mm_dropMenu" onmouseenter="titleHover(0)" onclick="toggleMainDrops(false)">
+			<H_BOX class="mm_menuTextWrapper" id="selectButtton">
+				<TEXT class="mm_bigText" value="SELECT" name="dropText"></TEXT>
+			</H_BOX>
+			<V_BOX class="mm_dropDownWrapperA" onmouseenter="dropHover(1)" name="mainDropWrapper">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="select_all">
+					<TEXT class="mm_smallText" value="ALL"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="select_none">
+					<TEXT class="mm_smallText" value="NONE"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="select_reselect">
+					<TEXT class="mm_smallText" value="RESELECT"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="select_inverse">
+					<TEXT class="mm_smallText" value="INVERSE"></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="select_colorRange">
+					<TEXT class="mm_smallText" value="COLOR RANGE..."></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="select_modify">
+					<TEXT class="mm_smallText" value="MODIFY..."></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="select_transformSelection">
+					<TEXT class="mm_smallText" value="TRANSFORM SELECTION..."></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="select_toggleMaskView">
+					<TEXT class="mm_smallText" value="TOGGLE MASK VIEW"></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="select_loadSelection">
+					<TEXT class="mm_smallText" value="LOAD SELECTION..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="select_saveSelection">
+					<TEXT class="mm_smallText" value="SAVE SELECTION..."></TEXT>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+		// FILTERS DROP DOWN
+		<V_BOX class="mm_dropMenu" onmouseenter="titleHover(0)" onclick="toggleMainDrops(false)">
+			<H_BOX class="mm_menuTextWrapper" id="filtersButton">
+				<TEXT class="mm_bigText" value="FILTERS" name="dropText"></TEXT>
+			</H_BOX>
+			<V_BOX class="mm_dropDownWrapperA" onmouseenter="dropHover(1)" name="mainDropWrapper">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="filters_blur">
+					<TEXT class="mm_smallText" value="BLUR..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="filters_sharpen">
+					<TEXT class="mm_smallText" value="SHARPEN..."></TEXT>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+		// VIEW DROP DOWN
+		<V_BOX class="mm_dropMenu" onmouseenter="titleHover(0)" onclick="toggleMainDrops(false)">
+			<H_BOX class="mm_menuTextWrapper" id="viewButton">
+				<TEXT class="mm_bigText" value="VIEW" name="dropText"></TEXT>
+			</H_BOX>
+			<V_BOX class="mm_dropDownWrapperA" onmouseenter="dropHover(1)" name="mainDropWrapper">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="view_zoomIn">
+					<TEXT class="mm_smallText" value="ZOOM IN"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="view_zoomOut">
+					<TEXT class="mm_smallText" value="ZOOM OUT"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="view_zoomExtents">
+					<TEXT class="mm_smallText" value="ZOOM EXTENTS"></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="view_100p">
+					<TEXT class="mm_smallText" value="100%"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="view_200p">
+					<TEXT class="mm_smallText" value="200%"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="view_printSize">
+					<TEXT class="mm_smallText" value="PRINT SIZE"></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="view_mirrorViewX">
+					<TEXT class="mm_smallText" value="MIRROR VIEW X"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="view_mirrorViewY">
+					<TEXT class="mm_smallText" value="MIRROR VIEW Y"></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(2)" id="view_show">
+					<TEXT class="mm_smallText" value="SHOW"></TEXT>
+					<IMAGE class="mm_carrotRight"></IMAGE>
+					<V_BOX id="showWrapper" class="mm_dropDownWrapperB">
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="viewShow_selectionOutline">
+							<TEXT class="mm_smallText" value="SELECTION OUTLINE"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="viewShow_gridLines">
+							<TEXT class="mm_smallText" value="GRID LINES"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="viewShow_tooltips">
+							<TEXT class="mm_smallText" value="TOOL TIPS"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="viewShow_rulers">
+							<TEXT class="mm_smallText" value="RULERS"></TEXT>
+						</H_BOX>
+					</V_BOX>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="view_toggleSnapping">
+					<TEXT class="mm_smallText" value="TOGGLE SNAPPING"></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="view_snappingSettings">
+					<TEXT class="mm_smallText" value="SNAPPING SETTINGS..."></TEXT>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+		// WINDOW DROP DOWN
+		<V_BOX class="mm_dropMenu" onmouseenter="titleHover(0)" onclick="toggleMainDrops(false)">
+			<H_BOX class="mm_menuTextWrapper" id="windowButton">
+				<TEXT class="mm_bigText" value="WINDOW" name="dropText"></TEXT>
+			</H_BOX>
+			<V_BOX class="mm_dropDownWrapperA" onmouseenter="dropHover(1)" name="mainDropWrapper">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(2)" id="window_workspaces">
+					<TEXT class="mm_smallText" value="WORKSPACES"></TEXT>
+					<IMAGE class="mm_carrotRight"></IMAGE>
+					<V_BOX id="workspacesWrapper" class="mm_dropDownWrapperB" style="width:110;">
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="workspace_painting">
+							<TEXT class="mm_smallText" value="PAINTING"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="workspace_conceptArt">
+							<TEXT class="mm_smallText" value="CONCEPT ART"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="workspace_animation">
+							<TEXT class="mm_smallText" value="ANIMATION"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="workspace_design">
+							<TEXT class="mm_smallText" value="DESIGN"></TEXT>
+						</H_BOX>
+					</V_BOX>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="window_newWorkspace">
+					<TEXT class="mm_smallText" value="NEW WORKSPACE..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="window_loadWorkspaces">
+					<TEXT class="mm_smallText" value="LOAD WORKSPACES..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="window_saveWorkspaces">
+					<TEXT class="mm_smallText" value="SAVE WORKSPACES..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="window_manageWorkspaces">
+					<TEXT class="mm_smallText" value="MANAGE WORKSPACES..."></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="window_toggleFullscreen">
+					<TEXT class="mm_smallText" value="TOGGLE FULLSCREEN"></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(2)" id="window_mainMenu">
+					<TEXT class="mm_smallText" value="MAIN MENU"></TEXT>
+					<IMAGE class="mm_carrotRight"></IMAGE>
+					<V_BOX id="mainMenuPluginWrapper" class="mm_dropDownWrapperB">
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="mainMenu_toggleVisibility">
+							<TEXT class="mm_smallText" value="TOGGLE VISIBILITY"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="mainMenu_reload">
+							<TEXT class="mm_smallText" value="RELOAD"></TEXT>
+						</H_BOX>
+						<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(3)" id="mainMenu_managePlugin">
+							<TEXT class="mm_smallText" value="MANAGE PLUGIN..."></TEXT>
+						</H_BOX>
+					</V_BOX>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+		// HELP DROP DOWN
+		<V_BOX class="mm_dropMenu" onmouseenter="titleHover(0)" onclick="toggleMainDrops(false)">
+			<H_BOX class="mm_menuTextWrapper" id="helpButton">
+				<TEXT class="mm_bigText" value="HELP" name="dropText"></TEXT>
+			</H_BOX>
+			<V_BOX class="mm_dropDownWrapperA" onmouseenter="dropHover(1)" name="mainDropWrapper">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="help_about">
+					<TEXT class="mm_smallText" value="ABOUT..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="help_managePlugins">
+					<TEXT class="mm_smallText" value="MANAGE PLUGINS..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="help_systemInfo">
+					<TEXT class="mm_smallText" value="SYSTEM INFO..."></TEXT>
+				</H_BOX>
+				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="help_documentation">
+					<TEXT class="mm_smallText" value="DOCUMENTATION..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="help_tutorials">
+					<TEXT class="mm_smallText" value="TUTORIALS..."></TEXT>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+	</H_BOX>
+	// WINDOW BUTTONS
+	<H_BOX id="mm_menuWinButtonWrapper" onmouseleave="winButtonHover(1)">
+		<H_BOX class="mm_button" onmouseenter="winButtonHover(0)" onclick="app.minimize()">
+			<IMAGE class="mm_buttonImage" id="mm_minimize"></IMAGE>
+		</H_BOX>
+		<H_BOX class="mm_button" onmouseenter="winButtonHover(0)" onclick="app.maximize()">
+			<IMAGE class="mm_buttonImage" id="mm_maximize"></IMAGE>
+		</H_BOX>
+		<H_BOX class="mm_button" onmouseenter="winButtonHover(0)" onrelease="app.exit()">
+			<IMAGE class="mm_buttonImage" id="mm_close"></IMAGE>
+		</H_BOX>
+	</H_BOX>
+</H_BOX>
+</ROOT>
+
+/*
+<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" onclick="">
+	<TEXT class="mm_smallText" value="SAVE LAYER SET"></TEXT>
+	<IMAGE class="mm_carrotRight"></IMAGE>
+	<V_BOX class="mm_dropDownWrapperB" id="saveLayerSetWrapper">
+		
+		<H_BOX class="mm_dropMenuSmall" id="saveLSet_all">
+			<TEXT class="mm_smallText" value="ALL"></TEXT>
+		</H_BOX>
+		<H_BOX class="mm_dropMenuSmall" id="saveLSet_none">
+			<TEXT class="mm_smallText" value="NONE"></TEXT>
+		</H_BOX>
+		<H_BOX class="mm_dropMenuSmall" id="saveLSet_reselect">
+			<TEXT class="mm_smallText" value="RESELECT"></TEXT>
+		</H_BOX>
+		<H_BOX class="mm_dropMenuSmall" id="saveLSet_inverse">
+			<TEXT class="mm_smallText" value="INVERSE"></TEXT>
+		</H_BOX>
+		
+	</V_BOX>
+</H_BOX>
+*/

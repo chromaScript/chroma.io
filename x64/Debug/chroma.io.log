@@ -1,0 +1,4 @@
+﻿  WidgetStyle.cpp
+D:\a.Work Files\e.Project Files\a.20.11.15 - chroma.io\chroma.io\chroma.io\source\entities\WidgetStyle.cpp(27,36): warning C4305: '=': truncation from 'int' to 'float'
+D:\a.Work Files\e.Project Files\a.20.11.15 - chroma.io\chroma.io\chroma.io\source\entities\WidgetStyle.cpp(28,36): warning C4305: '=': truncation from 'int' to 'float'
+  chroma.io.vcxproj -> D:\a.Work Files\e.Project Files\a.20.11.15 - chroma.io\chroma.io\x64\Debug\chroma.io.exe

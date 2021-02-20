@@ -1,0 +1,7 @@
+<NAME=HSL Sliders>
+<VERSION=1.0>
+<ABOUT=chroma.IO HSL Sliders>
+<NAMESPACE=hslSliders>
+<LAYOUT_PATH=hslSliders.layout>
+<STYLE_PATH=hslSliders.style>
+<SCRIPT_PATH=hslSliders.cscript>

@@ -1,0 +1,14 @@
+#colhud_over {
+	anchor: center;
+	dimensions: 100, 100;
+	background-texture: "textures/T_colorHUD_valuekey_D.png";
+	background-color: white;
+}
+#colhud_under {
+	visibility: hide;
+	anchor: center;
+	dimensions: 100, 100;
+	background-texture: "textures/T_colorHUD_underlay_D.png";
+	background-color: white;
+	fill-color: red;
+}

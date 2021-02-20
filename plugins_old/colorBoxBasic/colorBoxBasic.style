@@ -1,0 +1,22 @@
+#colorBoxWrapper {
+	dimensions: 210, 160;
+	background-color: $darkGrey$;
+	box-shadow-color: black;
+	box-shadow-size: 3, 3;
+}
+#colorBox {
+	dimensions: 150, 75;
+	margin-top: 4;
+	margin-left: 4;
+	vertex-1-color: white;
+	vertex-2-color: red;
+	vertex-3-color: red;
+	vertex-4-color: white;
+}
+#blackBox {
+	dimensions: 150, 75;
+	vertex-1-color: 0, 0, 0, 0;
+	vertex-2-color: 0, 0, 0, 0;
+	vertex-3-color: black;
+	vertex-4-color: black;
+}

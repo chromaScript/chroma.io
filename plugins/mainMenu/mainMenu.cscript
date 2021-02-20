@@ -1,0 +1,102 @@
+bool mainDropsHidden = true;
+string activeDropID = "";
+array num titleBarGrey = {0.47, 0.47, 0.47, 1.0};
+array num exitRed = {0.83, 0.28, 0.28, 1.0};
+array num darkGreyText = {0.28, 0.28, 0.28, 1.0};
+array num darkGreyDrop = {0.38, 0.38, 0.38, 1.0};
+array num darkerGreyText = {0.18, 0.18, 0.18, 1.0};
+array num darkGrey = {0.38, 0.38, 0.38, 1.0};
+array num mediumGrey = {0.62, 0.62, 0.62, 1.0};
+array num lightGrey = {0.76, 0.76, 0.76, 1.0};
+array num offWhite = {0.92, 0.92, 0.92, 1.0};
+
+void toggleMainDrops(bool override)
+{
+	if (mainDropsHidden && !override)
+	{
+		mainDropsHidden = false;
+		setChildProperty_byClass("mm_menuTextWrapper", "background-color-alpha", 1);
+		setChildProperty_byName("mainDropWrapper", "visibility", "show");
+	}
+	else
+	{
+		if (sweepTestRoot_byID("MenuTitleBar"))
+		{
+			app.ui.preventBlurCallback();
+			return;
+		}
+		mainDropsHidden = true;
+		setClassProperty("mm_menuTextWrapper", "background-color-alpha", 0);
+		setClassProperty("mm_dropDownWrapperA", "visibility", "hide");
+		setClassProperty("mm_dropDownWrapperB", "visibility", "hide");
+		resetClassProperty("mm_bigText", "fill-color");
+	}
+}
+
+void titleHover(num switch)
+{
+	if (switch == 0)
+	{
+		resetClassProperty("mm_smallText", "fill-color");
+		resetClassProperty("mm_dropMenuSmall", "background-color-alpha");
+		resetClassProperty("mm_carrotRight", "fill-color");
+		setClassProperty("mm_bigText", "fill-color", darkGreyText);
+		setChildProperty_byClass("mm_bigText", "fill-color", offWhite);
+		if (!mainDropsHidden)
+		{
+			setClassProperty("mm_menuTextWrapper", "background-color-alpha", 0);
+			setClassProperty("mm_dropDownWrapperA", "visibility", "hide");
+			setClassProperty("mm_dropDownWrapperB", "visibility", "hide");
+			setChildProperty_byClass("mm_menuTextWrapper", "background-color-alpha", 1);
+			setChildProperty_byName("mainDropWrapper", "visibility", "show");
+		}
+	}
+	else if (switch == 1 && mainDropsHidden)
+	{
+		resetClassProperty("mm_bigText", "fill-color");
+	}
+}
+
+void dropHover(num switch)
+{
+	if (switch == 0 || switch >= 2)
+	{
+		print getProperty("id");
+		setClassProperty("mm_dropMenuSmall", "background-color-alpha", 0);
+		setProperty("background-color-alpha", 1);
+		setClassProperty("mm_smallText", "fill-color", darkerGreyText);
+		setClassProperty("mm_carrotRight", "fill-color", darkerGreyText);
+		setChildProperty_byType("TEXT", "fill-color", offWhite);
+		setChildProperty_byClass("mm_carrotRight", "fill-color", offWhite);
+		if (switch == 2)
+		{
+			setChildProperty_byClass("mm_dropDownWrapperB", "visibility", "show");
+		}
+		else if (switch == 0) 
+		{
+			setClassProperty("mm_dropDownWrapperB", "visibility", "hide");
+		}
+	}
+	else if (switch == 1)
+	{
+		//resetClassProperty("mm_smallText", "fill-color");
+		//resetClassProperty("mm_dropMenuSmall", "background-color-alpha");
+	}
+}
+
+void winButtonHover(num switch)
+{
+	if (switch == 0)
+	{
+		setClassProperty("mm_button", "background-color-alpha", 0);
+		setClassProperty("mm_buttonImage", "fill-color", darkGrey);
+		setProperty("background-color-alpha", 1);
+		setChildProperty_byType("IMAGE", "fill-color", offWhite);
+		setChildProperty_byID("mm_close", "fill-color", exitRed);
+	}
+	else if (switch == 1)
+	{
+		resetClassProperty("mm_button", "background-color-alpha");
+		resetClassProperty("mm_buttonImage", "fill-color");
+	}
+}

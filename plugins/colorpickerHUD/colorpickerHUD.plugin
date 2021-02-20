@@ -1,0 +1,7 @@
+<NAME=Color Picker HUD>
+<VERSION=1.0>
+<ABOUT=chroma.IO Color Picker HUD>
+<NAMESPACE=colorHUD>
+<LAYOUT_PATH=colhud.layout>
+<STYLE_PATH=colhud.style>
+<SCRIPT_PATH=colhud.cscript>
