@@ -1,0 +1,158 @@
+#cntp_wrapper {
+	width: $cntp_minWidth$;
+	height: $cntp_minHeight$;
+	background-color: $global::tone33$;
+	box-shadow-size: 3, 3;
+	box-shadow-color: black;
+	visibility: hidden;
+}
+
+.cntp_titleTextWrapper {
+	min-width: 24;
+	min-height: 16;
+	margin-top: 2;
+	background-color: $global::darkGrey$;
+	background-color-alpha: 0.0;
+	overflow-X: auto;
+}
+
+.cntp_inputTextWrapper {
+	min-width: 12;
+	min-height: 14;
+	margin-top: 2;
+	background-color: $global::darkGrey$;
+	background-color-alpha: 1.0;
+	overflow-X: auto;
+}
+
+#cntp_contentWrapper {
+	width: inherit;
+	height: fill;
+}
+
+.cntp_dropContainer {
+	width: $dropContWidth$;
+	height: 22;
+	margin-top: 4;
+	border-top: 2;
+}
+
+.cntp_nameContainer {
+	width: $nameContWidth$;
+	height: 22;
+	border-top: 2;
+}
+
+.cntp_halfNameWrapper {
+	width: $(nameContWidth / 2) - 8$;
+	height: inherit;
+}
+
+.cntp_cursorContainer {
+	width: $cursorContWidth$;
+	height: 22;
+	border-top: 2;
+}
+
+.cntp_buttonContainer {
+	width: $buttonContWidth$;
+	height: 24;
+	margin-top: 4;
+	border-top: 8;
+}
+
+.cntp_smallButton {
+	height: 22;
+	width: 22;
+	background-color: black;
+}
+
+.cntp_mainButton {
+	width: $(buttonContWidth / 2) - 8$;
+	height: inherit;
+	background-color: $darkGreyLight$;
+}
+
+.cntp_nameInnerAlign {
+	width: $nameContWidth - 52$;
+	height: 18;
+	margin-top: 2;
+	float: right;
+}
+
+.cntp_dropWrapper {
+	width: $dropContWidth - 62$;
+	height: 18;
+	margin-top: 2;
+	float: right;
+	background-color: $darkGreyLight$;
+}
+
+.cntp_dropWrapperCursor {
+	width: 102;
+	height: 18;
+	margin-top: 2;
+	float: left;
+	background-color: $darkGreyLight$;
+}
+
+.cntp_dropTop {
+	width: fill;
+	height: 18;
+}
+
+.cntp_dropItem {
+	width: inherit;
+	height: 18;
+	margin-top: 2;
+	margin-bottom: 2;
+	border-bottom: 2;
+	z-index: 2;
+}
+
+.cntp_dropList {
+	position: absolute;
+	width: inherit;
+	min-height: 6;
+	top: 18;
+	overflow-Y: auto;
+	background-color: $darkGrey$;
+	z-index: 2;
+	visibility: hide;
+}
+
+.cntp_dropButton {
+	width: 12;
+	height: 12;
+	border-left: 3;
+	margin-top: 3;
+	margin-right: 3;
+	float: right;
+	background-texture:"textures/T_arrowDown36_D.png";
+}
+
+#cntp_keyBind {
+	width: 140;
+	height: inherit;
+	border-right: 6;
+	float: left;
+	background-color: $darkGreyLight$;
+}
+
+#cntp_idNum {
+	width: 50;
+	height: inherit;
+	border-right: 6;
+	float: right;
+	background-color: $darkGreyLight$;
+}
+
+.cntp_textInput14 {
+	width: inherit;
+	height: inherit;
+}
+
+.cntp_text14 {
+	float: left;
+	margin-top: 2;
+}

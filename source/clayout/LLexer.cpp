@@ -47,12 +47,27 @@ std::vector<std::shared_ptr<LToken>> LLexer::scanTokens(std::string source)
 		{
 			switch (c)
 			{
+			case 'B':
 			case 'C': case 'c': case 'd': case 'G': case 'g':
 			case 'H': case 'h': case 'I': case 'i': case 'L': case 'n':
 			case 'o': case 'P': case 'p': case 'R': case 'r': case 's': case 'T': case 't':
 			case 'V': case 'v':
 				switch (c)
 				{
+				case 'B':
+					if (source[startSearch + 1] == 'L' &&
+						source[startSearch + 2] == 'O' &&
+						source[startSearch + 3] == 'C' &&
+						source[startSearch + 4] == 'K' &&
+						(!isalpha(source[startSearch + 5])))
+					{
+						addToken(LTokenType::BLOCK, line);
+						currentIndex += 5;
+						break;
+					}
+					else { goto identifier; }
+					break;
+					//
 				case 'C': case 'c':
 					if (source[startSearch + 1] == 'l' &&
 						source[startSearch + 2] == 'a' &&
@@ -280,6 +295,15 @@ std::vector<std::shared_ptr<LToken>> LLexer::scanTokens(std::string source)
 					break;
 				case 'L':
 					if (source[startSearch + 1] == 'I' &&
+						source[startSearch + 2] == 'N' &&
+						source[startSearch + 3] == 'E' &&
+						(!isalpha(source[startSearch + 4])))
+					{
+						addToken(LTokenType::LINE, line);
+						currentIndex += 4;
+						break;
+					}
+					if (source[startSearch + 1] == 'I' &&
 						source[startSearch + 2] == 'S' &&
 						source[startSearch + 3] == 'T' &&
 						(!isalpha(source[startSearch + 4]) && source[startSearch + 4] != '_'))
@@ -332,6 +356,19 @@ std::vector<std::shared_ptr<LToken>> LLexer::scanTokens(std::string source)
 					}
 					if (source[startSearch + 1] == 'n' &&
 						source[startSearch + 2] == 'c' &&
+						source[startSearch + 3] == 'a' &&
+						source[startSearch + 4] == 'n' &&
+						source[startSearch + 5] == 'c' &&
+						source[startSearch + 6] == 'e' &&
+						source[startSearch + 7] == 'l' &&
+						(!isalpha(source[startSearch + 8])))
+					{
+						addToken(LTokenType::ON_CANCEL, line);
+						currentIndex += 8;
+						break;
+					}
+					if (source[startSearch + 1] == 'n' &&
+						source[startSearch + 2] == 'c' &&
 						source[startSearch + 3] == 'l' &&
 						source[startSearch + 4] == 'i' &&
 						source[startSearch + 5] == 'c' &&
@@ -376,6 +413,18 @@ std::vector<std::shared_ptr<LToken>> LLexer::scanTokens(std::string source)
 					{
 						addToken(LTokenType::ON_DBL_CLICK, line);
 						currentIndex += 10;
+						break;
+					}
+					if (source[startSearch + 1] == 'n' &&
+						source[startSearch + 2] == 'e' &&
+						source[startSearch + 3] == 'n' &&
+						source[startSearch + 4] == 't' &&
+						source[startSearch + 5] == 'r' &&
+						source[startSearch + 6] == 'y' &&
+						(!isalpha(source[startSearch + 7])))
+					{
+						addToken(LTokenType::ON_ENTRY, line);
+						currentIndex += 7;
 						break;
 					}
 					if (source[startSearch + 1] == 'n' &&
@@ -776,6 +825,20 @@ std::vector<std::shared_ptr<LToken>> LLexer::scanTokens(std::string source)
 					{
 						addToken(LTokenType::PANEL, line);
 						currentIndex += 5;
+						break;
+					}
+					if (source[startSearch + 1] == 'A' &&
+						source[startSearch + 2] == 'R' &&
+						source[startSearch + 3] == 'A' &&
+						source[startSearch + 4] == 'G' &&
+						source[startSearch + 5] == 'R' &&
+						source[startSearch + 6] == 'A' &&
+						source[startSearch + 7] == 'P' &&
+						source[startSearch + 8] == 'H' &&
+						(!isalpha(source[startSearch + 9])))
+					{
+						addToken(LTokenType::PARAGRAPH, line);
+						currentIndex += 9;
 						break;
 					}
 					if (source[startSearch + 1] == 'R' &&

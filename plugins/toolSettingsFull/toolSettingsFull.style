@@ -1,8 +1,8 @@
 #tsf_wrapper {
 	min-width: $tsf_minWidth$;
-	width: 220;
+	max-width: $tsf_minWidth$;
 	min-height: $tsf_minHeight$;
-	height: 250;
+	max-height: $tsf_minHeight$;
 	overflow-Y: auto;
 	background-color: $global::lowMidGrey$;
 	box-shadow-color: black;
@@ -12,8 +12,65 @@
 
 #tsf_body {
 	width: inherit;
-	height: 180;
+	height: fill;
 	//background-color: $global::lowMidGrey$;
+}
+
+#tsf_interestWrapper
+{
+	width: 140;
+	height: inherit;
+	margin-left: 4;
+	margin-top: 4;
+	margin-bottom: 4;
+	float: left;
+}
+
+.tsf_interest {
+	width: inherit;
+	height: $interestHeight$;
+	border-bottom: 2;
+}
+
+.tsf_interestName {
+	width: 122;
+	height: inherit;
+	float: left;
+	background-color: $global::darkGreyLight$;
+}
+
+.tsf_interestText {
+	min-width: 6;
+	height: inherit;
+	margin-left: 4;
+	float: left;
+	background-color: $global::lightGrey$;
+}
+
+.tsf_interestBox {
+	width: $interestHeight$;
+	height: inherit;
+	float: right;
+	background-color: $global::darkGreyLight$;
+}
+
+.tsf_interestCheck {
+	width: 10;
+	height: 10;
+	margin: 3, 3, 3, 3;
+	background-texture: "textures/T_button10_D.png";
+	fill-color: $global::lightGrey$;
+}
+
+#tsf_settingsWrapper
+{
+	//min-width: 120;
+	width: fill;
+	height: inherit;
+	border-left: 6;
+	margin-top: 4;
+	margin-right: 12;
+	margin-bottom: 4;
 }
 
 .tsf_text {

@@ -19,6 +19,7 @@ protected:
 public:
 	In_ShapeField(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
 	{
+		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::onepoint; }
 		interestMask = { TSetType::basic, TSetType::image, TSetType::polygon, TSetType::field, TSetType::alpha };
 		fragData.constantSize = false;
 		fragData.linearStream = false;

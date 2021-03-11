@@ -96,6 +96,13 @@ public:
 	Toolbox();
 	// Cursor Functions (Use to create library of cursors for making tools with
 	std::shared_ptr<CustomCursor> getCursor(int name);
+	// Check Functions
+	bool checkValidIOCombination(std::shared_ptr<CInterpreter> interpreter, std::string inputName, std::string outputName);
+	bool checkValidIOCombination(std::shared_ptr<CInterpreter> interpreter, int inputMacro, int outputMacro);
+	bool checkValidControlScheme(std::shared_ptr<CInterpreter> interpreter, std::string inputName, std::string controlScheme);
+	bool checkValidControlScheme(std::shared_ptr<CInterpreter> interpreter, int inputMacro, int controlMacro);
+	int convertIOStringToMacro(int kind, std::string name);
+	TSetType convertControlMacro(int macro);
 	// Input Functions
 	int sendClick(Application* sender, MouseEvent dat);
 	int sendMove(Application* sender, MouseEvent dat);
@@ -111,6 +118,11 @@ public:
 	void endCallback(std::shared_ptr<CInterpreter> interpreter, double xpos, double ypos);
 	// Tool Functions
 	void initializeTools(bool isNew);
+	bool createCustomTool(
+		std::string cursorUp, std::string cursorDown,
+		int toolID, std::string toolName,
+		std::string inputMethod, std::string controlScheme, std::string outputMethod,
+		int modBit, int glfwKey);
 	void createDefaultTools();
 	void setActiveTool_byID(int id);
 	void setActiveTool_byIndex(int i);

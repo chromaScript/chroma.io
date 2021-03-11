@@ -1,0 +1,391 @@
+<ROOT id="createNewTool_pop" defaultPosition="150,80">
+<V_BOX id="cntp_wrapper" onresize="global::createNewTool_pop::resizeCNTP()">
+	<H_BOX id="cntp_titleBar" class="popupTitle"
+	ondragstart="moveWidget(0, &quot;createNewTool_pop&quot;)" 
+	ondrag="moveWidget(1, &quot;createNewTool_pop&quot;)">
+		<H_BOX class="cntp_titleTextWrapper">
+			<TEXT class="text16default, barlow16" value="CREATE NEW TOOL"></TEXT>
+		</H_BOX>
+		<H_BOX class="titleButton" 
+			onmouseenter="titleButtonHover(0)" onmouseleave="titleButtonHover(1)"
+			onclick="titleButtonHover(1); exitCNTP();">
+			<IMAGE class="titleButtonImage, titleClose"></IMAGE></H_BOX>
+	</H_BOX>
+	<V_BOX id="cntp_contentWrapper">
+		<H_BOX class="cntp_dropContainer">
+			<TEXT class="barlow14, cntp_text14" value="INPUT:"></TEXT>
+			<H_BOX class="cntp_dropWrapper"
+			onmouseenter="hoverDropdown(0)" 
+			onmouseleave="hoverDropdown(1)"
+			onfocus="toggleDrop(0)"
+			onblur="toggleDrop(1)">
+				<V_BOX class="cntp_dropTop">
+					<TEXT id="cntp_inputMethod" class="barlow14" style="margin-left:4;" value="NO INPUT"></TEXT>
+					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(1, &quot;NO INPUT&quot;)">
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;NO INPUT&quot;)"
+						onclick="clickDropOption(0, &quot;NO INPUT&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="NO INPUT"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;PAN CAMERA&quot;)"
+						onclick="clickDropOption(0, &quot;PAN CAMERA&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="PAN CAMERA"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;ZOOM CAMERA&quot;)"
+						onclick="clickDropOption(0, &quot;ZOOM CAMERA&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="ZOOM CAMERA"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;ROTATE CAMERA&quot;)"
+						onclick="clickDropOption(0, &quot;ROTATE CAMERA&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="ROTATE CAMERA"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;DRAW&quot;)"
+						onclick="clickDropOption(0, &quot;DRAW&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="DRAW"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;POINT&quot;)"
+						onclick="clickDropOption(0, &quot;POINT&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="POINT"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;COLOR PICKER&quot;)"
+						onclick="clickDropOption(0, &quot;COLOR PICKER&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="COLOR PICKER"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;SHAPE LINE&quot;)"
+						onclick="clickDropOption(0, &quot;SHAPE LINE&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="SHAPE LINE"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;SHAPE DRAW&quot;)"
+						onclick="clickDropOption(0, &quot;SHAPE DRAW&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="SHAPE DRAW"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;LASSO&quot;)"
+						onclick="clickDropOption(0, &quot;LASSO&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="LASSO"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;POLYGON&quot;)"
+						onclick="clickDropOption(0, &quot;POLYGON&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="POLYGON"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;SHAPE FIELD&quot;)"
+						onclick="clickDropOption(0, &quot;SHAPE FIELD&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="SHAPE FIELD"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;VORTEX&quot;)"
+						onclick="clickDropOption(0, &quot;VORTEX&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="VORTEX"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;RAKE&quot;)"
+						onclick="clickDropOption(0, &quot;RAKE&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="RAKE"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;FAN&quot;)"
+						onclick="clickDropOption(0, &quot;FAN&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="FAN"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(0, 0, &quot;POLYLINE&quot;)"
+						onclick="clickDropOption(0, &quot;POLYLINE&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="POLY-LINE"></TEXT></H_BOX>
+					</V_BOX>
+				</V_BOX>
+				<IMAGE class="cntp_dropButton"></IMAGE>
+			</H_BOX>
+		</H_BOX>
+		<H_BOX class="cntp_dropContainer">
+			<TEXT class="barlow14, cntp_text14" value="CONTROL:"></TEXT>
+			<H_BOX class="cntp_dropWrapper"
+			onmouseenter="hoverDropdown(0)" 
+			onmouseleave="hoverDropdown(1)"
+			onfocus="toggleDrop(0)"
+			onblur="toggleDrop(1)">
+				<V_BOX class="cntp_dropTop">
+					<TEXT id="cntp_controlScheme" class="barlow14" style="margin-left:4;" value="NO CONTROL"></TEXT>
+					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(1, &quot;USE DEFAULT&quot;)">
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(1, 0, &quot;USE DEFAULT&quot;)"
+						onclick="clickDropOption(1, &quot;USE DEFAULT&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="USE DEFAULT"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(1, 0, &quot;CONTINUOUS&quot;)"
+						onclick="clickDropOption(1, &quot;CONTINUOUS&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="CONTINUOUS"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(1, 0, &quot;DRAG&quot;)"
+						onclick="clickDropOption(1, &quot;DRAG&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="DRAG"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(1, 0, &quot;ONE POINT&quot;)"
+						onclick="clickDropOption(1, &quot;ONE POINT&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="ONE POINT"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(1, 0, &quot;TWO POINT&quot;)"
+						onclick="clickDropOption(1, &quot;TWO POINT&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="TWO POINT"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(1, 0, &quot;THREE POINT&quot;)"
+						onclick="clickDropOption(1, &quot;THREE POINT&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="THREE POINT"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(1, 0, &quot;FOUR POINT&quot;)"
+						onclick="clickDropOption(1, &quot;FOUR POINT&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="FOUR POINT"></TEXT></H_BOX>
+					</V_BOX>
+				</V_BOX>
+				<IMAGE class="cntp_dropButton"></IMAGE>
+			</H_BOX>
+		</H_BOX>
+		<H_BOX class="cntp_dropContainer">
+			<TEXT class="barlow14, cntp_text14" value="OUTPUT:"></TEXT>
+			<H_BOX class="cntp_dropWrapper"
+			onmouseenter="hoverDropdown(0)" 
+			onmouseleave="hoverDropdown(1)"
+			onfocus="toggleDrop(0)"
+			onblur="toggleDrop(1)">
+				<V_BOX class="cntp_dropTop">
+					<TEXT id="cntp_outputMethod" class="barlow14" style="margin-left:4;" value="NO OUTPUT"></TEXT>
+					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(1, &quot;NO OUTPUT&quot;)">
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(2, 0, &quot;NO OUTPUT&quot;)"
+						onclick="clickDropOption(2, &quot;NO OUTPUT&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="NO OUTPUT"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(2, 0, &quot;PAN CAMERA&quot;)"
+						onclick="clickDropOption(2, &quot;PAN CAMERA&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="CAMERA PAN"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(2, 0, &quot;ROTATE CAMERA&quot;)"
+						onclick="clickDropOption(2, &quot;ROTATE CAMERA&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="CAMERA ROTATE"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(2, 0, &quot;ZOOM CAMERA&quot;)"
+						onclick="clickDropOption(2, &quot;ZOOM CAMERA&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="CAMERA ZOOM"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(2, 0, &quot;COLOR SAMPLE&quot;)"
+						onclick="clickDropOption(2, &quot;COLOR SAMPLE&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="COLOR SAMPLE"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(2, 0, &quot;STROKE&quot;)"
+						onclick="clickDropOption(2, &quot;STROKE&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="STROKE"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(2, 0, &quot;SHAPE&quot;)"
+						onclick="clickDropOption(2, &quot;SHAPE&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="SHAPE"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(2, 0, &quot;GRADIENT&quot;)"
+						onclick="clickDropOption(2, &quot;GRADIENT&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="GRADIENT"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(2, 0, &quot;FILL&quot;)"
+						onclick="clickDropOption(2, &quot;FILL&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="FILL"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(2, 0, &quot;SELECTION&quot;)"
+						onclick="clickDropOption(2, &quot;SELECTION&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="SELECTION"></TEXT></H_BOX>
+					</V_BOX>
+				</V_BOX>
+				<IMAGE class="cntp_dropButton"></IMAGE>
+			</H_BOX>
+		</H_BOX>
+		
+	// CURSOR DROP DOWNS
+		<H_BOX class="cntp_cursorContainer">
+			<TEXT class="barlow14, cntp_text14" style="border-right:4;" value="HOVER:"></TEXT>
+			<H_BOX class="cntp_dropWrapperCursor"
+			onmouseenter="hoverDropdown(0)" 
+			onmouseleave="hoverDropdown(1)"
+			onfocus="toggleDrop(0)"
+			onblur="toggleDrop(1)">
+				<V_BOX class="cntp_dropTop">
+					<TEXT id="cntp_cursorHover" class="barlow14" style="margin-left:4;" value="POINTER"></TEXT>
+					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(1, &quot;POINTER&quot;)">
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(3, 0, &quot;POINTER&quot;)"
+						onclick="clickDropOption(3, &quot;POINTER&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="POINTER"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(3, 0, &quot;HAND&quot;)"
+						onclick="clickDropOption(3, &quot;HAND&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="HAND"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(3, 0, &quot;GRAB&quot;)"
+						onclick="clickDropOption(3, &quot;GRAB&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="GRAB"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(3, 0, &quot;ROTATE&quot;)"
+						onclick="clickDropOption(3, &quot;ROTATE&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="ROTATE"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(3, 0, &quot;ZOOM&quot;)"
+						onclick="clickDropOption(3, &quot;ZOOM&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="ZOOM"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(3, 0, &quot;ZOOM IN&quot;)"
+						onclick="clickDropOption(3, &quot;ZOOM IN&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="ZOOM IN"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(3, 0, &quot;ZOOM OUT&quot;)"
+						onclick="clickDropOption(3, &quot;ZOOM OUT&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="ZOOM OUT"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(3, 0, &quot;BRUSH&quot;)"
+						onclick="clickDropOption(3, &quot;BRUSH&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="BRUSH"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(3, 0, &quot;EYE DROPPER&quot;)"
+						onclick="clickDropOption(3, &quot;EYE DROPPER&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="EYE DROPPER"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(3, 0, &quot;CIRCLE SMALL&quot;)"
+						onclick="clickDropOption(3, &quot;CIRCLE SMALL&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="CIRCLE SMALL"></TEXT></H_BOX>
+					</V_BOX>
+				</V_BOX>
+				<IMAGE class="cntp_dropButton"></IMAGE>
+			</H_BOX>
+			<TEXT class="barlow14, cntp_text14" style="float:right;border-right:4;" value="PRESS:"></TEXT>
+			<H_BOX class="cntp_dropWrapperCursor"
+			onmouseenter="hoverDropdown(0)" 
+			onmouseleave="hoverDropdown(1)"
+			onfocus="toggleDrop(0)"
+			onblur="toggleDrop(1)">
+				<V_BOX class="cntp_dropTop">
+					<TEXT id="cntp_cursorPress" class="barlow14" style="margin-left:4;" value="POINTER"></TEXT>
+					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(1, &quot;POINTER&quot;)">
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(4, 0, &quot;POINTER&quot;)"
+						onclick="clickDropOption(4, &quot;POINTER&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="POINTER"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(4, 0, &quot;HAND&quot;)"
+						onclick="clickDropOption(4, &quot;HAND&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="HAND"></TEXT></H_BOX>
+						<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(4, 0, &quot;GRAB&quot;)"
+						onclick="clickDropOption(4, &quot;GRAB&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="GRAB"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(4, 0, &quot;ROTATE&quot;)"
+						onclick="clickDropOption(4, &quot;ROTATE&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="ROTATE"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(4, 0, &quot;ZOOM&quot;)"
+						onclick="clickDropOption(4, &quot;ZOOM&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="ZOOM"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(4, 0, &quot;ZOOM IN&quot;)"
+						onclick="clickDropOption(4, &quot;ZOOM IN&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="ZOOM IN"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(4, 0, &quot;ZOOM OUT&quot;)"
+						onclick="clickDropOption(4, &quot;ZOOM OUT&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="ZOOM OUT"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(4, 0, &quot;BRUSH&quot;)"
+						onclick="clickDropOption(4, &quot;BRUSH&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="BRUSH"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(4, 0, &quot;EYE DROPPER&quot;)"
+						onclick="clickDropOption(4, &quot;EYE DROPPER&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="EYE DROPPER"></TEXT></H_BOX>
+							<H_BOX class="cntp_dropItem"
+						onmouseenter="hoverDropOptions(4, 0, &quot;CIRCLE SMALL&quot;)"
+						onclick="clickDropOption(4, &quot;CIRCLE SMALL&quot;)">
+							<TEXT class="barlow14, cntp_dropText" style="z-index:2;margin-left:4;" value="CIRCLE SMALL"></TEXT></H_BOX>
+					</V_BOX>
+				</V_BOX>
+				<IMAGE class="cntp_dropButton"></IMAGE>
+			</H_BOX>
+		</H_BOX>
+		
+	// NAME AND KEYBIND AND ID
+		<H_BOX class="cntp_nameContainer">
+			<TEXT class="barlow14, cntp_text14" value="NAME:"></TEXT>
+			<H_BOX class="cntp_nameInnerAlign, bgDarkGreyLight">
+				<LINE id="cntp_toolName" class="barlow14, cntp_textInput14, textInputColor"  style="margin-left:4;" value="New tool name..."></LINE>
+			</H_BOX>
+		</H_BOX>
+		<H_BOX class="cntp_nameContainer">
+			<TEXT class="barlow14, cntp_text14" value="KEYBIND:"></TEXT>
+			<H_BOX class="cntp_nameInnerAlign">
+				<H_BOX id="cntp_keyBind"
+				onmouseenter="hoverMainButton(0)" 
+				onmouseleave="hoverMainButton(1)"
+				onclick="startKeyCapture()"><TEXT id="cntp_keyBindText" class="barlow14" style="margin-left:4;" value="SET KEY..."></TEXT></H_BOX>
+				<TEXT class="barlow14" value="ID #:"></TEXT>
+				<H_BOX id="cntp_idNum">
+					<LINE id="cntp_idNumber" class="barlow14, cntp_textInput14, textInputColor" style="margin-left:4;" value="-1"></LINE>
+				</H_BOX>
+			</H_BOX>
+		</H_BOX>
+		
+	// ICON AND COLOR DROP DOWNS
+		<H_BOX class="cntp_nameContainer">
+			<H_BOX class="cntp_halfNameWrapper">
+				<TEXT class="barlow14, cntp_text14" style="float:right;border-right:6;" value="TOOL ICON:"></TEXT>
+				<IMAGE class="cntp_smallButton" style="float:right;"></IMAGE>
+			</H_BOX>
+			<H_BOX class="cntp_halfNameWrapper" style="float:right;">
+				<TEXT class="barlow14, cntp_text14" style="float:right;border-right:6;" value="HIGHLIGHT COLOR:"></TEXT>
+				<IMAGE class="cntp_smallButton" style="float:right;" ></IMAGE>
+			</H_BOX>
+		</H_BOX>
+		<H_BOX class="cntp_nameContainer">
+			<H_BOX class="cntp_halfNameWrapper">
+				<TEXT class="barlow14, cntp_text14" style="float:right;border-right:6;" value="USE TIP IMAGE:"></TEXT>
+				<IMAGE class="cntp_smallButton" style="float:right;"></IMAGE>
+			</H_BOX>
+			<H_BOX class="cntp_halfNameWrapper" style="float:right;">
+				<TEXT class="barlow14, cntp_text14" style="float:right;border-right:6;" value="ICON FILL COLOR:"></TEXT>
+				<IMAGE class="cntp_smallButton" style="float:right;" ></IMAGE>
+			</H_BOX>
+		</H_BOX>
+		
+	// CREATE NEW TOOL BUTTONS
+		<H_BOX class="cntp_buttonContainer">
+			<H_BOX class="cntp_mainButton" style="float:left;"
+			onmouseenter="hoverMainButton(0)" 
+			onmouseleave="hoverMainButton(1)"
+			onclick="commitCNTP()"><TEXT class="barlow16" style="float:center;margin-top:1;" value="CREATE TOOL"></TEXT></H_BOX>
+			<H_BOX class="cntp_mainButton" style="float:right;"
+			onmouseenter="hoverMainButton(0)" 
+			onmouseleave="hoverMainButton(1)"
+			onclick="exitCNTP()"><TEXT class="barlow16" style="float:center;margin-top:1;" value="CANCEL"></TEXT></H_BOX>
+		</H_BOX>
+	</V_BOX>
+	
+// RESIZE BOXES
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()" 
+		ondragstart="resizeWidget(0, 0, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		ondrag="resizeWidget(1, 0, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		ondragend="resizeWidget(2, 0, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		class="resizeBarLeft"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()" 
+		ondragstart="resizeWidget(0, 0, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		ondrag="resizeWidget(1, 0, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		ondragend="resizeWidget(2, 0, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		class="resizeBarRight"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 1, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		ondrag="resizeWidget(1, 1, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		ondragend="resizeWidget(2, 1, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"		
+		class="resizeBarBottom"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 2, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		ondrag="resizeWidget(1, 2, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		ondragend="resizeWidget(2, 2, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"		
+		class="resizeBarBottomLeft"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 2, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		ondrag="resizeWidget(1, 2, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		ondragend="resizeWidget(2, 2, &quot;cntp_wrapper&quot;, cntp_minWidth, cntp_minHeight)"
+		class="resizeBarBottomRight"></H_BOX>
+</V_BOX>
+</ROOT>

@@ -14,6 +14,7 @@ protected:
 public:
 	In_Zoom(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner } 
 	{ 
+		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::usedefault; }
 		interestMask = { TSetType::zoom };
 		this->maxBufferLength = 3;
 		this->anchorIDCount = 0;

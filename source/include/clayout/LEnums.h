@@ -55,6 +55,8 @@ enum class LTokenType
 	ON_MOUSE_WHEELDOWN,
 	ON_RELEASE,
 	ON_RESIZE,
+	ON_CANCEL,
+	ON_ENTRY,
 	DRAGGABLE,
 	DROPPABLE,
 	DRAG_TYPE,
@@ -75,6 +77,9 @@ enum class LTokenType
 	PANEL,
 	IMAGE,
 	TEXT,
+	LINE,
+	BLOCK,
+	PARAGRAPH,
 	TEXT_ENTRY,
 
 	END
@@ -130,6 +135,8 @@ inline std::vector<std::string> LTokenTypeNames =
 	"onmousewheelup",
 	"onrelease",
 	"onresize",
+	"oncancel",
+	"onentry",
 	"draggable",
 	"droppable",
 	"dragType",
@@ -150,6 +157,9 @@ inline std::vector<std::string> LTokenTypeNames =
 	"PANEL",
 	"IMAGE",
 	"TEXT",
+	"LINE",
+	"BLOCK",
+	"PARAGRAPH",
 	"TEXT_ENTRY",
 
 	"end"

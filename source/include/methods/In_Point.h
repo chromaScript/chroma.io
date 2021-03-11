@@ -12,7 +12,8 @@ private:
 protected:
 public:
 	In_Point(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner } 
-	{ 
+	{
+		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::drag; }
 		interestMask = { TSetType::sampler }; 
 		fragData.constantSize = true; 
 		this->maxBufferLength = 5;

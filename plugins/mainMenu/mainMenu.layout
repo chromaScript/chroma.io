@@ -38,7 +38,7 @@
 				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_closeAll">
 					<TEXT class="mm_smallText" value="CLOSE ALL"></TEXT>
 				</H_BOX>
-				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" onclick="app.saveBMP()" id="file_save">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" onclick="hideMainDrops(); app.saveBMP();" id="file_save">
 					<TEXT class="mm_smallText" value="SAVE"></TEXT>
 				</H_BOX>
 				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_saveAs">
@@ -178,7 +178,7 @@
 				<TEXT class="mm_bigText" value="TOOLBOX" name="dropText"></TEXT>
 			</H_BOX>
 			<V_BOX class="mm_dropDownWrapperA" onmouseenter="dropHover(1)" name="mainDropWrapper">
-				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="toolBox_new">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" onclick="hideMainDrops(); global::createNewTool_pop::toggleCNTP(0);" id="toolBox_new">
 					<TEXT class="mm_smallText" value="NEW TOOL..."></TEXT>
 				</H_BOX>
 				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="toolBox_loadTools">

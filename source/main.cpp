@@ -15,8 +15,7 @@ chroma.io:
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
--The In_Draw method features axis-constraints for X,Y and +/-45. The constraints are applied to the input, rather than output,
-so users can take advantage of canvas rotation to create intermediate angles. Axis constraint is accessed using Shift (solo).
+-The In_Draw method features axis-constraints for X,Y and +/-45. The constraints are applied to the input.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -24,12 +23,6 @@ so users can take advantage of canvas rotation to create intermediate angles. Ax
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
--Input functions (excluding Pan/Rotate/Zoom) are interested in detecting when the stylus/mouse is paused during input.
-A pause flag is set on the mouseEvent. Because the stylus fires input continuously and is polled more rapidly
-than the mouse, the detection flips rapidly between pause/move, even during what looks like continuous movement, especially
-if the stylus is being moved slowly. The function "cleans" the (pause-buffer) data behind it as it goes to remove these fluctuations, the
-data dump from input looks correct, but dumping the data in real time would show PAUSE/MOVE/PAUSE/MOVE/MOVE/PAUSE, etc.
-In order to correctly take input, the Output method must therefore lag behind the foremost inputEvent by the length of the pause-buffer.
 */
 
 #include "include/WinStylusHandler.h"
@@ -74,7 +67,7 @@ In order to correctly take input, the Output method must therefore lag behind th
 
 // GLOBAL DEBUG VARIABLES
 bool doStrokeDebugFrames = false;
-bool doDebugMouseInput = false;
+bool doDebugMouseInput = true;
 
 // GLOBAL VARIABLES
 #define APP_NAME "chroma.io 0.0.5"
@@ -119,7 +112,7 @@ int main()
 #endif
 
 	// Initialize the Application Window
-	chromaIO = std::make_shared<Application>(1920, 1080);
+	chromaIO = std::make_shared<Application>(1080, 1080);
 	chromaIO.get()->setShared(chromaIO);
 	chromaIO.get()->setWindowColor(glm::vec4(0.19f, 0.19f, 0.19f, 1.0f));
 	chromaIO.get()->setMonitorDPI();
@@ -185,7 +178,7 @@ int main()
 	chromaIO.get()->getUI()->initializeInterface();
 
 	// Create Canvas and Load Default Canvas Texture (temporary, will eventually open app with no document open)
-	chromaIO.get()->getUI().get()->newDocument(3200, 2350, true);
+	chromaIO.get()->getUI().get()->newDocument(2800, 2800, true);
 
 	// Create Camera
 	chromaIO.get()->createOrthoCamera();
@@ -221,6 +214,7 @@ int main()
 		float currentFrame = (float)glfwGetTime();
 		DELTA_TIME = currentFrame - LAST_FRAME;
 		LAST_FRAME = currentFrame;
+
 	// Update Objects That Need Delta
 		chromaIO.get()->getCamera()->updateSpeed(DELTA_TIME);
 		if (chromaIO.get()->getDynamicPan() == true) 
@@ -229,6 +223,10 @@ int main()
 		}
 		chromaIO.get()->clearMouseHold(currentFrame);
 		chromaIO.get()->updateTimerCallbacks(currentFrame);
+
+	// Do Upkeep
+		chromaIO.get()->getUI().get()->clearResizeEvents();
+		chromaIO.get()->ui.get()->checkFocusVisibility();
 
 	// Input Loop
 		

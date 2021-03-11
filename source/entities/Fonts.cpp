@@ -193,16 +193,17 @@ glm::ivec2 Fonts::findSizeTextLine(std::string textLine,
 	return outSize;
 }
 // Render Text
-void Fonts::renderTextLine(std::shared_ptr<Shader> shader, glm::vec3 textColor, float alpha, std::string textLine,
+void Fonts::renderTextLine(std::shared_ptr<Shader> shader, glm::vec4 textColor, float alpha, std::string textLine,
 	std::shared_ptr<CachedFace> thisFace, std::shared_ptr<CachedCharBitmap> thisCurrentBitmap, 
 	glm::vec2 startLoc, glm::ivec2 offsetPos,
 	int VAO, int VBO, int EBO)
 {
 	// Setup the Shader
 	shader->use();
-	shader->setVec3("textColor", textColor);
+	shader->setVec4("textColor", textColor);
 	shader->setFloat("textAlpha", alpha);
 	shader->setInt("texture1", 0);
+	shader->setBool("renderText", true);
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO);
 	
@@ -213,10 +214,7 @@ void Fonts::renderTextLine(std::shared_ptr<Shader> shader, glm::vec3 textColor, 
 		((float(offsetPos.x * scale * 2) / WINDOW_WIDTH)),
 		((float(offsetPos.y * scale * 2) / WINDOW_HEIGHT)));
 	int lineHeight = thisCurrentBitmap.get()->pxSize;
-	if (textLine.find("..") != std::string::npos)
-	{
-		int i = 0;
-	}
+
 	// Iterate over the text string
 	std::string::const_iterator c_iter;
 	for (c_iter = textLine.begin(); c_iter != textLine.end(); c_iter++)
@@ -225,8 +223,6 @@ void Fonts::renderTextLine(std::shared_ptr<Shader> shader, glm::vec3 textColor, 
 
 		float offsetX = ((float(character.bearing.x * scale * 2) / WINDOW_WIDTH));
 		float xpos = (float)textStartLoc.x + offsetX + anchorOffset.x;
-		//float offsetY = ((float((character.size.y - character.bearing.y) * scale * 2) / WINDOW_HEIGHT));
-		//float offsetY = ((float((lineHeight - (character.bearing.y - character.size.y)) * scale * 2) / WINDOW_HEIGHT));
 		float offsetY = ((float((lineHeight - character.bearing.y) * scale * 2) / WINDOW_HEIGHT));
 		float ypos = (float)textStartLoc.y - offsetY - anchorOffset.y;
 
@@ -250,10 +246,165 @@ void Fonts::renderTextLine(std::shared_ptr<Shader> shader, glm::vec3 textColor, 
 		// update content of VBO memory
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(verticies1), verticies1); // be sure to use glBufferSubData and not glBufferData
-		//glBindBuffer(GL_ARRAY_BUFFER, 0);
 		// Render quad
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		textStartLoc.x += (((character.advance >> 6) * scale) * 2) / WINDOW_WIDTH; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+		// bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+		textStartLoc.x += (((character.advance >> 6) * scale) * 2) / WINDOW_WIDTH;
+	}
+}
+
+// Buffers are as follows { textVAO, textVBO, textEBO, cursorVAO, cursorVBO, cursorEBO, selectionVAO, selectionVBO, selectionEBO }
+void Fonts::renderTextInput(std::shared_ptr<Shader> textShader, std::string textLine,
+	std::shared_ptr<CachedFace> thisFace, std::shared_ptr<CachedCharBitmap> thisCurrentBitmap,
+	glm::vec2 startLoc, glm::ivec2 offsetPos, glm::vec4 textColor, glm::vec4 highlightColor, glm::vec4 focusColor,
+	std::vector<unsigned int> buffers, glm::ivec4 widgetBounds, int cursorPos, int selectStart, int selectEnd,
+	bool drawCursor, bool drawSelection, bool calculateVertData, float* cursorData, float* selectionData)
+{
+
+	// Setup the location variables and scale
+	float scale = 1.0f;
+	glm::vec2 textStartLoc = glm::vec2(startLoc.x - 1, startLoc.y + 1);
+	glm::vec2 anchorOffset = glm::vec2(
+		((float(offsetPos.x * scale * 2) / WINDOW_WIDTH)),
+		((float(offsetPos.y * scale * 2) / WINDOW_HEIGHT)));
+	int lineHeight = thisCurrentBitmap.get()->pxSize;
+	
+	// Pre-calculate all of the offset and position values
+	std::vector<float> vertexData;
+
+	// Enter loop
+	std::string::const_iterator c_iter; int i = 0;
+	for (c_iter = textLine.begin(); c_iter != textLine.end(); c_iter++)
+	{
+		FaceCharacter* character = &thisCurrentBitmap.get()->bitmaps[*c_iter];
+
+		float offsetX = ((float(character->bearing.x * scale * 2) / WINDOW_WIDTH));
+		float xpos = (float)textStartLoc.x + offsetX + anchorOffset.x;
+		float offsetY = ((float((lineHeight - character->bearing.y) * scale * 2) / WINDOW_HEIGHT));
+		float ypos = (float)textStartLoc.y - offsetY - anchorOffset.y;
+
+		float w = character->size.x * scale;
+		w = (float(w * 2) / WINDOW_WIDTH);
+		float h = character->size.y * scale;
+		h = (float(h * 2) / WINDOW_HEIGHT);
+		// update VBO for each character
+		vertexData.insert(vertexData.end(), {
+			// The top and bottom are normal texture coords because this renders in respect
+			// to the screen space coordinates
+			// positions					// texture coords - 
+			xpos + w, ypos - h, 0.0f,		1.0f, 1.0f, // top right
+			xpos + w, ypos, 0.0f,			1.0f, 0.0f, // bottom right
+			xpos, ypos,	0.0f,				0.0f, 0.0f,  // bottom left
+			xpos, ypos - h, 0.0f,			0.0f, 1.0f // top left
+		});
+
+		if (drawSelection && i == selectStart)
+		{
+			xpos = (float)textStartLoc.x + offsetX + anchorOffset.x;
+			if (h == 0) { h = (float(-lineHeight) / WINDOW_HEIGHT); }
+			selectionData[0] = xpos + ((float)4 / (float)WINDOW_WIDTH); selectionData[1] = ypos;
+			selectionData[5] = xpos + ((float)4 / (float)WINDOW_WIDTH); selectionData[6] = ypos - h;
+		}
+		
+		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+		// bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+		textStartLoc.x += (((character->advance >> 6) * scale) * 2) / WINDOW_WIDTH;
+
+		i++;
+		if (calculateVertData && i == cursorPos)
+		{
+			xpos = (float)textStartLoc.x + offsetX + anchorOffset.x;
+			if (h == 0) { h = (float(-lineHeight) / WINDOW_HEIGHT); }
+			cursorData[0] = xpos + ((float)4 / (float)WINDOW_WIDTH); cursorData[1] = ypos;
+			cursorData[5] = xpos + ((float)4 / (float)WINDOW_WIDTH); cursorData[6] = ypos - h;
+			cursorData[10] = xpos; cursorData[11] = ypos - h;
+			cursorData[15] = xpos; cursorData[16] = ypos;
+		}
+		if (drawSelection && i == selectEnd)
+		{
+			xpos = (float)textStartLoc.x + offsetX + anchorOffset.x;
+			if (h == 0) { h = (float(-lineHeight) / WINDOW_HEIGHT); }
+			selectionData[10] = xpos; selectionData[11] = ypos - h;
+			selectionData[15] = xpos; selectionData[16] = ypos;
+		}
+	}
+
+	// Setup the Shader
+	textShader->use();
+	textShader->setVec4("textColor", textColor);
+	textShader->setVec4("highlightColor", highlightColor);
+	textShader->setFloat("textAlpha", 1.0f);
+	textShader->setInt("texture1", 0);
+	
+	if (drawSelection)
+	{
+		textShader->setBool("renderSelection", true);
+		textShader->setBool("renderText", false);
+		glBindVertexArray(buffers[6]);
+		glBindBuffer(GL_ARRAY_BUFFER, buffers[7]);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 20, selectionData);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+
+	// Draw each character
+	glActiveTexture(GL_TEXTURE0);
+	glBindVertexArray(buffers[0]);
+	textShader->setBool("renderText", true);
+	for (size_t k = 0; k < textLine.size(); k++)
+	{
+		FaceCharacter* character = &thisCurrentBitmap.get()->bitmaps[textLine[k]];
+
+		float vertexSection[20] = { 
+			vertexData[(k * 20) + 0], vertexData[(k * 20) + 1], vertexData[(k * 20) + 2], vertexData[(k * 20) + 3],
+			vertexData[(k * 20) + 4], vertexData[(k * 20) + 5], vertexData[(k * 20) + 6], vertexData[(k * 20) + 7], 
+			vertexData[(k * 20) + 8], vertexData[(k * 20) + 9], vertexData[(k * 20) + 10], vertexData[(k * 20) + 11], 
+			vertexData[(k * 20) + 12], vertexData[(k * 20) + 13], vertexData[(k * 20) + 14], vertexData[(k * 20) + 15], 
+			vertexData[(k * 20) + 16], vertexData[(k * 20) + 17], vertexData[(k * 20) + 18], vertexData[(k * 20) + 19] };
+
+		// Set the text color based on whether it's selected
+		if (drawSelection && (k >= selectStart && k < selectEnd))
+		{
+			textShader->setVec4("textColor", focusColor);
+		}
+		else
+		{
+			textShader->setVec4("textColor", textColor);
+		}
+
+		// Render the glyph texture
+		glBindTexture(GL_TEXTURE_2D, character->texID);
+		// update content of VBO memory
+		glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertexSection), vertexSection); // be sure to use glBufferSubData and not glBufferData
+		// Render quad
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+
+	// Draw the cursor quad
+	if (drawCursor)
+	{
+		if (textLine.size() == 0 || cursorPos == 0)
+		{
+			float offsetX = ((float(0 * scale * 2) / WINDOW_WIDTH));
+			float xpos = (float)(startLoc.x - 1) + offsetX + anchorOffset.x;
+			float offsetY = ((float((lineHeight - 0) * scale * 2) / WINDOW_HEIGHT));
+			float ypos = (float)(startLoc.y + 1) - offsetY - anchorOffset.y;
+
+			float h = lineHeight * 0.6f;
+			h = (float(-h * 2) / WINDOW_HEIGHT);
+
+			cursorData[0] = xpos + ((float)4 / (float)WINDOW_WIDTH); cursorData[1] = ypos;
+			cursorData[5] = xpos + ((float)4 / (float)WINDOW_WIDTH); cursorData[6] = ypos - h;
+			cursorData[10] = xpos; cursorData[11] = ypos - h;
+			cursorData[15] = xpos; cursorData[16] = ypos;
+		}
+		textShader->setVec4("highlightColor", highlightColor);
+		textShader->setBool("renderSelection", false);
+		textShader->setBool("renderText", false);
+		glBindVertexArray(buffers[3]);
+		glBindBuffer(GL_ARRAY_BUFFER, buffers[4]);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(float) * 20, cursorData);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 }

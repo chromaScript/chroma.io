@@ -14,6 +14,7 @@ protected:
 public:
 	In_Rotate(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner } 
 	{ 
+		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::usedefault; }
 		interestMask = { TSetType::rotate }; 
 		fragData.constantSize = true; 
 		this->maxBufferLength = 2;

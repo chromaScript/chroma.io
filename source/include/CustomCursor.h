@@ -33,12 +33,12 @@ inline int convertCursorName(std::string name)
 	if (name == "hand") { return CURSOR_HAND; }
 	if (name == "rotate") { return CURSOR_ROTATE; }
 	if (name == "grab") { return CURSOR_GRAB; }
-	if (name == "zoomscrub") { return CURSOR_ZOOMSCRUB; }
+	if (name == "zoomscrub" || name =="zoom") { return CURSOR_ZOOMSCRUB; }
 	if (name == "zoomin") { return CURSOR_ZOOMIN; }
 	if (name == "zoomout") { return CURSOR_ZOOMOUT; }
 	if (name == "brush") { return CURSOR_BRUSH; }
-	if (name == "dropper") { return CURSOR_DROPPER; }
-	if (name == "circleSmall") { return CURSOR_CIRCLESMALL; }
+	if (name == "dropper" || name == "eyedropper" || name == "colorpicker") { return CURSOR_DROPPER; }
+	if (name == "circleSmall" || name =="circlesmall") { return CURSOR_CIRCLESMALL; }
 	return 0;
 }
 

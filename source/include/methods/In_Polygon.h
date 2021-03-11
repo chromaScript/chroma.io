@@ -18,6 +18,7 @@ protected:
 public:
 	In_Polygon(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
 	{
+		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::onepoint; }
 		interestMask = { TSetType::basic, TSetType::image, TSetType::polygon, TSetType::alpha };
 		fragData.constantSize = true;
 		fragData.linearStream = true;

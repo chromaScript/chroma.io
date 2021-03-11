@@ -77,6 +77,35 @@ void Toolbox::initializeTools(bool isNew)
 		// Read tool presets from config file
 	}
 }
+
+bool Toolbox::createCustomTool(
+	std::string cursorUp, std::string cursorDown,
+	int toolID, std::string toolName,
+	std::string inputMethod, std::string controlScheme, std::string outputMethod,
+	int modBit, int glfwKey)
+{
+	int cursorUpEnum = convertCursorName(stringToLower(cursorUp));
+	int cursorDownEnum = convertCursorName(stringToLower(cursorDown));
+	int inputID = convertIOStringToMacro(1, inputMethod);
+	int controlID = convertIOStringToMacro(3, controlScheme);
+	TSetType controlEnum = convertControlMacro(controlID);
+	int outputID = convertIOStringToMacro(2, outputMethod);
+	int keybind = createKeySig(modBit, glfwKey);
+
+	if (!chromaIO.get()->isValidKeybind_tool(modBit, glfwKey)) { return false; }
+	if (!checkValidIOCombination(nullptr, inputID, outputID)) { return false; }
+	if (!checkValidControlScheme(nullptr, inputID, controlID)) { return false; }
+
+	tools.emplace_back(
+		std::make_shared<Tool>(getCursor(cursorUpEnum), getCursor(cursorDownEnum), toolID, toolName,
+			inputID, outputID,
+			controlEnum,
+			keybind, shared_from_this()));
+	tools.back().get()->initializeTool(controlEnum);
+	
+	return true;
+}
+
 void Toolbox::createDefaultTools()
 {
 	// Later this will be read using a config file, likely XML or some human-readable format for easy editing
@@ -394,4 +423,145 @@ void Toolbox::sendFinialize(Application* sender)
 {
 	activeTool.get()->output.get()->finalize(sender, &activeTool.get()->input.get()->fragData);
 	activeTool.get()->output.get()->postprocess(sender, &activeTool.get()->input.get()->fragData);
+}
+
+// Validation Functions
+bool Toolbox::checkValidIOCombination(std::shared_ptr<CInterpreter> interpreter, std::string inputName, std::string outputName)
+{
+	int input = convertIOStringToMacro(1, inputName);
+	int output = convertIOStringToMacro(2, outputName);
+	return checkValidIOCombination(interpreter, input, output);
+}
+
+bool Toolbox::checkValidIOCombination(std::shared_ptr<CInterpreter> interpreter, int inputMacro, int outputMacro)
+{
+	if (inputMacro == -1 || outputMacro == -1) { return false; }
+	if (inputMacro == 0 || outputMacro == 0) { return true; }
+
+	switch (inputMacro)
+	{
+	case IN_DRAG: if (outputMacro == OUT_STROKE) { return true; } break;
+	case IN_ROTATE: if (outputMacro == OUT_CAMERAROTATE) { return true; } break;
+	case IN_ZOOM: if (outputMacro == OUT_CAMERAZOOM) { return true; } break;
+	case IN_DRAW: if (outputMacro == OUT_STROKE) { return true; } break;
+	case IN_LINE: if (outputMacro == OUT_STROKE) { return true; } break;
+	case IN_LASSO: if (outputMacro == OUT_STROKE) { return true; } break;
+	case IN_POLYGON: if (outputMacro == OUT_STROKE) { return true; } break;
+	case IN_PAN: if (outputMacro == OUT_CAMERAPAN) { return true; } break;
+	case IN_POINT: if (outputMacro == OUT_STROKE) { return true; } break;
+	case IN_SAMPLER: if (outputMacro == OUT_SAMPLER) { return true; } break;
+	case IN_SHAPEFIELD: if (outputMacro == OUT_STROKE) { return true; } break;
+	case IN_VORTEX: if (outputMacro == OUT_STROKE) { return true; } break;
+	case IN_RAKE: if (outputMacro == OUT_STROKE) { return true; } break;
+	case IN_FAN: if (outputMacro == OUT_STROKE) { return true; } break;
+	case IN_SHAPELINE: if (outputMacro == OUT_STROKE) { return true; } break;
+	case IN_SHAPEDRAW: if (outputMacro == OUT_STROKE) { return true; } break;
+	case IN_POLYLINE: if (outputMacro == OUT_STROKE) { return true; } break;
+	}
+
+	return false;
+}
+
+bool Toolbox::checkValidControlScheme(std::shared_ptr<CInterpreter> interpreter, std::string inputName, std::string controlScheme)
+{
+	int input = convertIOStringToMacro(1, inputName);
+	int control = convertIOStringToMacro(3, controlScheme);
+	return checkValidControlScheme(interpreter, input, control);
+}
+
+bool Toolbox::checkValidControlScheme(std::shared_ptr<CInterpreter> interpreter, int inputMacro, int controlMacro)
+{
+	if (inputMacro == -1 || controlMacro == -1) { return false; }
+	if (inputMacro == 0) { return true; }
+
+	switch (inputMacro)
+	{
+	case IN_DRAG: if (controlMacro == CONTROL_CONTINUOUS) { return true; } break;
+	case IN_ROTATE: if (controlMacro == CONTROL_DEFAULT) { return true; } break;
+	case IN_ZOOM: if (controlMacro == CONTROL_DEFAULT) { return true; } break;
+	case IN_DRAW: if (controlMacro == CONTROL_CONTINUOUS) { return true; } break;
+	case IN_LINE: if (controlMacro == CONTROL_DRAG) { return true; } break;
+	case IN_LASSO: if (controlMacro == CONTROL_CONTINUOUS) { return true; } break;
+	case IN_POLYGON: if (controlMacro == CONTROL_ONEPOINT) { return true; } break;
+	case IN_PAN: if (controlMacro == CONTROL_DEFAULT) { return true; } break;
+	case IN_POINT: if (controlMacro == CONTROL_CONTINUOUS) { return true; } break;
+	case IN_SAMPLER: if (controlMacro == CONTROL_DEFAULT) { return true; } break;
+	case IN_SHAPEFIELD: if (controlMacro == CONTROL_ONEPOINT || controlMacro == CONTROL_DRAG) { return true; } break;
+	case IN_VORTEX: if (controlMacro == CONTROL_CONTINUOUS || controlMacro == CONTROL_DRAG) { return true; } break;
+	case IN_RAKE: if (controlMacro == CONTROL_CONTINUOUS) { return true; } break;
+	case IN_FAN: if (controlMacro == CONTROL_CONTINUOUS) { return true; } break;
+	case IN_SHAPELINE: if (controlMacro == CONTROL_ONEPOINT || controlMacro == CONTROL_DRAG) { return true; } break;
+	case IN_SHAPEDRAW: if (controlMacro == CONTROL_CONTINUOUS) { return true; } break;
+	case IN_POLYLINE: if (controlMacro == CONTROL_DRAG) { return true; } break;
+	}
+
+	return false;
+}
+
+int Toolbox::convertIOStringToMacro(int kind, std::string name)
+{
+	std::string nameFixed = name;
+	nameFixed.erase(remove_if(nameFixed.begin(), nameFixed.end(), isspace), nameFixed.end());
+	stringToLower(nameFixed);
+	if (kind == 1) // INPUT METHOD
+	{
+		if (nameFixed == "noinputMacro") { return IN_NO_INPUT; }
+		if (nameFixed == "drag") { return IN_DRAG; }
+		if (nameFixed == "rotate" || nameFixed == "inrotate" || nameFixed == "rotatecamera" || nameFixed == "camerarotate") { return IN_ROTATE; }
+		if (nameFixed == "zoom" || nameFixed == "inzoom" || nameFixed == "zoomcamera" || nameFixed == "camerazoom") { return IN_ZOOM; }
+		if (nameFixed == "draw") { return IN_DRAW; }
+		if (nameFixed == "line") { return IN_LINE; }
+		if (nameFixed == "lasso") { return IN_LASSO; }
+		if (nameFixed == "polygon") { return IN_POLYGON; }
+		if (nameFixed == "pan" || nameFixed == "inpan" || nameFixed == "pancamera" || nameFixed == "camerapan") { return IN_PAN; }
+		if (nameFixed == "point") { return IN_POINT; }
+		if (nameFixed == "sampler" || nameFixed == "eyedropper" || nameFixed == "colorpicker") { return IN_SAMPLER; }
+		if (nameFixed == "shapefield") { return IN_SHAPEFIELD; }
+		if (nameFixed == "vortex") { return IN_VORTEX; }
+		if (nameFixed == "rake") { return IN_RAKE; }
+		if (nameFixed == "fan") { return IN_FAN; }
+		if (nameFixed == "shapeline") { return IN_SHAPELINE; }
+		if (nameFixed == "shapedraw") { return IN_SHAPEDRAW; }
+		if (nameFixed == "polyline") { return IN_POLYLINE; }
+	}
+	else if (kind == 2) // OUTPUT METHOD
+	{
+		if (nameFixed == "nooutput") { return OUT_NO_OUTPUT; }
+		if (nameFixed == "pan" || nameFixed == "outpan" || nameFixed == "pancamera" || nameFixed == "camerapan") { return OUT_CAMERAPAN; }
+		if (nameFixed == "rotate" || nameFixed == "outrotate" || nameFixed == "rotatecamera" || nameFixed == "camerarotate") { return OUT_CAMERAROTATE; }
+		if (nameFixed == "zoom" || nameFixed == "outzoom" || nameFixed == "zoomcamera" || nameFixed == "camerazoom") { return OUT_CAMERAZOOM; }
+		if (nameFixed == "stroke" || nameFixed == "brush") { return OUT_STROKE; }
+		if (nameFixed == "shape") { return OUT_SHAPE; }
+		if (nameFixed == "gradient") { return OUT_GRADIENT; }
+		if (nameFixed == "fill") { return OUT_FILL; }
+		if (nameFixed == "sampler" || nameFixed == "eyedropper" || nameFixed == "colorpicker") { return OUT_SAMPLER; }
+		if (nameFixed == "selection") { return OUT_SELECTION; }
+	}
+	else if (kind == 3) // CONTROL SCHEME
+	{
+		if (nameFixed == "default" || nameFixed == "usedefault") { return CONTROL_DEFAULT; }
+		if (nameFixed == "continuous") { return CONTROL_CONTINUOUS; }
+		if (nameFixed == "drag") { return CONTROL_DRAG; }
+		if (nameFixed == "onepoint") { return CONTROL_ONEPOINT; }
+		if (nameFixed == "twopoint") { return CONTROL_TWOPOINT; }
+		if (nameFixed == "threepoint") { return CONTROL_THREEPOINT; }
+		if (nameFixed == "fourpoint") { return CONTROL_FOURPOINT; }
+	}
+	else { return -1; }
+}
+
+TSetType Toolbox::convertControlMacro(int macro)
+{
+	switch (macro)
+	{
+	case CONTROL_DEFAULT: return TSetType::usedefault;
+	case CONTROL_CONTINUOUS: return TSetType::continuous;
+	case CONTROL_DRAG: return TSetType::drag;
+	case CONTROL_ONEPOINT: return TSetType::onepoint;
+	case CONTROL_TWOPOINT: return TSetType::twopoint;
+	case CONTROL_THREEPOINT: return TSetType::threepoint;
+	case CONTROL_FOURPOINT: return TSetType::fourpoint;
+	default:
+		return TSetType::usedefault;
+	}
 }

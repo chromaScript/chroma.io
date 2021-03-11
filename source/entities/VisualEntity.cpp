@@ -133,6 +133,12 @@ void VisualEntity::generateBuffers(unsigned int* va, unsigned int* vb, unsigned 
 	glGenBuffers(1, eb);
 	glGenTextures(1, tx0);
 }
+void VisualEntity::generateBuffers(unsigned int* va, unsigned int* vb, unsigned int* eb)
+{
+	glGenVertexArrays(1, va);
+	glGenBuffers(1, vb);
+	glGenBuffers(1, eb);
+}
 void VisualEntity::bindBuffers()
 {
 	// Bind vertex array and buffers with data

@@ -156,7 +156,7 @@ void Widget::setVertData_Widget()
 
 glm::ivec2 Widget::setSizeByChildren()
 {
-	glm::ivec2 outSize = glm::ivec2(0, 0);
+	glm::ivec2 outSize = glm::ivec2(sizeX, sizeY);
 	// 1. Establish minimum/maximum value (Must never violate minX/Y sizes)
 	// Allow Max values to be INT_MAX to allow fill/stretch to work properly
 		// For X
@@ -325,14 +325,14 @@ glm::ivec2 Widget::setSizeByParent()
 	// 2. Establish minimum value (Must never violate minX/Y sizes)
 		// For X
 	int potentialMinX = findMinX();
-	if (outSize.x == UI_WVALUE_NONE) { outSize.x = 0; }
+	if (potentialMinX == UI_WVALUE_NONE) { outSize.x = 0; }
 	//if (potentialMinX < outSize.x) {}
 	//else if (potentialMinX > style.minX && style.minX > 0) { outSize.x = (int)style.minX; }
 	else if (potentialMinX > style.minX && style.minX > 0) { outSize.x = potentialMinX; }
 	else { outSize.x = potentialMinX; }
 		// For Y
 	int potentialMinY = findMinY();
-	if (outSize.y == UI_WVALUE_NONE) { outSize.y = 0; }
+	if (potentialMinY == UI_WVALUE_NONE) { outSize.y = 0; }
 	if (potentialMinY < outSize.y) {}
 	//else if (potentialMinY > style.minY && style.minY > 0) { outSize.y = (int)style.minY; }
 	else if (potentialMinY > style.minY && style.minY > 0) { outSize.y = potentialMinY; }
@@ -359,6 +359,7 @@ glm::ivec2 Widget::setSizeByParent()
 		// Return
 	sizeX = outSize.x;
 	sizeY = outSize.y;
+	
 	return outSize;
 }
 void Widget::placeWidget()
@@ -385,7 +386,7 @@ int Widget::findMinX()
 		}
 		else
 		{
-			if (style.minX != UI_WVALUE_NONE) { outMinX = int((parentWidget.lock().get()->setSizeByParent().x) * style.minX); }
+			if (style.minX != UI_WVALUE_NONE) { outMinX = int((parentWidget.lock().get()->findAvailableWidth(shared_from_this())) * style.minX); }
 			else { outMinX = int(parentWidget.lock().get()->setSizeByParent().x); }
 		}
 	}
@@ -427,10 +428,8 @@ int Widget::findMaxX()
 		}
 		else
 		{
-			if (style.maxX != UI_WVALUE_NONE) { outMaxX = int((parentWidget.lock().get()->setSizeByParent().x) * style.maxX)
-				- style.getMargin().left - style.getMargin().right; }
-			else { outMaxX = (parentWidget.lock().get()->setSizeByParent().x)
-				- style.getMargin().left - style.getMargin().right; }
+			if (style.maxX != UI_WVALUE_NONE) { outMaxX = int((parentWidget.lock().get()->findAvailableWidth(shared_from_this())) * style.maxX); }
+			else { outMaxX = (parentWidget.lock().get()->setSizeByParent().x); }
 		}
 	}
 	else if ((int)style.maxX == UI_WVALUE_INHERIT)
@@ -479,7 +478,7 @@ int Widget::findMinY()
 		}
 		else
 		{
-			if (style.minY != UI_WVALUE_NONE) { outMinY = int((parentWidget.lock().get()->setSizeByParent().y) * style.minY); }
+			if (style.minY != UI_WVALUE_NONE) { outMinY = int((parentWidget.lock().get()->findAvailableHeight(shared_from_this())) * style.minY); }
 			else { outMinY = int(parentWidget.lock().get()->setSizeByParent().y); }
 		}
 	}
@@ -496,17 +495,8 @@ int Widget::findMinY()
 	}
 	else
 	{
-		/*
-		if (style.minY != UI_WVALUE_NONE) 
-		{ 
-			outMinY = (int)style.minY; 
-		}
-		else { outMinY = 0; }
-		*/
-		//if (style.minY != UI_WVALUE_NONE || sizeY > 0)
 		if (style.minY != UI_WVALUE_NONE)
 		{
-			//outMinY = (int)style.minY; 
 			outMinY = (sizeY > style.minY) ? sizeY : (style.minY > UI_WVALUE_NONE / 2) ? sizeY : style.minY;
 		}
 		else { outMinY = 0; }
@@ -528,10 +518,8 @@ int Widget::findMaxY()
 		}
 		else
 		{
-			if (style.maxY != UI_WVALUE_NONE) { outMaxY = int((parentWidget.lock().get()->setSizeByParent().y) * style.maxY)
-				- style.getMargin().top - style.getMargin().bottom; }
-			else { outMaxY = (parentWidget.lock().get()->setSizeByParent().y)
-				- style.getMargin().top - style.getMargin().bottom; }
+			if (style.maxY != UI_WVALUE_NONE) { outMaxY = int((parentWidget.lock().get()->findAvailableHeight(shared_from_this())) * style.maxY); }
+			else { outMaxY = (parentWidget.lock().get()->setSizeByParent().y); }
 		}
 	}
 	else if ((int)style.maxY == UI_WVALUE_INHERIT)
@@ -542,7 +530,6 @@ int Widget::findMaxY()
 		}
 		else
 		{
-			//outMaxY = parentWidget.lock().get()->findMaxY() - style.getMargin().top - style.getMargin().bottom;
 			outMaxY = parentWidget.lock().get()->findMaxY();
 			if (outMaxY != UI_WVALUE_NONE)
 			{
@@ -552,20 +539,191 @@ int Widget::findMaxY()
 	}
 	else
 	{
-		
-		//if (style.maxY != UI_WVALUE_NONE || sizeY > 0)
 		if (style.maxY != UI_WVALUE_NONE)
 		{
-			//outMaxY = (sizeY > style.maxY) ? sizeY : (style.maxY > UI_WVALUE_NONE / 2) ? sizeY : style.maxY; 
 			outMaxY = style.maxY;
 		}
 		else { outMaxY = UI_WVALUE_NONE; }
-		//else { outMaxY = sizeY; }
-		
-		//outMaxY = (sizeY > style.maxY) ? sizeY : (style.maxY > UI_WVALUE_NONE / 2) ? sizeY : style.maxY;
 	}
 	return outMaxY;
 }
+
+// Find available space for relative-sized widgets to occupy
+int Widget::findAvailableWidth(std::shared_ptr<Widget> askingWidget)
+{
+	int outWidth = 0;
+	int firstPositionedWidget = -1;
+	for (int i = 0; i < childWidgets.size(); i++)
+	{
+		Widget* child = childWidgets[i].get();
+		if (child != askingWidget.get())
+		{
+			if (firstPositionedWidget == -1) { firstPositionedWidget = i; }
+			if (child->style.position != UI_POSITION_ABSOLUTE)
+			{
+				outWidth += child->sizeX;
+				if (childWidgets.size() == 0)
+				{
+					outWidth += child->style.getMargin().left;
+					outWidth += child->style.getMargin().right;
+				}
+				else if (i == 0)
+				{
+					outWidth += child->style.getMargin().left;
+					outWidth += child->style.getBorder().right;
+				}
+				else if (i > 0 && i < childWidgets.size() - 1)
+				{
+					outWidth += child->style.getBorder().left;
+					outWidth += child->style.getBorder().right;
+				}
+				else if (i == childWidgets.size() - 1)
+				{
+					outWidth += child->style.getMargin().right;
+					outWidth += child->style.getBorder().left;
+				}
+			}
+		}
+		else if (child == askingWidget.get())
+		{
+			if (childWidgets.size() == 0)
+			{
+				outWidth += askingWidget.get()->style.getMargin().left;
+				outWidth += askingWidget.get()->style.getMargin().right;
+			}
+			else if (i == 0)
+			{
+				outWidth += askingWidget.get()->style.getMargin().left;
+				outWidth += askingWidget.get()->style.getBorder().right;
+			}
+			else if (i > 0 && i < childWidgets.size() - 1)
+			{
+				bool isLastPositionedWidget = false;
+				int k = i + 1;
+				while (k < childWidgets.size() - 1)
+				{
+					if (childWidgets[k].get()->style.position != UI_POSITION_ABSOLUTE)
+					{
+						isLastPositionedWidget = true; break;
+					}
+					k++;
+				}
+				if (firstPositionedWidget == -1)
+				{
+					outWidth += askingWidget.get()->style.getMargin().left;
+				}
+				else
+				{
+					outWidth += askingWidget.get()->style.getBorder().left;
+				}
+				if (isLastPositionedWidget)
+				{
+					outWidth += askingWidget.get()->style.getBorder().right;
+				}
+				else
+				{
+					outWidth += askingWidget.get()->style.getMargin().right;
+				}
+			}
+			else if (i == childWidgets.size() - 1)
+			{
+				outWidth += askingWidget.get()->style.getBorder().left;
+				outWidth += askingWidget.get()->style.getMargin().right;
+			}
+		}
+	}
+	outWidth = sizeX - outWidth;
+	return outWidth;
+}
+
+int Widget::findAvailableHeight(std::shared_ptr<Widget> askingWidget)
+{
+	int outHeight = 0;
+	int firstPositionedWidget = -1;
+	for (int i = 0; i < childWidgets.size(); i++)
+	{
+		Widget* child = childWidgets[i].get();
+		if (child != askingWidget.get())
+		{
+			if (firstPositionedWidget == -1) { firstPositionedWidget = i; }
+			if (child->style.position != UI_POSITION_ABSOLUTE)
+			{
+				outHeight += child->sizeY;
+				if (childWidgets.size() == 0)
+				{
+					outHeight += child->style.getMargin().top;
+					outHeight += child->style.getMargin().bottom;
+				}
+				else if (i == 0)
+				{
+					outHeight += child->style.getMargin().top;
+					outHeight += child->style.getBorder().bottom;
+				}
+				else if (i > 0 && i < childWidgets.size() - 1)
+				{
+					outHeight += child->style.getBorder().top;
+					outHeight += child->style.getBorder().bottom;
+				}
+				else if (i == childWidgets.size() - 1)
+				{
+					outHeight += child->style.getMargin().bottom;
+					outHeight += child->style.getBorder().top;
+				}
+			}
+		}
+		else if (child == askingWidget.get())
+		{
+			if (childWidgets.size() == 0)
+			{
+				outHeight += askingWidget.get()->style.getMargin().top;
+				outHeight += askingWidget.get()->style.getMargin().bottom;
+			}
+			else if (i == 0)
+			{
+				outHeight += askingWidget.get()->style.getBorder().bottom;
+				outHeight += askingWidget.get()->style.getMargin().top;
+			}
+			else if (i > 0 && i < childWidgets.size() - 1)
+			{
+				bool isLastPositionedWidget = false;
+				int k = i + 1;
+				while (k < childWidgets.size() - 1)
+				{
+					if (childWidgets[k].get()->style.position != UI_POSITION_ABSOLUTE)
+					{
+						isLastPositionedWidget = true; break;
+					}
+					k++;
+				}
+				if (firstPositionedWidget == -1)
+				{
+					outHeight += askingWidget.get()->style.getMargin().top;
+				}
+				else
+				{
+					outHeight += askingWidget.get()->style.getBorder().top;
+				}
+				if (isLastPositionedWidget)
+				{
+					outHeight += askingWidget.get()->style.getBorder().bottom;
+				}
+				else
+				{
+					outHeight += askingWidget.get()->style.getMargin().bottom;
+				}
+			}
+			else if (i == childWidgets.size() - 1)
+			{
+				outHeight += askingWidget.get()->style.getMargin().bottom;
+				outHeight += askingWidget.get()->style.getBorder().top;
+			}
+		}
+	}
+	outHeight = sizeY - outHeight;
+	return outHeight;
+}
+
+
 // Recursive function to get the fontPath
 std::filesystem::path Widget::findFontPath()
 {
@@ -694,10 +852,11 @@ bool Widget::mouseSweep(double x, double y)
 		{
 			bool result = false;
 			// Only the top-most root widget should have anything in this vector
-			for (std::weak_ptr<Widget> widget : outsideBoundWidgets)
+			//for (std::weak_ptr<Widget> widget : outsideBoundWidgets)
+			for (auto const& item : outsideBoundWidgets)
 			{
-				if (widget.expired() || widget.lock().get()->style.visibility == UI_VISIBILITY_HIDE) { continue; }
-				if (widget.lock().get()->mouseSweep(x, y)) { result = true; }
+				if (item.second.expired() || item.second.lock().get()->style.visibility == UI_VISIBILITY_HIDE) { continue; }
+				if (item.second.lock().get()->mouseSweep(x, y)) { result = true; }
 			}
 			if (result)
 			{
@@ -707,42 +866,72 @@ bool Widget::mouseSweep(double x, double y)
 	}
 	return false;
 }
+
 // Return full-depth result of mouseEvent
-bool Widget::mouseHit(MouseEvent dat, bool dragOnly)
+bool Widget::mouseHit(MouseEvent* dat, bool dragOnly, bool shouldFocus, 
+	std::deque<Widget*>& clickStack, std::deque<Widget*>& focusStack, bool zIndexExists, unsigned int& maxZIndex)
 {
 	// Focus testing works from the top down, the first widget to have a callback
 	// captures the focus
-	if (dat.action != 0 && !chromaIO.get()->getUI().get()->didFocusThisClick)
+	bool wasFocusStored = false;
+	int focusResult = 0;
+	if (dat->action != 0 && !chromaIO.get()->getUI().get()->didFocusThisClick && shouldFocus)
 	{
-		bool wasFocused = selfFocus(dat);
-		if (wasFocused) 
+		focusResult = selfFocus(dat, zIndexExists, maxZIndex, false);
+		if (focusResult != 0)
 		{
-			chromaIO.get()->getUI().get()->didFocusThisClick = true;
-			chromaIO.get()->getUI().get()->updateFocusWidget(weak_from_this()); 
+			if (!zIndexExists) 
+			{ 
+				chromaIO.get()->getUI().get()->didFocusThisClick = true;
+				chromaIO.get()->getUI().get()->updateFocusWidget(weak_from_this());
+			}
+			else
+			{
+				// When result is 2, clear the hoverStack first
+				if (focusResult == 2) { focusStack.clear(); }
+				focusStack.push_front(this); wasFocusStored = true;
+			}
 		}
 	}
+
 	// Hit testing works from the bottom up, only once childWidgets = 0
 	// will self-tests begin to run
 	bool wasHandled = false;
+	bool wasHitStored = false;
 	for (int i = (int)childWidgets.size() - 1; i >= 0; i--)
 	{
-		wasHandled = childWidgets[i].get()->mouseHit(dat, dragOnly);
-		if (wasHandled) { return true; }
+		wasHandled = childWidgets[i].get()->mouseHit(dat, dragOnly, shouldFocus, clickStack, focusStack, zIndexExists, maxZIndex);
+		if (wasHandled && !zIndexExists) { return true; }
+		else if (wasHandled && zIndexExists) { wasHitStored = true; clickStack.push_front(this); }
 	}
-	if (selfHit(dat, dragOnly)) { return true; }
-	return false;
+
+	// Do Bottom up events
+	int hitResult = selfHit(dat, dragOnly, zIndexExists, maxZIndex, false);
+	if (hitResult != 0)
+	{
+		if (!zIndexExists) { return true; }
+		else
+		{
+			// When result is 2, clear the hoverStack first
+			if (hitResult == 2) { clickStack.clear(); }
+			clickStack.push_front(this); wasHitStored = true;
+		}
+	}
+	return wasHitStored;
 }
+
 // Perform self-hit Test
-bool Widget::selfHit(MouseEvent dat, bool dragOnly)
+int Widget::selfHit(MouseEvent* dat, bool dragOnly, bool storeHitEvent, unsigned int& maxZIndex, bool ignoreCollision)
 {
-	bool wasTriggered = false;
-	if (checkVisibility() && checkPointCollision_self(glm::ivec2(dat.x, dat.y)))
+	int wasTriggered = 0;
+	if (checkVisibility() && (ignoreCollision || checkPointCollision_self(glm::ivec2(dat->x, dat->y))))
 	{
 		// Bypass area for checking against drag events. Desireable to immediate call when a widget
 		// has a drag function. Input appears sluggish if drag is not immediate.
-		if (dragOnly)
+		if (dragOnly && !chromaIO.get()->getDragStart())
 		{
-			if (callbackMap.count("ondragstart"))
+			// Check for ondragstart trigger
+			if (!storeHitEvent && callbackMap.count("ondragstart"))
 			{
 				if (callbackMap.at("ondragstart").size() != 0)
 				{
@@ -750,22 +939,32 @@ bool Widget::selfHit(MouseEvent dat, bool dragOnly)
 					chromaIO.get()->scriptConsole.get()->run(callbackMap.at("ondragstart"), _namespace);
 					chromaIO.get()->getUI().get()->activeWidget.reset();
 				}
-				wasTriggered = true;
+				wasTriggered = 1;
 			}
 			// Notify to begin calling ondrag next time the mouse moves while left click is held
-			if (callbackMap.count("ondrag") && callbackMap.at("ondrag").size() != 0)
+			if (!storeHitEvent && callbackMap.count("ondrag") && callbackMap.at("ondrag").size() != 0)
 			{
 				chromaIO.get()->ui.get()->dragWidget = weak_from_this();
 				chromaIO.get()->setDragStart();
-				wasTriggered = true;
+				wasTriggered = 1;
+			}
+			if (storeHitEvent && style.zIndex >= maxZIndex)
+			{
+				wasTriggered = 1;
+				if (style.zIndex > maxZIndex)
+				{
+					wasTriggered = 2;
+				}
+				maxZIndex = style.zIndex;
 			}
 			return wasTriggered;
 		}
+		// Regular mouse click check events
 		std::string callbackName = "";
 		// Only allow a click action trigger on mouse-down
-		if (dat.action != 0)
+		if (dat->action != 0)
 		{
-			switch (dat.button)
+			switch (dat->button)
 			{
 			case UI_MOUSE_LEFT:
 				callbackName = "onclick"; break;
@@ -783,7 +982,7 @@ bool Widget::selfHit(MouseEvent dat, bool dragOnly)
 				callbackName = ""; break;
 			}
 			// Call the matched callback function
-			if (callbackMap.count(callbackName))
+			if (!storeHitEvent && callbackMap.count(callbackName))
 			{
 				if (callbackMap.at(callbackName).size() != 0)
 				{
@@ -791,10 +990,10 @@ bool Widget::selfHit(MouseEvent dat, bool dragOnly)
 					chromaIO.get()->scriptConsole.get()->run(callbackMap.at(callbackName), _namespace);
 					chromaIO.get()->getUI().get()->activeWidget.reset();
 				}
-				wasTriggered = true;
+				wasTriggered = 1;
 			}
 			// Also call the dragstart callback if it exists
-			if (dat.button == UI_MOUSE_LEFT || dat.button == UI_MOUSE_LEFT_DBL)
+			if (!storeHitEvent && (dat->button == UI_MOUSE_LEFT || dat->button == UI_MOUSE_LEFT_DBL) && !chromaIO.get()->getDragStart())
 			{
 				if (callbackMap.count("ondragstart"))
 				{
@@ -804,50 +1003,68 @@ bool Widget::selfHit(MouseEvent dat, bool dragOnly)
 						chromaIO.get()->scriptConsole.get()->run(callbackMap.at("ondragstart"), _namespace);
 						chromaIO.get()->getUI().get()->activeWidget.reset();
 					}
-					wasTriggered = true;
+					wasTriggered = 1;
 				}
 				// Notify to begin calling ondrag next time the mouse moves while left click is held
 				if (callbackMap.count("ondrag") && callbackMap.at("ondrag").size() != 0)
 				{
 					chromaIO.get()->ui.get()->dragWidget = weak_from_this();
 					chromaIO.get()->setDragStart();
-					wasTriggered = true;
+					wasTriggered = 1;
 				}
 			}
 		}
 		if (callbackMap.count("onrelease"))
 		{
-			if (dat.action == 0)
+			if (dat->action == 0)
 			{
-				chromaIO.get()->getUI().get()->clickReleaseGate = false;
-				if (callbackMap.at("onrelease").size() != 0)
+				if (!storeHitEvent)
 				{
-					chromaIO.get()->getUI().get()->activeWidget = weak_from_this();
-					chromaIO.get()->scriptConsole.get()->run(callbackMap.at("onrelease"), _namespace);
-					chromaIO.get()->getUI().get()->activeWidget.reset();
+					chromaIO.get()->getUI().get()->clickReleaseGate = false;
+					if (callbackMap.at("onrelease").size() != 0)
+					{
+						chromaIO.get()->getUI().get()->activeWidget = weak_from_this();
+						chromaIO.get()->scriptConsole.get()->run(callbackMap.at("onrelease"), _namespace);
+						chromaIO.get()->getUI().get()->activeWidget.reset();
+					}
 				}
 			}
 			else
 			{
-				chromaIO.get()->getUI().get()->clickReleaseGate = true;
-				chromaIO.get()->getUI().get()->clickedWidget = weak_from_this();
+				if (!storeHitEvent)
+				{
+					chromaIO.get()->getUI().get()->clickReleaseGate = true;
+					chromaIO.get()->getUI().get()->clickedWidget = weak_from_this();
+				}
 			}
-			wasTriggered = true;
+			if (!storeHitEvent) { wasTriggered = 1; }
+		}
+		if (storeHitEvent)
+		{
+			if (style.zIndex >= maxZIndex)
+			{
+				wasTriggered = 1;
+				if (style.zIndex > maxZIndex)
+				{
+					wasTriggered = 2;
+				}
+				maxZIndex = style.zIndex;
+			}
 		}
 	}
 	return wasTriggered;
 }
 // Perform self-focus Test
-bool Widget::selfFocus(MouseEvent dat)
+int Widget::selfFocus(MouseEvent* dat, bool storeHitEvent, unsigned int& maxZIndex, bool ignoreCollision)
 {
-	bool wasCaptured = false;
-	if (checkVisibility() && checkPointCollision_self(glm::ivec2(dat.x, dat.y)))
+	int wasCaptured = 0;
+	if (checkVisibility() && (ignoreCollision || checkPointCollision_self(glm::ivec2(dat->x, dat->y))))
 	{
-		if (callbackMap.count("onfocus"))
+		if (!storeHitEvent && callbackMap.count("onfocus"))
 		{
 			// Only check for the 'onfocus' callback
 			// Only fire if the widget is not also the current focusWidget
-			if (dat.action != 0 && chromaIO.get()->getUI().get()->focusWidget.lock().get() != this)
+			if (dat->action != 0 && !chromaIO.get()->ui.get()->interruptFocus && chromaIO.get()->getUI().get()->focusWidget.lock().get() != this)
 			{
 				if (callbackMap.at("onfocus").size() != 0)
 				{
@@ -855,11 +1072,23 @@ bool Widget::selfFocus(MouseEvent dat)
 					chromaIO.get()->scriptConsole.get()->run(callbackMap.at("onfocus"), _namespace);
 					chromaIO.get()->getUI().get()->activeWidget.reset();
 				}
-				chromaIO.get()->getUI()->updateFocusWidget(weak_from_this());
-				chromaIO.get()->getUI()->didFocusThisClick = true;
 			}
 			// Declare wasCaptured regardless of whether a callback was fired
-			wasCaptured = true;
+			wasCaptured = 1;
+		}
+		// Capture fallthrough when an input-type widget did not have an onfocus callback
+		if (!storeHitEvent && isInputType(this->type))
+		{
+			wasCaptured = 1;
+		}
+		if (storeHitEvent && style.zIndex >= maxZIndex)
+		{
+			wasCaptured = 1;
+			if (style.zIndex > maxZIndex)
+			{
+				wasCaptured = 2;
+			}
+			maxZIndex = style.zIndex;
 		}
 	}
 	return wasCaptured;
@@ -890,54 +1119,87 @@ bool Widget::selfBlur()
 
 
 // Hover Test
-bool Widget::mouseHover(MouseEvent dat)
+bool Widget::mouseHover(MouseEvent* dat, std::deque<Widget*> &hoverStack, bool zIndexExists, unsigned int &maxZIndex)
 {
 	// Hit testing works from the bottom up, only once childWidgets = 0
 	// will self-tests begin to run
 	bool wasHandled = false;
+	bool wasStored = false;
 	for (int i = (int)childWidgets.size() - 1; i >= 0; i--)
 	{
-		wasHandled = childWidgets[i].get()->mouseHover(dat);
-		if (wasHandled) { return true; }
+		wasHandled = childWidgets[i].get()->mouseHover(dat, hoverStack, zIndexExists, maxZIndex);
+		if (wasHandled && !zIndexExists) { return true; }
+		else if (wasHandled && zIndexExists) { wasStored = true; hoverStack.push_front(this); }
 	}
-	if (selfHover(dat)) { return true; }
-	return false;
+	int result = selfHover(dat, zIndexExists, maxZIndex, false);
+	if (result != 0) {
+		if (!zIndexExists) { return true; }
+		else 
+		{
+			// When result is 2, clear the hoverStack first
+			if (result == 2) { hoverStack.clear(); }
+			hoverStack.push_front(this); wasStored = true;
+		}
+	}
+	return wasStored;
 }
 // Perform self-hover Test
-bool Widget::selfHover(MouseEvent dat)
+int Widget::selfHover(MouseEvent* dat, bool storeHitResult, unsigned int& maxZIndex, bool ignoreCollision)
 {
 	// Do self-test
-	bool wasTriggered = false;
-	if (checkVisibility() && checkPointCollision_self(glm::ivec2(dat.x, dat.y)))
+	int wasTriggered = 0;
+	if (checkVisibility() && (ignoreCollision || checkPointCollision_self(glm::ivec2(dat->x, dat->y))))
 	{
-		// 1. Register this widget into the onmouseleave handler
+		// Register this widget into the onmouseleave handler, regardless of whether the leave trigger exists
 		if (!isEntered)
 		{
-			//std::cout << "ENTER" << std::endl;
-			isEntered = true;
-			chromaIO.get()->getUI().get()->enteredWidgets.insert(std::pair<int, std::weak_ptr<Widget>>(UEID, weak_from_this()));
+			if (!storeHitResult)
+			{
+				isEntered = true;
+				chromaIO.get()->getUI().get()->enteredWidgets.insert(std::pair<int, std::weak_ptr<Widget>>(UEID, weak_from_this()));
+			}
 			if (callbackMap.count("onmouseenter") && callbackMap.at("onmouseenter").size() != 0)
 			{
+				if (!storeHitResult)
+				{
+					chromaIO.get()->getUI().get()->activeWidget = weak_from_this();
+					chromaIO.get()->scriptConsole.get()->run(callbackMap.at("onmouseenter"), _namespace); wasTriggered = 1;
+					chromaIO.get()->getUI().get()->activeWidget.reset();
+				}
+			}
+		}
+		// Trigger onmouseover events if available
+		if (callbackMap.count("onmouseover") && callbackMap.at("onmouseover").size() != 0)
+		{
+			if (!storeHitResult)
+			{
 				chromaIO.get()->getUI().get()->activeWidget = weak_from_this();
-				chromaIO.get()->scriptConsole.get()->run(callbackMap.at("onmouseenter"), _namespace); wasTriggered = true;
+				chromaIO.get()->scriptConsole.get()->run(callbackMap.at("onmouseover"), _namespace); wasTriggered = 1;
 				chromaIO.get()->getUI().get()->activeWidget.reset();
 			}
 		}
-		if (callbackMap.count("onmouseover") && callbackMap.at("onmouseover").size() != 0)
-		{
-			chromaIO.get()->getUI().get()->activeWidget = weak_from_this();
-			chromaIO.get()->scriptConsole.get()->run(callbackMap.at("onmouseover"), _namespace); wasTriggered = true;
-			chromaIO.get()->getUI().get()->activeWidget.reset();
+		// If instructed to store the hit result, when ZIndex is active, always return true. Each 'z-index' is
+		// essentially a 'layer', which blocks all events from falling through to lower z-indices. This also
+		// will trigger a widget onmouseleave event for any entered widget with a lower z-index than the new max
+		if (storeHitResult && style.zIndex >= maxZIndex) 
+		{ 
+			wasTriggered = 1;
+			if (style.zIndex > maxZIndex)
+			{
+				wasTriggered = 2;
+				chromaIO.get()->ui.get()->widgetLeaveTest(dat, style.zIndex);
+			}
+			maxZIndex = style.zIndex;
 		}
 	}
 	return wasTriggered;
 }
 
 // Trigger onmouseleave event
-bool Widget::selfLeave(MouseEvent dat)
+bool Widget::selfLeave(MouseEvent* dat, unsigned int maxZIndex)
 {
 	bool didLeave = false;
-	if (checkVisibility() && !checkPointCollision_self(glm::ivec2(dat.x, dat.y)))
+	if (!checkVisibility() || !checkPointCollision_self(glm::ivec2(dat->x, dat->y)) || style.zIndex < maxZIndex)
 	{
 		//std::cout << "LEAVE" << std::endl;
 		if (callbackMap.count("onmouseleave") && callbackMap.at("onmouseleave").size() != 0)
@@ -953,7 +1215,7 @@ bool Widget::selfLeave(MouseEvent dat)
 }
 
 // Trigger a ondrag event
-bool Widget::selfDrag(MouseEvent dat)
+bool Widget::selfDrag(MouseEvent* dat)
 {
 	bool didDrag = false;
 	if (callbackMap.count("ondrag"))
@@ -967,7 +1229,7 @@ bool Widget::selfDrag(MouseEvent dat)
 }
 
 // Trigger a ondragend event
-bool Widget::selfDragend(MouseEvent dat)
+bool Widget::selfDragend(MouseEvent* dat)
 {
 	bool didEnd = false;
 	if (callbackMap.count("ondragend"))
@@ -1018,34 +1280,55 @@ void Widget::checkOutofBoundsWidgets(std::weak_ptr<Widget> root, glm::ivec4 root
 	// check when sweeping.
 
 	// First check thisWidget if any portion is outside the root Widget
-	if (!root.expired() && checkBoxCollision_complexOther(rootBounds) != 2)
+	if (!root.expired())
 	{
-		// If the parent of thisWidget is the original root query, push it into the stack
-		if (!parentWidget.expired() && parentWidget.lock() == root.lock())
+		std::shared_ptr<Widget> rootGet = root.lock();
+		if (checkBoxCollision_complexOther(rootBounds) != 2)
 		{
-			root.lock().get()->outsideBoundWidgets.push_back(weak_from_this());
+			// If the parent of thisWidget is the original root query, push it into the stack
+			if (!parentWidget.expired() && parentWidget.lock() == root.lock())
+			{
+				if (outsideBoundWidgets.count(UEID) == 0)
+				{
+					rootGet.get()->outsideBoundWidgets.insert(std::pair<int, std::weak_ptr<Widget>>(UEID, weak_from_this()));
+				}
+			}
+			// Else, check if the widget falls wholly within any one of it's chained parents
+			// which are not the original root query.
+			else
+			{
+				glm::ivec4 thisBox = getColliderBox();
+				std::weak_ptr<Widget> parent = parentWidget;
+				while (!parent.expired() && parent.lock() != rootGet)
+				{
+					if (parent.lock().get()->checkBoxCollision_complexSelf(thisBox) == 2)
+					{
+						if (rootGet.get()->outsideBoundWidgets.count(UEID) == 1)
+						{
+							rootGet.get()->outsideBoundWidgets.erase(UEID);
+						}
+						break;
+					}
+					else if (!parent.lock().get()->parentWidget.expired() && parent.lock().get()->parentWidget.lock() != rootGet)
+					{
+						parent = parent.lock().get()->parentWidget;
+					}
+					else
+					{
+						if (outsideBoundWidgets.count(UEID) == 0)
+						{
+							rootGet.get()->outsideBoundWidgets.insert(std::pair<int, std::weak_ptr<Widget>>(UEID, weak_from_this()));
+						}
+						break;
+					}
+				}
+			}
 		}
-		// Else, check if the widget falls wholly within any one of it's chained parents
-		// which are not the original root query.
 		else
 		{
-			glm::ivec4 thisBox = getColliderBox();
-			std::weak_ptr<Widget> parent = parentWidget;
-			while (!parent.expired() && parent.lock() != root.lock())
+			if (rootGet.get()->outsideBoundWidgets.count(UEID) == 1)
 			{
-				if (parent.lock().get()->checkBoxCollision_complexSelf(thisBox) == 2)
-				{
-					break;
-				}
-				else if (!parent.lock().get()->parentWidget.expired() && parent.lock().get()->parentWidget.lock() != root.lock())
-				{
-					parent = parent.lock().get()->parentWidget;
-				}
-				else
-				{
-					root.lock().get()->outsideBoundWidgets.push_back(weak_from_this());
-					break;
-				}
+				rootGet.get()->outsideBoundWidgets.erase(UEID);
 			}
 		}
 	}
@@ -1120,6 +1403,22 @@ bool Widget::checkVisibility()
 // Child Widget Lookup Functions
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::weak_ptr<Widget> Widget::getRoot()
+{
+	if (isRoot) { return weak_from_this(); }
+	std::weak_ptr<Widget> parent = parentWidget;
+	while (!parent.expired())
+	{
+		if (parent.lock().get()->parentWidget.expired() || parent.lock().get()->isRoot)
+		{
+			break;
+		}
+		parent = parent.lock().get()->parentWidget;
+	}
+	if (parent.lock().get()->isRoot) { return parent; }
+	else { parent.reset(); return parent; }
+}
 
 void Widget::getChild_byClass(std::shared_ptr<std::vector<std::weak_ptr<Widget>>> bucket, std::string className, std::string idExclusion)
 {
@@ -1198,9 +1497,10 @@ glm::ivec2 Widget::horizontalArrangement(std::shared_ptr<Widget> childWidget)
 	// This Widget Properties (Self)
 	glm::ivec2 thisSize = glm::ivec2(sizeX, sizeY);
 	// Child Widget Properties
+	WidgetStyle childStyle = childWidget.get()->style;
 	glm::ivec2 childLoc = glm::ivec2(0, 0);
 	glm::ivec2 childSize = childWidget.get()->getSize();
-	WidgetStyle childStyle = childWidget.get()->style;
+	
 	// HoirzontalBox will only arrange elements horizontally, even if there is space available at the bottom
 	size_t childIndex = 0;
 	int nChildren = (int)childWidgets.size() - 1;
@@ -1434,17 +1734,8 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 		|| childStyle.position == UI_POSITION_ABSOLUTE)
 	{
 		// Assume that both position and margin must be positive values
-		//childLoc.x += childStyle.getMargin().left + childStyle.getOffset().left;
-		//childLoc.y += childStyle.getMargin().top + childStyle.getOffset().top;
 		childLoc.x += childStyle.getMargin().left;
 		childLoc.y += childStyle.getMargin().top;
-		/*
-		if (childStyle.position == UI_POSITION_RELATIVE)
-		{
-			childLoc.x += childStyle.getOffset().left - childStyle.getOffset().right;
-			childLoc.y += childStyle.getOffset().top - childStyle.getOffset().bottom;
-		}
-		*/
 		if (childStyle.position == UI_POSITION_ABSOLUTE)
 		{
 			if (childStyle.offset.left != UI_WVALUE_NONE)
@@ -1457,9 +1748,6 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 					(childSize.x +
 						((childStyle.getMargin().right > childStyle.getOffset().right) ?
 						childStyle.getMargin().right : childStyle.getOffset().right));
-				//childLoc.x = thisSize.x - childSize.x;
-				//int i = childSize.x + ((childStyle.getMargin().right >= childStyle.getOffset().right) ?	childStyle.getMargin().right : childStyle.getOffset().right);
-				//int l = 0;
 			}
 			if (childStyle.offset.top != UI_WVALUE_NONE)
 			{
@@ -1521,8 +1809,6 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 				childLoc.x += childStyle.getMargin().left + (childStyle.getOffset().left - childStyle.getOffset().right);
 				childLoc.y += (a > b) ? a : b;
 			}
-			//childLoc.x += childStyle.getMargin().left + childStyle.getOffset().left;
-			//childLoc.y += (a > b) ? a : b;
 			return childLoc;
 		}
 		// If childWidget is floating right but not the last in the array
@@ -1530,30 +1816,6 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 		// Evaluation order comes in left to right, so rightward positions are not yet set. 
 		if (childIndex < nChildren)
 		{
-			/*
-			size_t nChildrenToRight = nChildren - childIndex - 1;
-			int bottomLocSum = 0;
-			for (size_t k = nChildren; k > childIndex; k--)
-			{
-				if (k == nChildren)
-				{
-					bottomLocSum += thisSize.y;
-					bottomLocSum -= childWidgets[k].get()->getSize().y;
-					bottomLocSum -= childWidgets[k].get()->style.getBorder().top;
-					bottomLocSum -= childWidgets[k].get()->style.getMargin().bottom;
-				}
-				else if (k + 1 <= nChildren) // Sanity check to avoid read-access violation
-				{
-					bottomLocSum -= childWidgets[k].get()->getSize().y;
-					bottomLocSum -= childWidgets[k + 1].get()->style.getBorder().top;
-					bottomLocSum -= childWidgets[k].get()->style.getBorder().bottom;
-				}
-			}
-			bottomLocSum -= childSize.y + childStyle.getBorder().bottom;
-			childLoc.x = childStyle.getMargin().top + childStyle.getOffset().top;
-			childLoc.y += bottomLocSum;
-			return childLoc;
-			*/
 			int nChildrenInFlow = nChildren;
 			int bottomLocSum = 0;
 
@@ -1568,7 +1830,6 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 					if (nChildrenInFlow == childIndex)
 					{
 						int a = thisSize.y - (childSize.y + childStyle.getMargin().bottom);
-						//int b = childStyle.getMargin().top + childStyle.getOffset().top;
 						int b = 0;
 						if (childStyle.position == UI_POSITION_RELATIVE)
 						{
@@ -1582,8 +1843,6 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 							childLoc.x += childStyle.getMargin().left + (childStyle.getOffset().left - childStyle.getOffset().right);
 							childLoc.y += (a > b) ? a : b;
 						}
-						//childLoc.x += childStyle.getMargin().left + childStyle.getOffset().left;
-						//childLoc.y += (a > b) ? a : b;
 						return childLoc;
 					}
 					else
@@ -1625,7 +1884,7 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 		// If no the childWidget has no siblings or is the first (F.C.F.S), then calculation is straight forward
 		if (childIndex == nChildren || childIndex == 0)
 		{
-			childLoc.y = (thisSize.y - (childSize.y + childStyle.getMargin().top + childStyle.getMargin().bottom)) / 2;
+			//childLoc.y = (thisSize.y - (childSize.y + childStyle.getMargin().top + childStyle.getMargin().bottom)) / 2;
 			// Because location will otherwise be for virtual margin position, not content position
 			childLoc.y += childStyle.getMargin().top;
 			// Center first, then add the px offset, regardless of the margin size
@@ -1638,8 +1897,6 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 			{
 				childLoc.x += childStyle.getMargin().left;
 			}
-			//childLoc.x += childStyle.getMargin().left + childStyle.getOffset().left;
-			//childLoc.y += childStyle.getOffset().top;
 			return childLoc;
 		}
 		// If the childWidget has siblings and is not the first, then find the left-most position closest to center
@@ -1662,9 +1919,7 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 			{
 				childLoc.x = childStyle.getMargin().left;
 			}
-			//childLocWantY += childStyle.getOffset().top;
 			int topMostLocY = topLoc.y + topSize.y + topStyle.getBorder().bottom + childStyle.getBorder().top;
-			//childLoc.x = childStyle.getMargin().left + childStyle.getOffset().left;
 			childLoc.y += (childLocWantY > topMostLocY) ? childLocWantY : topMostLocY;
 			return childLoc;
 		}
@@ -1677,6 +1932,18 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 // Property Get/Set Functions
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
+
+//
+bool Widget::isInputType(LTokenType type)
+{
+	switch (type)
+	{
+	case LTokenType::LINE:
+	case LTokenType::PARAGRAPH:
+		return true;
+	}
+	return false;
+}
 
 // setChildProperty
 bool Widget::setChildProperty(int switchType,
@@ -1782,6 +2049,10 @@ bool Widget::setProperty(std::shared_ptr<CInterpreter> interpreter, std::string 
 		if (rebuild != nullptr && rebuild.get()->objType.type == CLiteralTypes::_CBool && std::get<bool>(rebuild.get()->obj) == true)
 		{
 			chromaIO.get()->ui.get()->rebuildWidgetHierarchy(weak_from_this());
+		}
+		if (style.isSizeProperty(name) && callbackMap.count("onresize") == 1 && callbackMap.at("onresize").size() != 0)
+		{
+			chromaIO.get()->getUI().get()->addResizeEvent(weak_from_this());
 		}
 		return true;
 	}
@@ -1964,17 +2235,43 @@ void Widget::draw(ShaderTransform xform)
 {
 	if (childWidgets.size() == 0 && style.visibility == UI_VISIBILITY_SHOW)
 	{
-		drawSelf(xform);
+		if (style.zIndex == 0) { drawSelf(xform); }
+		else { chromaIO.get()->ui.get()->addZIndexEntry(this, style.zIndex); }
 	}
 	else
 	{
 		if (style.visibility == UI_VISIBILITY_SHOW)
 		{
-			drawSelf(xform);
+			wasVisible = true;
+			if (style.zIndex == 0) { drawSelf(xform); }
+			else { chromaIO.get()->ui.get()->addZIndexEntry(this, style.zIndex); }
 			for (std::shared_ptr<Widget> child : childWidgets)
 			{
 				child.get()->draw(xform);
 			}
 		}
+		else if (wasVisible)
+		{
+			notifyVisibilityChanged();
+			for (std::shared_ptr<Widget> child : childWidgets)
+			{
+				child.get()->notifyVisibilityChanged();
+			}
+			wasVisible = false;
+		}
+	}
+}
+
+void Widget::notifyVisibilityChanged()
+{
+	UI* ui = &*chromaIO.get()->getUI();
+	if (!ui->activeInputWidget.expired() && 
+		ui->activeInputWidget.lock().get() == this)
+	{
+		ui->putActiveInputWidget(ui->activeInputWidget, true, false, UI_WEVENT_CANCEL);
+	}
+	for (std::shared_ptr<Widget> child : childWidgets)
+	{
+		child.get()->notifyVisibilityChanged();
 	}
 }

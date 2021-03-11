@@ -34,8 +34,6 @@ Tool::Tool(
 	this->owner = owner;
 	this->inID = inID;
 	this->outID = outID;
-	//createMethods(inID, outID);
-	//buildSettings(input.get()->interestMask, output.get()->interestMask);
 	std::cout << "TOOL::CONSTRUCTOR::REGISTERED::ID-" << id << "-::NAME-" << name << std::endl;
 }
 Tool::~Tool()
@@ -79,12 +77,6 @@ void Tool::createMethods(TSetType controlScheme)
 		break;
 	case IN_SHAPEDRAW:
 		input = std::make_unique<In_ShapeDraw>(IN_SHAPEDRAW, controlScheme, shared_from_this());
-		break;
-	case IN_RECTANGLE:
-		break;
-	case IN_ELLIPSE:
-		break;
-	case IN_NGON:
 		break;
 	case IN_LASSO:
 		input = std::make_unique<In_Lasso>(IN_LASSO, controlScheme, shared_from_this());

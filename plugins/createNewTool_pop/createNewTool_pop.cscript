@@ -1,0 +1,241 @@
+num cntp_minWidth = 410;
+num cntp_minHeight = 256;
+num dropContWidth = 210;
+num nameContWidth = 280;
+num buttonContWidth = 230;
+num cursorContWidth = 312;
+
+bool hasPosMemory = false;
+
+num keystore_modBit = -1;
+num keystore_key = -1;
+string inputStore = "NO INPUT";
+string controlStore = "USE DEFAULT";
+string outputStore = "NO OUTPUT";
+string cursorHoverStore = "POINTER";
+string cursorPressStore = "POINTER";
+
+void resizeCNTP()
+{
+	array num size = app.ui.getWidget_byID("cntp_wrapper").getProperty("size");
+	array num margins = {
+		(size[0] - dropContWidth) / 2,
+		(size[0] - nameContWidth) / 2,
+		(size[0] - buttonContWidth) / 2,
+		(size[0] - cursorContWidth) / 2
+	};
+	setClassProperty("cntp_dropContainer", "margin-left", margins[0]);
+	setClassProperty("cntp_nameContainer", "margin-left", margins[1]);
+	setClassProperty("cntp_buttonContainer", "margin-left", margins[2]);
+	setClassProperty("cntp_cursorContainer", "margin-left", margins[3]);
+}
+
+void toggleCNTP(num select)
+{
+	Widget popup = app.ui.getWidget_byID("cntp_wrapper");
+	if (select == 0)
+	{
+		if (!hasPosMemory)
+		{
+			array num windowSize = app.getWindowSize();
+			array num widgetSize = popup.getProperty("size");
+			popup.setPosition((windowSize[0] / 2) - (widgetSize[0] / 2), (windowSize[1] / 2) - (widgetSize[1] / 2));
+			resizeCNTP();
+			hasPosMemory = true;
+		}
+		popup.setProperty("visibility", "show");
+		app.ui.setActivePopup("cntp_wrapper", true, exitCNTP);
+		app.ui.preventFocusCallback();
+	}
+}
+
+void startKeyCapture()
+{
+	print "start key capture";
+	setChildProperty_byType("TEXT", "value", "enter key...");
+	setProperty("background-color", global::darkGreyLight);
+	bindCallbackEvent("keyListener_blocking", "cntp_keyListener", endKeyCapture);
+}
+
+bool endKeyCapture(num modBit, num keyID)
+{
+	if (!app.isValidKeybind_tool(modBit, keyID))
+	{
+		keystore_modBit = -1; keystore_key = -1;
+		app.ui.getWidget_byID("cntp_keyBindText").setProperty("value", "INVALID KEY");
+		app.ui.getWidget_byID("cntp_keyBind").setProperty("background-color", global::redButtonBG);
+	}
+	else
+	{
+		keystore_modBit = modBit; keystore_key = keyID;
+		string keyString = keyToString(modBit, keyID);
+		app.ui.getWidget_byID("cntp_keyBindText").setProperty("value", keyString);
+	}
+	return true;
+}
+
+void exitCNTP()
+{
+	setClassProperty("cntp_dropList", "visibility", "hide");
+	
+	inputStore = "NO INPUT";
+	controlStore = "USE DEFAULT";
+	outputStore = "NO OUTPUT";
+	cursorHoverStore = "POINTER";
+	cursorPressStore = "POINTER";
+	app.ui.getWidget_byID("cntp_inputMethod").setProperty("value", inputStore);
+	app.ui.getWidget_byID("cntp_controlScheme").setProperty("value", controlStore);
+	app.ui.getWidget_byID("cntp_outputMethod").setProperty("value", outputStore);
+	app.ui.getWidget_byID("cntp_cursorHover").setProperty("value", cursorHoverStore);
+	app.ui.getWidget_byID("cntp_cursorPress").setProperty("value", cursorPressStore);
+	
+	keystore_modBit = -1; keystore_key = -1;
+	app.ui.getWidget_byID("cntp_toolName").setProperty("value", "New tool name...");
+	app.ui.getWidget_byID("cntp_keyBindText").setProperty("value", "SET KEY...");
+	app.ui.getWidget_byID("cntp_idNumber").setProperty("value", "-1");
+
+	app.ui.getWidget_byID("cntp_wrapper").setProperty("visibility", "hide");
+	app.ui.clearPopup("cntp_wrapper");
+}
+
+void commitCNTP()
+{
+	string name = app.ui.getWidget_byID("cntp_toolName").getProperty("value");
+	num id = toNum(app.ui.getWidget_byID("cntp_idNumber").getProperty("value"));
+	bool result = app.toolbox.createNewTool(
+		cursorHoverStore, cursorPressStore, id, name, inputStore, 
+		controlStore, outputStore, keystore_modBit, keystore_key);
+	if (result) { exitCNTP(); }
+}
+
+void toggleDrop(num switch)
+{
+	if (switch == 0)
+	{
+		setClassProperty("cntp_dropList", "visibility", "hide");
+		setChildProperty_byClass("cntp_dropList", "visibility", "show");
+	}
+	else if (switch == 1)
+	{
+		print "hide drops";
+		setClassProperty("cntp_dropList", "visibility", "hide");
+	}
+}
+
+void hoverMainButton(num switch)
+{
+	if (switch == 0)
+	{
+		setProperty("background-color", global::midGrey);
+	}
+	else if (switch == 1)
+	{
+		setProperty("background-color", global::darkGreyLight);
+	}
+}
+
+void hoverDropdown(num switch)
+{
+	if (switch == 0)
+	{
+		setChildProperty_byType("TEXT", "fill-color", global::midGrey);
+	}
+	else if (switch == 1)
+	{
+		setChildProperty_byType("TEXT", "fill-color", global::lightGrey);
+	}
+}
+
+void hoverDropOptions(num type, num switch, string value)
+{
+	if (switch == 0)
+	{
+		setClassProperty("cntp_dropText", "fill-color", global::midGrey);
+		setClassProperty("cntp_dropItem", "background-color", global::darkGrey);
+		
+		if (type <= 2)
+		{
+			string input = app.ui.getWidget_byID("cntp_inputMethod").getProperty("value");
+			string control = app.ui.getWidget_byID("cntp_controlScheme").getProperty("value");
+			string output = app.ui.getWidget_byID("cntp_outputMethod").getProperty("value");
+			
+			bool result = true;
+			if (type == 0 && outputStore != "NO OUTPUT")
+			{
+				if (!app.toolbox.checkValidIOCombination(value, outputStore)) { result = false; }
+			}
+			else if (type == 1 && inputStore != "NO INPUT")
+			{
+				if (!app.toolbox.checkValidControlScheme(inputStore, value)) { result = false; }
+			}
+			else if (type == 2 && inputStore != "NO INPUT")
+			{
+				if (!app.toolbox.checkValidIOCombination(inputStore, value)) { result = false; }
+			}
+			
+			// Use the result to determine background color
+			if (!result)
+			{
+				setChildProperty_byType("TEXT", "fill-color", global::darkGrey);
+				setProperty("background-color", global::redButtonBG);
+			}
+			else
+			{
+				setChildProperty_byType("TEXT", "fill-color", global::lightGrey);
+				setProperty("background-color", global::midGrey);
+			}
+		}
+		else
+		{
+			setChildProperty_byType("TEXT", "fill-color", global::lightGrey);
+			setProperty("background-color", global::midGrey);
+		}
+	}
+	else if (switch == 1)
+	{
+		setClassProperty("cntp_dropText", "fill-color", global::midGrey);
+		setClassProperty("cntp_dropItem", "background-color", global::darkGrey);
+	}
+}
+
+void clickDropOption(num type, string valueIn)
+{
+	print valueIn;
+	if (type == 0)
+	{
+		if (outputStore != "NO OUTPUT")
+		{
+			if (!app.toolbox.checkValidIOCombination(valueIn, outputStore)) { return; }
+		}
+		inputStore = valueIn;
+		app.ui.getWidget_byID("cntp_inputMethod").setProperty("value", valueIn);
+	}
+	else if (type == 1)
+	{
+		if (inputStore != "NO INPUT")
+		{
+			if (!app.toolbox.checkValidControlScheme(inputStore, valueIn)) { return; }
+		}
+		controlStore = valueIn;
+		app.ui.getWidget_byID("cntp_controlScheme").setProperty("value", valueIn);
+	}
+	else if (type == 2)
+	{
+		if (inputStore != "NO OUTPUT")
+		{
+			if (!app.toolbox.checkValidIOCombination(inputStore, valueIn)) { return; }
+		}
+		outputStore = valueIn;
+		app.ui.getWidget_byID("cntp_outputMethod").setProperty("value", valueIn);
+	}
+	else if (type == 3)
+	{
+		cursorHoverStore = valueIn;
+		app.ui.getWidget_byID("cntp_cursorHover").setProperty("value", valueIn);
+	}
+	else if (type == 4)
+	{
+		cursorPressStore = valueIn;
+		app.ui.getWidget_byID("cntp_cursorPress").setProperty("value", valueIn);
+	}
+}

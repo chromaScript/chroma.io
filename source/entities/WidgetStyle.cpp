@@ -41,19 +41,20 @@ WidgetStyle::WidgetStyle()
 	this->margin.right = UI_WVALUE_NONE;
 	this->anchoring = UI_ANCHORING_NONE;
 	this->floating = UI_FLOATING_LEFT;
-	this->backgroundColor.r = -1.0f;
-	this->backgroundColor.g = -1.0f;
-	this->backgroundColor.b = -1.0f;
+	this->fillColor = CColor(-1.0f);
+	this->fillAlpha = -1.0f;
+	this->focusColor = CColor(-1.0f);
+	this->highlightColor = CColor(-1.0f);
+	this->backgroundColor = CColor(-1.0f);
 	this->backgroundAlpha = -1.0f;
-	this->boxShadowColor.r = -1.0f;
-	this->boxShadowColor.g = -1.0f;
-	this->boxShadowColor.b = -1.0f;
+	this->boxShadowColor = CColor(-1.0f);
 	this->boxShadowAlpha = -1.0f;
 	this->boxShadowSizeX = 0;
 	this->boxShadowSizeY = 0;
 	this->backgroundTexture = "";
 	this->overrideClipping = true;
 	this->visibility = UI_VISIBILITY_SHOW;
+	this->zIndex = 0;
 	this->overflowX = UI_OVERFLOW_NONE;
 	this->overflowY = UI_OVERFLOW_NONE;
 	this->fontPath = "";
@@ -101,6 +102,24 @@ CBorder WidgetStyle::getBorder()
 	if (out.left == UI_WVALUE_NONE) { out.left = 0; }
 	if (out.right == UI_WVALUE_NONE) { out.right = 0; }
 	return out;
+}
+
+bool WidgetStyle::isSizeProperty(std::string name)
+{
+	SToken type = stringToPropertyType(name);
+	switch (type.type)
+	{
+	case STokenType::BOUNDS:
+	case STokenType::WIDTH:
+	case STokenType::MIN_WIDTH:
+	case STokenType::MAX_WIDTH:
+	case STokenType::HEIGHT:
+	case STokenType::MIN_HEIGHT:
+	case STokenType::MAX_HEIGHT:
+	case STokenType::DIMENSIONS:
+		return true;
+	}
+	return false;
 }
 
 void WidgetStyle::resetProperty(std::shared_ptr<CInterpreter> interpreter,
@@ -174,6 +193,9 @@ void WidgetStyle::resetProperty(std::shared_ptr<CInterpreter> interpreter,
 	case STokenType::VISIBILITY:
 		visibility = origStyle.visibility;
 		break;
+	case STokenType::ZINDEX:
+		zIndex = origStyle.zIndex;
+		break;
 	case STokenType::$OVERFLOW:
 		overflowX = origStyle.overflowX;
 		overflowY = origStyle.overflowY;
@@ -197,6 +219,7 @@ void WidgetStyle::resetProperty(std::shared_ptr<CInterpreter> interpreter,
 		relMinY = origStyle.relMinY;
 		relMaxY = origStyle.relMaxY;
 		break;
+	// Fill Color
 	case STokenType::FILL_COLOR:
 		fillColor = origStyle.fillColor;
 		break;
@@ -212,6 +235,39 @@ void WidgetStyle::resetProperty(std::shared_ptr<CInterpreter> interpreter,
 	case STokenType::FILL_COLOR_ALPHA:
 		fillAlpha = origStyle.fillAlpha;
 		break;
+	// Focus Color
+	case STokenType::FOCUS_COLOR:
+		fillColor = origStyle.fillColor;
+		break;
+	case STokenType::FOCUS_COLOR_RED:
+		fillColor.r = origStyle.fillColor.r;
+		break;
+	case STokenType::FOCUS_COLOR_GREEN:
+		fillColor.g = origStyle.fillColor.g;
+		break;
+	case STokenType::FOCUS_COLOR_BLUE:
+		fillColor.b = origStyle.fillColor.b;
+		break;
+	case STokenType::FOCUS_COLOR_ALPHA:
+		fillAlpha = origStyle.fillAlpha;
+		break;
+	// Highlight Color
+	case STokenType::HIGHLIGHT_COLOR:
+		fillColor = origStyle.fillColor;
+		break;
+	case STokenType::HIGHLIGHT_COLOR_RED:
+		fillColor.r = origStyle.fillColor.r;
+		break;
+	case STokenType::HIGHLIGHT_COLOR_GREEN:
+		fillColor.g = origStyle.fillColor.g;
+		break;
+	case STokenType::HIGHLIGHT_COLOR_BLUE:
+		fillColor.b = origStyle.fillColor.b;
+		break;
+	case STokenType::HIGHLIGHT_COLOR_ALPHA:
+		fillAlpha = origStyle.fillAlpha;
+		break;
+	// Background Color
 	case STokenType::BACKGROUND_COLOR:
 		backgroundColor = origStyle.backgroundColor;
 		break;
@@ -230,6 +286,7 @@ void WidgetStyle::resetProperty(std::shared_ptr<CInterpreter> interpreter,
 	case STokenType::BACKGROUND_TEXTURE:
 		backgroundTexture = origStyle.backgroundTexture;
 		break;
+	// Box Shadow Color
 	case STokenType::BOX_SHADOW_COLOR:
 		boxShadowColor = origStyle.boxShadowColor;
 		break;
@@ -326,7 +383,7 @@ std::shared_ptr<CObject> WidgetStyle::getSetProperty(
 	bool isGet)
 {
 	std::vector<std::shared_ptr<CObject>> values;
-
+	
 	// For now assume good values
 	bool triggerRebuild = false;
 	switch (name.type)
@@ -350,7 +407,7 @@ std::shared_ptr<CObject> WidgetStyle::getSetProperty(
 			return std::make_shared<CObject>(CLiteralTypes::_CNumber_Array,
 				std::make_shared<std::vector<std::shared_ptr<CObject>>>(values));
 		}
-		evaluateRelativeStyleProperty(minX, relMinX, &fieldValue); maxX = minX; triggerRebuild = true; break;
+		evaluateRelativeStyleProperty(minX, relMinX, &fieldValue); maxX = minX; relMaxX = relMinX; triggerRebuild = true; break;
 	case STokenType::MIN_WIDTH:
 		if (isGet)
 		{
@@ -371,7 +428,7 @@ std::shared_ptr<CObject> WidgetStyle::getSetProperty(
 			return std::make_shared<CObject>(CLiteralTypes::_CNumber_Array,
 				std::make_shared<std::vector<std::shared_ptr<CObject>>>(values));
 		}
-		evaluateRelativeStyleProperty(minY, relMinY, &fieldValue); maxY = minY; triggerRebuild = true; break;
+		evaluateRelativeStyleProperty(minY, relMinY, &fieldValue); maxY = minY; relMaxY = relMinY; triggerRebuild = true; break;
 	case STokenType::MIN_HEIGHT:
 		if (isGet)
 		{
@@ -444,6 +501,12 @@ std::shared_ptr<CObject> WidgetStyle::getSetProperty(
 			return std::make_shared<CObject>(propertyEnumToString("visibility", visibility));
 		}
 		evaluateVisibilityProperty(visibility, &fieldValue); triggerRebuild = true; break;
+	case STokenType::ZINDEX:
+		if (isGet)
+		{
+			return std::make_shared<CObject>((double)zIndex);
+		}
+		evaluateNumericStyleProperty(zIndex, &fieldValue); triggerRebuild = false; break;
 	case STokenType::$OVERFLOW:
 		if (isGet)
 		{
@@ -516,6 +579,77 @@ std::shared_ptr<CObject> WidgetStyle::getSetProperty(
 			return std::make_shared<CObject>((double)fillAlpha);
 		}
 		evaluateNumericStyleProperty(fillAlpha, &fieldValue); break;
+	// Focus Color
+	case STokenType::FOCUS_COLOR:
+		if (isGet)
+		{
+			return std::make_shared<CObject>(glm::dvec4(
+				(double)focusColor.r,
+				(double)focusColor.g,
+				(double)focusColor.b,
+				(double)focusColor.a));
+		}
+		evaluateColorStyleProperty(focusColor, focusColor.a, &fieldValue); break;
+	case STokenType::FOCUS_COLOR_RED:
+		if (isGet)
+		{
+			return std::make_shared<CObject>((double)focusColor.r);
+		}
+		evaluateNumericStyleProperty(focusColor.r, &fieldValue); break;
+	case STokenType::FOCUS_COLOR_GREEN:
+		if (isGet)
+		{
+			return std::make_shared<CObject>((double)focusColor.g);
+		}
+		evaluateNumericStyleProperty(focusColor.g, &fieldValue); break;
+	case STokenType::FOCUS_COLOR_BLUE:
+		if (isGet)
+		{
+			return std::make_shared<CObject>((double)focusColor.b);
+		}
+		evaluateNumericStyleProperty(focusColor.b, &fieldValue); break;
+	case STokenType::FOCUS_COLOR_ALPHA:
+		if (isGet)
+		{
+			return std::make_shared<CObject>((double)focusColor.a);
+		}
+		evaluateNumericStyleProperty(focusColor.a, &fieldValue); break;
+	// Highlight Color
+	case STokenType::HIGHLIGHT_COLOR:
+		if (isGet)
+		{
+			return std::make_shared<CObject>(glm::dvec4(
+				(double)highlightColor.r,
+				(double)highlightColor.g,
+				(double)highlightColor.b,
+				(double)highlightColor.a));
+		}
+		evaluateColorStyleProperty(highlightColor, highlightColor.a, &fieldValue); break;
+	case STokenType::HIGHLIGHT_COLOR_RED:
+		if (isGet)
+		{
+			return std::make_shared<CObject>((double)highlightColor.r);
+		}
+		evaluateNumericStyleProperty(highlightColor.r, &fieldValue); break;
+	case STokenType::HIGHLIGHT_COLOR_GREEN:
+		if (isGet)
+		{
+			return std::make_shared<CObject>((double)highlightColor.g);
+		}
+		evaluateNumericStyleProperty(highlightColor.g, &fieldValue); break;
+	case STokenType::HIGHLIGHT_COLOR_BLUE:
+		if (isGet)
+		{
+			return std::make_shared<CObject>((double)highlightColor.b);
+		}
+		evaluateNumericStyleProperty(highlightColor.b, &fieldValue); break;
+	case STokenType::HIGHLIGHT_COLOR_ALPHA:
+		if (isGet)
+		{
+			return std::make_shared<CObject>((double)highlightColor.a);
+		}
+		evaluateNumericStyleProperty(highlightColor.a, &fieldValue); break;
+	// Background Color
 	case STokenType::BACKGROUND_COLOR:
 		if (isGet)
 		{
@@ -1006,6 +1140,40 @@ void WidgetStyle::mergeStyle(std::shared_ptr<WidgetStyle> style)
 	{
 		this->fillAlpha = style.get()->fillAlpha;
 	}
+	// Focus Color / Alpha
+	if (style.get()->focusColor.r != defaultStyle.focusColor.r)
+	{
+		this->focusColor.r = style.get()->focusColor.r;
+	}
+	if (style.get()->focusColor.g != defaultStyle.focusColor.g)
+	{
+		this->focusColor.g = style.get()->focusColor.g;
+	}
+	if (style.get()->focusColor.b != defaultStyle.focusColor.b)
+	{
+		this->focusColor.b = style.get()->focusColor.b;
+	}
+	if (style.get()->focusColor.a != defaultStyle.focusColor.a)
+	{
+		this->focusColor.a = style.get()->focusColor.a;
+	}
+	// Highlight Color / Alpha
+	if (style.get()->highlightColor.r != defaultStyle.highlightColor.r)
+	{
+		this->highlightColor.r = style.get()->highlightColor.r;
+	}
+	if (style.get()->highlightColor.g != defaultStyle.highlightColor.g)
+	{
+		this->highlightColor.g = style.get()->highlightColor.g;
+	}
+	if (style.get()->highlightColor.b != defaultStyle.highlightColor.b)
+	{
+		this->highlightColor.b = style.get()->highlightColor.b;
+	}
+	if (style.get()->highlightColor.a != defaultStyle.highlightColor.a)
+	{
+		this->highlightColor.a = style.get()->highlightColor.a;
+	}
 	// Background Color / Alpha / Texture
 	if (style.get()->backgroundColor.r != defaultStyle.backgroundColor.r)
 	{
@@ -1053,7 +1221,7 @@ void WidgetStyle::mergeStyle(std::shared_ptr<WidgetStyle> style)
 	{
 		this->boxShadowSizeY = style.get()->boxShadowSizeY;
 	}
-	// Clipping / Visibility / Overflow
+	// Clipping / Visibility / Overflow / ZIndex
 	if (style.get()->overrideClipping != defaultStyle.overrideClipping)
 	{
 		this->overrideClipping = style.get()->overrideClipping;
@@ -1069,6 +1237,10 @@ void WidgetStyle::mergeStyle(std::shared_ptr<WidgetStyle> style)
 	if (style.get()->overflowY != defaultStyle.overflowY)
 	{
 		this->overflowY = style.get()->overflowY;
+	}
+	if (style.get()->zIndex != defaultStyle.zIndex)
+	{
+		this->zIndex = style.get()->zIndex;
 	}
 	// FontPath / Size
 	if (style.get()->fontPath != defaultStyle.fontPath)
@@ -1162,6 +1334,15 @@ std::string WidgetStyle::propertyEnumToString(std::string propSelect, int p)
 }
 
 // Evaluate integer-type properties
+void WidgetStyle::evaluateNumericStyleProperty(unsigned int& prop, std::string* value)
+{
+	if (*value == "inherit") { prop = UI_WVALUE_INHERIT; return; }
+	else if (*value == "fill") { prop = UI_WVALUE_FILL; return; }
+	else if (*value == "min") { prop = UI_WVALUE_MIN; return; }
+	else if (*value == "max") { prop = UI_WVALUE_MAX; return; }
+	else if (*value == "noreport") { prop = UI_WVALUE_INHERIT; return; }
+	else { prop = (unsigned int)std::stoi(*value); }
+}
 void WidgetStyle::evaluateNumericStyleProperty(int& prop, std::string* value)
 {
 	if (*value == "inherit") { prop = UI_WVALUE_INHERIT; return; }
@@ -1232,12 +1413,14 @@ void WidgetStyle::evaluateRelativeStyleProperty(float& prop, bool& makeRelative,
 			makeRelative = true;
 			return;
 		}
+		/*
 		else if (std::stof(*value) <= 1.0f && std::stof(*value) >= 0.0f)
 		{
 			prop = clampf(std::stof(*value), 0.0f, 1.0f);
 			makeRelative = true;
 			return;
 		}
+		*/
 		else
 		{
 			prop = floor(std::stof(*value));

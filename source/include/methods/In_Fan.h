@@ -19,6 +19,7 @@ protected:
 public:
 	In_Fan(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
 	{
+		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::continuous; }
 		interestMask = { TSetType::basic, TSetType::fan, TSetType::smoothing, TSetType::image, TSetType::alpha };
 		fragData.constantSize = false;
 		fragData.linearStream = true;

@@ -40,6 +40,15 @@ inline std::string ConvertBSTRToMBS(BSTR bstr)
 	return ConvertWCSToMBS((wchar_t*)bstr, wslen);
 }
 
+inline std::string stringToLower(std::string& input)
+{
+	for (int i = 0; i < input.size(); i++)
+	{
+		input[i] = std::tolower(input[i]);
+	}
+	return input;
+}
+
 
 inline bool readFileToString(std::string &str, std::filesystem::path path)
 {

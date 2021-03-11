@@ -4,6 +4,8 @@ layout (location = 1) in vec2 aTexCoord;
 
 varying vec2 texCoord;
 
+uniform bool renderText;
+
 void main()
 {
 	gl_Position = vec4(aPos.xy, 0, 1);

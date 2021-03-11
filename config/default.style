@@ -1,8 +1,17 @@
+.bgLowMid {
+	background-color: $lowMidGrey$;
+}
+
+.bgDarkGreyLight {
+	background-color: $darkGreyLight$;
+}
+
 .tabWrapper {
 	width: inherit;
 	background-color: $darkGrey$;
 	height: 28;
 }
+
 .panelTab {
 	min-width: 30;
 	margin-top: 2;
@@ -10,6 +19,7 @@
 	overflow-X: auto;
 	background-color: $lowMidGrey$;
 }
+
 .panelTabText {
 	min-width: 18;
 	min-height: 6;
@@ -21,6 +31,53 @@
 	font-path: "fonts/BarlowSemiCondensed-Light.ttf";
 	font-size: 16;
 }
+
+.barlow12 {
+	font-path: "fonts/BarlowSemiCondensed-Light.ttf";
+	fill-color: $lightGrey$;
+	font-size: 12;
+}
+.barlow14 {
+	font-path: "fonts/BarlowSemiCondensed-Light.ttf";
+	fill-color: $lightGrey$;
+	font-size: 14;
+}
+.barlow16 {
+	font-path: "fonts/BarlowSemiCondensed-Light.ttf";
+	fill-color: $lightGrey$;
+	font-size: 16;
+}
+.barlow20 {
+	font-path: "fonts/BarlowSemiCondensed-Light.ttf";
+	fill-color: $lightGrey$;
+	font-size: 20;
+}
+.text16default {
+	min-width: 18;
+	min-height: 6;
+	margin-top: -2;
+	margin-left: 8;
+	margin-right: 8;
+	float: left;
+}
+.text14default {
+	min-width: 10;
+	min-height: 6;
+	margin-top: -2;
+	float: left;
+}
+.text12default {
+	min-width: 10;
+	min-height: 6;
+	margin-top: -2;
+	float: left;
+}
+
+.textInputColor {
+	focus-color: 1, 0.721, 0.905, 1.0;
+	highlight-color: 0, 0.925, 1, 0.8;
+}
+
 .tabButton {
 	float: right;
 	dimensions: 20, 20;
@@ -34,7 +91,7 @@
 .resizeBarLeft {
 	position: absolute;
 	height: inherit;
-	margin-top: 8;
+	margin-top: 20;
 	margin-bottom: 4;
 	width: 4;
 }
@@ -42,7 +99,7 @@
 	position: absolute;
 	height: inherit;
 	width: 4;
-	margin-top: 8;
+	margin-top: 20;
 	margin-bottom: 4;
 	right: 0;
 }
@@ -67,6 +124,31 @@
 	height: 8;
 	left: 0;
 	bottom: 0;
+}
+
+.popupTitle {
+	width: inherit;
+	height: 20;
+	background-color: $tone42$;
+}
+.titleButton {
+	width: 18;
+	height: 18;
+	float: right;
+	margin-top: 1;
+	margin-right: 4;
+	border-left: 4;
+	background-color: $tone33$;
+	background-color-alpha: 0;
+}
+.titleButtonImage {
+	width: 12;
+	height: 12;
+	margin: 3, 3, 3, 3;
+}
+.titleClose {
+	background-texture: "textures/T_titleClose80_D.png";
+	fill-color: $tone52$;
 }
 
 .debugRed {

@@ -20,17 +20,17 @@ void toggleMainDrops(bool override)
 	}
 	else
 	{
-		if (sweepTestRoot_byID("MenuTitleBar"))
-		{
-			app.ui.preventBlurCallback();
-			return;
-		}
-		mainDropsHidden = true;
-		setClassProperty("mm_menuTextWrapper", "background-color-alpha", 0);
-		setClassProperty("mm_dropDownWrapperA", "visibility", "hide");
-		setClassProperty("mm_dropDownWrapperB", "visibility", "hide");
-		resetClassProperty("mm_bigText", "fill-color");
+		hideMainDrops();
 	}
+}
+
+void hideMainDrops()
+{
+	mainDropsHidden = true;
+	setClassProperty("mm_menuTextWrapper", "background-color-alpha", 0);
+	setClassProperty("mm_dropDownWrapperA", "visibility", "hide");
+	setClassProperty("mm_dropDownWrapperB", "visibility", "hide");
+	resetClassProperty("mm_bigText", "fill-color");
 }
 
 void titleHover(num switch)

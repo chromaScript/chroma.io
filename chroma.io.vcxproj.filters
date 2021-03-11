@@ -312,9 +312,6 @@
     <ClCompile Include="source\methods\In_RadialField.cpp">
       <Filter>Source Files\methods</Filter>
     </ClCompile>
-    <ClCompile Include="source\methods\In_Scanline.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
     <ClCompile Include="source\methods\In_ShapeDraw.cpp">
       <Filter>Source Files\methods</Filter>
     </ClCompile>
@@ -335,6 +332,18 @@
     </ClCompile>
     <ClCompile Include="source\methods\In_Lasso.cpp">
       <Filter>Source Files\methods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Block.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Line.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\Paragraph.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\WidgetInterface.cpp">
+      <Filter>Source Files\entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -647,9 +656,6 @@
     <ClInclude Include="source\include\methods\In_RadialField.h">
       <Filter>Header Files\methods</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\methods\In_Scanline.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
     <ClInclude Include="source\include\methods\In_ShapeDraw.h">
       <Filter>Header Files\methods</Filter>
     </ClInclude>
@@ -673,6 +679,18 @@
     </ClInclude>
     <ClInclude Include="source\include\keys.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Block.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Line.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Paragraph.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\WidgetInterface.h">
+      <Filter>Header Files\entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

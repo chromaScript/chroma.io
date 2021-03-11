@@ -21,7 +21,7 @@ TSet_Pan::TSet_Pan()
 	this->friction = 0.0f;
 	this->force = 1000;
 	this->speedAmount = 0.0f;
-	this->slowModKey = INPUT_KEY_LEFT_ALT;
+	this->slowModKey = INPUT_KEY_MODLEFT_ALT;
 	this->slowFactor = 0.85f;
 	this->clickTargetPanning = true;
 	this->clickTarButton = UI_MOUSE_RIGHT;

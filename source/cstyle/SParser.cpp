@@ -295,6 +295,7 @@ bool SParser::isValidPropertyType(std::shared_ptr<SToken> token)
 	case STokenType::ANCHOR: 
 	case STokenType::FLOAT: 
 	case STokenType::VISIBILITY:
+	case STokenType::ZINDEX:
 	case STokenType::$OVERFLOW: 
 	case STokenType::OVERFLOW_X: 
 	case STokenType::OVERFLOW_Y:
@@ -312,6 +313,16 @@ bool SParser::isValidPropertyType(std::shared_ptr<SToken> token)
 	case STokenType::FILL_COLOR_GREEN:
 	case STokenType::FILL_COLOR_BLUE:
 	case STokenType::FILL_COLOR_ALPHA:
+	case STokenType::FOCUS_COLOR:
+	case STokenType::FOCUS_COLOR_RED:
+	case STokenType::FOCUS_COLOR_GREEN:
+	case STokenType::FOCUS_COLOR_BLUE:
+	case STokenType::FOCUS_COLOR_ALPHA:
+	case STokenType::HIGHLIGHT_COLOR:
+	case STokenType::HIGHLIGHT_COLOR_RED:
+	case STokenType::HIGHLIGHT_COLOR_GREEN:
+	case STokenType::HIGHLIGHT_COLOR_BLUE:
+	case STokenType::HIGHLIGHT_COLOR_ALPHA:
 	case STokenType::BACKGROUND_COLOR:
 	case STokenType::BACKGROUND_COLOR_RED:
 	case STokenType::BACKGROUND_COLOR_GREEN:

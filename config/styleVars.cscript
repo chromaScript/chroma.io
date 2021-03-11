@@ -1,12 +1,26 @@
 array num darkGrey = {0.25, 0.25, 0.25, 1.0};
+array num darkGreyLight = {0.29, 0.29, 0.29, 1.0};
 array num lowMidGrey = {0.33, 0.33, 0.33, 1.0};
 array num midGrey = {0.52, 0.52, 0.52, 1.0};
 array num highMidGrey = {0.68, 0.68, 0.68, 1.0};
 array num lightGrey = {0.82, 0.82, 0.82, 1.0};
 
+array num tone25 = {0.25, 0.25, 0.25, 1.0};
+array num tone29 = {0.29, 0.29, 0.29, 1.0};
+array num tone33 = {0.33, 0.33, 0.33, 1.0};
+array num tone42 = {0.42, 0.42, 0.42, 1.0};
+array num tone52 = {0.52, 0.52, 0.52, 1.0};
+array num tone68 = {0.68, 0.68, 0.68, 1.0};
+array num tone82 = {0.82, 0.82, 0.82, 1.0};
+array num tone92 = {0.92, 0.92, 0.92, 1.0};
+
+array num redButtonBG = {0.83, 0.28, 0.28, 1.0};
+
 array num resizeOrigin = {0, 0};
 num resizeWidthOriginal = 0;
 num resizeHeightOriginal = 0;
+
+array num widgetOffset = {0, 0}; 
 
 void cursorHand()
 {
@@ -55,5 +69,33 @@ void resizeWidget(num trigger, num select, string id, num minWidth, num minHeigh
 	if (trigger == 2)
 	{
 		cursorHand();
+	}
+}
+
+void moveWidget(num select, string id)
+{
+	if (select == 0)
+	{
+		widgetOffset = getMousePos_relative();
+	}
+	else if (select == 1)
+	{
+		array num pos = getMousePos();
+		app.ui.getWidget_byID(id).setPosition(pos[0] - widgetOffset[0], pos[1] - widgetOffset[1]);
+	}
+}
+
+void titleButtonHover(num switch)
+{
+	if (switch == 0)
+	{
+		setClassProperty("titleButton", "background-color-alpha", 0);
+		setClassProperty("titleButtonImage", "fill-color", redButtonBG);
+		setProperty("background-color-alpha", 1);
+	}
+	else if (switch == 1)
+	{
+		resetClassProperty("titleButton", "background-color-alpha");
+		resetClassProperty("titleButtonImage", "fill-color");
 	}
 }

@@ -16,6 +16,21 @@ class Widget;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
+// Internal Built-In Widget Functions
+//
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+class CInt_TextClick : public CFunction
+{
+public:
+	std::shared_ptr<UI> ui;
+	CInt_TextClick(std::shared_ptr<CEnvironment> funcEnv, std::shared_ptr<UI> ui);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//
 // Standard Library Utility Functions
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,6 +46,20 @@ class CStd_fToString : public CFunction
 {
 public:
 	CStd_fToString(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
+class CStd_fToNum : public CFunction
+{
+public:
+	CStd_fToNum(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
+class CStd_fKeyToString : public CFunction
+{
+public:
+	CStd_fKeyToString(std::shared_ptr<CEnvironment> funcEnv);
 	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
 	virtual std::string toString();
 };
@@ -342,6 +371,13 @@ public:
 	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
 	virtual std::string toString();
 };
+class CStd_cfGetWindowSize : public CFunction
+{
+public:
+	CStd_cfGetWindowSize(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
 class CStd_cfMaximize : public CFunction
 {
 public:
@@ -363,6 +399,13 @@ public:
 	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
 	virtual std::string toString();
 };
+class CStd_cfIsValidKeybind_Tool : public CFunction
+{
+public:
+	CStd_cfIsValidKeybind_Tool(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -370,6 +413,27 @@ public:
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+class CStd_cfMoveRootToFront : public CFunction
+{
+public:
+	CStd_cfMoveRootToFront(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
+class CStd_cfSetActivePopup : public CFunction
+{
+public:
+	CStd_cfSetActivePopup(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
+class CStd_cfClearPopup : public CFunction
+{
+public:
+	CStd_cfClearPopup(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
 class CStd_cfPreventBlurCallback : public CFunction
 {
 public:
@@ -377,10 +441,24 @@ public:
 	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
 	virtual std::string toString();
 };
+class CStd_cfPreventFocusCallback : public CFunction
+{
+public:
+	CStd_cfPreventFocusCallback(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
 class CStd_cfSetFocus_byID : public CFunction
 {
 public:
 	CStd_cfSetFocus_byID(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
+class CStd_cfClearFocus : public CFunction
+{
+public:
+	CStd_cfClearFocus(std::shared_ptr<CEnvironment> funcEnv);
 	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
 	virtual std::string toString();
 };
@@ -412,6 +490,27 @@ public:
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+class CStd_cfCheckValidIOCombination : public CFunction
+{
+public:
+	CStd_cfCheckValidIOCombination(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
+class CStd_cfCheckValidControlScheme : public CFunction
+{
+public:
+	CStd_cfCheckValidControlScheme(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
+class CStd_cfCreateNewTool : public CFunction
+{
+public:
+	CStd_cfCreateNewTool(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
 class CStd_cfCheckActiveToolSettingsMask : public CFunction
 {
 public:

@@ -13,9 +13,6 @@
 #define IN_ZOOM 3
 #define IN_DRAW 4
 #define IN_LINE 5
-#define IN_RECTANGLE 6
-#define IN_ELLIPSE 7
-#define IN_NGON 8
 #define IN_LASSO 9
 #define IN_POLYGON 10
 #define IN_PAN 11
@@ -39,6 +36,14 @@
 #define OUT_FILL 106
 #define OUT_SAMPLER 107
 #define OUT_SELECTION 110
+
+#define CONTROL_DEFAULT 0
+#define CONTROL_CONTINUOUS 200
+#define CONTROL_DRAG 201
+#define CONTROL_ONEPOINT 202
+#define CONTROL_TWOPOINT 203
+#define CONTROL_THREEPOINT 204
+#define CONTROL_FOURPOINT 205
 
 #ifndef TOOL_H
 #define TOOL_H

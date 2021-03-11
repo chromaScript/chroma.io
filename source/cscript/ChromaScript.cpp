@@ -306,6 +306,11 @@ void ChromaScript::loadLibraries(std::shared_ptr<CEnvironment> env)
 {
 	// Note: May also need to define an environment for the function as well, just to avoid
 	// potential problems later (ie. user named class named "clock"?)
+	env.get()->define("@textClick",
+		std::make_shared<CObject>(
+			CCallableTypes::_CInt_TextClick,
+			global.get()->lookupEnvironment("@textClick", true),
+			owner));
 	env.get()->define("clock", 
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fClock, 
@@ -314,6 +319,14 @@ void ChromaScript::loadLibraries(std::shared_ptr<CEnvironment> env)
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fToString,
 			global.get()->lookupEnvironment("toString", true)));
+	env.get()->define("toNum",
+		std::make_shared<CObject>(
+			CCallableTypes::_CStd_fToNum,
+			global.get()->lookupEnvironment("toNum", true)));
+	env.get()->define("keyToString",
+		std::make_shared<CObject>(
+			CCallableTypes::_CStd_fKeyToString,
+			global.get()->lookupEnvironment("keyToString", true)));
 	env.get()->define("fibonacci", 
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fFibonacci, 
@@ -751,6 +764,60 @@ std::string ChromaScript::toString(std::shared_ptr<CObject> obj)
 		break;
 	default:
 		return "nil";
+		break;
+	}
+}
+// Retreive any object as Num
+double ChromaScript::toNum(std::shared_ptr<CObject> obj)
+{
+	if (obj == nullptr || obj.get()->obj.index() == 0)
+	{
+		return (double)INT_MIN;
+	}
+	std::vector<std::shared_ptr<CObject>> container;
+	switch (obj.get()->objType.type)
+	{
+	case CLiteralTypes::_CBool:
+		return (double)std::get<bool>(obj.get()->obj);
+		break;
+	case CLiteralTypes::_CNumber:
+		return std::get<double>(obj.get()->obj);
+		break;
+	case CLiteralTypes::_CString:
+		return std::stod(std::get<std::string>(obj.get()->obj));
+		break;
+	case CLiteralTypes::_CBool_Array:
+	case CLiteralTypes::_CNumber_Array:
+	case CLiteralTypes::_CString_Array:
+		container = *std::get<std::shared_ptr<std::vector<std::shared_ptr<CObject>>>>(obj.get()->obj);
+		return toNum(container[0]);
+		break;
+	case CLiteralTypes::_CVec2:
+		return std::get<glm::dvec2>(obj.get()->obj).x;
+		break;
+	case CLiteralTypes::_CVec3:
+		return std::get<glm::dvec3>(obj.get()->obj).x;
+		break;
+	case CLiteralTypes::_CVec4:
+		return std::get<glm::dvec4>(obj.get()->obj).x;
+		break;
+	case CLiteralTypes::_CVec2_Array:
+	case CLiteralTypes::_CVec3_Array:
+	case CLiteralTypes::_CVec4_Array:
+		container = *std::get<std::shared_ptr<std::vector<std::shared_ptr<CObject>>>>(obj.get()->obj);
+		return toNum(container[0]);
+		break;
+	case CLiteralTypes::_CFunction:
+		return std::stod(std::get<std::shared_ptr<CFunction>>(obj.get()->obj).get()->toString());
+		break;
+	case CLiteralTypes::_CClass:
+		return std::stod(std::get<std::shared_ptr<CClass>>(obj.get()->obj).get()->toString());
+		break;
+	case CLiteralTypes::_CInstance:
+		return std::stod(std::get<std::shared_ptr<CInstance>>(obj.get()->obj).get()->toString());
+		break;
+	default:
+		return (double)INT_MIN;
 		break;
 	}
 }

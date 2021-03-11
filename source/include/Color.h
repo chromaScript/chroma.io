@@ -60,6 +60,10 @@ struct CColor
 	float b = 0.0f;
 	float a = 1.0f;
 	CColor() {};
+	CColor(float fill)
+	{
+		r = g = b = a = fill;
+	}
 	CColor(float red, float green, float blue)
 	{
 		r = red;

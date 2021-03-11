@@ -5,6 +5,7 @@
 #include "../include/entities/VerticalBox.h"
 #include "../include/entities/Image.h"
 #include "../include/entities/Text.h"
+#include "../include/entities/Line.h"
 #include "../include/entities/GradientBox.h"
 #include "../include/cscript/ChromaScript.h"
 #include "../include/cscript/CEnvironment.h"
@@ -19,7 +20,9 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <deque>
 #include <functional>
+#include <algorithm>
 #include <map>
 
 // Constructors
@@ -149,7 +152,7 @@ void UI::buildAllWidgetTrees()
 {
 	// 1. Each of the Widgets in this->widgets is the root of an individual plugin hierarchy tree
 	// For each of these tree roots, build the widget tree (sizeDown, sizeUp, then place)
-	for (std::shared_ptr<Widget> root : widgets)
+	for (std::shared_ptr<Widget> root : rootWidgets)
 	{
 						// TopDown, BottomUp, Placement
 		stepThroughWidgetTree(root, false, true, false); // 1. BottomUp
@@ -197,6 +200,8 @@ std::shared_ptr<Widget> UI::createWidget(
 		return std::make_shared<Image>(basicAttribs, parent, style, shader);
 	case LTokenType::TEXT:
 		return std::make_shared<Text>(basicAttribs, parent, style, shader, fontHandler);
+	case LTokenType::LINE:
+		return std::make_shared<Line>(basicAttribs, parent, style, shader, fontHandler);
 	case LTokenType::GRADIENT_BOX:
 		return std::make_shared<GradientBox>(basicAttribs, parent, style, shader);
 	default:
@@ -575,13 +580,13 @@ bool UI::widgetSweepTest(MouseEvent input)
 {
 	hitWidget.reset();
 	std::vector<std::weak_ptr<Widget>> hitWidgets;
-	for (size_t i = 0; i < widgets.size(); i++)
+	for (size_t i = 0; i < rootWidgets.size(); i++)
 	{
 		// Check for sweep against hotspots, single depth check
-		bool sweepResult = widgets[i].get()->mouseSweep(input.x, input.y);
+		bool sweepResult = rootWidgets[i].get()->mouseSweep(input.x, input.y);
 		if (sweepResult)
 		{
-			hitWidgets.push_back(widgets[i]);
+			hitWidgets.push_back(rootWidgets[i]);
 		}
 	}
 	if (hitWidgets.size() == 0) { return false; }
@@ -602,19 +607,50 @@ bool UI::widgetSweepTest(MouseEvent input)
 	}
 }
 
-bool UI::widgetHitTest(MouseEvent input, bool dragOnly)
+bool UI::widgetHitTest(MouseEvent input, bool dragOnly, bool shouldFocus)
 {
-	bool result = false;
+	bool hitResult = false;
 	// Check if there's a stored widget
 	if (!hitWidget.expired())
 	{
-		if (hitWidget.lock().get()->mouseHit(input, dragOnly)) 
-		{ 
-			result = true;
-		}
-		if (!didFocusThisClick)
+		// First prevent clicks when a popup is blocking
+		if (checkBlockingPopupMatch(hitWidget.lock().get()->getRoot())) { return false; }
+		// Resolve hit events
+		std::deque<Widget*> clickStack;
+		std::deque<Widget*> focusStack;
+		unsigned int maxZIndex = 0;
+		hitResult = hitWidget.lock().get()->mouseHit(&input, dragOnly, shouldFocus, clickStack, focusStack, isZStackActive, maxZIndex);
+		clickStack.shrink_to_fit();
+		focusStack.shrink_to_fit();
+		if (hitResult && isZStackActive)
 		{
-			hitWidget.lock().get()->selfFocus(input);
+			hitResult = false;
+			// If the ZStack is empty, then the return is simple
+			for (int i = (int)clickStack.size() - 1; i >= 0; i--)
+			{
+				if (clickStack[i]->style.zIndex < maxZIndex) { continue; }
+				if (clickStack[i]->selfHit(&input, dragOnly, false, maxZIndex, true)) { hitResult = true; break; }
+			}
+		}
+		// Clean up focus events
+		if (isZStackActive && focusStack.size() != 0 && shouldFocus)
+		{
+			bool focusResult = false;
+			// If the ZStack is empty, then the return is simple
+			for (int i = 0; i < focusStack.size(); i++)
+			//for (int i = (int)focusStack.size() - 1; i >= 0; i--)
+			{
+				if (focusStack[i]->selfFocus(&input, false, maxZIndex, true)) { focusResult = true; break; }
+			}
+			if (!didFocusThisClick && !focusResult && shouldFocus)
+			{
+				hitWidget.lock().get()->selfFocus(&input, false, maxZIndex, false);
+				updateFocusWidget(hitWidget);
+			}
+		}
+		else if (!didFocusThisClick && shouldFocus)
+		{
+			hitWidget.lock().get()->selfFocus(&input, false, maxZIndex, false);
 			updateFocusWidget(hitWidget);
 		}
 		hitWidget.reset();
@@ -623,65 +659,120 @@ bool UI::widgetHitTest(MouseEvent input, bool dragOnly)
 	else
 	{
 		std::vector<std::weak_ptr<Widget>> hitWidgets;
-		for (size_t i = 0; i < widgets.size(); i++)
+		for (size_t i = 0; i < rootWidgets.size(); i++)
 		{
 			// Check for sweep against hotspots, single depth check
-			bool sweepResult = widgets[i].get()->mouseSweep(input.x, input.y);
+			bool sweepResult = rootWidgets[i].get()->mouseSweep(input.x, input.y);
 			if (sweepResult)
 			{
-				result = true;
-				hitWidgets.push_back(widgets[i]);
+				hitResult = true;
+				hitWidgets.push_back(rootWidgets[i]);
 			}
 		}
+		// First prevent clicks when a popup is blocking
+		if (checkBlockingPopupMatch(hitWidgets.back().lock().get()->getRoot())) { return false; }
 		// Check for hitResult against the collision
 		// Note: For now only check against the last widget in the array which (should)
 		// be the top-most (last) rendered widget.
-		if (hitWidgets.size() != 0) { result = hitWidgets.back().lock().get()->mouseHit(input, dragOnly); }
-		if (hitWidgets.size() != 0 && !didFocusThisClick)
+		std::deque<Widget*> clickStack;
+		std::deque<Widget*> focusStack;
+		unsigned int maxZIndex = 0;
+		if (hitWidgets.size() != 0) 
 		{
-			hitWidgets.back().lock().get()->selfFocus(input);
-			updateFocusWidget(hitWidgets.back());
+			hitResult = hitWidgets.back().lock().get()->mouseHit(&input, dragOnly, shouldFocus, clickStack, focusStack, isZStackActive, maxZIndex);
+			clickStack.shrink_to_fit();
+			if (hitResult)
+			{
+				if (isZStackActive)
+				{
+					hitResult = false;
+					// If the ZStack is empty, then the return is simple
+					for (int i = (int)clickStack.size() - 1; i >= 0; i--)
+					{
+						if (clickStack[i]->style.zIndex < maxZIndex) { continue; }
+						if (clickStack[i]->selfHit(&input, dragOnly, false, maxZIndex, true) != 0) { hitResult = true; break; }
+					}
+				}
+			}
+		}
+		if (hitWidgets.size() != 0)
+		{
+			// Clean up focus events
+			if (isZStackActive && focusStack.size() != 0 && shouldFocus)
+			{
+				focusStack.shrink_to_fit();
+				bool focusResult = false;
+				// If the ZStack is empty, then the return is simple
+				for (int i = 0; i < focusStack.size(); i++)
+				{
+					if (focusStack[i]->selfFocus(&input, false, maxZIndex, true)) { focusResult = true; break; }
+				}
+				if (!didFocusThisClick && !focusResult && shouldFocus)
+				{
+					hitWidgets.back().lock().get()->selfFocus(&input, false, maxZIndex, false);
+					updateFocusWidget(hitWidgets.back());
+				}
+			}
+			else if (!didFocusThisClick && shouldFocus)
+			{
+				hitWidgets.back().lock().get()->selfFocus(&input, false, maxZIndex, false);
+				updateFocusWidget(hitWidgets.back());
+			}
 		}
 	}
 	didFocusThisClick = false;
-	return result;
+	return hitResult;
 }
 
-bool UI::widgetHoverTest(MouseEvent input)
+bool UI::widgetHoverTest(MouseEvent* input)
 {
 	// Otherwise, continue
 	std::vector<std::weak_ptr<Widget>> hoveredWidgets;
-	for (size_t i = 0; i < widgets.size(); i++)
+	for (size_t i = 0; i < rootWidgets.size(); i++)
 	{
 		// Check for sweep against hotspots, single depth check
-		bool sweepResult = widgets[i].get()->mouseSweep(input.x, input.y);
+		bool sweepResult = rootWidgets[i].get()->mouseSweep(input->x, input->y);
 		if (sweepResult)
 		{
-			hoveredWidgets.push_back(widgets[i]);
+			hoveredWidgets.push_back(rootWidgets[i]);
 		}
 	}
 	if (hoveredWidgets.size() == 0) { return false; }
 	else
 	{
+		// First prevent clicks when a popup is blocking
+		if (checkBlockingPopupMatch(hoveredWidgets.back().lock().get()->getRoot())) { return false; }
 		// Check for hitResult against the collision
 		// Note: For now only check against the last widget in the array which (should)
 		// be the top-most (last) rendered widget.
 		// If the hitResult is false (no-hit in event of non-rectangular widget)
 		// then check the next widget in the array
-		bool hitResult = hoveredWidgets.back().lock().get()->mouseHover(input);
-		if (hitResult) { return true; }
-		else { return false; }
+		std::deque<Widget*> hoverStack;
+		unsigned int maxZIndex = 0;
+		bool hitResult = hoveredWidgets.back().lock().get()->mouseHover(input, hoverStack, isZStackActive, maxZIndex);
+		hoverStack.shrink_to_fit();
+		if (hitResult) 
+		{
+			// If the ZStack is empty, then the return is simple
+			if (!isZStackActive) { return hitResult; }
+			for (int i = (int)hoverStack.size() - 1; i >= 0; i--)
+			{
+				if (hoverStack[i]->selfHover(input, false, maxZIndex, false) != 0) { return hitResult; }
+			}
+			return hitResult;
+		}
+		else { return hitResult; }
 	}
 	return false;
 }
 
-bool UI::widgetLeaveTest(MouseEvent input)
+bool UI::widgetLeaveTest(MouseEvent* input, unsigned int maxZIndex)
 {
 	bool result = false;
 	std::vector<int> eraseKeys;
 	for (auto& entry : enteredWidgets)
 	{
-		if (!entry.second.expired() && entry.second.lock().get()->selfLeave(input))
+		if (!entry.second.expired() && entry.second.lock().get()->selfLeave(input, maxZIndex))
 		{
 			entry.second.reset();
 			eraseKeys.push_back(entry.first);
@@ -705,6 +796,266 @@ bool UI::widgetLeaveTest(MouseEvent input)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Z Index Handling
+void UI::addZIndexEntry(Widget* target, unsigned int zIndex)
+{
+	if (zIndexMap.count(zIndex) == 1)
+	{
+		zIndexMap.at(zIndex).stack.push_back(target);
+	}
+	else
+	{
+		zIndexMap.insert(std::pair<unsigned int, ZIndexStack>(zIndex, ZIndexStack(zIndex)));
+		zIndexMap.at(zIndex).stack.push_back(target);
+	}
+}
+
+// Handling Input Widget Updates
+void UI::putActiveInputWidget(std::weak_ptr<Widget> widget, bool isClear, bool withBlur, int eventType)
+{
+	// Clear Active Widget
+	if (isClear)
+	{
+		if (!activeInputWidget.expired())
+		{
+			// Trigger callbacks
+			std::shared_ptr<Widget> target = activeInputWidget.lock();
+			if (eventType == UI_WEVENT_CANCEL && 
+				target->callbackMap.count("oncancel") == 1 && 
+				target->callbackMap.at("oncancel").size() != 0)
+			{
+				owner.get()->getUI().get()->activeWidget = activeInputWidget;
+				owner.get()->scriptConsole.get()->run(target->callbackMap.at("oncancel"), target->_namespace);
+				owner.get()->getUI().get()->activeWidget.reset();
+			}
+			else if (eventType == UI_WEVENT_ENTRY &&
+				target->callbackMap.count("onentry") == 1 &&
+				target->callbackMap.at("onentry").size() != 0)
+			{
+				owner.get()->getUI().get()->activeWidget = activeInputWidget;
+				owner.get()->scriptConsole.get()->run(target->callbackMap.at("onentry"), target->_namespace);
+				owner.get()->getUI().get()->activeWidget.reset();
+			}
+			// Type-Specific Instructions
+			if (activeInputWidget.lock().get()->type == LTokenType::LINE)
+			{
+				std::shared_ptr<Line> lineWidget = std::dynamic_pointer_cast<Line>(target);
+				lineWidget.get()->clearSelection();
+				lineWidget.get()->setCursorPos(0);
+				lineWidget.get()->isActive = false;
+			}
+			activeInputWidget.reset();
+			activeInputType = LTokenType::NIL;
+			// Trigger blur callback
+			if (withBlur && !focusWidget.expired() && target == focusWidget.lock())
+			{
+				clearFocusWidget();
+			}
+		}
+		else
+		{
+			activeInputWidget.reset();
+			activeInputType = LTokenType::NIL;
+		}
+		return;
+	}
+	// Set Active Widget
+	if (!widget.expired() && !isClear)
+	{
+		if (widget.lock().get()->type == LTokenType::LINE)
+		{
+			activeInputWidget = widget;
+			//
+			std::shared_ptr<Line> lineWidget = std::dynamic_pointer_cast<Line>(activeInputWidget.lock());
+			activeInputType = lineWidget.get()->type;
+			lineWidget.get()->isActive = true;
+			lineWidget.get()->valueAttrib = "";
+			lineWidget.get()->setCursorPos(0);
+		}
+	}
+}
+
+// Manage resize events
+void UI::clearResizeEvents()
+{
+	if (resizeWidgets.size() == 0) { return; }
+	for (std::weak_ptr<Widget> widget : resizeWidgets)
+	{
+		if (widget.expired()) { continue; }
+		std::shared_ptr<Widget> target = widget.lock();
+		if (target->callbackMap.count("onresize") == 1 && target->callbackMap.at("onresize").size() != 0)
+		{
+			owner.get()->getUI().get()->activeWidget = widget;
+			owner.get()->scriptConsole.get()->run(target->callbackMap.at("onresize"), target->_namespace);
+			owner.get()->getUI().get()->activeWidget.reset();
+		}
+	}
+	resizeWidgets.clear();
+	resizeWidgets.shrink_to_fit();
+}
+
+
+// Manage popup widgets
+bool UI::putActivePopupWidget(std::weak_ptr<Widget> widget, bool isBlocking, std::shared_ptr<CFunction> escCallback)
+{
+	bool wasHandled = false;
+	// First verify that the callback is valid
+	if (escCallback == nullptr || widget.expired()) { return wasHandled; }
+	else
+	{
+		if (escCallback.get()->funcDeclaration.get()->paramsTypes.size() != 0 ||
+			escCallback.get()->funcDeclaration.get()->returnType.get()->type != CTokenType::_VOID)
+		{
+			return wasHandled;
+		}
+	}
+	// Next check that the tag is not duplicate
+	bool foundTagMatch = false;
+	size_t matchIndex = std::string::npos;
+	for (int i = 0; i < popupTags.size(); i++)
+	{
+		if (popupTags[i] == widget.lock().get()->idAttrib)
+		{
+			foundTagMatch = true;
+			matchIndex = size_t(i);
+			break;
+		}
+	}
+	// Set the blocking property
+	widget.lock().get()->popupIsBlocking = isBlocking;
+	// Insert or rearrange the pop-up order
+	if (foundTagMatch)
+	{
+		// If was duplicate, move the popup to the front of the deque
+		// The front-most element in the deque intercepts the escape-key inputs
+		popupTags.erase(popupTags.begin() + matchIndex);
+		popupWidgets.erase(popupWidgets.begin() + matchIndex);
+		popupTags.push_front(widget.lock().get()->idAttrib);
+		popupWidgets.push_front(widget);
+		wasHandled = isPopupActive = true;
+		moveRootToFront(widget.lock().get()->getRoot());
+	}
+	else
+	{
+		// If was not a duplicate, insert a new popup
+		if (popupEscCallbacks.count(widget) == 0)
+		{
+			popupEscCallbacks.insert(std::pair<std::weak_ptr<Widget>, std::shared_ptr<CFunction>>(widget, escCallback));
+			wasHandled = isPopupActive = true;
+			popupTags.push_front(widget.lock().get()->idAttrib);
+			popupWidgets.push_back(widget);
+			moveRootToFront(widget.lock().get()->getRoot());
+		}
+	}
+	
+	return wasHandled;
+}
+
+bool UI::clearPopupWidget(std::weak_ptr<Widget> widget)
+{
+	bool wasHandled = false;
+
+	bool foundTagMatch = false;
+	size_t matchIndex = std::string::npos;
+	for (int i = 0; i < popupTags.size(); i++)
+	{
+		if (popupTags[i] == widget.lock().get()->idAttrib)
+		{
+			foundTagMatch = true;
+			matchIndex = size_t(i);
+			break;
+		}
+	}
+
+	if (foundTagMatch)
+	{
+		// Clear the popup from the callbacks map
+		std::weak_ptr<Widget> popup;
+		for (auto const& item : popupEscCallbacks)
+		{
+			if (item.first.lock() == widget.lock()) { popup = item.first; }
+		}
+		popupEscCallbacks.erase(popup);
+		// Clear the tag from the tags list
+		popupTags.erase(popupTags.begin() + matchIndex);
+		popupWidgets.erase(popupWidgets.begin() + matchIndex);
+		if (popupTags.size() == 0)
+		{
+			isPopupActive = false;
+		}
+		wasHandled = true;
+	}
+
+	if ((popupEscCallbacks.size() == 0 && popupTags.size() != 0) ||
+		(popupEscCallbacks.size() != 0 && popupTags.size() == 0))
+	{
+		std::cout << "UI::ERROR::POPUP_ESC_CALLBACK::SYNC_ERROR" << std::endl;
+	}
+	return wasHandled;
+}
+
+bool UI::sendPopupEscape()
+{
+	if (popupEscCallbacks.size() == 0) { return false; }
+	else
+	{
+		for (auto const& item : popupEscCallbacks)
+		{
+			if (!item.first.expired() && item.first.lock().get()->idAttrib == popupTags.front())
+			{ 
+				std::vector<std::shared_ptr<CObject>> args;
+				item.second.get()->call(owner.get()->scriptConsole.get()->getInterpreter(), &args);
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+bool UI::checkPopupBlocking()
+{
+	if (!isPopupActive) { return false; }
+	for (auto& popup : popupEscCallbacks)
+	{
+		if (!popup.first.expired() && popup.first.lock().get()->popupIsBlocking == true) { return true; }
+	}
+	return false;
+}
+
+bool UI::checkBlockingPopupMatch(std::weak_ptr<Widget> widget)
+{
+	if (!isPopupActive || widget.expired()) { return false; }
+	int firstBlockingPos = -1; int widgetQueryPos = -1;
+	std::string id = widget.lock().get()->idAttrib;
+	std::weak_ptr<Widget> weakRoot = widget.lock().get()->getRoot();
+	if (weakRoot.expired()) { return false; }
+	std::shared_ptr<Widget> strongRoot = widget.lock();
+	for (int i = 0; i < popupWidgets.size(); i++)
+	{
+		if (!popupWidgets[i].expired())
+		{
+			if (firstBlockingPos == -1 && popupWidgets[i].lock().get()->popupIsBlocking == true)
+			{
+				firstBlockingPos = i;
+			}
+			std::weak_ptr<Widget> popupWeak = popupWidgets[i].lock().get()->getRoot();
+			if (!popupWeak.expired())
+			{ 
+				if (popupWeak.lock() == strongRoot) 
+				{ 
+					widgetQueryPos = i; 
+				}
+			}
+			
+		}
+		if (firstBlockingPos == -1 && id == popupTags[i]) { widgetQueryPos = i; }
+	}
+	if (firstBlockingPos == -1) { return false; }
+	if (widgetQueryPos != -1 && widgetQueryPos <= firstBlockingPos) { return false; }
+	if (widgetQueryPos > firstBlockingPos || (firstBlockingPos != -1 && widgetQueryPos == -1)) { return true; }
+	return false;
+}
+
 void UI::updateFocusWidget(std::weak_ptr<Widget> target)
 {
 	if (!target.expired())
@@ -714,13 +1065,30 @@ void UI::updateFocusWidget(std::weak_ptr<Widget> target)
 			if (focusWidget.lock().get() != target.lock().get())
 			{
 				//std::cout << "UPDATE::FOCUS::WITH-BLUR" << std::endl;
-				focusWidget.lock().get()->selfBlur();
+				// Check whether should allow the focusWidget to reset
 				if (!interruptBlur)
 				{
-					focusWidget.reset();
-					//std::cout << "UPDATE::FOCUS::CHANGED-TARGET::ID,CLASSES=" <<
-					//	target.lock().get()->idAttrib + ", " << stringVecToString(target.lock().get()->classAttribs) << std::endl;
-					focusWidget = target;
+					focusWidget.lock().get()->selfBlur();
+					// On focus change, always fire onentry callback
+					if (!activeInputWidget.expired() && 
+						target.lock() != activeInputWidget.lock() && 
+						focusWidget.lock() == activeInputWidget.lock())
+					{
+						putActiveInputWidget(activeInputWidget, true, false, UI_WEVENT_ENTRY);
+					}
+					// Check whether to allow focus change
+					if (!interruptFocus)
+					{
+						focusWidget.reset();
+						//std::cout << "UPDATE::FOCUS::CHANGED-TARGET::ID,CLASSES=" <<
+						//	target.lock().get()->idAttrib + ", " << stringVecToString(target.lock().get()->classAttribs) << std::endl;
+						focusWidget = target;
+						moveRootToFront(focusWidget.lock().get()->getRoot());
+					}
+					else
+					{
+						interruptFocus = false;
+					}
 				}
 				else
 				{
@@ -732,9 +1100,19 @@ void UI::updateFocusWidget(std::weak_ptr<Widget> target)
 		}
 		else
 		{
-			//std::cout << "UPDATE::FOCUS::NEW-TARGET::ID,CLASSES=" <<
-			//	target.lock().get()->idAttrib + ", " << stringVecToString(target.lock().get()->classAttribs) << std::endl;
-			focusWidget = target;
+			if (!interruptFocus)
+			{
+				//std::cout << "UPDATE::FOCUS::NEW-TARGET::ID,CLASSES=" <<
+				//	target.lock().get()->idAttrib + ", " << stringVecToString(target.lock().get()->classAttribs) << std::endl;
+				//std::cout << "UPDATE::FOCUS::CHANGED-TARGET::ID,CLASSES=" <<
+				//	target.lock().get()->idAttrib + ", " << stringVecToString(target.lock().get()->classAttribs) << std::endl;
+				focusWidget = target;
+				moveRootToFront(focusWidget.lock().get()->getRoot());
+			}
+			else
+			{
+				interruptFocus = false;
+			}
 		}
 	}
 }
@@ -744,9 +1122,47 @@ void UI::clearFocusWidget()
 	{
 		//std::cout << "CLEAR::FOCUS::WITH-BLUR" << std::endl;
 		focusWidget.lock().get()->selfBlur();
+		if (!activeInputWidget.expired())
+		{
+			putActiveInputWidget(activeInputWidget, true, false, UI_WEVENT_ENTRY);
+		}
 	}
 	//std::cout << "CLEAR::FOCUS" << std::endl;
 	focusWidget.reset();
+}
+
+void UI::moveRootToFront(std::weak_ptr<Widget> root)
+{
+	if (root.expired() || rootWidgets.size() <= 1) { return; }
+	else
+	{
+		size_t position = std::string::npos;
+		for (int i = 0; i < rootWidgets.size(); i++)
+		{
+			if (rootWidgets[i] == root.lock()) { position = size_t(i); break; }
+		}
+		if (position != std::string::npos && position != rootWidgets.size() - 1)
+		{
+			std::swap(rootWidgets[rootWidgets.size() - 1], rootWidgets[position]);
+		}
+	}
+}
+
+void UI::checkFocusVisibility()
+{
+	if (focusWidget.expired()) { return; }
+	else
+	{
+		if (!focusWidget.lock().get()->checkVisibility())
+		{
+			focusWidget.lock().get()->selfBlur();
+			if (!activeInputWidget.expired() && activeInputWidget.lock() == focusWidget.lock())
+			{
+				putActiveInputWidget(activeInputWidget, true, false, UI_WEVENT_CANCEL);
+			}
+			focusWidget.reset();
+		}
+	}
 }
 
 void UI::resetPropertyByClass(std::shared_ptr<CInterpreter> interpreter,
@@ -807,7 +1223,7 @@ void UI::setPropertyByClass(std::shared_ptr<CInterpreter> interpreter,
 std::weak_ptr<Widget> UI::getWidgetByID(std::string id)
 {
 	std::weak_ptr<Widget> null;
-	for (std::shared_ptr<Widget> root : widgets)
+	for (std::shared_ptr<Widget> root : rootWidgets)
 	{
 		if (root.get()->rootId == id) { return root; }
 	}
@@ -858,7 +1274,7 @@ std::vector<std::weak_ptr<Widget>> UI::getWidgetsByType(std::string typeName, st
 std::weak_ptr<Widget> UI::getRootWidgetByID(std::string rootID)
 {
 	std::weak_ptr<Widget> null;
-	for (std::shared_ptr<Widget> root : widgets)
+	for (std::shared_ptr<Widget> root : rootWidgets)
 	{
 		if (root.get()->rootId == rootID)
 		{
@@ -876,12 +1292,37 @@ std::weak_ptr<Widget> UI::getRootWidgetByID(std::string rootID)
 
 void UI::drawWidgets()
 {
-	if (widgets.size() == 0) { return; }
+	if (rootWidgets.size() == 0) { return; }
 	else
 	{
-		for (std::shared_ptr<Widget> obj : widgets)
+		//for (std::shared_ptr<Widget> obj : rootWidgets)
+		for (int i = 0; i < rootWidgets.size(); i++)
 		{
-			obj.get()->draw(owner.get()->getCamera()->getShaderTransform());
+			//obj.get()->draw(owner.get()->getCamera()->getShaderTransform());
+			rootWidgets[i].get()->draw(owner.get()->getCamera()->getShaderTransform());
 		}
+		drawZStack();
+	}
+}
+
+void UI::drawZStack()
+{
+	if (zIndexMap.size() == 0) { isZStackActive = false; return; }
+	ShaderTransform xform = owner.get()->getCamera()->getShaderTransform();
+	bool didZIndexDraw = false;
+	for (auto& zindex : zIndexMap)
+	{
+		bool result = zindex.second.drawStack(xform);
+		zindex.second.clearStack();
+		if (result) { didZIndexDraw = true; }
+	}
+	if (!didZIndexDraw)
+	{
+		zIndexMap.clear();
+		isZStackActive = false;
+	}
+	else
+	{
+		isZStackActive = true;
 	}
 }

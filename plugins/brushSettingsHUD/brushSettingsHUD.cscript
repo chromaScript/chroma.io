@@ -142,6 +142,7 @@ void dragPercents(num type, num select)
 
 void toggleCheck(num type)
 {
+	print "BSH TOGGLE CHECK";
 	if (type == 0)
 	{
 		opacityEnable = !opacityEnable;

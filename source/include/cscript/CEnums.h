@@ -135,9 +135,13 @@ enum class CCallableTypes
 	_CClass,
 	_CClassInstance,
 	_CFunction,
+	// Internal Built-In Widget Functions
+	_CInt_TextClick,
 	// Standard Lib Utility Functions
 	_CStd_fClock,
 	_CStd_fToString,
+	_CStd_fToNum,
+	_CStd_fKeyToString,
 	_CStd_fBindTimerEvent,
 	_CStd_fCancelTimerEvent,
 	_CStd_fBindCallbackEvent,
@@ -172,15 +176,23 @@ enum class CCallableTypes
 	_CStd_fResetClassProperty,
 	// App Class & Functions
 	_CStd_cApp,
+	_CStd_cfIsValidKeybind_Tool,
+	_CStd_cfIsValidKeybind_Menu,
 	_CStd_cfExit,
 	_CStd_cfSaveBMP,
+	_CStd_cfGetWindowSize,
 	_CStd_cfMaximize,
 	_CStd_cfMinimize,
 	_CStd_cfSetCursor,
 	// Ui Class & functions
 	_CStd_cUi,
+	_CStd_cfMoveRootToFront,
+	_CStd_cfSetActivePopup,
+	_CStd_cfClearPopup,
 	_CStd_cfPreventBlurCallback,
+	_CStd_cfPreventFocusCallback,
 	_CStd_cfSetFocus_byID,
+	_CStd_cfClearFocus,
 	_CStd_cfGetWidget_byID,
 	_CStd_cfSetFGColor_HSL,
 	_CStd_cfSetBGColor_HSL,
@@ -188,6 +200,9 @@ enum class CCallableTypes
 	_CStd_cDocument,
 	// Toolbox Class & Functions
 	_CStd_cToolbox,
+	_CStd_cfCheckValidIOCombination,
+	_CStd_cfCheckValidControlScheme,
+	_CStd_cfCreateNewTool,
 	_CStd_cfCheckActiveToolSettingsMask,
 	_CStd_cfSetActiveToolProp,
 	_CStd_cfGetActiveToolProp,
@@ -218,6 +233,8 @@ enum class CCallableTypes
 
 enum class CCallbackType
 {
+	keyListener_blocking,
+	keyListener,
 	updateFGColor,
 	updateBGColor,
 	colorpickStart,
@@ -229,6 +246,8 @@ enum class CCallbackType
 };
 
 inline std::vector<std::string> CCallbackNames = {
+	"keyListener_blocking",
+	"keyListener",
 	"updateFGColor",
 	"updateBGColor",
 	"colorpickStart",

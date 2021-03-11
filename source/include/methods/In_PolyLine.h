@@ -18,6 +18,7 @@ protected:
 public:
 	In_PolyLine(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
 	{
+		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::drag; }
 		interestMask = { TSetType::basic, TSetType::image, TSetType::polyline, TSetType::alpha };
 		fragData.constantSize = false;
 		fragData.linearStream = false;

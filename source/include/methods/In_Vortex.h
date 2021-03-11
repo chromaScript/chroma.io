@@ -18,10 +18,11 @@ protected:
 public:
 	In_Vortex(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
 	{
+		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::drag; }
 		interestMask = { TSetType::basic, TSetType::vortex, TSetType::image, TSetType::alpha };
 		fragData.centerAboutOrigin = fragData.connectEnds = fragData.constantSize = false;
 		splineData.centerAboutOrigin = splineData.connectEnds = splineData.constantSize = false;
-		if (controlScheme == TSetType::drag)
+		if (controlScheme == TSetType::drag || controlScheme == TSetType::drag)
 		{
 			fragData.linearStream = false;
 			splineData.linearStream = false;

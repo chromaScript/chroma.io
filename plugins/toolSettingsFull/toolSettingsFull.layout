@@ -7,27 +7,39 @@
 		</H_BOX>
 		<H_BOX class="tabButton"></H_BOX>
 	</H_BOX>
-	<V_BOX id="tsf_body">
-	
-	</V_BOX>
+	<H_BOX id="tsf_body">
+		<V_BOX id="tsf_interestWrapper">
+			<H_BOX class="tsf_interest">
+				<H_BOX class="tsf_interestName"><TEXT class="tsf_interestText, barlow12" value="METADATA"></TEXT></H_BOX>
+				<H_BOX class="tsf_interestBox"><IMAGE class="tsf_interestCheck"></IMAGE></H_BOX>
+			</H_BOX>
+			<H_BOX class="tsf_interest">
+				<H_BOX class="tsf_interestName"><TEXT class="tsf_interestText, barlow12" value="CONTINUOUS CONTROL"></TEXT></H_BOX>
+				<H_BOX class="tsf_interestBox"><IMAGE class="tsf_interestCheck"></IMAGE></H_BOX>
+			</H_BOX>
+		</V_BOX>
+		<V_BOX id="tsf_settingsWrapper" class="debugBlue">
+		
+		</V_BOX>
+	</H_BOX>
 	<H_BOX 
 		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()" 
 		ondragstart="resizeWidget(0, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
 		ondrag="resizeWidget(1, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
 		ondragend="resizeWidget(2, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
-		class="resizeBarLeft, debugRed"></H_BOX>
+		class="resizeBarLeft"></H_BOX>
 	<H_BOX 
 		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()" 
 		ondragstart="resizeWidget(0, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
 		ondrag="resizeWidget(1, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
 		ondragend="resizeWidget(2, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
-		class="resizeBarRight, debugGreen"></H_BOX>
+		class="resizeBarRight"></H_BOX>
 	<H_BOX 
 		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
 		ondragstart="resizeWidget(0, 1, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
 		ondrag="resizeWidget(1, 1, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
 		ondragend="resizeWidget(2, 1, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"		
-		class="resizeBarBottom, debugBlue"></H_BOX>
+		class="resizeBarBottom"></H_BOX>
 	<H_BOX 
 		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
 		ondragstart="resizeWidget(0, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"

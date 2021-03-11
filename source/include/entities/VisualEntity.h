@@ -87,6 +87,7 @@ public:
 	void setShader(std::shared_ptr<Shader> program);
 	std::shared_ptr<Shader> getShader();
 	void generateBuffers(unsigned int* va, unsigned int* vb, unsigned int* eb, unsigned int* tx0);
+	void generateBuffers(unsigned int* va, unsigned int* vb, unsigned int* eb);
 	virtual void bindBuffers();
 	virtual void bindTexture(int width, int height);
 	virtual void render(ShaderTransform xform, unsigned int targetBuffer) = 0;

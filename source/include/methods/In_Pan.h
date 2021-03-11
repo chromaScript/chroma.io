@@ -14,6 +14,7 @@ protected:
 public:
 	In_Pan(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner } 
 	{ 
+		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::usedefault; }
 		interestMask = { TSetType::pan }; 
 		fragData.constantSize = true;
 		fragData.centerAboutOrigin = fragData.connectEnds = false;

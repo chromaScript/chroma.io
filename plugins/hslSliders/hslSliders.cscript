@@ -155,6 +155,7 @@ void dragSlider(num select, num index)
 
 void dragGraph(num select, num index)
 {
+	print "HSL GRAPH DRAG";
 	if (select == 1 || select == 0)
 	{
 		graphBeingDragged = true;

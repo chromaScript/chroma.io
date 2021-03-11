@@ -32,7 +32,7 @@
 	</H_BOX>
 	<H_BOX class="transferWrapper">
 		<H_BOX class="sliderTextWrapper"><TEXT class="bshudText" value="DYNAMIC:"></TEXT></H_BOX>
-		<H_BOX class="bshudCheckWrapper" ondragstart="toggleCheck(0)"><H_BOX id="opacityDynamic" class="bshudCheckBox"></H_BOX></H_BOX>
+		<H_BOX class="bshudCheckWrapper" onclick="toggleCheck(0)"><H_BOX id="opacityDynamic" class="bshudCheckBox"></H_BOX></H_BOX>
 		<H_BOX class="sliderTextWrapper"><TEXT class="bshudText" value="MIN:"></TEXT></H_BOX>
 		<H_BOX class="percentDragWrapper"
 			ondragstart="dragPercents(0, 0)" 
@@ -53,7 +53,7 @@
 	</H_BOX>
 	<H_BOX class="transferWrapper">
 		<H_BOX class="sliderTextWrapper"><TEXT class="bshudText" value="DYNAMIC:"></TEXT></H_BOX>
-		<H_BOX class="bshudCheckWrapper" ondragstart="toggleCheck(1)"><H_BOX id="flowDynamic" class="bshudCheckBox"></H_BOX></H_BOX>
+		<H_BOX class="bshudCheckWrapper" onclick="toggleCheck(1)"><H_BOX id="flowDynamic" class="bshudCheckBox"></H_BOX></H_BOX>
 		<H_BOX class="sliderTextWrapper"><TEXT class="bshudText" value="MAX:"></TEXT></H_BOX>
 		<H_BOX class="percentDragWrapper"
 			ondragstart="dragPercents(0, 1)" 

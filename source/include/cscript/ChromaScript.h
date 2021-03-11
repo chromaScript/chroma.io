@@ -83,6 +83,7 @@ public:
 	//
 	void printObj(std::shared_ptr<CObject> obj);
 	std::string toString(std::shared_ptr<CObject> obj);
+	double toNum(std::shared_ptr<CObject> obj);
 	std::string numToString(double d);
 	std::string numToString(float f);
 	std::string boolToString(bool b);

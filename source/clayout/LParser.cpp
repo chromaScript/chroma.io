@@ -409,6 +409,9 @@ bool LParser::isValidElementType(std::shared_ptr<LToken> token)
 	case LTokenType::PANEL:
 	case LTokenType::IMAGE:
 	case LTokenType::TEXT:
+	case LTokenType::LINE:
+	case LTokenType::BLOCK:
+	case LTokenType::PARAGRAPH:
 	case LTokenType::TEXT_ENTRY:
 		return true;
 		break;
@@ -477,6 +480,8 @@ bool LParser::isValidEleAttribType(std::shared_ptr<LToken> token)
 	case LTokenType::ON_MOUSE_WHEELDOWN:
 	case LTokenType::ON_RELEASE:
 	case LTokenType::ON_RESIZE:
+	case LTokenType::ON_CANCEL:
+	case LTokenType::ON_ENTRY:
 	case LTokenType::DRAGGABLE:
 	case LTokenType::DROPPABLE:
 	case LTokenType::DRAG_TYPE:

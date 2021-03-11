@@ -19,6 +19,7 @@ protected:
 public:
 	In_Rake(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
 	{
+		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::continuous; }
 		interestMask = { TSetType::basic, TSetType::rake, TSetType::smoothing, TSetType::image, TSetType::alpha };
 		fragData.centerAboutOrigin = fragData.connectEnds = fragData.constantSize = false;
 		fragData.linearStream = true;

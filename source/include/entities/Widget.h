@@ -12,6 +12,7 @@ class CInterpreter;
 
 #include <map>
 #include <memory>
+#include <deque>
 
 class Widget : public VisualEntity, public std::enable_shared_from_this<Widget> // Might not need this, enabling for now
 {
@@ -28,6 +29,7 @@ protected:
 
 	// State Variables
 	bool isEntered = false;
+	bool wasVisible = false;
 
 public:
 	// Public variables
@@ -36,7 +38,8 @@ public:
 	std::string _namespace = "";
 	LTokenType type = LTokenType::NIL;
 	std::vector<std::shared_ptr<Widget>> childWidgets;
-	std::vector<std::weak_ptr<Widget>> outsideBoundWidgets;
+	std::vector<std::weak_ptr<Widget>> _outsideBoundWidgets;
+	std::map<int, std::weak_ptr<Widget>> outsideBoundWidgets;
 	std::weak_ptr<Widget> parentWidget;
 
 	// State Variables
@@ -45,6 +48,8 @@ public:
 	bool isThisDirty = true;
 	bool isBeingResized = false; // Might not need this variable
 	bool canResize = false; // Might not need this variable
+	bool popupIsBlocking = false;
+	bool isActive = false;
 
 	// Style Variables
 	WidgetStyle style;
@@ -75,6 +80,8 @@ public:
 	virtual glm::ivec2 getSizeByChildren() = 0;
 	virtual glm::ivec2 getSizeByParent() = 0;
 	virtual glm::ivec2 findWidgetLocation(std::shared_ptr<Widget> childWidget) = 0;
+	int findAvailableWidth(std::shared_ptr<Widget> askingWidget);
+	int findAvailableHeight(std::shared_ptr<Widget> askingWidget);
 	void placeWidget();
 	virtual void buildWidget() = 0;
 
@@ -123,28 +130,31 @@ public:
 
 	// Click Functions
 	bool mouseSweep(double x, double y);
-	bool mouseHit(MouseEvent dat, bool dragOnly);
-	bool selfHit(MouseEvent dat, bool dragOnly);
-	bool selfFocus(MouseEvent dat);
+	bool mouseHit(MouseEvent* dat, bool dragOnly, bool shouldFocus, 
+		std::deque<Widget*>& clickStack, std::deque<Widget*>& focusStackbool, bool zIndexExists, unsigned int& maxZIndex);
+	int selfHit(MouseEvent* dat, bool dragOnly, bool storeHitEvent, unsigned int& maxZIndex, bool ignoreCollision);
+	int selfFocus(MouseEvent* dat, bool storeHitEvent, unsigned int& maxZIndex, bool ignoreCollision);
 	bool selfBlur();
-	bool mouseHover(MouseEvent dat);
-	bool selfHover(MouseEvent dat);
-	bool selfLeave(MouseEvent dat);
-	bool selfDrag(MouseEvent dat);
-	bool selfDragend(MouseEvent dat);
+	bool mouseHover(MouseEvent* dat, std::deque<Widget*> &hoverStack, bool zIndexExists, unsigned int& maxZIndex);
+	int selfHover(MouseEvent* dat, bool storeHitEvent, unsigned int& maxZIndex, bool ignoreCollision);
+	bool selfLeave(MouseEvent* dat, unsigned int maxZIndex);
+	bool selfDrag(MouseEvent* dat);
+	bool selfDragend(MouseEvent* dat);
 	bool checkPointCollision_self(glm::ivec2 point);
 	bool checkPointCollision_other(glm::ivec2 point, glm::ivec4 bounds);
 	int checkBoxCollision_complexSelf(glm::ivec4 testBox);
 	int checkBoxCollision_complexOther(glm::ivec4 testBox);
 	bool checkVisibility();
 
-	// Child Get Functions
+	// Parent/Child Get Functions
+	std::weak_ptr<Widget> getRoot();
 	std::weak_ptr<Widget> getChild_byID(std::string id);
 	std::weak_ptr<Widget> getChild_byName(std::string id);
 	void getChild_byClass(std::shared_ptr<std::vector<std::weak_ptr<Widget>>> bucket, std::string className, std::string idExclusion);
 	void getChild_byType(std::shared_ptr<std::vector<std::weak_ptr<Widget>>> bucket, LTokenType type, std::string idExclusion);
 
 	// Property Get/Set Functions
+	bool isInputType(LTokenType type);
 	bool resetProperty(std::shared_ptr<CInterpreter> interpreter, std::string name);
 	bool setProperty(std::shared_ptr<CInterpreter> interpreter, std::string name, std::shared_ptr<CObject> value);
 	bool setChildProperty(int switchType, std::shared_ptr<CInterpreter> interpreter, std::string id, std::string name, std::shared_ptr<CObject> value);
@@ -152,6 +162,7 @@ public:
 
 	// Render Functions
 	virtual void render(ShaderTransform xform, unsigned int targetBuffer) {};
+	void notifyVisibilityChanged();
 	virtual void draw(ShaderTransform xform);
 	virtual void drawSelf(ShaderTransform xform) = 0;
 };

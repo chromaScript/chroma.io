@@ -170,6 +170,7 @@
     <ClCompile Include="source\cstyle\SToken.cpp" />
     <ClCompile Include="source\CustomCursor.cpp" />
     <ClCompile Include="source\entities\AdjustmentLayer.cpp" />
+    <ClCompile Include="source\entities\Block.cpp" />
     <ClCompile Include="source\entities\Canvas.cpp" />
     <ClCompile Include="source\entities\ColorBox.cpp" />
     <ClCompile Include="source\entities\Container.cpp" />
@@ -183,9 +184,11 @@
     <ClCompile Include="source\entities\HueStrip.cpp" />
     <ClCompile Include="source\entities\Image.cpp" />
     <ClCompile Include="source\entities\Layer.cpp" />
+    <ClCompile Include="source\entities\Line.cpp" />
     <ClCompile Include="source\entities\List.cpp" />
     <ClCompile Include="source\entities\ListItem.cpp" />
     <ClCompile Include="source\entities\Panel.cpp" />
+    <ClCompile Include="source\entities\Paragraph.cpp" />
     <ClCompile Include="source\entities\Popup.cpp" />
     <ClCompile Include="source\entities\Shape.cpp" />
     <ClCompile Include="source\entities\Stroke.cpp" />
@@ -196,6 +199,7 @@
     <ClCompile Include="source\entities\VerticalBox.cpp" />
     <ClCompile Include="source\entities\VisualEntity.cpp" />
     <ClCompile Include="source\entities\Widget.cpp" />
+    <ClCompile Include="source\entities\WidgetInterface.cpp" />
     <ClCompile Include="source\entities\WidgetStyle.cpp" />
     <ClCompile Include="source\glad.c" />
     <ClCompile Include="source\loadImageData.cpp" />
@@ -211,7 +215,6 @@
     <ClCompile Include="source\methods\In_RadialField.cpp" />
     <ClCompile Include="source\methods\In_Rotate.cpp" />
     <ClCompile Include="source\methods\In_Sampler.cpp" />
-    <ClCompile Include="source\methods\In_Scanline.cpp" />
     <ClCompile Include="source\methods\In_ShapeDraw.cpp" />
     <ClCompile Include="source\methods\In_ShapeField.cpp" />
     <ClCompile Include="source\methods\In_ShapeLine.cpp" />
@@ -278,6 +281,7 @@
     <ClInclude Include="source\include\cstyle\SVisitors.h" />
     <ClInclude Include="source\include\CustomCursor.h" />
     <ClInclude Include="source\include\entities\AdjustmentLayer.h" />
+    <ClInclude Include="source\include\entities\Block.h" />
     <ClInclude Include="source\include\entities\Canvas.h" />
     <ClInclude Include="source\include\entities\ColorBox.h" />
     <ClInclude Include="source\include\entities\Container.h" />
@@ -291,9 +295,11 @@
     <ClInclude Include="source\include\entities\HueStrip.h" />
     <ClInclude Include="source\include\entities\Image.h" />
     <ClInclude Include="source\include\entities\Layer.h" />
+    <ClInclude Include="source\include\entities\Line.h" />
     <ClInclude Include="source\include\entities\List.h" />
     <ClInclude Include="source\include\entities\ListItem.h" />
     <ClInclude Include="source\include\entities\Panel.h" />
+    <ClInclude Include="source\include\entities\Paragraph.h" />
     <ClInclude Include="source\include\entities\Popup.h" />
     <ClInclude Include="source\include\entities\Shape.h" />
     <ClInclude Include="source\include\entities\Stroke.h" />
@@ -304,6 +310,7 @@
     <ClInclude Include="source\include\entities\VerticalBox.h" />
     <ClInclude Include="source\include\entities\VisualEntity.h" />
     <ClInclude Include="source\include\entities\Widget.h" />
+    <ClInclude Include="source\include\entities\WidgetInterface.h" />
     <ClInclude Include="source\include\entities\WidgetStyle.h" />
     <ClInclude Include="source\include\IOClasses.h" />
     <ClInclude Include="source\include\keys.h" />
@@ -322,7 +329,6 @@
     <ClInclude Include="source\include\methods\In_RadialField.h" />
     <ClInclude Include="source\include\methods\In_Rotate.h" />
     <ClInclude Include="source\include\methods\In_Sampler.h" />
-    <ClInclude Include="source\include\methods\In_Scanline.h" />
     <ClInclude Include="source\include\methods\In_ShapeDraw.h" />
     <ClInclude Include="source\include\methods\In_ShapeField.h" />
     <ClInclude Include="source\include\methods\In_ShapeLine.h" />

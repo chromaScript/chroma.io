@@ -1,5 +1,7 @@
+num interestHeight = 16;
+
 array num toolSettingPosOffset = {0, 0};
-num tsf_minWidth = 160;
+num tsf_minWidth = 430;
 num tsf_minHeight = 210;
 
 void movePanel(num select)

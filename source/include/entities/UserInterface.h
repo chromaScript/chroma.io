@@ -12,10 +12,41 @@ class WidgetStyle;
 class CInterpreter;
 
 #include <vector>
+#include <deque>
 #include <string>
 #include <map>
 #include <filesystem>
 #include <functional>
+#include <memory>
+
+class ZIndexStack
+{
+private:
+public:
+	int index = 0;
+	std::vector<Widget*> stack;
+	ZIndexStack() {};
+	ZIndexStack(int index) { this->index = index; }
+	void wipeStack()
+	{
+		stack.clear();
+		stack.shrink_to_fit();
+	}
+	void clearStack()
+	{
+		if (stack.size() == 0) { return; }
+		stack.clear();
+	}
+	bool drawStack(ShaderTransform xform)
+	{
+		if (stack.size() == 0) { return false; }
+		for (int i = 0; i < stack.size(); i++)
+		{
+			stack[i]->drawSelf(xform);
+		}
+		return true;
+	}
+};
 
 class UI
 {
@@ -33,6 +64,20 @@ private:
 	std::vector<std::shared_ptr<WidgetStyle>> styles;
 	std::vector<std::shared_ptr<WPlugin>> plugins;
 	std::vector<std::filesystem::path> pluginPaths;
+
+// Popup Widgets & Callbacks
+	// isPopupActive is a state gate to use instead of reading .size()
+	// The escape callback map is the tag, widget, and function to call on escape-key while that widget is active
+	bool isPopupActive = false;
+	std::deque<std::string> popupTags;
+	std::deque<std::weak_ptr<Widget>> popupWidgets;
+	std::map<std::weak_ptr<Widget>, std::shared_ptr<CFunction>, std::owner_less<std::weak_ptr<Widget>>> popupEscCallbacks;
+
+// Resize Widgets
+	std::vector<std::weak_ptr<Widget>> resizeWidgets;
+
+// ZStack Variables
+	bool isZStackActive = false;
 
 protected:
 public:
@@ -54,8 +99,12 @@ public:
 	// a unique key, and lookup is done by querying every root id in the value
 	std::map<std::string, std::vector<std::string>> widgetClassTable;
 
+// Z-Index Handling
+	std::map<unsigned int, ZIndexStack> zIndexMap;
+	void addZIndexEntry(Widget* target, unsigned int zIndex);
+
 // Array of root Widgets
-	std::vector<std::shared_ptr<Widget>> widgets;
+	std::vector<std::shared_ptr<Widget>> rootWidgets;
 
 // Held hitWidget
 	// Used for storing the innermost widget that received a click event
@@ -88,6 +137,11 @@ public:
 	bool didFocusThisClick = false;
 	std::weak_ptr<Widget> focusWidget;
 
+// Active Input Widget
+	// Stores the active input widget
+	LTokenType activeInputType = LTokenType::NIL;
+	std::weak_ptr<Widget> activeInputWidget;
+
 // Prototype Factory Table
 	// In form of <"id", WidgetObject>
 	// Stores the widget trees of every prototype widget for creating copies from
@@ -114,6 +168,7 @@ public:
 
 	// Widget Variables
 	bool interruptBlur = false;
+	bool interruptFocus = false;
 
 	// Constructors
 	UI(std::shared_ptr<Application>);
@@ -163,8 +218,18 @@ public:
 	std::shared_ptr<Canvas> getCanvas();
 
 	// Widget Variables
+	void putActiveInputWidget(std::weak_ptr<Widget> widget, bool isClear, bool withBlur, int eventType);
+	void clearResizeEvents();
+	void addResizeEvent(std::weak_ptr<Widget> event) { resizeWidgets.push_back(event); }
+	bool putActivePopupWidget(std::weak_ptr<Widget> widget, bool isBlocking, std::shared_ptr<CFunction> escCallback);
+	bool clearPopupWidget(std::weak_ptr<Widget> tag);
+	bool sendPopupEscape();
+	bool checkPopupBlocking();
+	bool checkBlockingPopupMatch(std::weak_ptr<Widget> widget);
 	void updateFocusWidget(std::weak_ptr<Widget> target);
 	void clearFocusWidget();
+	void moveRootToFront(std::weak_ptr<Widget> root);
+	void checkFocusVisibility();
 	void resetPropertyByClass(std::shared_ptr<CInterpreter> interpreter,
 		std::string className,
 		std::string propertyName);
@@ -182,14 +247,15 @@ public:
 
 	// Cursor Functions
 	bool widgetSweepTest(MouseEvent input);
-	bool widgetHitTest(MouseEvent input, bool dragOnly);
-	bool widgetFocusTest(MouseEvent input);
-	bool widgetHoverTest(MouseEvent input);
-	bool widgetLeaveTest(MouseEvent input);
+	bool widgetHitTest(MouseEvent input, bool dragOnly, bool shouldFocus);
+	//bool widgetFocusTest(MouseEvent input);
+	bool widgetHoverTest(MouseEvent* input);
+	bool widgetLeaveTest(MouseEvent* input, unsigned int maxZIndex);
 	void updateCursorImage(std::shared_ptr<CustomCursor> cursor);
 	std::shared_ptr<CustomCursor> getCursor();
 
 	// Render Functions
+	void drawZStack();
 	void drawWidgets();
 };
 

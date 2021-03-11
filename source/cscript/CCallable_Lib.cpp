@@ -19,6 +19,7 @@
 #include "../include/Toolbox.h"
 #include "../include/entities/Widget.h"
 #include "../include/structs.h"
+#include "../include/keys.h"
 #include <glm.hpp>
 
 #include <GLFW/glfw3.h>
@@ -29,6 +30,50 @@
 #include <map>
 
 extern std::shared_ptr<Application> chromaIO;
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Internal Built-In Widget Functions
+//
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+//
+//
+// CInt_TextClick
+CInt_TextClick::CInt_TextClick(std::shared_ptr<CEnvironment> funcEnv, std::shared_ptr<UI> ui)
+{
+	this->ui = ui;
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CInt_TextClick;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	std::vector<std::string> paramsNames;
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::_VOID, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "@textClick", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CInt_TextClick::call(
+	std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	if (!ui.get()->activeWidget.expired())
+	{
+		// Text Input widgets automatically receive focus, even in the absense of a
+		// valid callback. If a focus callback exists, then it will have been triggered
+		// before reaching this point.
+		ui.get()->updateFocusWidget(ui.get()->activeWidget);
+		// Update the active input widget, which will signal to the program to swap
+		// the input stream over to text.
+		ui.get()->putActiveInputWidget(ui.get()->activeWidget, false, false, UI_WEVENT_NULL);
+	}
+	return std::make_shared<CObject>(nullptr);
+}
+std::string CInt_TextClick::toString() { return "<int @textClick>"; }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -90,6 +135,70 @@ std::shared_ptr<CObject> CStd_fToString::call(std::shared_ptr<CInterpreter> inte
 	return std::make_shared<CObject>(interpreter.get()->console.get()->toString(args[0]));
 }
 std::string CStd_fToString::toString() { return "<std toString>"; }
+
+//
+//
+// CStd_fToNum
+CStd_fToNum::CStd_fToNum(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_fToNum;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::ANY, -1));
+	std::vector<std::string> paramsNames;
+	paramsNames.push_back("object");
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::NUM, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "toNum", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_fToNum::call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	return std::make_shared<CObject>(interpreter.get()->console.get()->toNum(args[0]));
+}
+std::string CStd_fToNum::toString() { return "<std toNum>"; }
+
+//
+//
+// CStd_fKeyToString
+CStd_fKeyToString::CStd_fKeyToString(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_fKeyToString;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
+	std::vector<std::string> paramsNames;
+	paramsNames.push_back("modKeyBit");
+	paramsNames.push_back("glfwKey");
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::STRING, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "keyToString", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_fKeyToString::call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	// Get the arguments
+	int modKeyBit = (int)std::get<double>(args[0].get()->obj);
+	int glfwKey = (int)std::get<double>(args[1].get()->obj);
+	// Build the string using the global function
+	return std::make_shared<CObject>(keySigToString((glfwKey * 10) + modKeyBit));
+}
+std::string CStd_fKeyToString::toString() { return "<std keyToString>"; }
 
 //
 //
@@ -848,6 +957,8 @@ std::shared_ptr<CObject> CStd_fBindCallbackEvent::call(std::shared_ptr<CInterpre
 		case CCallbackType::toolSwitch:
 			fizzle = app.get()->toolbox.get()->bindCallback(interpreter, type, callerID, funcCall);
 			break;
+		case CCallbackType::keyListener:
+		case CCallbackType::keyListener_blocking:
 		case CCallbackType::canvasRightClickPress:
 			fizzle = app.get()->bindCallback(interpreter, type, callerID, funcCall);
 			break;
@@ -901,7 +1012,9 @@ std::shared_ptr<CObject> CStd_fSetProperty::call(
 }
 std::string CStd_fSetProperty::toString() { return "<std setProperty>"; }
 
-// CStd_fGetActiveProperty
+//
+//
+// CStd_fGetProperty
 CStd_fGetProperty::CStd_fGetProperty(std::shared_ptr<CEnvironment> funcEnv, std::shared_ptr<UI> ui)
 {
 	this->ui = ui;
@@ -1368,6 +1481,9 @@ CStd_cApp::CStd_cApp(std::shared_ptr<CEnvironment> classEnv, std::shared_ptr<App
 		"saveBMP",
 		std::make_shared<CObject>(CCallableTypes::_CStd_cfSaveBMP, classEnv.get()->lookupEnvironment("saveBMP", true)));
 	this->classEnv.get()->define(
+		"getWindowSize",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfGetWindowSize, classEnv.get()->lookupEnvironment("getWindowSize", true)));
+	this->classEnv.get()->define(
 		"minimize", 
 		std::make_shared<CObject>(CCallableTypes::_CStd_cfMinimize, classEnv.get()->lookupEnvironment("minimize", true)));
 	this->classEnv.get()->define(
@@ -1376,6 +1492,9 @@ CStd_cApp::CStd_cApp(std::shared_ptr<CEnvironment> classEnv, std::shared_ptr<App
 	this->classEnv.get()->define(
 		"setCursor", 
 		std::make_shared<CObject>(CCallableTypes::_CStd_cfSetCursor, classEnv.get()->lookupEnvironment("setCursor", true)));
+	this->classEnv.get()->define(
+		"isValidKeybind_tool",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfIsValidKeybind_Tool, classEnv.get()->lookupEnvironment("isValidKeybind_tool", true)));
 	for (auto const& item : this->classEnv.get()->values)
 	{
 		std::shared_ptr<CStmt> func = std::get<std::shared_ptr<CFunction>>(item.second.get()->obj).get()->funcDeclaration;
@@ -1473,6 +1592,39 @@ std::string CStd_cfSaveBMP::toString() { return funcDeclaration.get()->name.get(
 
 //
 //
+// CStd_cfGetWindowSize
+CStd_cfGetWindowSize::CStd_cfGetWindowSize(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfGetWindowSize;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	std::vector<std::string> paramsNames;
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::NUM_ARRAY, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "getWindowSize", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfGetWindowSize::call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Fetch the appObj, always has the same value name
+	Application* app = std::get<std::shared_ptr<Application>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@appObj").get()->obj).get();
+	// Create the return object
+	std::vector<std::shared_ptr<CObject>> returnList;
+	returnList.emplace_back(std::make_shared<CObject>((double)app->getWindowWidth()));
+	returnList.emplace_back(std::make_shared<CObject>((double)app->getWindowHeight()));
+	return std::make_shared<CObject>(CLiteralTypes::_CNumber_Array, std::make_shared<std::vector<std::shared_ptr<CObject>>>(returnList));
+}
+std::string CStd_cfGetWindowSize::toString() { return funcDeclaration.get()->name.get()->lexeme; }
+
+//
+//
 // CStd_cfMaximize
 CStd_cfMaximize::CStd_cfMaximize(std::shared_ptr<CEnvironment> funcEnv)
 {
@@ -1564,6 +1716,44 @@ std::shared_ptr<CObject> CStd_cfSetCursor::call(std::shared_ptr<CInterpreter> in
 }
 std::string CStd_cfSetCursor::toString() { return funcDeclaration.get()->name.get()->lexeme; }
 
+//
+//
+// CStd_cfIsValidKeybind_Tool
+CStd_cfIsValidKeybind_Tool::CStd_cfIsValidKeybind_Tool(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfIsValidKeybind_Tool;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
+	std::vector<std::string> paramsNames;
+	paramsNames.push_back("modKeyBit");
+	paramsNames.push_back("glfwKey");
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::BOOL, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "isValidKeybind_tool", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfIsValidKeybind_Tool::call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Get Args
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	// Cast Arg 0 as string
+	int modKey = (int)std::get<double>(args[0].get()->obj);
+	int glfwKey = (int)std::get<double>(args[1].get()->obj);
+	// Fetch the appObj, always has the same value name
+	bool result = std::get<std::shared_ptr<Application>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@appObj").get()->obj).get()->isValidKeybind_tool(modKey, glfwKey);
+	return std::make_shared<CObject>(result);
+}
+std::string CStd_cfIsValidKeybind_Tool::toString() { return funcDeclaration.get()->name.get()->lexeme; }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1580,11 +1770,26 @@ CStd_cUi::CStd_cUi(std::shared_ptr<CEnvironment> classEnv, std::shared_ptr<Appli
 	std::vector<std::shared_ptr<CToken>> scopeStack;
 	std::vector<std::shared_ptr<CStmt>> methods;
 	this->classEnv.get()->define(
+		"moveRootToFront",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfMoveRootToFront, classEnv.get()->lookupEnvironment("moveRootToFront", true)));
+	this->classEnv.get()->define(
 		"preventBlurCallback",
 		std::make_shared<CObject>(CCallableTypes::_CStd_cfPreventBlurCallback, classEnv.get()->lookupEnvironment("preventBlurCallback", true)));
 	this->classEnv.get()->define(
+		"preventFocusCallback",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfPreventFocusCallback, classEnv.get()->lookupEnvironment("preventFocusCallback", true)));
+	this->classEnv.get()->define(
+		"setActivePopup",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfSetActivePopup, classEnv.get()->lookupEnvironment("setActivePopup", true)));
+	this->classEnv.get()->define(
+		"clearPopup",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfClearPopup, classEnv.get()->lookupEnvironment("clearPopup", true)));
+	this->classEnv.get()->define(
 		"setFocus_byID",
 		std::make_shared<CObject>(CCallableTypes::_CStd_cfSetFocus_byID, classEnv.get()->lookupEnvironment("setFocus_byID", true)));
+	this->classEnv.get()->define(
+		"clearFocus",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfClearFocus, classEnv.get()->lookupEnvironment("clearFocus", true)));
 	this->classEnv.get()->define(
 		"getWidget_byID",
 		std::make_shared<CObject>(CCallableTypes::_CStd_cfGetWidget_byID, classEnv.get()->lookupEnvironment("getWidget_byID", true)));
@@ -1626,6 +1831,135 @@ std::string CStd_cUi::toString() { return name; }
 
 //
 //
+// CStd_cfMoveRootToFront
+CStd_cfMoveRootToFront::CStd_cfMoveRootToFront(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfMoveRootToFront;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	std::vector<std::string> paramsNames;
+	paramsNames.push_back("id");
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::_VOID, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "moveRootToFront", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfMoveRootToFront::call(
+	std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Get Args
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	// Cast Arg 0 as string & Arg 1 as Function
+	std::string id = std::get<std::string>(args[0].get()->obj);
+	// Check that the widget id is valid
+	UI* ui = std::get<std::shared_ptr<UI>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@uiObj").get()->obj).get();
+	std::weak_ptr<Widget> widget = ui->getWidgetByID(id);
+	if (!widget.expired())
+	{
+		ui->moveRootToFront(widget.lock().get()->getRoot());
+	}
+	return std::make_shared<CObject>(nullptr);
+}
+std::string CStd_cfMoveRootToFront::toString() { return funcDeclaration.get()->name.get()->lexeme; }
+
+//
+//
+// CStd_cfSetActivePopup
+CStd_cfSetActivePopup::CStd_cfSetActivePopup(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfSetActivePopup;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::BOOL, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::FUNCTION, -1));
+	std::vector<std::string> paramsNames;
+	paramsNames.push_back("id");
+	paramsNames.push_back("isBlocking");
+	paramsNames.push_back("escapeCallback");
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::_VOID, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "setActivePopup", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfSetActivePopup::call(
+	std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Get Args
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	// Cast Arg 0 as string & Arg 1 as Function
+	std::string id = std::get<std::string>(args[0].get()->obj);
+	bool isBlocking = std::get<bool>(args[1].get()->obj);
+	std::shared_ptr<CFunction> callback = std::get<std::shared_ptr<CFunction>>(args[2].get()->obj);
+	// Check that the widget id is valid
+	UI* ui = std::get<std::shared_ptr<UI>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@uiObj").get()->obj).get();
+	std::weak_ptr<Widget> widget = ui->getWidgetByID(id);
+	if (!widget.expired())
+	{
+		ui->putActivePopupWidget(widget, isBlocking, callback);
+	}
+	return std::make_shared<CObject>(nullptr);
+}
+std::string CStd_cfSetActivePopup::toString() { return funcDeclaration.get()->name.get()->lexeme; }
+
+//
+//
+// CStd_cfClearPopup
+CStd_cfClearPopup::CStd_cfClearPopup(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfClearPopup;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	std::vector<std::string> paramsNames;
+	paramsNames.push_back("id");
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::_VOID, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "clearPopup", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfClearPopup::call(
+	std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Get Args
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	// Cast Arg 0 as string
+	std::string id = std::get<std::string>(args[0].get()->obj);
+	// Get the UI
+	UI* ui = std::get<std::shared_ptr<UI>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@uiObj").get()->obj).get();
+	std::weak_ptr<Widget> widget = ui->getWidgetByID(id);
+	if (!widget.expired())
+	{
+		ui->clearPopupWidget(widget);
+	}
+	return std::make_shared<CObject>(nullptr);
+}
+std::string CStd_cfClearPopup::toString() { return funcDeclaration.get()->name.get()->lexeme; }
+
+//
+//
 // CStd_cfPreventBlurCallback
 CStd_cfPreventBlurCallback::CStd_cfPreventBlurCallback(std::shared_ptr<CEnvironment> funcEnv)
 {
@@ -1657,6 +1991,40 @@ std::shared_ptr<CObject> CStd_cfPreventBlurCallback::call(
 	return std::make_shared<CObject>(nullptr);
 }
 std::string CStd_cfPreventBlurCallback::toString() { return funcDeclaration.get()->name.get()->lexeme; }
+
+//
+//
+// CStd_cfPreventFocusCallback
+CStd_cfPreventFocusCallback::CStd_cfPreventFocusCallback(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfPreventFocusCallback;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	std::vector<std::string> paramsNames;
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::_VOID, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "preventFocusCallback", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfPreventFocusCallback::call(
+	std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Fetch the UI
+	std::weak_ptr<UI> ui = std::get<std::shared_ptr<UI>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@uiObj").get()->obj);
+	if (!ui.expired())
+	{
+		ui.lock().get()->interruptFocus = true;
+	}
+	return std::make_shared<CObject>(nullptr);
+}
+std::string CStd_cfPreventFocusCallback::toString() { return funcDeclaration.get()->name.get()->lexeme; }
 
 //
 //
@@ -1698,6 +2066,39 @@ std::shared_ptr<CObject> CStd_cfSetFocus_byID::call(
 	return std::make_shared<CObject>(nullptr);
 }
 std::string CStd_cfSetFocus_byID::toString() { return funcDeclaration.get()->name.get()->lexeme; }
+
+//
+//
+// CStd_cfClearFocus
+CStd_cfClearFocus::CStd_cfClearFocus(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfClearFocus;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	std::vector<std::string> paramsNames;
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::_VOID, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "clearFocus", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfClearFocus::call(
+	std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Get Args
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	// Call getWidget_byID on the UI
+	std::weak_ptr<UI> ui = std::get<std::shared_ptr<UI>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@uiObj").get()->obj);
+	ui.lock().get()->clearFocusWidget();
+	return std::make_shared<CObject>(nullptr);
+}
+std::string CStd_cfClearFocus::toString() { return funcDeclaration.get()->name.get()->lexeme; }
 
 //
 //
@@ -1860,6 +2261,15 @@ CStd_cToolbox::CStd_cToolbox(std::shared_ptr<CEnvironment> classEnv, std::shared
 	std::vector<std::shared_ptr<CToken>> scopeStack;
 	std::vector<std::shared_ptr<CStmt>> methods;
 	this->classEnv.get()->define(
+		"checkValidIOCombination",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfCheckValidIOCombination, classEnv.get()->lookupEnvironment("checkValidIOCombination", true)));
+	this->classEnv.get()->define(
+		"checkValidControlScheme",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfCheckValidControlScheme, classEnv.get()->lookupEnvironment("checkValidControlScheme", true)));
+	this->classEnv.get()->define(
+		"createNewTool",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfCreateNewTool, classEnv.get()->lookupEnvironment("createNewTool", true)));
+	this->classEnv.get()->define(
 		"checkActiveToolSettingsMask",
 		std::make_shared<CObject>(CCallableTypes::_CStd_cfCheckActiveToolSettingsMask, classEnv.get()->lookupEnvironment("checkActiveToolSettingsMask", true)));
 	this->classEnv.get()->define(
@@ -1897,6 +2307,149 @@ std::string CStd_cToolbox::toString() { return name; }
 // CStd_cToolbox Functions
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
+
+//
+//
+// CStd_cfCheckValidIOCombination
+CStd_cfCheckValidIOCombination::CStd_cfCheckValidIOCombination(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfCheckValidIOCombination;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	std::vector<std::string> paramsNames;
+	paramsNames.push_back("inputMethod");
+	paramsNames.push_back("outputMethod");
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::BOOL, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "checkValidIOCombination", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfCheckValidIOCombination::call(
+	std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Get Args
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	std::string inputName = std::get<std::string>(args[0].get()->obj);
+	std::string outputName = std::get<std::string>(args[1].get()->obj);
+	// Set the values
+	bool result = std::get<std::shared_ptr<Toolbox>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->checkValidIOCombination(
+			interpreter, inputName, outputName);
+	return std::make_shared<CObject>(result);
+}
+std::string CStd_cfCheckValidIOCombination::toString() { return funcDeclaration.get()->name.get()->lexeme; }
+
+//
+//
+// CStd_cfCheckValidControlScheme
+CStd_cfCheckValidControlScheme::CStd_cfCheckValidControlScheme(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfCheckValidControlScheme;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	std::vector<std::string> paramsNames;
+	paramsNames.push_back("inputMethod");
+	paramsNames.push_back("controlScheme");
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::BOOL, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "checkValidControlScheme", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfCheckValidControlScheme::call(
+	std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Get Args
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	std::string inputName = std::get<std::string>(args[0].get()->obj);
+	std::string controlScheme = std::get<std::string>(args[1].get()->obj);
+	// Set the values
+	bool result = std::get<std::shared_ptr<Toolbox>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->checkValidControlScheme(
+			interpreter, inputName, controlScheme);
+	return std::make_shared<CObject>(result);
+}
+std::string CStd_cfCheckValidControlScheme::toString() { return funcDeclaration.get()->name.get()->lexeme; }
+
+//
+//
+// CStd_cfCreateNewTool
+CStd_cfCreateNewTool::CStd_cfCreateNewTool(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfCreateNewTool;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
+	std::vector<std::string> paramsNames;
+	paramsNames.push_back("cursorHover");
+	paramsNames.push_back("cursorPress");
+	paramsNames.push_back("toolID");
+	paramsNames.push_back("toolName");
+	paramsNames.push_back("inputMethod");
+	paramsNames.push_back("controlScheme");
+	paramsNames.push_back("outputMethod");
+	paramsNames.push_back("keybind_modBit");
+	paramsNames.push_back("keybind_glfwKey");
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::BOOL, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "createNewTool", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfCreateNewTool::call(
+	std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Get Args
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	std::string cursorHover = std::get<std::string>(args[0].get()->obj);
+	std::string cursorPress = std::get<std::string>(args[1].get()->obj);
+	int toolID = (int)std::get<double>(args[2].get()->obj);
+	std::string toolName = std::get<std::string>(args[3].get()->obj);
+	std::string inputMethod = std::get<std::string>(args[4].get()->obj);
+	std::string controlScheme = std::get<std::string>(args[5].get()->obj);
+	std::string outputMethod = std::get<std::string>(args[6].get()->obj);
+	int keybind_modBit = (int)std::get<double>(args[7].get()->obj);
+	int keybind_glfwKey = (int)std::get<double>(args[8].get()->obj);
+	// Set the values
+	bool result = std::get<std::shared_ptr<Toolbox>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->createCustomTool(
+			cursorHover, cursorPress, toolID, toolName, inputMethod, 
+			controlScheme, outputMethod, keybind_modBit, keybind_glfwKey);
+	if (!result)
+	{
+		interpreter.get()->console.get()->error("");
+	}
+	return std::make_shared<CObject>(result);
+}
+std::string CStd_cfCreateNewTool::toString() { return funcDeclaration.get()->name.get()->lexeme; }
 
 //
 //

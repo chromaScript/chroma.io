@@ -100,6 +100,8 @@ private:
 	bool dynamicPan = false;
 
 	// Callback Arrays
+	std::map<std::string, std::shared_ptr<CFunction>> keyListenerBlockingCallbacks;
+	std::map<std::string, std::shared_ptr<CFunction>> keyListenerCallbacks;
 	std::map<std::string, std::shared_ptr<CFunction>> canvasRightClickPressCallbacks;
 
 	// TimerCallbackMap
@@ -118,6 +120,9 @@ private:
 
 protected:
 public:
+	// Clipboard
+	std::string textClipboard = "";
+
 	// UI variables
 	std::shared_ptr<UI> ui = nullptr;
 
@@ -218,11 +223,15 @@ public:
 	void setModKeys(int mods) { modKeys = mods; }
 	int getModKeys() { return modKeys; }
 	bool getIsDoingInput() { return isDoingInput; }
+	// I/O Keybind Functions
+	bool isValidKeybind_tool(int modKey, int glfwKey);
 	// I/O Key Functions
 	int getKeyState(int namedKey) { return glfwGetKey(appWindow, namedKey); }
 	void keyEventHandler(int sig, int action);
+	void textInputHandler(int sig, int action);
 	// I/O Mouse Functions
 	void setDragStart() { isDragStarted = true; }
+	bool getDragStart() { return isDragStarted; }
 	void clearMouseHold(double time);
 	void clickEventHandler(int button, int action, MouseEvent mouseEvent, bool clearHold);
 	void mousePosEventHandler(MouseEvent mouseEvent);

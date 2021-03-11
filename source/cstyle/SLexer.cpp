@@ -50,7 +50,7 @@ std::vector<std::shared_ptr<SToken>> SLexer::scanTokens(std::string source)
 			case 'a': case 'b': case 'c': case 'd': case 'f':
 			case 'h': case 'i': case 'l': case 'm': case 'n':
 			case 'o': case 'p': case 'r': case 's': case 't': 
-			case 'u': case 'v': case 'w':
+			case 'u': case 'v': case 'w': case 'z':
 				switch (c)
 				{
 				case 'a':
@@ -559,6 +559,76 @@ std::vector<std::shared_ptr<SToken>> SLexer::scanTokens(std::string source)
 						break;
 					}
 					if (source[startSearch + 1] == 'o' &&
+						source[startSearch + 2] == 'c' &&
+						source[startSearch + 3] == 'u' &&
+						source[startSearch + 4] == 's' &&
+						source[startSearch + 5] == '-' &&
+						(isalpha(source[startSearch + 6])))
+					{
+						if (source[startSearch + 6] == 'c' &&
+							source[startSearch + 7] == 'o' &&
+							source[startSearch + 8] == 'l' &&
+							source[startSearch + 9] == 'o' &&
+							source[startSearch + 10] == 'r')
+						{
+							if (source[startSearch + 11] != '-')
+							{
+								addToken(STokenType::FOCUS_COLOR, line);
+								currentIndex += 11;
+								break;
+							}
+							else
+							{
+								if (source[startSearch + 11] == '-' &&
+									source[startSearch + 12] == 'a' &&
+									source[startSearch + 13] == 'l' &&
+									source[startSearch + 14] == 'p' &&
+									source[startSearch + 15] == 'h' &&
+									source[startSearch + 16] == 'a' &&
+									(!isalpha(source[startSearch + 16])))
+								{
+									addToken(STokenType::FOCUS_COLOR_ALPHA, line);
+									currentIndex += 16;
+									break;
+								}
+								if (source[startSearch + 11] == '-' &&
+									source[startSearch + 12] == 'b' &&
+									source[startSearch + 13] == 'l' &&
+									source[startSearch + 14] == 'u' &&
+									source[startSearch + 15] == 'e' &&
+									(!isalpha(source[startSearch + 16])))
+								{
+									addToken(STokenType::FOCUS_COLOR_BLUE, line);
+									currentIndex += 16;
+									break;
+								}
+								if (source[startSearch + 11] == '-' &&
+									source[startSearch + 12] == 'r' &&
+									source[startSearch + 13] == 'e' &&
+									source[startSearch + 14] == 'd' &&
+									(!isalpha(source[startSearch + 15])))
+								{
+									addToken(STokenType::FOCUS_COLOR_RED, line);
+									currentIndex += 15;
+									break;
+								}
+								if (source[startSearch + 11] == '-' &&
+									source[startSearch + 12] == 'g' &&
+									source[startSearch + 13] == 'r' &&
+									source[startSearch + 14] == 'e' &&
+									source[startSearch + 15] == 'e' &&
+									source[startSearch + 16] == 'n' &&
+									(!isalpha(source[startSearch + 17])))
+								{
+									addToken(STokenType::FOCUS_COLOR_GREEN, line);
+									currentIndex += 17;
+									break;
+								}
+								else { goto identifier; }
+							}
+						}
+					}
+					if (source[startSearch + 1] == 'o' &&
 						source[startSearch + 2] == 'n' &&
 						source[startSearch + 3] == 't' &&
 						source[startSearch + 4] == '-')
@@ -619,6 +689,80 @@ std::vector<std::shared_ptr<SToken>> SLexer::scanTokens(std::string source)
 						addToken(STokenType::HIDE, line);
 						currentIndex += 4;
 						break;
+					}
+					if (source[startSearch + 1] == 'i' &&
+						source[startSearch + 2] == 'g' &&
+						source[startSearch + 3] == 'h' &&
+						source[startSearch + 4] == 'l' &&
+						source[startSearch + 5] == 'i' &&
+						source[startSearch + 6] == 'g' &&
+						source[startSearch + 7] == 'h' &&
+						source[startSearch + 8] == 't' &&
+						source[startSearch + 9] == '-' &&
+						(isalpha(source[startSearch + 10])))
+					{
+						if (source[startSearch + 10] == 'c' &&
+							source[startSearch + 11] == 'o' &&
+							source[startSearch + 12] == 'l' &&
+							source[startSearch + 13] == 'o' &&
+							source[startSearch + 14] == 'r')
+						{
+							if (source[startSearch + 15] != '-')
+							{
+								addToken(STokenType::HIGHLIGHT_COLOR, line);
+								currentIndex += 15;
+								break;
+							}
+							else
+							{
+								if (source[startSearch + 15] == '-' &&
+									source[startSearch + 16] == 'a' &&
+									source[startSearch + 17] == 'l' &&
+									source[startSearch + 18] == 'p' &&
+									source[startSearch + 19] == 'h' &&
+									source[startSearch + 20] == 'a' &&
+									(!isalpha(source[startSearch + 21])))
+								{
+									addToken(STokenType::HIGHLIGHT_COLOR_ALPHA, line);
+									currentIndex += 21;
+									break;
+								}
+								if (source[startSearch + 15] == '-' &&
+									source[startSearch + 16] == 'b' &&
+									source[startSearch + 17] == 'l' &&
+									source[startSearch + 18] == 'u' &&
+									source[startSearch + 19] == 'e' &&
+									(!isalpha(source[startSearch + 20])))
+								{
+									addToken(STokenType::HIGHLIGHT_COLOR_BLUE, line);
+									currentIndex += 20;
+									break;
+								}
+								if (source[startSearch + 15] == '-' &&
+									source[startSearch + 16] == 'r' &&
+									source[startSearch + 17] == 'e' &&
+									source[startSearch + 18] == 'd' &&
+									(!isalpha(source[startSearch + 19])))
+								{
+									addToken(STokenType::HIGHLIGHT_COLOR_RED, line);
+									currentIndex += 19;
+									break;
+								}
+								if (source[startSearch + 15] == '-' &&
+									source[startSearch + 16] == 'g' &&
+									source[startSearch + 17] == 'r' &&
+									source[startSearch + 18] == 'e' &&
+									source[startSearch + 19] == 'e' &&
+									source[startSearch + 20] == 'n' &&
+									(!isalpha(source[startSearch + 21])))
+								{
+									addToken(STokenType::HIGHLIGHT_COLOR_GREEN, line);
+									currentIndex += 21;
+									break;
+								}
+								else { goto identifier; }
+							}
+						}
 					}
 					else { goto identifier; }
 					break;
@@ -1210,6 +1354,22 @@ std::vector<std::shared_ptr<SToken>> SLexer::scanTokens(std::string source)
 					{
 						addToken(STokenType::WIDTH, line);
 						currentIndex += 5;
+						break;
+					}
+					else { goto identifier; }
+					break;
+					//
+				case 'z':
+					if (source[startSearch + 1] == '-' &&
+						source[startSearch + 2] == 'i' &&
+						source[startSearch + 3] == 'n' &&
+						source[startSearch + 4] == 'd' &&
+						source[startSearch + 5] == 'e' &&
+						source[startSearch + 6] == 'x' &&
+						(!isalpha(source[startSearch + 7])))
+					{
+						addToken(STokenType::ZINDEX, line);
+						currentIndex += 7;
 						break;
 					}
 					else { goto identifier; }

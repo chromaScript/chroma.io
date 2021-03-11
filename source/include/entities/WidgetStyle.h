@@ -11,6 +11,11 @@
 #include <filesystem>
 #include <map>
 
+// Widget Event Types
+#define UI_WEVENT_NULL 0
+#define UI_WEVENT_CANCEL 1
+#define UI_WEVENT_ENTRY 2
+
 // Numeric Property Values for reporting desired size to parent object
 #define UI_WVALUE_INHERIT -9 // Defer to parent
 #define UI_WVALUE_FILL -8
@@ -171,6 +176,8 @@ public:
 	int floating; // To what side of a container should the widget prefer to occupy. Left float has right of way
 	CColor fillColor; // Primary color for text, also used as a tint or fill on images when fillAlpha != 0
 	float fillAlpha;
+	CColor focusColor; // Color of text when text is selected
+	CColor highlightColor; // Color of background when text is selected
 	CColor backgroundColor; // Background color for widget if not reporting a texture
 	std::filesystem::path backgroundTexture; // Texture path for the widget
 	float backgroundAlpha; // Alpha value for the background color, does not affect a texture currently
@@ -179,6 +186,7 @@ public:
 	int boxShadowSizeX;
 	int boxShadowSizeY;
 	bool overrideClipping; // Whether rendering should ignore overflow settings
+	unsigned int zIndex;
 	int visibility; // Used to show/hide widgets by disabling the render call. Does not accept inheritance, always hides children
 	int overflowX; // Whether overflow should be clipped to the widget in rendering
 	int overflowY; // Whether overflow should be clipped to the widget in rendering
@@ -191,6 +199,7 @@ public:
 	std::shared_ptr<WidgetStyle> makeCopy();
 	//
 	SToken stringToPropertyType(std::string name);
+	bool isSizeProperty(std::string name);
 	// So as to return 0 if the value is INT_MIN
 	CBorder getBorder();
 	CMargin getMargin();
@@ -217,6 +226,7 @@ public:
 	// Style Property Evaluator Functions
 	std::string propertyEnumToString(std::string propSelect, int p);
 	// Evaluate integer-type properties
+	void evaluateNumericStyleProperty(unsigned int& prop, std::string* value);
 	void evaluateNumericStyleProperty(int& prop, std::string* value);
 	void evaluateNumericStyleProperty(float& prop, std::string* value);
 	void evaluateDoubleNumericProperty(int& a, int& b, std::string* value);

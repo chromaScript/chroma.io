@@ -36,7 +36,7 @@ ctrl-find on the entire project.
 4. Color Picker
 	-Custom sample size and sample shape
 	-Option to apply color jitters to sampling
-5. Axis Constrained Drawing
+5. Axis/Radial Constrained Drawing
 	-Add support for custom angle input & larger/smaller axis increments
 		-Include some relatively fast way to snap/rotate/select between sets of user
 		defined angles. Useful for isometric drawing
@@ -60,6 +60,11 @@ ctrl-find on the entire project.
 			that has already been pre-constrained to the current axis,
 			which the user can access to do calculations and then return a vec2
 			with the modified location.
+	-Allow drawing tools to use a custom two-point input mode with the first input as drag to
+	create a circle/ellipse around a point. The second phase of input is drawing, which is then
+	snapped to the equation of that ellipse/circle
+		-Could also use a polygon or shape path, although that may be difficult to compute\
+		-Support the ability to use Click-Shift-Click straight lines to be conformed to axis/shape/radius constraints
 6. Palette(Literal) Widget
 	-Gives the user a virtual palette to mix colors on with any tool
 	-Pagination for multiple active palettes
@@ -199,6 +204,13 @@ ctrl-find on the entire project.
 	-Could also create a subset of states that shrink or remove excess UI/widget styles, like getting rid
 	of the tab-bar on panels, or shrinking a color hue panel.
 		-Could condense or remove excess info on layer panel, etc.
+23. Customizable Camera Control
+	-Allow Axis-Constrained camera movement
+	-Allow camera to track along a vector path
+	-Create a system to easily send camera movement instructions, would be useful for animation
+	-With this system, could also create a way of rendering an animation to a floating frame like in Blender
+	-Implement an alternative camera pan mode that moves to the click destination
+
 
 ################################################################
 ##
@@ -335,10 +347,19 @@ fix the layer/canvas tiling bottleneck.
 ##
 ################################################################
 0.0.6b
+-While apparently correct for current widget suite, this update is introducing many updates to the UI engine's sizing
+and location calculations and the changes may have broken things that were once working with past
+test widgets.
+	-This issue can be removed around the time 0.0.8 is finished as long as any newly found UI issues are resolved
+-Something about the blur/focus callback system causes the main-menu dropdowns to still show themselves
+after clicking the canvas or another widget. The main-menu should have lost focus so this should not happen.
+-The 'style' property in the Layout system does not work properly. It causes errors and erasure of style data when used.
+-'float:right' does not appear to work when the right-ward widget is an IMAGE and the floated widget is TEXT or H_BOX
+-Introduction of the z-index property required a modestly sized update to the mouse-event callback triggers for
+widgets. It's not yet been tested thoroughly enough to verify that the new system is as clean as previously.
+	-This issue can be removed around the time 0.0.8 is finished as long as any newly found UI issues are resolved
 
 0.0.6a
--Pan Camera no longer handles rotated canvas correctly. Small problem, simple fix, did not have time when swapping
-over the input/output functions to adjust it appropriately.
 -The onclick callback gets triggered accidentally for some reason on brushSettingsHUD when using the sliders
 	-This is likely inside the widget class functions for handling the clicks.
 	-Reproduce this by swapping the callback from ondragstart to onclick and then clicking sliders after toggling
@@ -355,6 +376,7 @@ as tall as they should be. Potentially for the same reason the brush pixels were
 -Still need a lot of polish and tweaking on the UI display engine. Lots of weird rules interactions
 and edge cases that should be resolved. Many areas where functionality is missing or an interaction
 doesn't do what is predictable based on other rules.
+	-This issue can be removed around the time 0.0.8 is finished as long as any newly found UI issues are resolved
 0.0.5k
 0.0.5j
 
@@ -366,8 +388,6 @@ doesn't do what is predictable based on other rules.
 	-Should also throw warnings for every uninitialized variable.
 	-Will need try-catch blocks around get/set on variables for release because otherwise
 	nullptr or nullvariant access will happen to uncautious users.
--Should enforce l-value / r-value in the CExpr_Assign in typeWizard or optimizerRed. Should not allow
-statements that have no result, such as 5 = 5;
 -Lots of untested edge cases & outcomes of badly written scripts is untested
 
 0.0.5g
@@ -377,12 +397,6 @@ hierarchies can potentially get weird.
 sure to test this later and verify the math is correct.
 -The right: and bottom: offset properties do not currently have any function, not needed for now,
 and their purpose/use isn't obvious, but leave this on the to-do list.
--position:fixed has no function currently, may remove this property later because widgets shouldn't
-get rooted to the window
--Prior to this update, margin and pxPosition were coupled together in calculation. The swap to
-using left/right/top/bottom now means these are decoupled. When a left/right/top/bottom property
-or margin/border property is behaving unexpectedly, investigate this. To clear this issue, do a thorough
-search against getMargin() and getOffset() and where those pop up.
 0.0.5f
 0.0.5e
 0.0.5d
@@ -426,6 +440,22 @@ entirely.
 -Fixed some of the height/width and sizing functions to now correctly handle inheritance and min/max values.
 -Fixed some of the calculations for height/width inheritance combined with margin/border effects. Something that
 inherits it's dimensions should now have it's margin/border subtracted from the maximum possible dimensions.
+-Added Focus Color, Highlight Color, and the Line/Block/Paragraph skeleton to the UI/Layout/Style framework.
+	-Parser/Lexer should now support (not throw error) all these new entity & style types, but are not yet implemented
+-Added the text-input to the Line widget
+	-Support for selection, cursor position, copy/paste/cut
+	-Added the "oncancel" and "onentry" callbacks to the layout parser. These get triggered when an input-type
+	widget receives certain key-inputs and when they lose focus
+	-Input type widgets now automatically gain focus, even if the user does not define any callback for the event,
+	blank or otherwise.
+-Added additional native functions
+	-app.ui.preventFocusCallback - Prevents the next focus callback and focus update
+	-toNum - converts any object to a number
+	-app.toolbox.checkValidIOCombination, app.toolbox.checkValidControlScheme - Used for pre-checking createNewTool
+	-app.toolbox.createNewTool - Create a new tool (Partially complete, does not utilize highlight colors and other options)
+-Completed the first pass of the Create New Tool Popup
+	-Does not have the color boxes enabled.
+	-Only handles the very most basic parameters for tool creation.
 
 Known Issues:
 -While apparently correct for current widget suite, this update is introducing many updates to the UI engine's sizing
@@ -436,7 +466,9 @@ test widgets.
 after clicking the canvas or another widget. The main-menu should have lost focus so this should not happen.
 -The 'style' property in the Layout system does not work properly. It causes errors and erasure of style data when used.
 -'float:right' does not appear to work when the right-ward widget is an IMAGE and the floated widget is TEXT or H_BOX
-
+-Introduction of the z-index property required a modestly sized update to the mouse-event callback triggers for
+widgets. It's not yet been tested thoroughly enough to verify that the new system is as clean as previously.
+	-This issue can be removed around the time 0.0.8 is finished as long as any newly found UI issues are resolved
 
 ////////////////
 // 0.0.6a

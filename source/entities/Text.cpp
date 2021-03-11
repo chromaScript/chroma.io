@@ -73,8 +73,8 @@ glm::ivec2 Text::getSizeByChildren()
 	// TEXT widgets report their size based solely upon their text-contents, in order to use fill-type
 	// sizes, they must be wrapped in another widget
 	glm::ivec2 report = uiHandler.get()->findSizeTextLine(valueAttrib, thisFace, thisCurrentBitmap);
-	sizeX = report.x;
-	sizeY = report.y = style.fontSize;
+	sizeX = style.minX = report.x;
+	sizeY = style.minY = report.y = style.fontSize;
 	return report;
 }
 glm::ivec2 Text::getSizeByParent()
@@ -82,8 +82,8 @@ glm::ivec2 Text::getSizeByParent()
 	// TEXT widgets report their size based solely upon their text-contents, in order to use fill-type
 	// sizes, they must be wrapped in another widget
 	glm::ivec2 report = uiHandler.get()->findSizeTextLine(valueAttrib, thisFace, thisCurrentBitmap);
-	sizeX = report.x;
-	sizeY = report.y = style.fontSize;
+	sizeX = style.minX = report.x;
+	sizeY = style.minY = report.y = style.fontSize;
 	return report;
 }
 // Report the location of child widget relative to it's siblings (Per-Widget behavior, this is how a widget
@@ -119,13 +119,13 @@ void Text::bindBuffers()
 }
 void Text::drawSelf(ShaderTransform xform)
 {
-	glm::vec3 textColor;
+	glm::vec4 textColor;
 	glm::vec2 screenLocation;
 	// Draw the drop shadow if applicable
 	if (style.boxShadowSizeX != 0 || style.boxShadowSizeY != 0)
 	{
 		screenLocation = getScreenLocation(style.boxShadowSizeX, style.boxShadowSizeY, true);
-		textColor = style.boxShadowColor.makeVec3();
+		textColor = style.boxShadowColor.makeVec4();
 		uiHandler.get()->renderTextLine(shader, textColor, style.boxShadowAlpha, valueAttrib,
 			thisFace, thisCurrentBitmap,
 			screenLocation, glm::ivec2(transform.boundBox.x1, transform.boundBox.y1),
@@ -133,7 +133,7 @@ void Text::drawSelf(ShaderTransform xform)
 	}
 
 	screenLocation = getScreenLocation(0, 0, true);
-	textColor = style.fillColor.makeVec3();
+	textColor = style.fillColor.makeVec4();
 	uiHandler.get()->renderTextLine(shader, textColor, style.fillAlpha, valueAttrib,
 		thisFace, thisCurrentBitmap, 
 		screenLocation, glm::ivec2(transform.boundBox.x1, transform.boundBox.y1),

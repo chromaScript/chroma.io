@@ -42,14 +42,15 @@ public:
 	glm::ivec2 findSizeTextLine(std::string textLine,
 		std::shared_ptr<CachedFace> thisFace, std::shared_ptr<CachedCharBitmap> thisCurrentBitmap);
 	// Render Functions
-	void renderTextLine(std::shared_ptr<Shader> shader, glm::vec3 textColor, float alpha, std::string textLine,
+	void renderTextLine(std::shared_ptr<Shader> shader, glm::vec4 textColor, float alpha, std::string textLine,
 		std::shared_ptr<CachedFace> thisFace, std::shared_ptr<CachedCharBitmap> thisCurrentBitmap, 
 		glm::vec2 startLoc, glm::ivec2 offsetPos,
 		int VAO, int VBO, int EBO);
-
+	void renderTextInput(std::shared_ptr<Shader> textShader, std::string textLine,
+		std::shared_ptr<CachedFace> thisFace, std::shared_ptr<CachedCharBitmap> thisCurrentBitmap,
+		glm::vec2 startLoc, glm::ivec2 offsetPos, glm::vec4 textColor, glm::vec4 highlightColor, glm::vec4 focusColor,
+		std::vector<unsigned int> buffers, glm::ivec4 widgetBounds, int cursorPos, int selectStart, int selectEnd,
+		bool drawCursor, bool drawSelection, bool calculateVertData, float* cursorData, float* selectionData);
 };
-
-
-
 
 #endif

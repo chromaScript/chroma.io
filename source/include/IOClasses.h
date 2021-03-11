@@ -11,7 +11,6 @@
 #include "methods/In_ShapeField.h"
 #include "methods/In_Fan.h"
 #include "methods/In_RadialField.h"
-#include "methods/In_Scanline.h"
 #include "methods/In_ShapeDraw.h"
 #include "methods/In_ShapeField.h"
 #include "methods/In_ShapeLine.h"

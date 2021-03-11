@@ -104,11 +104,11 @@ void LInterpreter::visit(std::shared_ptr<LStmt_Root> stmt)
 	basicOnly = false;
 
 	// Make the widget (may only have one child)
-	ui.get()->widgets.push_back(stmt.get()->childElements[0].get()->acceptBuilder(*this));
-	ui.get()->widgets.back().get()->isRoot = true;
-	ui.get()->widgets.back().get()->rootId = stmt.get()->id;
-	ui.get()->widgets.back().get()->setLocation((int)stmt.get()->defaultX, (int)stmt.get()->defaultY);
-	ui.get()->widgets.back().get()->_namespace = currentEnvironment.get()->_namespace;
+	ui.get()->rootWidgets.push_back(stmt.get()->childElements[0].get()->acceptBuilder(*this));
+	ui.get()->rootWidgets.back().get()->isRoot = true;
+	ui.get()->rootWidgets.back().get()->rootId = stmt.get()->id;
+	ui.get()->rootWidgets.back().get()->setLocation((int)stmt.get()->defaultX, (int)stmt.get()->defaultY);
+	ui.get()->rootWidgets.back().get()->_namespace = currentEnvironment.get()->_namespace;
 
 	// Clean up and exit
 	currentElement.reset();
@@ -173,6 +173,9 @@ std::shared_ptr<Widget> LInterpreter::visit(std::shared_ptr<LExpr_Element> expr)
 	case LTokenType::IMAGE:
 		shader = console.get()->owner.get()->getWidgetShader(); break;
 	case LTokenType::TEXT:
+	case LTokenType::LINE:
+	case LTokenType::BLOCK:
+	case LTokenType::PARAGRAPH:
 		shader = console.get()->owner.get()->getTextShader(); break;
 	case LTokenType::GRADIENT_BOX:
 		shader = console.get()->owner.get()->getGradientBoxShader(); break;
@@ -310,6 +313,8 @@ std::shared_ptr<Widget> LInterpreter::visit(std::shared_ptr<LExpr_ElementAttrib>
 	case LTokenType::ON_MOUSE_WHEELDOWN:
 	case LTokenType::ON_RESIZE:
 	case LTokenType::ON_RELEASE:
+	case LTokenType::ON_CANCEL:
+	case LTokenType::ON_ENTRY:
 		if (basicOnly) { unboundAttribs.push_back(expr); break; }
 		else
 		{
