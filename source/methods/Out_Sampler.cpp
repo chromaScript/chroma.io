@@ -1,6 +1,7 @@
 #include "../include/methods/Out_Sampler.h"
 #include "../include/Toolbox.h"
 #include "../include/ToolSettings.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/Color.h"
 
 #ifndef APPLICATION_H
@@ -62,10 +63,11 @@ void Out_Sampler::preview(Application* sender, VertexData* dat)
 		// Modify the sample color accordingly
 	}
 	// Send the FG Color Sample
-	sender->ui.get()->updateFGColor(sample, x1, y1);
+	if (dat->activeModKey == samplerSettings->sampleBGModKey) { sender->ui.get()->updateBGColor(sample, x1, y1); }
+	else { sender->ui.get()->updateFGColor(sample, x1, y1); }
 
 	// Do BG Color matching if enabled
-	if (samplerSettings->useAutoBGUpdater)
+	if (samplerSettings->useAutoBGUpdater && dat->activeModKey != samplerSettings->sampleBGModKey)
 	{
 		CColor bgSample = sample;
 		// Modify the BG Color

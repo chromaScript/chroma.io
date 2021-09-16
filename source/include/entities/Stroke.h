@@ -7,6 +7,9 @@
 #include "../SharedHelper.h"
 #include "../Color.h"
 #include "../ToolSettings.h"
+#include "../toolSettings/ToolSettings_Forward.h"
+
+class Tool;
 
 #include <memory>
 
@@ -51,19 +54,30 @@ protected:
 	unsigned int rbo = 0;
 	float* strokeImageData = nullptr;
 	float* tempImageData = nullptr;
-
-	// Tool / Brush settings Note: will directly read from the associated tool later
-	int tipSize = 12;
-	float tipSpacing = 1.0f;
-	float strokeAlpha = 1.0f; // This is the maximum opacity value for the stroke, in which opacityByPressure will operate
-	CColor strokeColor = red;
-	bool opacityByPressure = true;
-	bool sizeByPressure = true;
-	bool rotationByDirection = true;
-	// Note: May want to add additional textureID slots to this for Dual Brush?
+	int compositePadding = 0;
 
 	// Stroke Data
+	int dataID = 0;
+	std::vector<char> serialSettingsData;
 	std::vector<StrokeShard> shards;
+	float shardValue_min = 1.0f;
+	float shardValue_max = 0.0f;
+	glm::vec3 averageDir = glm::vec3(0.0f);
+	glm::vec2 totalPos = glm::vec2(0.0f);
+	glm::vec3 averagePos = glm::vec3(0.0f);
+
+	bool rebuildBounds = true;
+	float maskDir_cutoffFactor = 10.0f;
+	float maskDir_spacingFactor = 8.0f;
+	TSetProp maskDir_cutoffMode = TSetProp::null;
+	glm::vec2 fillX = glm::vec2(0.0f);
+	glm::vec2 fillY = glm::vec2(0.0f);
+	glm::vec3 center = glm::vec3(0.0f);
+	glm::vec3 dir_average = glm::vec3(0.0f);
+	glm::vec3 dirIntersectA = glm::vec3(0.0f);
+	glm::vec3 dirIntersectB = glm::vec3(0.0f);
+	float stretchLength = 0.0f;
+	bool isPortrait = false;
 
 	// Shard Management
 	int lastShardID = 0;
@@ -80,12 +94,16 @@ protected:
 	// Inherited Tool Settings
 	TSet_Basic basic;
 	TSet_Image image;
+	TSet_Character character;
 	TSet_Alpha alpha;
+	TSet_Color color;
+	TSet_Scatter scatter;
+	TSet_Effects effects;
 
 public:
 	// Constructor / Destructor
 	Stroke();
-	Stroke(std::shared_ptr<Shader> shader, TSet_Basic* basicPtr, TSet_Image* imagePtr, TSet_Alpha* alphaPtr);
+	Stroke(std::shared_ptr<Shader> shader, std::shared_ptr<Tool> tool);
 	void initializeDebugData();
 	~Stroke();
 
@@ -94,34 +112,32 @@ public:
 	std::shared_ptr<Shader> compositeFrameShader;
 	std::shared_ptr<Shader> debugLineShader;
 
-	// Shard Properties (Usually taken from the tool settings)
-	void setTipProperties(int size, float spacing);
-	void setRGBA(float r, float g, float b, float a);
-	int getTipSize() { return tipSize; }
-
 	// Shard Modification Functions
-	CColor modulateColor(float scalar);
 	float modulateOpacity(float scalar);
 	glm::vec4 modulateScale(float scalar);
-	//glm::vec3 lerpDir(glm::vec3 dirA, glm::vec3 dirB, float t);
+	void updateGenData(int lastShard, glm::vec3 pos, glm::vec3 dir, float count, float trueSpacing, float tipSize);
 
 	// Container Functions
-	void createNewShard(int ID, glm::vec3 pos, glm::vec3 dir, glm::vec4 scale,
-		CColor color, float opacity, float pressure, float rotation, float tiltx, float tilty, float velocity);
+	void generateShards(int& shardCount, int& lastShardID, glm::vec3 pos, glm::vec3 dir, float scale,
+		CColor fgColorIn, CColor bgColorIn, float pressure,
+		float rotation, float tiltx, float tilty, float velocity);
+	void createNewShard(int ID, glm::vec3 pos, glm::vec3 dir, float scale,
+		CColor color, float opacity, float flow, float pressure, float rotation, float tiltx, float tilty, float velocity);
 
 	// Shard Management Functions
-	//void processNewAnchor();
 	void processNewAnchor();
 	void rebuildFragmentShards();
 	void rebuildAnchorShards(int anchorID);
 
 	// Data Functions
-	void setVertData_stroke(float size);
+	void setVertData_stroke(float size, float scaleX, float scaleY);
 	void setVertData_composite(int width, int height);
 	void setCompositePos(float x, float y);
 	void reframeCompositeData(float widthNew, float heightNew, float xposNew, float yposNew);
+	void cleanup_stroke();
 
 	// Render Functions
+	void setCompositeShaderUniforms(ShaderTransform xform);
 	void setBoundsDraw(EntityTransform transform);
 	void disableBoundsDraw();
 	void setLineDraw(std::vector<glm::vec3> lines);

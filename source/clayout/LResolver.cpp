@@ -176,6 +176,7 @@ void LResolver::visit(std::shared_ptr<LStmt_Proto> stmt)
 	std::vector<std::shared_ptr<LToken>> attribs;
 	for (std::shared_ptr<LExpr> attribExpr : stmt.get()->attributes)
 	{
+		if (attribExpr == nullptr) { continue; }
 		attribs.push_back(attribExpr.get()->acceptResolver(*this));
 	}
 	for (std::shared_ptr<LToken> attribToken : attribs)

@@ -30,6 +30,7 @@ DataLayer::DataLayer(glm::ivec2 dimensions, std::string name, CColor fill, std::
 	bindTexture(transform.boundBox.x2, transform.boundBox.y2);
 
 	std::cout << "NEW::DATALAYER::UEID=" << UEID 
+		<< "::VBO=" << this->VBO
 		<< "::NAME=" << name.c_str() 
 		<< "::COLOR=" << static_cast<int>(fill.r) << ", "
 		<< static_cast<int>(fill.g) << ", "

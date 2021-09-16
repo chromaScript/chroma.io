@@ -40,6 +40,7 @@ public:
 		std::shared_ptr<Shader> shader,
 		std::shared_ptr<Fonts> uiHandler);
 	virtual void buildWidget();
+	virtual void clearData();
 
 	// Data Functions (Text Specific)
 	void setCursorPos(int pos);

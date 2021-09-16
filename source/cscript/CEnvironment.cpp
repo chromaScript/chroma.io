@@ -57,7 +57,7 @@ std::shared_ptr<CEnvironment> CEnvironment::virtualize(std::string _namespaceNew
 		virtualBox.get()->values.insert(
 			std::pair<std::string, std::shared_ptr<CObject>>(
 				item.first,
-				nullptr));
+				item.second));
 		virtualBox.get()->values.at(item.first) = console.get()->copyObj(item.second, item.first);
 	}
 	return virtualBox;

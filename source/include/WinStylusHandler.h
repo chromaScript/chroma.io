@@ -39,6 +39,7 @@ private:
 	PACKET_PROPERTY* packetProperties = NULL;
 
 	//
+	bool doneCalibratingStylus = false;
 	int scaleSetCount = 0;
 	int scaleCountMax = 2500;
 protected:
@@ -47,7 +48,7 @@ public:
 	LONG refCount = 0;			// COM object reference count
 	IUnknown* FTMarshaler = nullptr;	// free-threaded marshaller
 	// Scaling Factor
-	double downscaleFactor = 26.4;
+	double downscaleFactor = 0;
 	//Application* owner;
 	std::shared_ptr<Application> owner = nullptr;
 
@@ -91,6 +92,8 @@ public:
 	bool getStylusIsHover();
 	// Scale Fixing
 	bool updateDownscaleFactor(LONG &xpos, LONG &ypos, double& mouseX, double& mouseY);
+	void resetCalibration();
+	void stopCalibration();
 };
 
 #endif

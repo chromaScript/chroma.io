@@ -1,0 +1,37 @@
+[header]
+
+metadata 
+{
+ID=0::SID=-1::id = 3 ;
+ID=1::SID=-1::inID = 3 ;
+ID=2::SID=-1::outID = 102 ;
+ID=3::SID=-1::name = "Zoom Camera" ;
+ID=8::SID=-1::useTipAsIcon = "true" ;
+ID=15::SID=-1::tags = "" ;
+ID=16::SID=-1::category = "" ;
+ID=17::SID=-1::toolType = "" ;
+ID=18::SID=-1::date = "" ;
+ID=19::SID=-1::author = "" ;
+ID=20::SID=-1::bindType = 0 ;
+ID=21::SID=-1::keySig = 900 ;
+ID=24::SID=-1::cursorUp = "Zoom In" ;
+ID=25::SID=-1::cursorDown = "Zoom Out" ;
+ID=30::SID=-1::input = "Zoom Camera" ;
+ID=31::SID=-1::output = "Camera Zoom" ;
+ID=32::SID=-1::controlScheme = "ZOOM" ;
+ID=41::SID=-1::activeSettingsPage = 0 ;
+ID=51::SID=-1::lockSettings = "false" ;
+ID=52::SID=-1::autoSaveSettings = "false" ;
+}
+
+zoom 
+{
+ID=200::SID=-1::scrubThreshold = 16 ;
+ID=201::SID=-1::minZoomFactor = 50.000000 ;
+ID=202::SID=-1::maxZoomFactor = 1500.000000 ;
+ID=210::SID=-1::stepZoomAmount = 200.000000 ;
+ID=220::SID=-1::zoomSpeed = 5.000000 ;
+ID=221::SID=-1::zoomFactor_A = 0.300000 ;
+}
+
+[end]

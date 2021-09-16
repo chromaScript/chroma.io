@@ -38,7 +38,6 @@ public:
 	std::string _namespace = "";
 	LTokenType type = LTokenType::NIL;
 	std::vector<std::shared_ptr<Widget>> childWidgets;
-	std::vector<std::weak_ptr<Widget>> _outsideBoundWidgets;
 	std::map<int, std::weak_ptr<Widget>> outsideBoundWidgets;
 	std::weak_ptr<Widget> parentWidget;
 
@@ -50,6 +49,11 @@ public:
 	bool canResize = false; // Might not need this variable
 	bool popupIsBlocking = false;
 	bool isActive = false;
+	bool applyOverflowMask = false;
+	//overflowBox is given as BottomLeft.xy, TopRight.xy
+	std::weak_ptr<Widget> overflowTarget;
+	glm::vec4 overflowBox = glm::vec4(0.0f);
+	glm::vec4 overflowOffset = glm::vec4(0.0f);
 
 	// Style Variables
 	WidgetStyle style;
@@ -84,6 +88,8 @@ public:
 	int findAvailableHeight(std::shared_ptr<Widget> askingWidget);
 	void placeWidget();
 	virtual void buildWidget() = 0;
+	void checkOverflow();
+	std::shared_ptr<Widget> duplicate(std::shared_ptr<Widget> prototypeRoot, std::shared_ptr<Widget> parent, std::string rootID, bool isRoot);
 
 	// State Functions
 	void setDirty() { isThisDirty = true; }
@@ -116,6 +122,7 @@ public:
 	glm::ivec2 chainLocation();
 	glm::vec2 getScreenLocation(int offsetX, int offsetY, bool createNDC);
 	glm::ivec4 getColliderBox();
+	glm::vec4 calculateOverflowMask();
 	// Child Organization Functions
 	glm::ivec2 horizontalArrangement(std::shared_ptr<Widget> childWidget);
 	glm::ivec2 verticalArrangement(std::shared_ptr<Widget> childWidget);
@@ -123,7 +130,6 @@ public:
 	// Measurement & Data Set/Get
 	void setBounds_Widget();
 	void setVertData_Widget();
-	
 
 	// Child Collision Check
 	void checkOutofBoundsWidgets(std::weak_ptr<Widget> root, glm::ivec4 rootBounds);
@@ -148,15 +154,26 @@ public:
 
 	// Parent/Child Get Functions
 	std::weak_ptr<Widget> getRoot();
+	std::vector<int> reportParentUEIDChain();
 	std::weak_ptr<Widget> getChild_byID(std::string id);
 	std::weak_ptr<Widget> getChild_byName(std::string id);
 	void getChild_byClass(std::shared_ptr<std::vector<std::weak_ptr<Widget>>> bucket, std::string className, std::string idExclusion);
 	void getChild_byType(std::shared_ptr<std::vector<std::weak_ptr<Widget>>> bucket, LTokenType type, std::string idExclusion);
+	bool removeChild_byID(std::shared_ptr<CInterpreter> interpreter, std::string childID);
+	bool removeChildren_byClass(std::shared_ptr<CInterpreter> interpreter, std::string className);
+	bool deleteWidget();
+	bool deleteSelf();
+	virtual void clearData() = 0;
+
 
 	// Property Get/Set Functions
 	bool isInputType(LTokenType type);
+	bool updateChildOrder(std::string idName, int moveNumber, bool ignoreHidden, bool asLiteral, bool setVisible);
+	std::weak_ptr<Widget> addChildWidget(std::shared_ptr<CInterpreter> interpreter, 
+		std::string protoID, std::string childID, std::vector<std::string> extraClasses, int moveNumber);
 	bool resetProperty(std::shared_ptr<CInterpreter> interpreter, std::string name);
 	bool setProperty(std::shared_ptr<CInterpreter> interpreter, std::string name, std::shared_ptr<CObject> value);
+	bool setProperty_value(std::shared_ptr<CInterpreter> interpreter, std::string name, std::shared_ptr<CObject> value);
 	bool setChildProperty(int switchType, std::shared_ptr<CInterpreter> interpreter, std::string id, std::string name, std::shared_ptr<CObject> value);
 	std::shared_ptr<CObject> getProperty(std::shared_ptr<CInterpreter> interpreter, std::string name);
 

@@ -1,6 +1,7 @@
 #include "../include/methods/In_Lasso.h"
 #include "../include/methods/InputMethod.h"
 #include "../include/ToolSettings.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/Tool.h"
 
 #ifndef APPLICATION_H
@@ -26,7 +27,7 @@ int In_Lasso::move(Application* sender, MouseEvent dat)
 	bool isNew = (fragData.anchors.front().flag == FLAG_NEW_INPUT) ? true : false;
 	if (controlScheme == TSetType::continuous)
 	{
-		if (!continuousMove(sender, dat, &continuous, nullptr, false, pos, dir)) { return INPUT_WAIT; }
+		if (!continuousMove(sender, dat, &continuous, nullptr, false, continuous.anchorSpacing, pos, dir)) { return INPUT_WAIT; }
 	}
 
 	anchorIDCount++;

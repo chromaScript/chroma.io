@@ -170,7 +170,7 @@ glm::ivec2 Widget::setSizeByChildren()
 	int potentialMaxY = findMaxY();
 	if (potentialMaxY > style.maxY && style.maxY > 0 && style.relMaxY != true) { potentialMaxY = (int)style.maxY; }
 	// 2. Size widget according to it's children/self if applicable
-	if (style.overflowX == UI_OVERFLOW_AUTO && childWidgets.size() != 0)
+	if ((style.overflowX == UI_OVERFLOW_AUTO || style.overflowX == UI_OVERFLOW_AUTOBLOCK) && childWidgets.size() != 0)
 	{
 		int childSizeSumX = 0;
 		size_t numChildren = childWidgets.size();
@@ -243,7 +243,7 @@ glm::ivec2 Widget::setSizeByChildren()
 		outSize.x = (currentSizeX > potentialMinX) ? currentSizeX : potentialMinX;
 		outSize.x = (outSize.x > potentialMaxX) ? potentialMaxX : outSize.x;
 	}
-	if (style.overflowY == UI_OVERFLOW_AUTO && childWidgets.size() != 0)
+	if ((style.overflowY == UI_OVERFLOW_AUTO || style.overflowY == UI_OVERFLOW_AUTOBLOCK) && childWidgets.size() != 0)
 	{
 		int childSizeSumY = 0;
 		size_t numChildren = childWidgets.size();
@@ -364,7 +364,179 @@ glm::ivec2 Widget::setSizeByParent()
 }
 void Widget::placeWidget()
 {
-	location = reportLocation();
+	if (checkVisibility()) { location = reportLocation(); }
+	else { location = glm::ivec2(0, 0); }
+	//location = reportLocation();
+}
+void Widget::checkOverflow()
+{
+	if (!checkVisibility() || style.overrideClipping == true) { applyOverflowMask = false; }
+	else
+	{
+		std::shared_ptr<Widget> dir = (parentWidget.expired()) ? nullptr : parentWidget.lock();
+
+		if (dir == nullptr && (style.overflowX == UI_OVERFLOW_HIDDEN || style.overflowY == UI_OVERFLOW_HIDDEN))
+		{
+			applyOverflowMask = true;
+			overflowTarget = weak_from_this();
+			overflowBox = glm::vec4(
+				0.0f,
+				0.0f,
+				sizeX,
+				sizeY
+			);
+			return;
+		}
+		bool intersectNextBox = false;
+		glm::vec2 overflowOffsetOriginal = glm::vec2(0.0f);
+		glm::vec4 intersectBox = glm::vec4(0.0f);
+		glm::vec4 adj = glm::vec4(0.0f);
+		while (dir != nullptr)
+		{
+			// Allow a widget with a BLOCK set on overflow to prevent all it's childs widgets from receiving overflow above it.
+			// Widgets nested deeper into the blocking element, with overflow sandwiched between the block and child, should
+			// still receive an overflow mask.
+			WidgetStyle* dirStyle = &dir.get()->style;
+			if (dirStyle->overrideClipping == true)
+			{
+				return;
+			}
+			if (dirStyle->overflowX == UI_OVERFLOW_HIDDEN || dirStyle->overflowY == UI_OVERFLOW_HIDDEN)
+			{
+				if (!intersectNextBox)
+				{
+					applyOverflowMask = intersectNextBox = true;
+					overflowTarget = dir.get()->weak_from_this();
+					overflowBox = glm::vec4(
+						0.0f,
+						0.0f,
+						dir.get()->sizeX,
+						dir.get()->sizeY);
+					glm::vec2 screenOffset = overflowTarget.lock()->getScreenLocation(0, 0, false);
+					screenOffset.y += overflowBox.w;
+					overflowOffsetOriginal = screenOffset;
+					overflowBox = glm::vec4(
+						overflowBox.x + screenOffset.x,
+						overflowBox.y + (WINDOW_HEIGHT - screenOffset.y),
+						overflowBox.z + screenOffset.x,
+						overflowBox.w + (WINDOW_HEIGHT - screenOffset.y)
+					);
+				}
+				else
+				{
+					intersectBox = glm::vec4(
+						0.0f,
+						0.0f,
+						dir.get()->sizeX,
+						dir.get()->sizeY);
+					glm::vec2 intersectOffset = dir.get()->getScreenLocation(0, 0, false);
+					intersectOffset.y += intersectBox.w;
+					intersectBox = glm::vec4(
+						intersectBox.x + intersectOffset.x,
+						intersectBox.y + (WINDOW_HEIGHT - intersectOffset.y),
+						intersectBox.z + intersectOffset.x,
+						intersectBox.w + (WINDOW_HEIGHT - intersectOffset.y));
+
+					if (idAttrib == "tsf_fx_power")
+					{
+						//std::cout << "INTERSECT : " << vec4ToString(intersectBox) << std::endl;
+						//std::cout << "OVERFLOW : " << vec4ToString(overflowBox) << std::endl;
+						//std::cout << "OFFSET-ORIGINAL : " << vec2ToString(overflowOffsetOriginal) << std::endl;
+					}
+					if (intersectBox.w < overflowBox.w) { adj.w = overflowBox.w - intersectBox.w; }
+					if (intersectBox.y > overflowBox.y) { adj.y = overflowBox.y - intersectBox.y; }
+
+					if (idAttrib == "tsf_fx_power")
+					{
+						//std::cout << "OVERFLOW : " << vec4ToString(overflowBox) << std::endl;
+					}
+				}
+			}
+			dir = (dir.get()->parentWidget.expired()) ? nullptr : dir.get()->parentWidget.lock();
+		}
+
+		overflowBox = glm::vec4(
+			overflowBox.x - overflowOffsetOriginal.x,
+			overflowBox.y - (WINDOW_HEIGHT - overflowOffsetOriginal.y),
+			overflowBox.z - overflowOffsetOriginal.x,
+			overflowBox.w - (WINDOW_HEIGHT - overflowOffsetOriginal.y)
+		);
+		overflowOffset.w = adj.w;
+		overflowOffset.y = adj.y;
+
+		if (idAttrib == "tsf_fx_power")
+		{
+			//std::cout << "OUT-OFFSET : " << vec4ToString(overflowOffset) << std::endl;
+			//std::cout << "OVERFLOW : " << vec4ToString(overflowBox) << std::endl;
+			//sstd::cout << "" << std::endl;
+		}
+	}
+}
+
+std::shared_ptr<Widget> Widget::duplicate(std::shared_ptr<Widget> prototypeRoot, std::shared_ptr<Widget> parent, std::string rootID, bool isRoot)
+{
+	if (isRoot)
+	{
+		std::map<std::string, std::string> basicAttribs = {
+			{"name", prototypeRoot.get()->nameAttrib},
+			{"img", prototypeRoot.get()->imgAttrib.string()},
+			{"value", prototypeRoot.get()->valueAttrib},
+			{"innerContent", prototypeRoot.get()->innerContent},
+		};
+		std::shared_ptr<Widget> duplicateWidget = chromaIO.get()->ui.get()->createWidget(
+			prototypeRoot.get()->type,
+			basicAttribs,
+			parent.get()->weak_from_this(),
+			prototypeRoot.get()->style.makeCopy(),
+			prototypeRoot.get()->shader
+		);
+		for (std::shared_ptr<Widget> childWidget : prototypeRoot.get()->childWidgets)
+		{
+			duplicateWidget.get()->childWidgets.push_back(childWidget.get()->duplicate(nullptr, duplicateWidget, rootID, false));
+		}
+		duplicateWidget.get()->_namespace = prototypeRoot.get()->_namespace;
+		duplicateWidget.get()->classAttribs = prototypeRoot.get()->classAttribs;
+		duplicateWidget.get()->groupsAttribs = prototypeRoot.get()->groupsAttribs;
+		duplicateWidget.get()->isDraggable = prototypeRoot.get()->isDraggable;
+		duplicateWidget.get()->isDroppable = prototypeRoot.get()->isDroppable;
+		duplicateWidget.get()->dragType = prototypeRoot.get()->dragType;
+		duplicateWidget.get()->dropType = prototypeRoot.get()->dropType;
+		duplicateWidget.get()->callbackMap = prototypeRoot.get()->callbackMap;
+		for (std::string className : duplicateWidget.get()->classAttribs)
+		{
+			chromaIO.get()->ui.get()->addToClassTable(className, rootID);
+		}
+		return duplicateWidget;
+	}
+	else
+	{
+		std::map<std::string, std::string> basicAttribs = {
+			{"name", this->nameAttrib},
+			{"img", this->imgAttrib.string()},
+			{"value", this->valueAttrib},
+			{"innerContent", this->innerContent},
+		};
+		std::shared_ptr<Widget> duplicateChild = chromaIO.get()->ui.get()->createWidget(
+			this->type,
+			basicAttribs,
+			parent.get()->weak_from_this(),
+			this->style.makeCopy(),
+			this->shader
+		);
+		for (std::shared_ptr<Widget> childWidget : this->childWidgets)
+		{
+			duplicateChild.get()->childWidgets.push_back(childWidget.get()->duplicate(nullptr, childWidget, rootID, false));
+		}
+		duplicateChild.get()->_namespace = this->_namespace;
+		duplicateChild.get()->classAttribs = this->classAttribs;
+		duplicateChild.get()->groupsAttribs = this->groupsAttribs;
+		duplicateChild.get()->isDraggable = this->isDraggable;
+		duplicateChild.get()->isDroppable = this->isDroppable;
+		duplicateChild.get()->dragType = this->dragType;
+		duplicateChild.get()->dropType = this->dropType;
+		duplicateChild.get()->callbackMap = this->callbackMap;
+		return duplicateChild;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -825,7 +997,24 @@ glm::vec2 Widget::getScreenLocation(int offsetX, int offsetY, bool createNDC)
 	}
 	return out;
 }
-
+glm::vec4 Widget::calculateOverflowMask()
+{
+	glm::vec2 screenOffset = overflowTarget.lock()->getScreenLocation(0, 0, false);
+	screenOffset.y += overflowBox.w;
+	glm::vec4 outBox = glm::vec4(
+		overflowBox.x + screenOffset.x,
+		overflowBox.y + (WINDOW_HEIGHT - screenOffset.y),
+		overflowBox.z + screenOffset.x,
+		overflowBox.w + (WINDOW_HEIGHT - screenOffset.y)
+	);
+	// Warning : This functionality for intersecting multiple overflow masks is only applied to the top edge currently, for scrolling
+	// multiple overflows upward or left/right, this is not implemented yet.
+	outBox.w -= overflowOffset.w;
+	outBox.y -= overflowOffset.w;
+	//outBox.w += -overflowOffset.y;
+	//outBox.y += overflowOffset.y;
+	return outBox;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1100,7 +1289,7 @@ bool Widget::selfBlur()
 	if (checkVisibility() && callbackMap.count("onblur"))
 	{
 		std::cout << "WIDGET-BLURRED::ID,CLASSES= " <<
-			idAttrib + ", " << stringVecToString(classAttribs) << std::endl;
+			idAttrib + ", " << stringVecToString(classAttribs, true) << std::endl;
 		if (callbackMap.at("onblur").size() != 0)
 		{
 			chromaIO.get()->getUI().get()->activeWidget = weak_from_this();
@@ -1420,6 +1609,28 @@ std::weak_ptr<Widget> Widget::getRoot()
 	else { parent.reset(); return parent; }
 }
 
+std::vector<int> Widget::reportParentUEIDChain()
+{
+	std::vector<int> outVec;
+
+	if (isRoot) { return outVec; }
+	std::weak_ptr<Widget> parent = parentWidget;
+	while (!parent.expired())
+	{
+		if (parent.lock().get()->parentWidget.expired() || parent.lock().get()->isRoot)
+		{
+			outVec.push_back(parent.lock().get()->getUEID());
+			break;
+		}
+		else
+		{
+			outVec.push_back(parent.lock().get()->getUEID());
+			parent = parent.lock().get()->parentWidget;
+		}
+	}
+	return outVec;
+}
+
 void Widget::getChild_byClass(std::shared_ptr<std::vector<std::weak_ptr<Widget>>> bucket, std::string className, std::string idExclusion)
 {
 	for (std::shared_ptr<Widget> child : childWidgets)
@@ -1486,6 +1697,52 @@ std::weak_ptr<Widget> Widget::getChild_byName(std::string nameAttrib)
 	return selection;
 }
 
+bool Widget::removeChild_byID(std::shared_ptr<CInterpreter> interpreter, std::string childID)
+{
+	return false;
+}
+
+bool Widget::removeChildren_byClass(std::shared_ptr<CInterpreter> interpreter, std::string className)
+{
+	return false;
+}
+
+bool Widget::deleteWidget()
+{
+	for (std::shared_ptr<Widget> child : childWidgets)
+	{
+		child.get()->deleteWidget();
+	}
+	return deleteSelf();
+}
+
+bool Widget::deleteSelf()
+{
+	// Remove listings from UI WidgetIDTable
+	if (idAttrib != "" && chromaIO.get()->ui.get()->widgetIDTable.count(idAttrib) == 1)
+	{
+		chromaIO.get()->ui.get()->widgetIDTable.erase(idAttrib);
+	}
+	// Empty child widget list
+	childWidgets.clear(); childWidgets.shrink_to_fit();
+	outsideBoundWidgets.clear();
+	// Reset target widgets
+	parentWidget.reset();
+	overflowTarget.reset();
+	// Clear the callbackMap
+	for (auto const& item : callbackMap)
+	{
+		for (std::shared_ptr<CStmt> callFunc : item.second)
+		{
+			callFunc.reset();
+		}
+	}
+	callbackMap.clear();
+	// Reset all pointer and openGL buffers
+	clearData(); deleteBuffers();
+	return true;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Child Location Finding
@@ -1505,9 +1762,11 @@ glm::ivec2 Widget::horizontalArrangement(std::shared_ptr<Widget> childWidget)
 	size_t childIndex = 0;
 	int nChildren = (int)childWidgets.size() - 1;
 	// Get the correct childWidget
-	for (std::shared_ptr<Widget> thisChildren : childWidgets)
+	//for (std::shared_ptr<Widget> thisChildren : childWidgets)
+	for (int c = 0; c < childWidgets.size(); c++)
 	{
-		if (childWidget == thisChildren) { break; }
+		//if (childWidget == thisChildren) { break; }
+		if (childWidget == childWidgets[c]) { break; }
 		else { childIndex++; }
 	}
 	// Floating Left
@@ -1562,9 +1821,23 @@ glm::ivec2 Widget::horizontalArrangement(std::shared_ptr<Widget> childWidget)
 			childLoc.x += childStyle.getOffset().left - childStyle.getOffset().right;
 			childLoc.y += childStyle.getOffset().top - childStyle.getOffset().bottom;
 		}
-		WidgetStyle leftStyle = childWidgets[childIndex - 1].get()->style;
-		glm::ivec2 leftSize = childWidgets[childIndex - 1].get()->getSize();
-		glm::ivec2 leftLoc = childWidgets[childIndex - 1].get()->getLocation();
+
+		int previousValidChild = 0;
+		bool foundValid = false; int z = 1;
+		while (!foundValid && ((int)childIndex - z) >= 0)
+		{
+			if (childWidgets[childIndex - z].get()->checkVisibility() == true &&
+				childWidgets[childIndex - z].get()->style.position != UI_POSITION_ABSOLUTE)
+			{
+				foundValid = true; previousValidChild = z; break;
+			}
+			else { z += 1; }
+		}
+
+		WidgetStyle leftStyle = childWidgets[childIndex - previousValidChild].get()->style;
+		glm::ivec2 leftSize = childWidgets[childIndex - previousValidChild].get()->getSize();
+		glm::ivec2 leftLoc = childWidgets[childIndex - previousValidChild].get()->getLocation();
+
 		int k = leftLoc.x + leftSize.x + leftStyle.getBorder().right + childStyle.getBorder().left;
 		childLoc.x = (childLoc.x > k) ? childLoc.x : k;
 		return childLoc;
@@ -1690,9 +1963,22 @@ glm::ivec2 Widget::horizontalArrangement(std::shared_ptr<Widget> childWidget)
 		// Widget locations are updated from begin-end, so the left-child should have correct data
 		if (childIndex < nChildren)
 		{
-			WidgetStyle leftStyle = childWidgets[childIndex - 1].get()->style;
-			glm::ivec2 leftSize = childWidgets[childIndex - 1].get()->getSize();
-			glm::ivec2 leftLoc = childWidgets[childIndex - 1].get()->getLocation();
+			int previousValidChild = 0;
+			bool foundValid = false; int z = 1;
+			while (!foundValid && ((int)childIndex - z) >= 0)
+			{
+				if (childWidgets[childIndex - z].get()->checkVisibility() == true &&
+					childWidgets[childIndex - z].get()->style.position != UI_POSITION_ABSOLUTE)
+				{
+					foundValid = true; previousValidChild = z; break;
+				}
+				else { z += 1; }
+			}
+
+			WidgetStyle leftStyle = childWidgets[childIndex - previousValidChild].get()->style;
+			glm::ivec2 leftSize = childWidgets[childIndex - previousValidChild].get()->getSize();
+			glm::ivec2 leftLoc = childWidgets[childIndex - previousValidChild].get()->getLocation();
+
 			int childLocWantX = (thisSize.x - (childSize.x + childStyle.getMargin().left + childStyle.getMargin().right)) / 2;
 			// Because location will otherwise be for virtual margin position, not content position
 			childLocWantX += childStyle.getMargin().left;
@@ -1724,9 +2010,11 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 	size_t childIndex = 0;
 	int nChildren = (int)childWidgets.size() - 1;
 	// Get the correct childWidget
-	for (std::shared_ptr<Widget> thisChildren : childWidgets)
+	//for (std::shared_ptr<Widget> thisChildren : childWidgets)
+	for (int c = 0; c < childWidgets.size(); c++)
 	{
-		if (childWidget == thisChildren) { break; }
+		//if (childWidget == thisChildren) { break; }
+		if (childWidget == childWidgets[c]) { break; }
 		else { childIndex++; }
 	}
 	// Floating Left
@@ -1771,13 +2059,26 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 		{
 			childLoc.x += childStyle.getOffset().left - childStyle.getOffset().right;
 		}
+		
+		int previousValidChild = 0;
+		bool foundValid = false; int z = 1;
+		while (!foundValid && ((int)childIndex - z) >= 0)
+		{
+			if (childWidgets[childIndex - z].get()->checkVisibility() == true &&
+				childWidgets[childIndex - z].get()->style.position != UI_POSITION_ABSOLUTE)
+			{
+				foundValid = true; previousValidChild = z; break;
+			}
+			else { z += 1; }
+		}
+		
 		childLoc.y += childStyle.getMargin().top;
 		int k = 0;
-		if (childWidgets[childIndex - 1].get()->style.position != UI_POSITION_ABSOLUTE)
+		if (childWidgets[childIndex - previousValidChild].get()->style.position != UI_POSITION_ABSOLUTE)
 		{
-			WidgetStyle topStyle = childWidgets[childIndex - 1].get()->style;
-			glm::ivec2 topSize = childWidgets[childIndex - 1].get()->getSize();
-			glm::ivec2 topLoc = childWidgets[childIndex - 1].get()->getLocation();
+			WidgetStyle topStyle = childWidgets[childIndex - previousValidChild].get()->style;
+			glm::ivec2 topSize = childWidgets[childIndex - previousValidChild].get()->getSize();
+			glm::ivec2 topLoc = childWidgets[childIndex - previousValidChild].get()->getLocation();
 			k = topLoc.y + topSize.y + topStyle.getBorder().bottom + childStyle.getBorder().top;
 		}
 		childLoc.y = (childLoc.y > k) ? childLoc.y : k;
@@ -1903,9 +2204,22 @@ glm::ivec2 Widget::verticalArrangement(std::shared_ptr<Widget> childWidget)
 		// Widget locations are updated from begin-end, so the left-child should have correct data
 		if (childIndex < nChildren)
 		{
-			WidgetStyle topStyle = childWidgets[childIndex - 1].get()->style;
-			glm::ivec2 topSize = childWidgets[childIndex - 1].get()->getSize();
-			glm::ivec2 topLoc = childWidgets[childIndex - 1].get()->getLocation();
+			int previousValidChild = 0;
+			bool foundValid = false; int z = 1;
+			while (!foundValid && ((int)childIndex - z) >= 0)
+			{
+				if (childWidgets[childIndex - z].get()->checkVisibility() == true &&
+					childWidgets[childIndex - z].get()->style.position != UI_POSITION_ABSOLUTE)
+				{
+					foundValid = true; previousValidChild = z; break;
+				}
+				else { z += 1; }
+			}
+
+			WidgetStyle topStyle = childWidgets[childIndex - previousValidChild].get()->style;
+			glm::ivec2 topSize = childWidgets[childIndex - previousValidChild].get()->getSize();
+			glm::ivec2 topLoc = childWidgets[childIndex - previousValidChild].get()->getLocation();
+
 			int childLocWantY = (thisSize.y - (childSize.y + childStyle.getMargin().top + childStyle.getMargin().bottom)) / 2;
 			// Because location will otherwise be for virtual margin position, not content position
 			childLocWantY += childStyle.getMargin().top;
@@ -1943,6 +2257,119 @@ bool Widget::isInputType(LTokenType type)
 		return true;
 	}
 	return false;
+}
+
+bool Widget::updateChildOrder(std::string idName, int moveNumber, bool ignoreHidden, bool asLiteral, bool setVisible)
+{
+	std::weak_ptr<Widget> child = getChild_byID(idName);
+	if (!child.expired())
+	{
+		if (asLiteral)
+		{
+			if (moveNumber >= childWidgets.size()) { return false; }
+			if (moveNumber < 0)
+			{
+				int i = 0;
+			}
+			else
+			{
+				int pos = 0;
+				std::vector<std::shared_ptr<Widget>>::iterator it = childWidgets.begin();
+				for (it; it != childWidgets.end(); ++it)
+				{
+					if (*it == child.lock()) { break; }
+					pos++;
+				}
+				int newPos = moveNumber;
+				std::shared_ptr<Widget> swapTar = childWidgets[newPos];
+				childWidgets[newPos] = childWidgets[pos];
+				childWidgets[pos] = swapTar;
+			}
+		}
+		else
+		{
+			int pos = 0;
+			std::vector<std::shared_ptr<Widget>>::iterator it = childWidgets.begin();
+			for (it; it != childWidgets.end(); ++it)
+			{
+				if (*it == child.lock()) { break; }
+				pos++;
+			}
+			int newPos = pos + moveNumber;
+			if (newPos >= childWidgets.size() || newPos < 0) { return false; }
+			if (ignoreHidden && childWidgets[newPos].get()->style.visibility <= 0) { return false; }
+			std::shared_ptr<Widget> swapTar = childWidgets[newPos];
+			childWidgets[newPos] = childWidgets[pos];
+			childWidgets[pos] = swapTar;
+		}
+		if (setVisible)
+		{
+			child.lock()->setProperty(
+				chromaIO.get()->scriptConsole.get()->getInterpreter(), 
+				"visibility", 
+				std::make_shared<CObject>("visible"));
+		}
+
+		std::weak_ptr<Widget> rebuildTarget = weak_from_this();
+		int rebuildCount = 0;
+		while (!rebuildTarget.expired() && !rebuildTarget.lock()->parentWidget.expired() && rebuildCount <= 2)
+		{
+			rebuildTarget = rebuildTarget.lock()->parentWidget; rebuildCount++;
+		}
+		chromaIO.get()->ui.get()->requestWidgetHierarchyRebuild(rebuildTarget);
+
+		return true;
+	}
+	return false;
+}
+
+std::weak_ptr<Widget> Widget::addChildWidget(std::shared_ptr<CInterpreter> interpreter,
+	std::string protoID, std::string childID, std::vector<std::string> extraClasses, int moveNumber)
+{
+	// Prevent bad lookups where either the prototype ID doesnt exist, or the new ID is overlapping
+	// Dynamically created widgets must have a unique ID in order to clean them up easier.
+	if (chromaIO.get()->ui.get()->prototypeFactoryTable.count(protoID) == 0) { return std::weak_ptr<Widget>(); }
+	if (chromaIO.get()->ui.get()->widgetIDTable.count(childID) == 1) { return std::weak_ptr<Widget>(); }
+	
+	std::vector<std::shared_ptr<Widget>>::iterator it;
+	
+	if (moveNumber == 0)
+	{
+		it = childWidgets.begin();
+		childWidgets.insert(it, 
+			chromaIO.get()->ui.get()->createWidget_fromPrototype(shared_from_this(), protoID, childID, extraClasses));
+		if (childWidgets.back() == nullptr) { childWidgets.pop_back(); return std::weak_ptr<Widget>(); } // Remove null creations
+
+		chromaIO.get()->scriptConsole.get()->insertWidgetTableID(childID, this->getRoot().lock()->rootId);
+		std::weak_ptr<Widget> rebuildTarget = weak_from_this();
+		int rebuildCount = 0;
+		while (!rebuildTarget.expired() && !rebuildTarget.lock()->parentWidget.expired() && rebuildCount <= 3)
+		{
+			rebuildTarget = rebuildTarget.lock()->parentWidget; rebuildCount++;
+		}
+		chromaIO.get()->ui.get()->requestWidgetHierarchyRebuild(rebuildTarget);
+
+		return childWidgets.front().get()->weak_from_this();
+	}
+	else if (moveNumber == -1)
+	{
+		it = childWidgets.end();
+		childWidgets.insert(it,
+			chromaIO.get()->ui.get()->createWidget_fromPrototype(shared_from_this(), protoID, childID, extraClasses));
+		if (childWidgets.back() == nullptr) { childWidgets.pop_back(); return std::weak_ptr<Widget>(); } // Remove null creations
+
+		chromaIO.get()->scriptConsole.get()->insertWidgetTableID(childID, this->getRoot().lock()->rootId);
+		std::weak_ptr<Widget> rebuildTarget = weak_from_this();
+		int rebuildCount = 0;
+		while (!rebuildTarget.expired() && !rebuildTarget.lock()->parentWidget.expired() && rebuildCount <= 3)
+		{
+			rebuildTarget = rebuildTarget.lock()->parentWidget; rebuildCount++;
+		}
+		chromaIO.get()->ui.get()->requestWidgetHierarchyRebuild(rebuildTarget);
+
+		return childWidgets.back().get()->weak_from_this();
+	}
+	return std::weak_ptr<Widget>();
 }
 
 // setChildProperty
@@ -1993,11 +2420,7 @@ bool Widget::setProperty(std::shared_ptr<CInterpreter> interpreter, std::string 
 		case LTokenType::STYLE:
 			return false; break;
 		case LTokenType::VALUE:
-			if (value.get()->objType.type == CLiteralTypes::_CString)
-			{
-				valueAttrib = std::get<std::string>(value.get()->obj); return true;
-			}
-			return false;
+			return setProperty_value(interpreter, name, value);
 		case LTokenType::IMG:
 			return false; break;
 		case LTokenType::GROUP:
@@ -2048,7 +2471,7 @@ bool Widget::setProperty(std::shared_ptr<CInterpreter> interpreter, std::string 
 		std::shared_ptr<CObject> rebuild = style.getSetProperty(interpreter, name, value, false);
 		if (rebuild != nullptr && rebuild.get()->objType.type == CLiteralTypes::_CBool && std::get<bool>(rebuild.get()->obj) == true)
 		{
-			chromaIO.get()->ui.get()->rebuildWidgetHierarchy(weak_from_this());
+			chromaIO.get()->ui.get()->requestWidgetHierarchyRebuild(weak_from_this());
 		}
 		if (style.isSizeProperty(name) && callbackMap.count("onresize") == 1 && callbackMap.at("onresize").size() != 0)
 		{
@@ -2058,6 +2481,52 @@ bool Widget::setProperty(std::shared_ptr<CInterpreter> interpreter, std::string 
 	}
 	return false;
 }
+
+// Special Set Value Property Logic
+bool Widget::setProperty_value(std::shared_ptr<CInterpreter> interpreter, std::string name, std::shared_ptr<CObject> value)
+{
+	std::string string = "";
+	if (value.get()->objType.type == CLiteralTypes::_CString)
+	{
+		string = std::get<std::string>(value.get()->obj);
+	}
+	else
+	{
+		string = chromaIO.get()->scriptConsole.get()->toString(value);
+	}
+	switch (style.textFormat)
+	{
+	case UI_TEXTFORMAT_DEFAULT: valueAttrib = string; break;
+	case UI_TEXTFORMAT_UPPERCASE: valueAttrib = stringToUpper(string); break;
+	case UI_TEXTFORMAT_LOWERCASE: valueAttrib = stringToLower(string); break;
+	case UI_TEXTFORMAT_PERCENT_WHOLE: valueAttrib = stringNumberOnly_truncate(string, 0) + "%"; break;
+	case UI_TEXTFORMAT_PERCENT_ALL: valueAttrib = stringNumberOnly(string) + "%"; break;
+	case UI_TEXTFORMAT_PERCENT_1D: valueAttrib = stringNumberOnly_truncate(string, 1) + "%"; break;
+	case UI_TEXTFORMAT_PERCENT_2D: valueAttrib = stringNumberOnly_truncate(string, 2) + "%"; break;
+	case UI_TEXTFORMAT_PERCENT_3D: valueAttrib = stringNumberOnly_truncate(string, 3) + "%"; break;
+	case UI_TEXTFORMAT_PERCENT_4D: valueAttrib = stringNumberOnly_truncate(string, 4) + "%"; break;
+	case UI_TEXTFORMAT_PERCENT_5D: valueAttrib = stringNumberOnly_truncate(string, 5) + "%"; break;
+	case UI_TEXTFORMAT_PERCENT_6D: valueAttrib = stringNumberOnly_truncate(string, 6) + "%"; break;
+	case UI_TEXTFORMAT_NUMBER_WHOLE: valueAttrib = stringNumberOnly_truncate(string, 0); break;
+	case UI_TEXTFORMAT_NUMBER_ALL: valueAttrib = stringNumberOnly(string); break;
+	case UI_TEXTFORMAT_NUMBER_1D: valueAttrib = stringNumberOnly_truncate(string, 1); break;
+	case UI_TEXTFORMAT_NUMBER_2D: valueAttrib = stringNumberOnly_truncate(string, 2); break;
+	case UI_TEXTFORMAT_NUMBER_3D: valueAttrib = stringNumberOnly_truncate(string, 3); break;
+	case UI_TEXTFORMAT_NUMBER_4D: valueAttrib = stringNumberOnly_truncate(string, 4); break;
+	case UI_TEXTFORMAT_NUMBER_5D: valueAttrib = stringNumberOnly_truncate(string, 5); break;
+	case UI_TEXTFORMAT_NUMBER_6D: valueAttrib = stringNumberOnly_truncate(string, 6); break;
+	case UI_TEXTFORMAT_DEGREE_WHOLE: valueAttrib = stringNumberOnly_truncate(string, 0) + "a"; break; // "°" Not available currently.
+	case UI_TEXTFORMAT_DEGREE_ALL: valueAttrib = stringNumberOnly(string) + "a"; break;
+	case UI_TEXTFORMAT_DEGREE_1D: valueAttrib = stringNumberOnly_truncate(string, 1) + "a"; break;
+	case UI_TEXTFORMAT_DEGREE_2D: valueAttrib = stringNumberOnly_truncate(string, 2) + "a"; break;
+	case UI_TEXTFORMAT_DEGREE_3D: valueAttrib = stringNumberOnly_truncate(string, 3) + "a"; break;
+	case UI_TEXTFORMAT_DEGREE_4D: valueAttrib = stringNumberOnly_truncate(string, 4) + "a"; break;
+	case UI_TEXTFORMAT_DEGREE_5D: valueAttrib = stringNumberOnly_truncate(string, 5) + "a"; break;
+	case UI_TEXTFORMAT_DEGREE_6D: valueAttrib = stringNumberOnly_truncate(string, 6) + "a"; break;
+	}
+	return true;
+}
+
 
 // setProperty
 bool Widget::resetProperty(std::shared_ptr<CInterpreter> interpreter, std::string name)
@@ -2216,6 +2685,12 @@ std::shared_ptr<CObject> Widget::getProperty(std::shared_ptr<CInterpreter> inter
 		{
 			return std::make_shared<CObject>((double)sizeY);
 		}
+	}
+	else if (name == "location")
+	{
+		std::vector<std::shared_ptr<CObject>> posOut = { std::make_shared<CObject>((double)location.x), std::make_shared<CObject>((double)location.y) };
+		return std::make_shared<CObject>(CLiteralTypes::_CNumber_Array,
+			std::make_shared<std::vector<std::shared_ptr<CObject>>>(posOut));
 	}
 	else 
 	{ 

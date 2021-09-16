@@ -1,10 +1,14 @@
+array num slateGrey = {0.21, 0.21, 0.21, 1.0};
 array num darkGrey = {0.25, 0.25, 0.25, 1.0};
 array num darkGreyLight = {0.29, 0.29, 0.29, 1.0};
 array num lowMidGrey = {0.33, 0.33, 0.33, 1.0};
+array num midMidGrey = {0.40, 0.40, 0.40, 1.0};
 array num midGrey = {0.52, 0.52, 0.52, 1.0};
 array num highMidGrey = {0.68, 0.68, 0.68, 1.0};
 array num lightGrey = {0.82, 0.82, 0.82, 1.0};
+array num offWhite = {0.92, 0.92, 0.92, 1.0};
 
+array num tone19 = {0.19, 0.19, 0.19, 1.0};
 array num tone25 = {0.25, 0.25, 0.25, 1.0};
 array num tone29 = {0.29, 0.29, 0.29, 1.0};
 array num tone33 = {0.33, 0.33, 0.33, 1.0};

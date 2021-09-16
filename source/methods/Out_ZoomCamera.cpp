@@ -5,6 +5,7 @@
 #include "../include/Application.h"
 #include "../include/Camera.h"
 #include "../include/Toolbox.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/entities/UserInterface.h"
 #include "../include/ToolSettings.h"
 #include "../include/Tool.h"
@@ -24,8 +25,8 @@ void Out_ZoomCamera::preview(Application* sender, VertexData* dat)
 	// Modulate zoom speed by current zoom level. A lower zoom means slower to reach max
 	float camZoom = sender->getCamera()->getOrthoZoom();
 	float f = clampf(camZoom, zoom.minZoomFactor, zoom.maxZoomFactor);
-	float mod = 0.3f + ((f / zoom.maxZoomFactor) * (1.0f - 0.3f));
-	camZoom = camZoom + ((mod * (y1 - y2)) / 2);
+	float mod = zoom.zoomFactor_A + ((f / zoom.maxZoomFactor) * (1.0f - zoom.zoomFactor_A));
+	camZoom = camZoom + ((mod * (y1 - y2)) / zoom.zoomSpeed);
 	// ZoomCamera manually sets the cursor when using scrub-zoom
 	if ((y1 - y2) >= 0.0f)
 	{
@@ -56,7 +57,7 @@ void Out_ZoomCamera::finalize(Application* sender, VertexData* dat)
 		float f = clampf(camZoom, zoom.minZoomFactor, zoom.maxZoomFactor);
 		float mod = sqrt(0.01f + ((f / zoom.maxZoomFactor) * (1.0f - 0.01f)));
 		float sign = -dat->anchors.back().dirInterpFactor;
-		camZoom = camZoom + (sign * mod * 200.0f);
+		camZoom = camZoom + (sign * mod * zoom.stepZoomAmount);
 		sender->getCamera()->setOrthoZoom(camZoom);
 		// 2. Get the center of the window, find the direction, then addOffset to position closer to zoom target
 		// Suggestions: This function is very rudimentary in calculation of offset target to zoom to, consider

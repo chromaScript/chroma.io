@@ -1079,6 +1079,7 @@ bool CParser::isValidVarType(std::shared_ptr<CToken> token)
 {
 	switch (token.get()->type)
 	{
+	case CTokenType::ANY:
 	case CTokenType::ARRAY:
 	case CTokenType::NUM:
 	case CTokenType::VECTOR2:

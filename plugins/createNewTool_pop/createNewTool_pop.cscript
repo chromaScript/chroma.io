@@ -122,30 +122,6 @@ void toggleDrop(num switch)
 	}
 }
 
-void hoverMainButton(num switch)
-{
-	if (switch == 0)
-	{
-		setProperty("background-color", global::midGrey);
-	}
-	else if (switch == 1)
-	{
-		setProperty("background-color", global::darkGreyLight);
-	}
-}
-
-void hoverDropdown(num switch)
-{
-	if (switch == 0)
-	{
-		setChildProperty_byType("TEXT", "fill-color", global::midGrey);
-	}
-	else if (switch == 1)
-	{
-		setChildProperty_byType("TEXT", "fill-color", global::lightGrey);
-	}
-}
-
 void hoverDropOptions(num type, num switch, string value)
 {
 	if (switch == 0)

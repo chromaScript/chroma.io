@@ -9,6 +9,7 @@
 
 #include "../include/entities/Stroke.h"
 #include "../include/ToolSettings.h"
+#include "../include/Tool.h"
 
 #include <memory>
 
@@ -17,7 +18,6 @@
 // Constructors & Destructors
 Layer::~Layer()
 {
-
 }
 
 // Properties Functions
@@ -33,10 +33,26 @@ LayerProperties Layer::getProperties()
 	return properties;
 }
 
-// Container Functions
-std::shared_ptr<Stroke> Layer::createNewStroke(std::shared_ptr<Shader> shader, TSet_Basic* basic, TSet_Image* image, TSet_Alpha* alpha)
+// Management Functions
+bool Layer::clearLayer()
 {
-	strokes.emplace_back(std::make_shared<Stroke>(shader, basic, image, alpha));
+	for (std::shared_ptr<Stroke> stroke : strokes)
+	{
+		stroke.get()->deleteBuffers();
+		stroke.get()->cleanup_stroke();
+		stroke.reset();
+	}
+	children.clear();
+	strokes.clear();
+	children.shrink_to_fit();
+	strokes.shrink_to_fit();
+	return true;
+}
+
+// Container Functions
+std::shared_ptr<Stroke> Layer::createNewStroke(std::shared_ptr<Shader> shader, std::shared_ptr<Tool> tool)
+{
+	strokes.emplace_back(std::make_shared<Stroke>(shader, tool));
 	children.push_back(std::weak_ptr<Fragment>(strokes.back()));
 	// Warning: Why is this not being done instead (below)? Define if there is a need for having two different vectors
 	// if both store the same thing. If dynamic_cast or type-erasure is of concern, create an enum for Fragment

@@ -1,6 +1,7 @@
 #include "../include/methods/In_Vortex.h"
 #include "../include/methods/InputMethod.h"
 #include "../include/ToolSettings.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/Tool.h"
 
 #ifndef APPLICATION_H
@@ -28,7 +29,7 @@ int In_Vortex::move(Application* sender, MouseEvent dat)
 			splineData.anchors.back().pos.y - point.y,
 			0.0f));
 		bool isNew = (splineData.anchors.front().flag == FLAG_NEW_INPUT) ? true : false;
-		if (!continuousMove(sender, dat, &continuous, nullptr, true, point, splineDir)) { return INPUT_WAIT; }
+		if (!continuousMove(sender, dat, &continuous, nullptr, true, continuous.anchorSpacing, point, splineDir)) { return INPUT_WAIT; }
 		splineIDCount++;
 		splineData.anchors.push_back(FragmentAnchor(data.start.flag, splineIDCount, point, splineDir, 1.0f,
 			FHANDLE_LINEAR, false, point,

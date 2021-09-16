@@ -40,11 +40,50 @@ UI::UI(std::shared_ptr<Application> owner)
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-void UI::newDocument(int width, int height, bool setAsActive)
+bool UI::newDocument(std::string docName, int width, int height, bool setAsActive)
 {
-	documents.push_back(std::make_shared<Canvas>(width, height, owner.get()->getCanvasShader()));
-	if (setAsActive) { setCanvas(documents.back()); }
+	documents.push_back(std::make_shared<Canvas>(docName, width, height, owner.get()->getCanvasShader()));
+	documents.back()->newDataLayer(
+		glm::ivec2(width, height), 
+		"Background", 
+		white, 
+		owner.get()->getLayerShader());
+	if (setAsActive) 
+	{ 
+		setCanvas(documents.back()); 
+		owner.get()->getCamera()->centerToCanvas(glm::ivec2(width, height));
+	}
+	return true;
 }
+bool UI::closeDocument(std::string docName, int docID, bool closeActive, bool saveBeforeExit)
+{
+	bool result = false;
+	if (closeActive)
+	{
+		if (activeCanvas != nullptr)
+		{
+			result = activeCanvas.get()->close(saveBeforeExit);
+			std::vector<std::shared_ptr<Canvas>>::iterator it = documents.begin();
+			for (it; it != documents.end(); ++it)
+			{
+				if (*it == activeCanvas)
+				{
+					activeCanvas.get()->deleteBuffers();
+					activeCanvas.reset();
+					break;
+				}
+			}
+			documents.erase(it);
+			documents.shrink_to_fit();
+		}
+	}
+	else
+	{
+
+	}
+	return result;
+}
+
 void UI::setCanvas(std::shared_ptr<Canvas> canvas)
 {
 	activeCanvas = canvas;
@@ -89,18 +128,19 @@ std::shared_ptr<CustomCursor> UI::getCursor()
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-void UI::sizeWidgetByChildren(std::shared_ptr<Widget> target)
+void UI::sizeWidgetByChildren(Widget* target)
 {
-	target.get()->setSizeByChildren();
+	target->setSizeByChildren();
 }
-void UI::sizeWidgetByParent(std::shared_ptr<Widget> target)
+void UI::sizeWidgetByParent(Widget* target)
 {
-	target.get()->setSizeByParent();
+	target->setSizeByParent();
 }
-void UI::updateWidgetLocation(std::shared_ptr<Widget> target)
+void UI::updateWidgetLocation(Widget* target)
 {
-	target.get()->buildWidget();
-	target.get()->placeWidget();
+	target->buildWidget();
+	target->placeWidget();
+	target->checkOverflow();
 }
 void UI::stepThroughWidgetTree(std::shared_ptr<Widget> treeRoot, bool doTopDown, bool doBottomUp, bool doPlacement)
 {
@@ -108,8 +148,8 @@ void UI::stepThroughWidgetTree(std::shared_ptr<Widget> treeRoot, bool doTopDown,
 	// performance for resizing/moving widgets. Make due with as few functions as necessary
 	// in order to avoid displaying widgets incorrectly.
 
-	if (doTopDown == true) { sizeWidgetByParent(treeRoot); }
-	if (doPlacement == true) { updateWidgetLocation(treeRoot); }
+	if (doTopDown == true) { sizeWidgetByParent(treeRoot.get()); }
+	if (doPlacement == true) { updateWidgetLocation(treeRoot.get()); }
 
 	for (std::shared_ptr<Widget> child : treeRoot.get()->childWidgets)
 	{
@@ -119,20 +159,21 @@ void UI::stepThroughWidgetTree(std::shared_ptr<Widget> treeRoot, bool doTopDown,
 		// maxX and maxY values.
 		for (std::shared_ptr<Widget> childChild : child.get()->childWidgets)
 		{
-			sizeWidgetByChildren(child);
+			sizeWidgetByChildren(child.get());
 		}
 
 		// Do stuff before stepping into tree
-		if (doTopDown == true) { sizeWidgetByParent(child); }
-		if (doPlacement == true) { updateWidgetLocation(child); }
+		if (doTopDown == true) { sizeWidgetByParent(child.get()); }
+		if (doPlacement == true) { updateWidgetLocation(child.get()); }
 
 		stepThroughWidgetTree(child, doTopDown, doBottomUp, doPlacement);
 
 		// Do stuff after stepping into tree
-		if (doBottomUp == true) { sizeWidgetByChildren(child); }
+		if (doBottomUp == true) { sizeWidgetByChildren(child.get()); }
 	}
 
-	if (doBottomUp == true) { sizeWidgetByChildren(treeRoot); }
+	if (doBottomUp == true) { sizeWidgetByChildren(treeRoot.get()); }
+	treeRoot.reset(); // Added**
 	return;
 }
 
@@ -169,6 +210,53 @@ void UI::buildWidgetHierarchy()
 }
 
 // Rebuild WidgetHierarchy
+void UI::requestWidgetHierarchyRebuild(std::weak_ptr<Widget> target)
+{
+	int targetUEID = 0;
+	int parentUEID = 0;
+	bool isRoot = false;
+
+	if (!target.expired())
+	{
+		targetUEID = target.lock().get()->getUEID();
+		if (!target.lock().get()->parentWidget.expired())
+		{
+			parentUEID = target.lock().get()->parentWidget.lock().get()->getUEID();
+		}
+		else { isRoot = true; }
+
+		if (rebuildWidgetIDList.size() == 0)
+		{
+			if (!isRoot) { rebuildWidgetIDList.push_back(parentUEID); rebuildWidgets.push_back(target.lock().get()->parentWidget); }
+			else { rebuildWidgetIDList.push_back(targetUEID); rebuildWidgets.push_back(target); }
+		}
+		else
+		{
+			bool didCollide = false;
+			if (isRoot)
+			{
+				for (int i : rebuildWidgetIDList)
+				{
+					if (i == targetUEID) { didCollide = true; break; }
+				}
+				if (!didCollide) { rebuildWidgetIDList.push_back(targetUEID); rebuildWidgets.push_back(target); }
+			}
+			else
+			{
+				std::vector<int> parentUEIDChain = target.lock().get()->reportParentUEIDChain();
+				for (int i : rebuildWidgetIDList)
+				{
+					if (i == parentUEID) { didCollide = true; break; }
+					for (int k : parentUEIDChain)
+					{
+						if (i == k) { didCollide = true; break; }
+					}
+				}
+				if (!didCollide) { rebuildWidgetIDList.push_back(parentUEID); rebuildWidgets.push_back(target.lock().get()->parentWidget); }
+			}
+		}
+	}
+}
 void UI::rebuildWidgetHierarchy(std::weak_ptr<Widget> target)
 {
 	if (!target.expired())
@@ -177,7 +265,26 @@ void UI::rebuildWidgetHierarchy(std::weak_ptr<Widget> target)
 		stepThroughWidgetTree(target.lock(), true, false, false); // 2. TopDown
 		stepThroughWidgetTree(target.lock(), false, false, true); // 3. Placement
 		target.lock().get()->checkOutofBoundsWidgets(target.lock(), target.lock().get()->getColliderBox());
+		target.reset(); // Added**
 	}
+}
+
+void UI::clearRebuildRequests()
+{
+	
+	if (rebuildWidgets.size() == 0) { return; }
+	for (std::weak_ptr<Widget> target : rebuildWidgets)
+	{
+		if (!target.expired())
+		{
+			rebuildWidgetHierarchy(target);
+		}
+		target.reset(); // Added**
+	}
+	rebuildWidgets.clear();
+	rebuildWidgets.shrink_to_fit();
+	rebuildWidgetIDList.clear();
+	rebuildWidgetIDList.shrink_to_fit();
 }
 
 std::shared_ptr<Widget> UI::createWidget(
@@ -207,6 +314,30 @@ std::shared_ptr<Widget> UI::createWidget(
 	default:
 		return nullptr;
 	}
+}
+
+std::shared_ptr<Widget> UI::createWidget_fromPrototype(
+	std::shared_ptr<Widget> targetWidget, 
+	std::string protoID, std::string childID, std::vector<std::string> extraClasses)
+{
+	std::shared_ptr<Widget> proto = prototypeFactoryTable.at(protoID);
+	std::string rootID = targetWidget.get()->getRoot().lock()->rootId;
+	std::shared_ptr<Widget> instance = proto.get()->duplicate(proto, targetWidget, rootID, true);
+	instance.get()->rootId = "";
+	instance.get()->idAttrib = childID;
+	std::shared_ptr<CInterpreter> interpreter = owner.get()->scriptConsole.get()->getInterpreter();
+	std::shared_ptr<CEnvironment> previousEnvironment = interpreter.get()->currentEnvironment;
+	interpreter.get()->setEnvironment(interpreter.get()->getEnvironment(proto.get()->_namespace));
+	for (std::string className : extraClasses)
+	{
+		std::shared_ptr<CObject> classStyle = interpreter.get()->currentEnvironment.get()->get("." + className);
+		if (classStyle != nullptr)
+		{
+			instance.get()->style.mergeStyle(std::get<std::shared_ptr<WidgetStyle>>(classStyle.get()->obj));
+		}
+	}
+	interpreter.get()->setEnvironment(previousEnvironment);
+	return instance;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -570,6 +701,19 @@ void UI::updateBGColor(CColor color, int xpos, int ypos)
 	//std::cout << "APP::UI::UPDATE_BG_COLOR=" << color.makeString() << std::endl;
 }
 
+void UI::resetFGBGColor(CColor fg, CColor bg)
+{
+	updateFGColor(fg, 0, 0);
+	updateBGColor(bg, 0, 0);
+}
+void UI::swapFGBGColor()
+{
+	CColor currentFG = fgColor;
+	CColor currentBG = bgColor;
+	updateFGColor(currentBG, 0, 0);
+	updateBGColor(currentFG, 0, 0);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // Click Handler Functions
@@ -795,6 +939,23 @@ bool UI::widgetLeaveTest(MouseEvent* input, unsigned int maxZIndex)
 // Widget Functions
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
+
+void UI::addToClassTable(std::string className, std::string rootID)
+{
+	if (widgetClassTable.count(className) == 0)
+	{
+		widgetClassTable.insert(std::pair<std::string, std::vector<std::string>>(className, { rootID }));
+	}
+	else
+	{
+		bool rootFound = false;
+		for (std::string rootIDExisting : widgetClassTable.at(className))
+		{
+			if (rootIDExisting == rootID) { rootFound = true; }
+		}
+		if (!rootFound) { widgetClassTable.at(className).push_back(rootID); }
+	}
+}
 
 // Z Index Handling
 void UI::addZIndexEntry(Widget* target, unsigned int zIndex)
@@ -1282,6 +1443,135 @@ std::weak_ptr<Widget> UI::getRootWidgetByID(std::string rootID)
 		}
 	}
 	return null;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Delete Functions
+//
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool UI::deleteWidget_byID(std::shared_ptr<CInterpreter> interpreter, std::string lookup)
+{
+	std::weak_ptr<Widget> target = getWidgetByID(lookup);
+	if (!target.expired())
+	{
+		std::weak_ptr<Widget> tarParent = target.lock()->parentWidget;
+		bool isRoot = target.lock()->isRoot;
+		bool result = target.lock()->deleteWidget();
+		std::string tarID = target.lock()->idAttrib;
+		if (isRoot)
+		{
+			std::vector<std::shared_ptr<Widget>>::iterator it = rootWidgets.begin();
+			for (it; it != rootWidgets.end(); ++it)
+			{
+				if (*it == target.lock()) { break; }
+			}
+			rootWidgets.erase(it);
+			rootWidgets.shrink_to_fit();
+		}
+		else if (!tarParent.expired())
+		{
+			std::vector<std::shared_ptr<Widget>>::iterator it = tarParent.lock()->childWidgets.begin();
+			for (it; it != tarParent.lock()->childWidgets.end(); ++it)
+			{
+				if (*it == target.lock()) { break; }
+			}
+			tarParent.lock()->childWidgets.erase(it);
+			tarParent.lock()->childWidgets.shrink_to_fit();
+			if (tarID != "" && widgetIDTable.count(tarID) == 1)
+			{
+				widgetIDTable.erase(tarID);
+			}
+			std::weak_ptr<Widget> rebuildTarget = tarParent;
+			int rebuildCount = 0;
+			while (!rebuildTarget.expired() && !rebuildTarget.lock()->parentWidget.expired() && rebuildCount <= 2)
+			{
+				rebuildTarget = rebuildTarget.lock()->parentWidget; rebuildCount++;
+			}
+			
+			requestWidgetHierarchyRebuild(rebuildTarget);
+			return true;
+		}
+	}
+	return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Sorting Functions
+//
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool UI::sortTargetWidgetChildren(std::shared_ptr<CInterpreter> interpreter,
+	std::string lookup, std::string sortValue, std::string macroName, bool setVisible)
+{
+	if (macroName == "effectsOrdering") { return sortChildren_effectsOrdering(interpreter, lookup, sortValue, setVisible); }
+	return false;
+}
+
+bool UI::sortChildren_effectsOrdering(std::shared_ptr<CInterpreter> interpreter,
+	std::string lookup, std::string sortValue, bool setVisible)
+{
+	std::weak_ptr<Widget> target = getWidgetByID(lookup);
+	if (target.expired()) { return false; }
+	if (!owner.get()->toolbox.get()->getActiveTool().get()->checkInterestMask(TSetType::effects)) { return false; }
+	std::vector<std::string> listCurrent;
+	for (std::shared_ptr<Widget> child : target.lock()->childWidgets)
+	{
+		if (sortValue == "id") { listCurrent.push_back(child.get()->idAttrib); }
+		else if (sortValue == "name") { listCurrent.push_back(child.get()->nameAttrib); }
+		else if (sortValue == "value") { listCurrent.push_back(child.get()->valueAttrib); }
+		else { listCurrent.push_back("null"); }
+		if (listCurrent.back() == "null" || listCurrent.back() == "") { return false; }
+	}
+	int childCount = listCurrent.size();
+	TSet_Effects* effects = owner.get()->toolbox.get()->getActiveTool().get()->getEffects();
+	effects->updateEffectsOrdering(false);
+	std::vector<int> effectsCurrent = effects->getOrdering_vec();
+	int pos = 0;
+	for (int order : effectsCurrent)
+	{
+		if (order == 0) { continue; }
+		if (pos >= childCount) { break; }
+		std::string targetChildID = sortEffectsOrdering_matchValue(
+			&listCurrent, 
+			effects->intToFX_string(effectsCurrent[pos]));
+		if (targetChildID == "") { return false; }
+		bool result = target.lock()->updateChildOrder(targetChildID, pos, false, true, setVisible);
+		std::vector<std::string>::iterator strIterator = listCurrent.begin();
+		for (strIterator; strIterator != listCurrent.end(); ++strIterator)
+		{
+			if (targetChildID == *strIterator) { break; }
+		}
+		listCurrent.erase(strIterator); listCurrent.shrink_to_fit(); pos++;
+		if (!result) { return false; }
+	}
+	if (listCurrent.size() > 0)
+	{
+		for (std::string li : listCurrent)
+		{
+			std::weak_ptr<Widget> child = getWidgetByID(li);
+			if (!child.expired())
+			{
+				child.lock()->setProperty(interpreter, "visibility", std::make_shared<CObject>(std::string("hidden")));
+			}
+		}
+	}
+	return true;
+}
+
+std::string UI::sortEffectsOrdering_matchValue(std::vector<std::string>* widgetValues, std::string fxSearchStr)
+{
+	std::string outID = "";
+	std::string searchStr = fxSearchStr;
+	if (searchStr.size() > 5) { searchStr = searchStr.substr(0, 5); }
+	for (std::string value : *widgetValues)
+	{
+		std::string lower = value; stringToLower(lower);
+		if (lower.find(searchStr) != std::string::npos) { outID = value; break; }
+	}
+	return outID;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

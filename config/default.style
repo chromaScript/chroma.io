@@ -78,6 +78,31 @@
 	highlight-color: 0, 0.925, 1, 0.8;
 }
 
+.percent1d {
+	text-format: percent-1d;
+}
+.percent2d {
+	text-format: percent-2d;
+}
+.percent3d {
+	text-format: percent-3d;
+}
+.degree1d {
+	text-format: degree-1d;
+}
+.number1d {
+	text-format: number-1d;
+}
+.number2d {
+	text-format: number-2d;
+}
+.number3d {
+	text-format: number-3d;
+}
+.numberWhole {
+	text-format: number-whole;
+}
+
 .tabButton {
 	float: right;
 	dimensions: 20, 20;
@@ -149,6 +174,31 @@
 .titleClose {
 	background-texture: "textures/T_titleClose80_D.png";
 	fill-color: $tone52$;
+}
+
+.button_checkBox
+{
+	background-texture: "textures/T_button_checkBox_smallA.png";
+}
+.button_trash
+{
+	background-texture: "textures/T_button_trashBin_smallA.png";
+}
+.button_upArrowA
+{
+	background-texture: "textures/T_button_upArrow_smallA.png";
+}
+.button_downArrowA
+{
+	background-texture: "textures/T_button_downArrow_smallA.png";
+}
+.button_cross
+{
+	background-texture: "textures/T_button_cross_smallA.png";
+}
+.button_plus
+{
+	background-texture: "textures/T_button_plus_smallA.png";
 }
 
 .debugRed {

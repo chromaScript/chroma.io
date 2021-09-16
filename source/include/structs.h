@@ -40,6 +40,12 @@ inline std::string ConvertBSTRToMBS(BSTR bstr)
 	return ConvertWCSToMBS((wchar_t*)bstr, wslen);
 }
 
+inline std::string stringRemoveSpace(std::string& input)
+{
+	input.erase(remove_if(input.begin(), input.end(), isspace), input.end());
+	return input;
+}
+
 inline std::string stringToLower(std::string& input)
 {
 	for (int i = 0; i < input.size(); i++)
@@ -47,6 +53,41 @@ inline std::string stringToLower(std::string& input)
 		input[i] = std::tolower(input[i]);
 	}
 	return input;
+}
+
+inline std::string stringToUpper(std::string& input)
+{
+	for (int i = 0; i < input.size(); i++)
+	{
+		input[i] = std::toupper(input[i]);
+	}
+	return input;
+}
+
+inline std::string stringNumberOnly(std::string& input)
+{
+	for (int i = 0; i < input.size(); i++)
+	{
+		if (!isdigit(input[i]) && input[i] != '.' && input[i] != '-')
+		{
+			input[i] = ' ';
+		}
+	}
+	input.erase(remove_if(input.begin(), input.end(), isspace), input.end());
+	return input;
+}
+
+inline std::string stringNumberOnly_truncate(std::string& input, int decimals)
+{
+	input = stringNumberOnly(input);
+	size_t decLoc = input.find_first_of('.');
+	if (decLoc == std::string::npos) { return input; }
+	switch (decimals)
+	{
+	case -1: return input; break;
+	case 0: input = input.substr(0, decLoc); return input; break;
+	default: input = input.substr(0, decLoc + 1 + decimals); return input; break;
+	}
 }
 
 
@@ -73,6 +114,27 @@ inline bool readFileToString(std::string &str, std::filesystem::path path)
 	}
 	return true;
 }
+inline std::string vec2ToString(glm::vec2 vector)
+{
+	return "{ " + 
+		std::to_string(vector.x) + ", " + 
+		std::to_string(vector.y) + " }";
+}
+inline std::string vec3ToString(glm::vec3 vector)
+{
+	return "{ " + 
+		std::to_string(vector.x) + ", " + 
+		std::to_string(vector.y) + ", " + 
+		std::to_string(vector.z) + " }";
+}
+inline std::string vec4ToString(glm::vec4 vector)
+{
+	return "{ " +
+		std::to_string(vector.x) + ", " +
+		std::to_string(vector.y) + ", " +
+		std::to_string(vector.z) + ", " +
+		std::to_string(vector.w) + " }";
+}
 inline std::string floatVecToString(std::vector<float> vector)
 {
 	std::string out = "{ ";
@@ -85,17 +147,47 @@ inline std::string floatVecToString(std::vector<float> vector)
 	out += " }";
 	return out;
 }
-inline std::string stringVecToString(std::vector<std::string> vector)
+inline std::string intVecToString(std::vector<int> vector)
 {
 	std::string out = "{ ";
 	size_t i = vector.size();
 	for (size_t k = 0; k < i; k++)
 	{
-		out += vector[k] + ",";
+		out += " " + std::to_string(vector[k]) + ",";
 	}
 	out.pop_back();
 	out += " }";
 	return out;
+}
+inline std::string stringVecToString(std::vector<std::string> vector, bool addBrackets)
+{
+	std::string out = "";
+	
+	if (addBrackets)
+	{
+		out += "{ ";
+		size_t i = vector.size();
+		for (size_t k = 0; k < i; k++)
+		{
+			out += vector[k] + ",";
+		}
+		out.pop_back();
+		out += " }";
+		return out;
+	}
+	else
+	{
+		size_t i = vector.size();
+		for (size_t k = 0; k < i; k++)
+		{
+			out += vector[k];
+			if (k != vector.size() - 1)
+			{
+				out += ", ";
+			}
+		}
+		return out;
+	}
 }
 inline std::string vec3VecToString(std::vector<glm::vec3> vector)
 {
@@ -142,6 +234,31 @@ inline std::string splitRegularString(std::string &str, std::string delim)
 	splitAt = str.find(delim, 0);
 	out = str.substr(0, splitAt);
 	str = str.substr(splitAt + 1, std::string::npos);
+	return out;
+}
+inline std::vector<std::string> stringVec_fromCommaSeparated(std::string input, bool removeWhitespace)
+{
+	std::string in = input;
+	std::vector<std::string> out;
+	while (in.size() != 0)
+	{
+		if (in.find(',') != std::string::npos)
+		{
+			out.push_back(splitRegularString(in, ","));
+		}
+		else
+		{
+			out.push_back(in);
+			in.clear();
+		}
+	}
+	if (removeWhitespace)
+	{
+		for (std::string str : out)
+		{
+			stringRemoveSpace(str);
+		}
+	}
 	return out;
 }
 
@@ -257,6 +374,33 @@ struct ShaderTransform
 /*
 // Property Structs
 */
+// Method Types
+enum class MethodType
+{
+	draw,
+	fan,
+	lasso,
+	line,
+	noInput,
+	pan,
+	point,
+	polygon,
+	polyLine,
+	radialField,
+	rake,
+	rotate,
+	sampler,
+	shapeDraw,
+	shapeField,
+	shapeLine,
+	vortex,
+	zoom,
+	fill,
+	gradient,
+	noOutput,
+	selection,
+	stroke,
+};
 // Blend modes
 enum class BlendModes
 {
@@ -428,17 +572,18 @@ struct StrokeShard
 	int ID = 0;
 	glm::vec3 pos = glm::vec3(0, 0, 0);
 	glm::vec3 dir = glm::vec3(0, 0, 0);
-	glm::vec4 scale = glm::vec4(0, 0, 0, 1);
+	float scale = 1.0f;
 	CColor color = CColor(0, 0, 0);
 	float opacity = 0;
+	float flow = 0;
 	float pressure = 0;
 	float rotation = 0;
 	float tiltx = 0;
 	float tilty = 0;
 	float velocity = 0;
 	StrokeShard() {}
-	StrokeShard(int ID, glm::vec3 pos, glm::vec3 dir, glm::vec4 scale,
-		CColor color, float opacity, float pressure, float rotation, float tiltx, float tilty, float velocity)
+	StrokeShard(int ID, glm::vec3 pos, glm::vec3 dir, float scale,
+		CColor color, float opacity, float flow, float pressure, float rotation, float tiltx, float tilty, float velocity)
 	{
 		this->ID = ID;
 		this->pos = pos;
@@ -446,6 +591,7 @@ struct StrokeShard
 		this->scale = scale;
 		this->color = color;
 		this->opacity = opacity;
+		this->flow = flow;
 		this->pressure = pressure;
 		this->rotation = rotation;
 		this->tiltx = tiltx;
@@ -473,6 +619,7 @@ struct StrokeShard
 struct FragmentAnchor
 {
 	int flag = 0;
+	size_t connectionTarget = -1;
 	int ID = 0;
 	int wait = 0; // Manual set only
 	glm::vec3 pos = glm::vec3(0, 0, 0);
@@ -607,6 +754,7 @@ struct FragmentAnchor
 	velocity, intensity)
 */
 
+
 // VertexData is used to hold the data processed from an InputData object. This is what gets stored as history and canvas objects. The original
 // mouse input is not salvageable. VertexData should only contain information useful for all fragment types. Output asks the active tool for
 // how to render the fragments.
@@ -616,6 +764,7 @@ private:
 	std::deque<FragmentAnchor> emptyAnchors = {};
 public:
 	EntityTransform transform;
+	int activeModKey = 0;
 	bool constantSize = false;
 	bool linearStream = true;
 	bool connectEnds = false;
@@ -695,6 +844,7 @@ struct StrokeSettings
 #define FLAG_CONSTART 7
 #define FLAG_CONORIGIN 8
 #define FLAG_CONORIGIN_SWAPMETA 9
+#define FLAG_CONTARGET 10
 #define FLAG_CONORIGIN_SWAPCLEARMETA 11
 #define FLAG_ORIGIN 16
 #define FLAG_ORIGIN_POINT 17
@@ -792,6 +942,7 @@ struct MouseEvent
 #define UI_MOUSE_LEFT_DBL 10 // LEFT + 10
 #define UI_MOUSE_RIGHT_DBL 11 // RIGHT + 10 
 #define UI_MOUSE_MIDDLE_DBL 12 // MIDDLE + 10
+#define UI_MOUSE_SCROLL 15 // MOUSE SCROLL CUSTOM
 
 // InputData is used for packaging MouseEvents into a single object
 struct InputData

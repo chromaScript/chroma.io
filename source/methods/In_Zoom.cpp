@@ -1,6 +1,7 @@
 #include "../include/methods/In_Zoom.h"
 #include "../include/methods/InputMethod.h"
 #include "../include/ToolSettings.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/Tool.h"
 
 #ifndef APPLICATION_H
@@ -39,6 +40,7 @@ int In_Zoom::click(Application* sender, MouseEvent dat)
 	if (dat.action == GLFW_PRESS && dat.button == UI_MOUSE_LEFT)
 	{
 		// Get the settings
+		zoom.~TSet_Zoom();
 		zoom = *owner.get()->getZoom();
 		// For new inputs, clear the current array, and then set start to the passed MouseEvent
 		data.inputEvents.clear();

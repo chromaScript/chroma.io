@@ -44,11 +44,16 @@
 #define CONTROL_TWOPOINT 203
 #define CONTROL_THREEPOINT 204
 #define CONTROL_FOURPOINT 205
+#define CONTROL_ZOOM 206
+#define CONTROL_ROTATE 207
+#define CONTROL_PAN 208
+#define CONTROL_SAMPLER 209
 
 #ifndef TOOL_H
 #define TOOL_H
 
 #include "structs.h"
+#include "keys.h"
 #include "CustomCursor.h"
 #include "Color.h"
 
@@ -56,6 +61,7 @@
 #include "methods/OutputMethod.h"
 
 #include "ToolSettings.h"
+#include "toolSettings/ToolSettings_Forward.h"
 
 class Toolbox;
 class UI;
@@ -69,33 +75,50 @@ class CInterpreter;
 
 class Tool : public std::enable_shared_from_this<Tool>
 {
+private:
+	std::vector<char> serialData = {};
 public:
+	// Meta-Data Uses Property ID's 0-100 Currently
 	// Tool Identity
-	int id;
-	int inID;
-	int outID;
-	std::string name;
+	int id; // 0
+	int inID; // 1
+	int outID; // 2
+	std::string name; // 3
+	//Image icon;
+	bool useTipAsIcon; // 8
+	CColor iconHighlightColor; // 11
+	CColor iconFillColor; // 12
+	// Meta-Data
+	std::vector<std::string> tags; // 15
+	std::string category = ""; // 16
+	std::string toolType = ""; // 17
+	std::string date = ""; // 18
+	std::string author = ""; // 19
 
 	// Tool Keybind
-	int keySig;
+	int bindType = 0; // 20
+	int keySig; // 21
 
 	// Cursors
-	std::shared_ptr<CustomCursor> cursorUp;
-	std::shared_ptr<CustomCursor> cursorDown;
+	std::shared_ptr<CustomCursor> cursorUp; // 24
+	std::shared_ptr<CustomCursor> cursorDown; // 25
 
 	// I/O Methods
-	std::unique_ptr<InputMethod> input;
-	std::unique_ptr<OutputMethod> output;
+	std::unique_ptr<InputMethod> input; // 30 // inputName - 33
+	std::unique_ptr<OutputMethod> output; // 31 // outputName - 34
+		// Control Scheme input->controlScheme // 32
+
 
 	// Containing Toolbox
-	std::shared_ptr<Toolbox> owner;
+	std::shared_ptr<Toolbox> owner; // 40
+	int activeSettingsPage = 0; // 41
 
 	// Input data for this tool
 	InputData data;
 
 	// Tool Settings
-	bool lockSettings = false;
-	bool autoSaveSettings = false;
+	bool lockSettings = false; // 51
+	bool autoSaveSettings = false; // 52
 	std::map<TSetType, std::unique_ptr<ToolSettings>> settings;
 
 	// Constructors
@@ -106,6 +129,14 @@ public:
 		int inID, int outID,
 		TSetType controlScheme,
 		int key, std::shared_ptr<Toolbox> owner);
+	Tool(
+		std::shared_ptr<CustomCursor> cursorUp,
+		std::shared_ptr<CustomCursor> cursorDown,
+		int id, std::string n,
+		int inID, int outID,
+		TSetType controlScheme,
+		int key, std::shared_ptr<Toolbox> owner,
+		std::vector<std::string> tags, std::string category, std::string type, std::string date, std::string author);
 	~Tool();
 	// Initializer (Required due to shared_from_this())
 	void initializeTool(TSetType controlScheme);
@@ -130,16 +161,28 @@ public:
 	TSet_Pan* getPan();
 	TSet_Rotate* getRotate();
 	TSet_Zoom* getZoom();
+	TSet_Blend* getBlend();
 	TSet_Basic* getBasic();
+	TSet_Character* getCharacter();
 	TSet_Smoothing* getSmoothing();
 	TSet_Image* getImage();
 	TSet_Polygon* getPolygon();
+	TSet_PolyLine* getPolyLine();
 	TSet_Alpha* getAlpha();
+	TSet_Color* getColor();
+	TSet_Scatter* getScatter();
+	TSet_Effects* getEffects();
 	TSet_Field* getField();
+	TSet_Vector* getVector();
 	TSet_Vortex* getVortex();
 	TSet_Rake* getRake();
 	TSet_Fan* getFan();
-	TSet_PolyLine* getPolyLine();
+	TSet_Gradient* getGradient();
+	TSet_Fill* getFill();
+	TSet_Shader* getShader();
+	TSet_Filter* getFilter();
+	TSet_AntiAliasing* getAntiAliasing();
+	TSet_Pattern* getPattern();
 
 	// Colors
 	CColor getFGColor();
@@ -152,6 +195,8 @@ public:
 	std::shared_ptr<CustomCursor> getCursorDown() { return cursorDown; }
 
 	// Data Functions
+	void serializeToolData();
+	std::vector<char> getSerialData();
 	InputData* getData() { return &data; }
 	void setData(InputData dat) { data = dat; }
 
@@ -161,8 +206,15 @@ public:
 
 	// Settings Functions
 	bool checkInterestMask(std::shared_ptr<CInterpreter> interpreter, std::string name);
+	bool checkInterestMask(TSetType interest);
+	std::shared_ptr<CObject> putInterest(
+		std::shared_ptr<CInterpreter> interpreter, TSetType interest, std::shared_ptr<CObject> object, bool isGet);
 	std::shared_ptr<CObject> putProperty(
-		std::shared_ptr<CInterpreter> interpreter, int settingsSig, std::shared_ptr<CObject> object, bool isGet);
+		std::shared_ptr<CInterpreter> interpreter, int settingsSig, 
+		int subSig, std::shared_ptr<CObject> object, bool isGet, 
+		bool asPercentage, bool asString);
+	std::shared_ptr<CObject> putMetaData(
+		std::shared_ptr<CInterpreter> interpreter, int settingsSig, int subSig, std::shared_ptr<CObject> object, bool isGetbool, bool asString);
 };
 
 #endif

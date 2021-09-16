@@ -349,6 +349,7 @@ bool SParser::isValidPropertyType(std::shared_ptr<SToken> token)
 	case STokenType::MARGIN_RIGHT:
 	case STokenType::FONT_PATH: 
 	case STokenType::FONT_SIZE:
+	case STokenType::TEXT_FORMAT:
 		return true;
 		break;
 	default:
@@ -391,6 +392,34 @@ bool SParser::isValidValueType(std::shared_ptr<SToken> token)
 	case STokenType::AUTO:
 	case STokenType::LEFT:
 	case STokenType::RIGHT:
+	case STokenType::NONE:
+	case STokenType::DEFAULT:
+	case STokenType::UPPERCASE:
+	case STokenType::LOWERCASE:
+	case STokenType::PERCENT_WHOLE:
+	case STokenType::PERCENT_ALL:
+	case STokenType::PERCENT_1D:
+	case STokenType::PERCENT_2D:
+	case STokenType::PERCENT_3D:
+	case STokenType::PERCENT_4D:
+	case STokenType::PERCENT_5D:
+	case STokenType::PERCENT_6D:
+	case STokenType::NUMBER_WHOLE:
+	case STokenType::NUMBER_ALL:
+	case STokenType::NUMBER_1D:
+	case STokenType::NUMBER_2D:
+	case STokenType::NUMBER_3D:
+	case STokenType::NUMBER_4D:
+	case STokenType::NUMBER_5D:
+	case STokenType::NUMBER_6D:
+	case STokenType::DEGREE_WHOLE:
+	case STokenType::DEGREE_ALL:
+	case STokenType::DEGREE_1D:
+	case STokenType::DEGREE_2D:
+	case STokenType::DEGREE_3D:
+	case STokenType::DEGREE_4D:
+	case STokenType::DEGREE_5D:
+	case STokenType::DEGREE_6D:
 		return true;
 		break;
 	default:

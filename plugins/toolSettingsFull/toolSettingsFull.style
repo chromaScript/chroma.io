@@ -13,16 +13,40 @@
 #tsf_body {
 	width: inherit;
 	height: fill;
+	border-top: 4;
+	margin-bottom: 4;
+	overflow: hidden;
 	//background-color: $global::lowMidGrey$;
+}
+
+#tsf_body_scrollWrapper
+{
+	height: inherit;
+	width: 6;
+	margin-right: 6;
+	float: right;
+}
+#tsf_body_scrollBar
+{
+	width: inherit;
+	height: $tsf_bodyScroll_height$;
+	position: absolute;
+	background-color: $global::highMidGrey$;
+}
+
+.tsf_text {
+	dimensions: 8, 16;
+	float: right;
+	margin-right: 1;
+	background-color: $global::midGrey$;
+	background-color-alpha: 1;
 }
 
 #tsf_interestWrapper
 {
-	width: 140;
+	width: $tsf_interestWidth$;
 	height: inherit;
 	margin-left: 4;
-	margin-top: 4;
-	margin-bottom: 4;
 	float: left;
 }
 
@@ -30,10 +54,12 @@
 	width: inherit;
 	height: $interestHeight$;
 	border-bottom: 2;
+	visibility: hidden;
+	// position: relative;
 }
 
 .tsf_interestName {
-	width: 122;
+	width: 98;
 	height: inherit;
 	float: left;
 	background-color: $global::darkGreyLight$;
@@ -44,7 +70,7 @@
 	height: inherit;
 	margin-left: 4;
 	float: left;
-	background-color: $global::lightGrey$;
+	fill-color: $global::highMidGrey$;
 }
 
 .tsf_interestBox {
@@ -58,25 +84,394 @@
 	width: 10;
 	height: 10;
 	margin: 3, 3, 3, 3;
-	background-texture: "textures/T_button10_D.png";
-	fill-color: $global::lightGrey$;
+	//fill-color: $global::midMidGrey$;
+	background-texture: "../../config/textures/T_button_checkBox_smallA.png";
+}
+.tsf_interestCheck_static {
+	width: 10;
+	height: 10;
+	margin: 3, 3, 3, 3;
+	background-color: $global::midGrey$;
 }
 
-#tsf_settingsWrapper
+.tsf_settingsWrapper
 {
-	//min-width: 120;
 	width: fill;
 	height: inherit;
 	border-left: 6;
 	margin-top: 4;
-	margin-right: 12;
-	margin-bottom: 4;
+	margin-right: 6;
+	margin-top: 0;
+	//overflow-X: auto;
+	//overflow: hidden;
 }
 
-.tsf_text {
-	dimensions: 8, 16;
+.tsf_settingsBlockWrapper
+{
+	width: inherit;
+	height: inherit;
+	position: absolute;
+	float: left;
+	
+}
+
+.tsf_settingsBlock
+{
+	width: inherit;
+	min-height: 18;
+	overflow: auto;
+	border-bottom: 3;
+	margin-top: 2;
+}
+
+.tsf_settingsLine
+{
+	width: inherit;
+	height: $tsf_settingsLine_height$;
+	border-bottom: 2;
+	margin-left: 4;
+	margin-right: 4;
+}
+
+.tsf_settingsLineInterior
+{
+	height: inherit;
+	min-width: 24;
+	overflow-X: auto;
+	float: left;
+}
+
+.tsf_settingsComponent
+{
+	height: inherit;
+	width: fill;
+	overflow-X: auto;
+	border-left: 6;
+}
+
+.tsf_bindOption
+{
+	height: inherit;
+	width: 150;
+	border-left: 6;
+}
+
+.tsf_settingsDivider
+{
+	width: inherit;
+	height: 1;
+	border-bottom: 3;
+	margin-right: 4;
+	background-color: $global::midGrey$;
+}
+
+.tsf_settingsText {
+	margin-top: 1;
+	border-right: 6;
+	border-left: 6;
+}
+
+.tsf_dropText {
+	margin-left: 3;
+	margin-top: 1;
+}
+.tsf_sub {
+	margin-left: 3;
+	margin-top: -1;
+	z-index: 2;
+}
+
+.tsf_inputBox {
+	width: inherit;
+	height: inherit;
+	background-color: $global::darkGreyLight$;
+}
+.tsf_inputBoxSmall {
+	width: 24;
+	height:inherit;
+	background-color: $global::darkGreyLight$;
+}
+
+.tsf_inputText {
+	width: inherit;
+	margin-top: 1;
+	margin-left: 3;
+}
+.tsf_inputSliderBox_minMax {
+	width: fill;
+	height: inherit;
+	border-right: 4;
+	float: left;
+}
+.tsf_inputSliderBox_single {
+	width: fill;
+	height: inherit;
+	border-right: 4;
+	float: left;
+}
+.tsf_inputSliderRail {
+	width: fill;
+	height: 2;
+	margin-top: 8;
+	margin-left: 2;
+	border-right: 2;
+	background-color: $global::highMidGrey$;
+}
+.tsf_inputSlider_single {
+	width: $tsf_inputSlider_minMax_width$;
+	height: 12;
+	position: absolute;
+	background-color: $global::highMidGrey$;
+	box-shadow-color: black;
+	box-shadow-size: 1, 1;
+}
+.tsf_inputSlider_center {
+	float: left;
+	margin-top: 3;
+}
+
+.tsf_inputSlider_minMax {
+	width: $tsf_inputSlider_minMax_width$;
+	height: 8;
+	position: absolute;
+	background-color: $global::highMidGrey$;
+	box-shadow-color: black;
+	box-shadow-size: 1, 1;
+}
+.tsf_inputSlider_min {
+	float: left;
+	margin-top: 11;
+}
+.tsf_inputSlider_max {
 	float: right;
-	margin-right: 1;
-	background-texture: "textures/T_arrows_D.png";
-	background-color-alpha: 1;
+	margin-top: 1;
+}
+
+// Buttons
+
+.tsf_buttonText {
+	margin-top: 1;
+	margin-left: 6;
+	margin-right: 6;
+}
+
+.tsf_checkBox {
+	width: 14;
+	height: 14;
+	margin-top: 2;
+	//background-color: $global::darkGrey$;
+	background-texture: "../../config/textures/T_button_checkBox_smallA.png";
+	fill-color: $global::midGrey$;
+}
+
+.tsf_controllerButton {
+	border-left: 10;
+	width: 28;
+	height: 18;
+	background-color: $global::darkGrey$;
+}
+
+.tsf_noiseButton {
+	border-left: 4;
+	width: 28;
+	height: 18;
+	background-color: $global::darkGrey$;
+}
+
+.tsf_settingsButton {
+	min-width: 12;
+	overflow-X: auto;
+	height: inherit;
+	background-color: $global::darkGreyLight$;
+}
+
+// Drop Menu
+
+.tsf_dropWrapper {
+	min-width: 24;
+	height: inherit;
+	overflow-X: auto;
+	background-color: $global::darkGreyLight$;
+}
+
+.tsf_dropTop {
+	width: 30;
+	height: inherit;
+}
+
+.tsf_dropItem {
+	width: inherit;
+	height: 14;
+	margin-top: 2;
+	margin-bottom: 4;
+	border-bottom: 2;
+	z-index: 2;
+}
+
+.tsf_dropList {
+	position: absolute;
+	width: inherit;
+	min-height: 6;
+	top: 18;
+	overflow-Y: auto;
+	background-color: $global::darkGrey$;
+	z-index: 2;
+	visibility: hide;
+}
+
+.tsf_dropButton {
+	width: 12;
+	height: 12;
+	border-left: 3;
+	margin-top: 3;
+	margin-right: 3;
+	float: right;
+	background-texture: "textures/T_arrowDown36_D.png";
+}
+
+// Ordered List Container Styles (Effects / Image / etc.)
+
+.tsf_listBox
+{
+	height: 90;
+}
+
+.tsf_listBox_wrapper
+{
+	width: fill;
+	height: inherit;
+	background-color: $global::tone19$;
+	overflow: hidden;
+}
+.tsf_listBox_scrollBox
+{
+	width: inherit;
+	min-height: 60;
+	border-right: 13;
+	float: left;
+	position: absolute;
+	overflow: auto;
+	clipping: false;
+}
+.tsf_listBox_scrollBarBox
+{
+	width: 6;
+	height: inherit;
+	margin-top: 3;
+	margin-bottom: 3;
+	margin-right: 3;
+	float: right;
+}
+.tsf_listBox_scrollBar
+{
+	width:inherit;
+	height: $tsf_scrollbar_height$;
+	background-color: $global::darkGreyLight$;
+	position: absolute;
+}
+
+#tsf_effects_dropListCont
+{
+	width: 90;
+	min-height:40;
+	overflow: auto;
+	clipping: true;
+	position: absolute;
+	background-color: $global::darkGreyLight$;
+	visibility: hide;
+	z-index: 2;
+	left: 20;
+	box-shadow-size: 2, 2;
+	box-shadow-color-alpha: 1;
+	box-shadow-color: black;
+}
+
+#tsf_effects_sizeBarWrapper
+{
+	width: inherit;
+	height: $tsf_listBox_dragBarHeight$;
+	position:absolute;
+	top: 78;
+	//background-color: red;
+	//background-color-alpha: 0.2;
+}
+
+#tsf_effects_sizeBar
+{
+	width: 40;
+	height: fill;
+	margin-top: 2;
+	border-bottom: 2;
+	float: center;
+	fill-color: $global::midGrey$;
+	background-texture: "../../config/textures/T_list_sizeBar_D.png";
+}
+
+.tsf_fxDrop_item
+{
+	width: inherit;
+	height: 14;
+	float: left;
+	z-index: 3;
+	border-bottom: 2;
+	margin-bottom: 2;
+	background-color: $global::darkGreyLight$;
+}
+.tsf_fxDropText
+{
+	margin-left: 6;
+	z-index: 3;
+}
+
+.tsf_listBox_modColumn
+{
+	width: 18;
+	height: inherit;
+	border-left: 6;
+}
+
+.tsf_lisBox_sideButtonBack
+{
+	width: 18;
+	height: 18;
+	background-color: $global::darkGreyLight$;
+	border-bottom: 3;
+}
+
+.tsf_lisBox_sideButtonImg
+{
+	margin: 2, 2, 2, 2;
+	width: 14;
+	height: 14;
+	fill-color: $global::midGrey$;
+	border-bottom: 3;
+}
+
+.tsf_listBox_item
+{
+	width:inherit;
+	height: 16;
+	margin: 3, 12, 3, 3;
+	border-bottom: 3;
+	background-color: $global::lowMidGrey$;
+	background-color-alpha: 0.2;
+	visibility: hidden;
+}
+.tsf_liFX_text {
+	margin-top: -1;
+	border-right: 6;
+	border-left: 4;
+	float: left;
+}
+
+.tsf_liFX_visButton
+{
+	height: 12;
+	width: 12;
+	float: left;
+	margin-top: 2;
+	margin-left: 2;
+	margin-right: 2;
+	border-right: 3;
+	fill-color: $global::midGrey$;
 }

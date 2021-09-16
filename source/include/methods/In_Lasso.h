@@ -3,6 +3,7 @@
 
 #include "InputMethod.h"
 #include "../ToolSettings.h"
+#include "../toolSettings/ToolSettings_Forward.h"
 
 #include <glm.hpp>
 class Application;
@@ -16,6 +17,7 @@ protected:
 public:
 	In_Lasso(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
 	{
+		this->type = MethodType::lasso;
 		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::continuous; }
 		interestMask = { TSetType::basic, TSetType::image, TSetType::alpha };
 		fragData.constantSize = false;
@@ -24,6 +26,7 @@ public:
 		fragData.connectEnds = true;
 		this->maxBufferLength = 5;
 		this->anchorIDCount = 0;
+		this->name = "Lasso";
 	};
 	virtual int move(Application* sender, MouseEvent dat);
 	virtual int click(Application* sender, MouseEvent dat);

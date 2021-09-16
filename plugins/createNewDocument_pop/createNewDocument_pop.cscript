@@ -1,0 +1,64 @@
+num cndocp_minWidth = 230;
+num cndocp_minHeight = 146;
+num innerContWidth = 140;
+num buttonContWidth = 180;
+num documentNameContWidth = 220;
+
+bool hasPosMemory = false;
+
+void resizeCNDocP()
+{
+
+	array num size = app.ui.getWidget_byID("cndocp_wrapper").getProperty("size");
+	array num margins = { 
+	(size[0] - innerContWidth) / 2, 
+	(size[0] - buttonContWidth) / 2,
+	(size[0] - documentNameContWidth) / 2 };
+	
+	setClassProperty("cndocp_lineWrapper", "margin-left", margins[0]);
+	setClassProperty("cndocp_buttonWrapper", "margin-left", margins[1]);
+	setClassProperty("cndocp_nameWrapper", "margin-left", margins[2]);
+	
+}
+
+void toggleCNDocP(num select)
+{
+	Widget popup = app.ui.getWidget_byID("cndocp_wrapper");
+	if (select == 0)
+	{
+		if (!hasPosMemory)
+		{
+			array num windowSize = app.getWindowSize();
+			array num widgetSize = popup.getProperty("size");
+			popup.setPosition((windowSize[0] / 2) - (widgetSize[0] / 2), (windowSize[1] / 2) - (widgetSize[1] / 2));
+			resizeCNDocP();
+			hasPosMemory = true;
+		}
+		
+		popup.setProperty("visibility", "show");
+		app.ui.setActivePopup("cndocp_wrapper", true, exitCNDocP);
+		app.ui.preventFocusCallback();
+		app.ui.getWidget_byID("cndocp_width").setProperty("value", "2400");
+		app.ui.getWidget_byID("cndocp_height").setProperty("value", "1800");
+		app.ui.getWidget_byID("cndocp_docName").setProperty("value", "Untitled-1");
+	}
+}
+
+void exitCNDocP()
+{
+	app.ui.getWidget_byID("cndocp_width").setProperty("value", "0");
+	app.ui.getWidget_byID("cndocp_height").setProperty("value", "0");
+	app.ui.getWidget_byID("cndocp_docName").setProperty("value", "document name...");
+
+	app.ui.getWidget_byID("cndocp_wrapper").setProperty("visibility", "hide");
+	app.ui.clearPopup("cndocp_wrapper");
+}
+
+void commitCNDocP()
+{
+	string name = app.ui.getWidget_byID("cndocp_docName").getProperty("value");
+	num width = toNum(app.ui.getWidget_byID("cndocp_width").getProperty("value"));
+	num height = toNum(app.ui.getWidget_byID("cndocp_height").getProperty("value"));
+	bool result = app.ui.createNewDocument(name, width, height, true);
+	if (result) { exitCNDocP(); }
+}

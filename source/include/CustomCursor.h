@@ -29,16 +29,18 @@
 
 inline int convertCursorName(std::string name)
 {
-	if (name == "pointer") { return CURSOR_POINTER; }
-	if (name == "hand") { return CURSOR_HAND; }
-	if (name == "rotate") { return CURSOR_ROTATE; }
-	if (name == "grab") { return CURSOR_GRAB; }
-	if (name == "zoomscrub" || name =="zoom") { return CURSOR_ZOOMSCRUB; }
-	if (name == "zoomin") { return CURSOR_ZOOMIN; }
-	if (name == "zoomout") { return CURSOR_ZOOMOUT; }
-	if (name == "brush") { return CURSOR_BRUSH; }
-	if (name == "dropper" || name == "eyedropper" || name == "colorpicker") { return CURSOR_DROPPER; }
-	if (name == "circleSmall" || name =="circlesmall") { return CURSOR_CIRCLESMALL; }
+	std::string testValue = name;
+	testValue.erase(std::remove_if(testValue.begin(), testValue.end(), isspace), testValue.end());
+	if (testValue == "pointer") { return CURSOR_POINTER; }
+	if (testValue == "hand") { return CURSOR_HAND; }
+	if (testValue == "rotate") { return CURSOR_ROTATE; }
+	if (testValue == "grab") { return CURSOR_GRAB; }
+	if (testValue == "zoomscrub" || testValue =="zoom") { return CURSOR_ZOOMSCRUB; }
+	if (testValue == "zoomin") { return CURSOR_ZOOMIN; }
+	if (testValue == "zoomout") { return CURSOR_ZOOMOUT; }
+	if (testValue == "brush") { return CURSOR_BRUSH; }
+	if (testValue == "dropper" || testValue == "eyedropper" || testValue == "colorpicker") { return CURSOR_DROPPER; }
+	if (testValue == "circleSmall" || testValue =="circlesmall") { return CURSOR_CIRCLESMALL; }
 	return 0;
 }
 
@@ -46,6 +48,7 @@ class CustomCursor
 {
 private:
 	int id = 0;
+	std::string name = "";
 	unsigned char* imgData;
 	int width;
 	int height;
@@ -58,8 +61,9 @@ public:
 	GLFWcursor* cursor;
 	// constructor / destructor
 	CustomCursor();
-	CustomCursor(const char* texPath, int id, int offType); // Overload for initialization with offset override;
+	CustomCursor(const char* texPath, int id, int offType, std::string name); // Overload for initialization with offset override;
 	~CustomCursor();
+	std::string getName() { return name; }
 };
 
 #endif

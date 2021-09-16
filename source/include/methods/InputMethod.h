@@ -3,17 +3,20 @@
 
 #include "../structs.h"
 #include "../ToolSettings.h"
+#include "../toolSettings/ToolSettings_Forward.h"
 
 class Application;
 class Tool;
 
 #include <vector>
+#include <string>
 
 class InputMethod
 {
 private:
 protected:
 	int ID;
+	std::string name = "";
 	std::shared_ptr<Tool> owner;
 	// InputData is an internal management structure for storing incoming mouse events
 	// This allows input methods to hold/wait on adding new anchor points, and still
@@ -28,6 +31,7 @@ protected:
 	float currentLength = 0.0f;
 	glm::vec3 lastCursor = glm::vec3(0);
 public:
+	MethodType type = MethodType::noInput;
 	// SplineData is the public spline data management structure that is used internally
 	// by input methods to perform more complex operations.
 	VertexData splineData;
@@ -56,7 +60,7 @@ public:
 	bool continuousMove(Application* sender, MouseEvent dat,
 		TSet_ContinuousControl* lineControl, 
 		TSet_Smoothing* smoothing,
-		bool useSplineData,
+		bool useSplineData, float vertexSpacing,
 		glm::vec3& outPos, glm::vec3& outDir);
 	bool dragMove(Application* sender, MouseEvent dat, 
 		TSet_DragControl* dragControl,
@@ -65,6 +69,7 @@ public:
 		TSet_OnePointControl* onePointControl, 
 		glm::vec3 &cursorPos);
 	void resetInput(Application* sender, MouseEvent dat, glm::vec3 &point, glm::vec3 &dir);
+	std::string getName() { return name; }
 };
 
 #endif

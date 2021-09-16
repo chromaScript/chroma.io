@@ -3,6 +3,7 @@
 
 #include "OutputMethod.h"
 #include "../ToolSettings.h"
+#include "../toolSettings/ToolSettings_Forward.h"
 
 #include "../entities/Fragment.h"
 #include "../entities/Stroke.h"
@@ -41,17 +42,23 @@ protected:
 public:
 	Out_Stroke(int id, std::shared_ptr<Tool> owner) : OutputMethod{ id, owner }
 	{
+		this->type = MethodType::stroke;
 		this->interestMask = { 
 			TSetType::basic, 
-			TSetType::smoothing, 
+			TSetType::smoothing,
+			TSetType::color,
+			TSetType::scatter,
 			TSetType::image, 
+			TSetType::character,
 			TSetType::polygon,
 			TSetType::polyline,
 			TSetType::vortex,
 			TSetType::field,
 			TSetType::fan,
 			TSetType::rake,
-			TSetType::alpha };
+			TSetType::alpha,
+			TSetType::effects };
+		this->name = "Stroke";
 	}
 	virtual void preview(Application* sender, VertexData* dat);
 	virtual void finalize(Application* sender, VertexData* dat);

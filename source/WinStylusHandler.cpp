@@ -336,7 +336,7 @@ bool WinStylusHandler::getStylusIsHover()
 // calibration maximum count
 bool WinStylusHandler::updateDownscaleFactor(LONG &xpos, LONG &ypos, double &mouseX, double &mouseY)
 {
-	if (scaleSetCount > scaleCountMax) { return false; }
+	if (scaleSetCount > scaleCountMax || doneCalibratingStylus) { return false; }
 	if (xpos >= 1 && ypos >= 1)
 	{
 		int scaleWeight = 0;
@@ -350,7 +350,19 @@ bool WinStylusHandler::updateDownscaleFactor(LONG &xpos, LONG &ypos, double &mou
 		double newFactor = ((downscaleFactor * ((double)scaleWeight - 1)) + scaleAvg) / (double)scaleWeight;
 		if (!isinf(newFactor) && !isnan(newFactor)) { downscaleFactor = newFactor; }
 		scaleSetCount++; 
-		if (scaleSetCount == scaleCountMax) { std::cout << "WINSTYLUSHANDLER::CALIBRATION_FINISHED" << std::endl; }
+		if (scaleSetCount == scaleCountMax) { 
+			doneCalibratingStylus = true; owner.get()->saveDownscaleFactor(downscaleFactor);
+			std::cout << "WINSTYLUSHANDLER::CALIBRATION_FINISHED" << std::endl; 
+		}
 		return true;
 	}
+}
+
+void WinStylusHandler::resetCalibration()
+{
+	doneCalibratingStylus = false; scaleSetCount = 0; downscaleFactor = 0;
+}
+void WinStylusHandler::stopCalibration()
+{
+	doneCalibratingStylus = true;
 }

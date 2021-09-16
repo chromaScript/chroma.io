@@ -4,4 +4,4 @@
 <NAMESPACE=toolSettingsFull>
 <LAYOUT_PATH=toolSettingsFull.layout>
 <STYLE_PATH=toolSettingsFull.style>
-<SCRIPT_PATH=toolSettingsFull.cscript>
+<SCRIPT_PATH=tsf_main.cscript, tsf_updater.cscript, tsf_updater_FX.cscript>

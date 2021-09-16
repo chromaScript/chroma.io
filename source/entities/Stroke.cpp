@@ -1,7 +1,7 @@
 #include "../include/entities/Stroke.h"
 #include "../include/Color.h"
 #include "../include/ToolSettings.h"
-
+#include "../include/toolSettings/ToolSettings_Forward.h"
 
 #include <glad/glad.h>
 
@@ -9,9 +9,12 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/quaternion.hpp>
 
+#include "../include/Tool.h"
+
 #include <iostream>
 #include <algorithm>
 #include <memory>
+#include <random>
 
 extern bool doStrokeDebugFrames;
 
@@ -36,30 +39,46 @@ Stroke::Stroke()
 	generateUEID();
 }
 // New Settings-Based Constructor
-Stroke::Stroke(std::shared_ptr<Shader> shader, TSet_Basic* basicPtr, TSet_Image* imagePtr, TSet_Alpha* alphaPtr)
+Stroke::Stroke(std::shared_ptr<Shader> shader, std::shared_ptr<Tool> tool)
 {
 	generateUEID();
 	fragData = VertexData();
 	this->shader = shader;
-	this->basic = *basicPtr;
-	this->image = *imagePtr;
-	this->alpha = *alphaPtr;
+	this->basic = *tool.get()->getBasic();
+	this->image = *tool.get()->getImage();
+	this->character = *tool.get()->getCharacter();
+	this->alpha = *tool.get()->getAlpha();
+	this->color = *tool.get()->getColor();
+	this->scatter = *tool.get()->getScatter();
+	this->effects = *tool.get()->getEffects();
+	// Run first-time set-up for any Tool Settings that require it
+	if (effects.isEnabled) 
+	{ 
+		effects.initializeData(basic.currentFGColor, basic.currentBGColor, image.tipSize);
+		if (effects.gradient.isEnabled)
+		{
+			effects.gradient.gradient.generateTexture();
+			bindTexture_utility(
+				4, effects.gradient.gradient.textureResolution, 1,
+				effects.gradient.gradient.textureID,
+				effects.gradient.gradient.texture);
+		}
+	}
+	if (scatter.isEnabled) { scatter.updatePadding(); }
+
 	this->frameShader = chromaIO.get()->getFrameShader();
 	this->compositeShader = chromaIO.get()->getCompositeShader();
 	this->compositeFrameShader = chromaIO.get()->getCompositeFrameShader();
 	this->debugLineShader = chromaIO.get()->getDebugLineShader();
 	// Note: Must use the default class transform variable to store
 	setTransform(glm::vec3(0.0f, 0.0f, 0.0f), Bounds(0, 0, 0, 0), 0.0f);
-	setTipProperties(image.tipSize, (image.relativeSpacing) ? image.tipSize * (image.spacing / 100.0f) : image.spacing);
-	setRGBA(basic.currentFGColor.r, basic.currentFGColor.g, basic.currentFGColor.b, 1.0f);
 	// Each shard shares the same Buffer ID's & texData. The shader is used to specify the alpha, color,
 	// scale, etc. of shards.
 	// Warning: The 'stroke-image' data should be moved into a new Image class which stores data that multiple
 	// objects can access. This will let the vertex-data be freed again for other uses.
-	setVertData_stroke((float)image.tipSize);
+	setVertData_stroke((float)image.tipSize, (image.isEnabled) ? image.scaleX : 1.0f, (image.isEnabled) ? image.scaleY : 1.0f);
 	initializeData(image.tipSize * image.tipSize);
 	// Warning: For now fill data with square shape, must change later!
-	//fillData(image.tipSize * image.tipSize, basic.currentFGColor.makeCColor_uc());
 	CColor_uc brushColor = basic.currentFGColor.makeCColor_uc();
 	int count = 0;
 	int radius = image.tipSize / 2;
@@ -80,7 +99,6 @@ Stroke::Stroke(std::shared_ptr<Shader> shader, TSet_Basic* basicPtr, TSet_Image*
 			}
 		}
 	}
-	//fillData(image.tipSize * image.tipSize, brushColor);
 	generateBuffers(&(this->VAO), &(this->VBO), &(this->EBO), &(this->TEX0));
 	bindBuffers();
 	bindTexture(image.tipSize, image.tipSize);
@@ -91,11 +109,14 @@ Stroke::Stroke(std::shared_ptr<Shader> shader, TSet_Basic* basicPtr, TSet_Image*
 	}
 
 	// Rendering Pipeline Testing - Should negate the code above for tempBuffer
-	int s = int(sqrt(image.tipSize * image.tipSize * 2) * 1.6);
+	compositePadding = int(((effects.blur.isEnabled) ? effects.blur.radius * 1.45f : 0.0f) +
+		((scatter.isEnabled) ? scatter.fetchPadding(image.tipSize) * 1.15f : 0.0f) +
+		(image.tipSize * 1.2f));
 	// Set the initial size of the compositeData
-	setVertData_composite(s, s);
+	setVertData_composite(compositePadding, compositePadding);
 
-	glGenVertexArrays(1, &quadVAO); glGenBuffers(1, &quadVBO);
+	glGenVertexArrays(1, &quadVAO); 
+	glGenBuffers(1, &quadVBO);
 	glBindVertexArray(quadVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
@@ -180,59 +201,173 @@ Stroke::Stroke(std::shared_ptr<Shader> shader, TSet_Basic* basicPtr, TSet_Image*
 	glGenBuffers(1, &boundsVBO);
 }
 
+void Stroke::cleanup_stroke()
+{
+	glDeleteBuffers(1, &this->quadVBO);
+	glDeleteVertexArrays(1, &this->quadVAO);
+
+	glDeleteBuffers(1, &this->compVBO);
+	glDeleteBuffers(1, &this->compEBO);
+	glDeleteVertexArrays(1, &this->compVAO);
+
+	glDeleteFramebuffers(1, &this->compBuffer);
+	glDeleteTextures(1, &this->compColorBuffer);
+
+	glDeleteVertexArrays(1, &compTempVAO);
+	glDeleteBuffers(1, &compTempVBO);
+	glDeleteBuffers(1, &compTempEBO);
+
+	glDeleteFramebuffers(1, &compTempBuffer);
+	glDeleteTextures(1, &compTempColorBuffer);
+
+	glDeleteVertexArrays(1, &linesVAO);
+	glDeleteBuffers(1, &linesVBO);
+	glDeleteVertexArrays(1, &boundsVAO);
+	glDeleteBuffers(1, &boundsVBO);
+
+	frameShader.reset();
+	compositeShader.reset();
+	compositeFrameShader.reset();
+	debugLineShader.reset();
+}
+
 Stroke::~Stroke()
 {
-
+	delete []strokeImageData;
+	delete strokeImageData;
+	delete []lineLoop;
+	delete lineLoop;
+	delete []tempImageData;
+	delete tempImageData;
 }
 
-// Shard Properties Functions (Usually taken from the tool settings)
-void Stroke::setTipProperties(int size, float spacing)
+void Stroke::updateGenData(int lastShard, glm::vec3 pos, glm::vec3 dir, float count, float trueSpacing, float tipSize)
 {
-	tipSize = size;
-	tipSpacing = spacing;
-}
-void Stroke::setRGBA(float r, float g, float b, float a)
-{
-	strokeColor.r = r;
-	strokeColor.g = g;
-	strokeColor.b = b;
-	strokeColor.a = a;
-}
+	totalPos.x += pos.x; totalPos.y += pos.y;
+	averagePos = glm::vec3(totalPos.x / (float)lastShardID, totalPos.y / (float)lastShardID, (float)lastShardID);
+	if (rebuildBounds) { fillX.x = fillX.y = pos.x; fillY.x = fillY.y = pos.y; rebuildBounds = false; }
+	else
+	{
+		if (pos.x + tipSize > fillX.y) { fillX.y = pos.x + tipSize; }
+		else if (pos.x - tipSize < fillX.x) { fillX.x = pos.x - tipSize; }
+		if (pos.y + tipSize > fillY.y) { fillY.y = pos.y + tipSize; }
+		else if (pos.y - tipSize < fillY.x) { fillY.x = pos.y + tipSize; }
+		if ((fillX.y - fillX.x) < (abs(fillY.y - fillY.x))) { isPortrait = true; }
+		else { isPortrait = false; }
+	}
 
-// Shard Modification Functions - Used to interpret tool settings into display data
-// Note: This is where randomization should be added later, using fragmentUEID as the seed
-CColor Stroke::modulateColor(float scalar)
-{
-	CColor out = strokeColor;
-	//float add = clampf((0.25f * scalar), 0.0f, 1.0f);
-	float add = 0;
-	out.r = clampf((out.r + add), 0.0f, 1.0f);
-	out.g = clampf((out.g + add), 0.0f, 1.0f);
-	out.b = clampf((out.b + add), 0.0f, 1.0f);
-	return out;
-}
-float Stroke::modulateOpacity(float scalar)
-{
-	float out = clampf(1.0f * scalar, 0.0f, 1.0f);
-	//float out = strokeAlpha * scalar;
-	return out;
-}
-glm::vec4 Stroke::modulateScale(float scalar)
-{
-	glm::vec4 out = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	out.x = 0.25f + (0.75f * scalar);
-	out.y = 0.25f + (0.75f * scalar);
-	return out;
-}
+	glm::vec2 size = glm::vec2(fillX.y - fillX.x, fillY.y - fillY.x);
+	center = glm::vec3(size.x / 2.0f, size.y / 2.0f, 0.0f);
+	glm::vec2 posCenter = glm::vec2(pos.x - fillX.x, pos.y - fillY.x);
+	glm::vec3 dirOut = glm::normalize(glm::vec3(posCenter.x - center.x, posCenter.y - center.y, 0.0f));
+	dirOut = dir;
+	float tipTrueSpacingRatio = tipSize / trueSpacing;
 
+	float length = sqrtf(center.x * center.x + center.y * center.y);
+	if (!isnan(dir.x) && count > 0)
+	{
+		if (count > (2 * (maskDir_spacingFactor / tipTrueSpacingRatio)))
+		{
+			float countWeight = count;
+			if (count < (15 * (maskDir_spacingFactor / tipTrueSpacingRatio)))
+			{
+				countWeight = clampf(0.6f * maskDir_cutoffFactor, 1.0f, 20.0f);
+			}
+			else if (count < (80 * (maskDir_spacingFactor / tipTrueSpacingRatio)))
+			{
+				countWeight = clampf(0.1f * maskDir_cutoffFactor, 1.0f, 20.0f);
+			}
+			else if (count < (140 * (maskDir_spacingFactor / tipTrueSpacingRatio)))
+			{
+				countWeight = clampf(1.5f * maskDir_cutoffFactor, 1.0f, 20.0f);
+			}
+			else { countWeight = 20.0f; }
+			dir_average.x = ((dir_average.x * count) + (dir.x / countWeight))
+				/ count;
+			dir_average.y = ((dir_average.y * count) + (dir.y / countWeight))
+				/ count;
+			dir_average = glm::normalize(dir_average);
+		}
+		//std::cout << glm::degrees(atan2f(dir_average.x, dir_average.y)) << std::endl;
+	}
+	dirIntersectA = (center - (dir_average * (length / 1.0f))); dirIntersectA.y = size.y - dirIntersectA.y;
+	dirIntersectB = (center + (dir_average * (length / 1.0f))); dirIntersectB.y = size.y - dirIntersectB.y;
+}
 
 // Container Functions
 // Overload for passing for direct construction
-void Stroke::createNewShard(int ID, glm::vec3 pos, glm::vec3 dir, glm::vec4 scale,
-	CColor color, float opacity, float pressure, float rotation, float tiltx, float tilty, float velocity)
+void Stroke::generateShards(int& shardCount, int& lastShardID, glm::vec3 pos, glm::vec3 dir, float scale,
+	CColor fgColorIn, CColor bgColorIn, float pressure,
+	float rotation, float tiltx, float tilty, float velocity)
+{
+	float outOpacity = 1.0f; float outFlow = 1.0f;
+	float outScale = 1.0f;
+	glm::vec3 finalPos = pos;
+	CColor outFGCol = fgColorIn;
+	CColor outBGCol = bgColorIn;
+	float colValue = 0.0f;
+	if (scatter.isEnabled)
+	{
+		//glm::vec3 savePos = pos;
+		int count = scatter.modulateCount();
+		
+		for (int i = 0; i < count; i++)
+		{
+			outScale = character.noiseScale(scale, pressure);
+			finalPos = pos;
+			outFGCol = fgColorIn;
+			outBGCol = bgColorIn;
+			if (color.isEnabled)
+			{
+				color.modulateColor(outFGCol, outBGCol, dir, pressure, rotation, tiltx, tilty, velocity);
+			}
+			if (alpha.isEnabled)
+			{
+				alpha.modulateAlpha(outOpacity, outFlow, dir, pressure, rotation, tiltx, tilty, velocity);
+			}
+			// Apply Scattering
+			finalPos = scatter.modulatePosition(finalPos, dir, image.tipSize);
+
+			colValue = outFGCol.makeGreyscale();
+			if (colValue > shardValue_max) { shardValue_max = colValue; }
+			else if (colValue < shardValue_min) { shardValue_min = colValue; }
+			// Create New Shard
+			createNewShard(lastShardID, finalPos, dir, outScale,
+				outFGCol, outOpacity, outFlow, pressure,
+				rotation, tiltx, tilty, velocity);
+			lastShardID++;
+			shardCount++;
+		}
+	}
+	else
+	{
+		outScale = character.noiseScale(scale, pressure);
+		if (color.isEnabled)
+		{
+			color.modulateColor(outFGCol, outBGCol, dir, pressure, rotation, tiltx, tilty, velocity);
+		}
+		if (alpha.isEnabled)
+		{
+			alpha.modulateAlpha(outOpacity, outFlow, dir, pressure, rotation, tiltx, tilty, velocity);
+		}
+
+		colValue = outFGCol.makeGreyscale();
+		if (colValue > shardValue_max) { shardValue_max = colValue; }
+		else if (colValue < shardValue_min) { shardValue_min = colValue; }
+		// Create New Shard
+		createNewShard(lastShardID, finalPos, dir, outScale,
+			outFGCol, outOpacity, outFlow, pressure,
+			rotation, tiltx, tilty, velocity);
+		lastShardID++;
+		shardCount++;
+	}
+
+}
+void Stroke::createNewShard(int ID, glm::vec3 pos, glm::vec3 dir, float scale,
+	CColor color, float opacity, float flow, float pressure, float rotation, float tiltx, float tilty, float velocity)
 {
 	shards.emplace_back(StrokeShard(ID, pos, dir, scale,
-		color, opacity, pressure,
+		color, opacity, flow, pressure,
 		rotation, tiltx, tilty, velocity));
 }
 
@@ -248,17 +383,17 @@ void Stroke::processNewAnchor()
 	{
 		// Place first Shard
 		FragmentAnchor* fa = &fragData.anchors.front();
-		CColor outCol = modulateColor(fa->pressure);
-		float outOpacity = modulateOpacity(fa->pressure);
-		glm::vec4 outScale = modulateScale(fa->pressure);
+		
 		glm::vec3 outDir;
 		if (isnan(fa->dir.x)) { outDir = glm::vec3(0.0f, 0.0f, 0.0f); }
 		else { outDir = fa->dir; }
-		createNewShard(lastShardID, fa->pos, outDir, outScale,
-			outCol, outOpacity, fa->pressure,
-			fa->rotation, fa->tiltx, fa->tilty, fa->velocity);
-		lastShardID++;
-		shardCount++;
+
+		// Update Effects Data
+		updateGenData(lastShardID, fa->pos, outDir, averagePos.z, image.trueSpacing, image.tipSize);
+
+		generateShards(shardCount, lastShardID, fa->pos, outDir, character.modulateScale(fa->pressure),
+			basic.currentFGColor, basic.currentBGColor,
+			fa->pressure, fa->rotation, fa->tiltx, fa->tilty, fa->velocity);
 	}
 	else
 	{
@@ -286,7 +421,6 @@ void Stroke::processNewAnchor()
 			faPrev = &fragData.anchors[size_t(size) - 2];
 		}
 		
-		
 		if (faNew->flag == FLAG_START) { return; }
 		// 1. Define the length of AnchorP -> anchorN (where P = previous, N = new)
 		// 2. Define the X/Y amount to add between each new shard based on spacing value
@@ -299,9 +433,11 @@ void Stroke::processNewAnchor()
 		{
 			dir = glm::vec3(0.0f, 0.0f, 0.0f);
 		}
+		// Update Effects Data
+		updateGenData(lastShardID, faNew->pos, dir, averagePos.z, image.trueSpacing, image.tipSize);
 		// Becausue length of dir should always be 1, dir can be used as a reliable source for the X/Y spacing
-		incX = dir.x * tipSpacing;
-		incY = dir.y * tipSpacing;
+		incX = dir.x * image.trueSpacing;
+		incY = dir.y * image.trueSpacing;
 		float spacingLen = glm::length(glm::vec2(incX, incY));
 		// 3. Beginning from AnchorP, for float = 0, less than length Ap -> An
 
@@ -316,33 +452,45 @@ void Stroke::processNewAnchor()
 		}
 		else
 		{
+
 			// Set initial outbound position to the previous anchor position
 			glm::vec3 outPos = faPrev->pos;
 
 			float usedLen = 0;
 			while (usedLen < segLen)
 			{
+				// B1. Calculate the lerp values for the pen data first. They are needed to fix the spacing value.
+				float t = usedLen / segLen;
+				float outPressure = faPrev->pressure + (t * (faNew->pressure - faPrev->pressure));
+				float outRotation = faPrev->rotation + (t * (faNew->rotation - faPrev->rotation));
+				float outTiltx = faPrev->tiltx + (t * (faNew->tiltx - faPrev->tiltx));
+				float outTilty = faPrev->tilty + (t * (faNew->tilty - faPrev->tilty));
+				float outVelocity = faPrev->velocity + (t * (faNew->velocity - faPrev->velocity));
+				
+				// B2. Calculate the amount of length left.
+				float outScale = character.modulateScale(outPressure);
 				if (storedLength > 0.01)
 				{
-					float remainder = (spacingLen - storedLength) / spacingLen;
+					float remainder = ((spacingLen * outScale) - storedLength) / (spacingLen * outScale);
 					outPos += glm::vec3(
-						(incX * remainder),
-						(incY * remainder),
+						((incX * outScale) * remainder),
+						((incY * outScale) * remainder),
 						0.0f);
 					storedLength = 0;
-					usedLen += remainder * spacingLen;
+					usedLen += remainder * (spacingLen * outScale);
 				}
 				else if (shardCount != 0)
 				{
 					outPos += glm::vec3(
-						incX,
-						incY,
+						(incX * outScale),
+						(incY * outScale),
 						0.0f);
-					usedLen += spacingLen;
+					usedLen += (spacingLen * outScale);
 				}
-				// B2. Find the relative position of shard.pos between Ap -> An
-				float t = usedLen / segLen;
-				// B3. Use this value to assign floating values based on tool settings
+
+				// B3. Find the relative position of shard.pos between Ap -> An
+				
+				// B4. Use this value to assign floating values based on tool settings
 				// Using lerp formula a + t(b - a), where A = 0.0, and B = 1.0
 				// Make sure that neither dir isnan, Note: this can be removed later once real time anchor culling is implemented
 				glm::vec3 outDir, dirA, dirB;
@@ -351,27 +499,11 @@ void Stroke::processNewAnchor()
 				if (isnan(faNew->dir.x)) { dirB = glm::vec3(0.0f, 0.0f, 0.0f); }
 				else { dirB = faNew->dir; }
 				outDir = lerpDir(dirA, dirB, t * faNew->dirInterpFactor);
-				//outDir = lerpDir(dirA, dirB, t);
-				float outPressure = faPrev->pressure + (t * (faNew->pressure - faPrev->pressure));
-				float outRotation = faPrev->rotation + (t * (faNew->rotation - faPrev->rotation));
-				float outTiltx = faPrev->tiltx + (t * (faNew->tiltx - faPrev->tiltx));
-				float outTilty = faPrev->tilty + (t * (faNew->tilty - faPrev->tilty));
-				float outVelocity = faPrev->velocity + (t * (faNew->velocity - faPrev->velocity));
-				glm::vec4 outScale = modulateScale(outPressure);
-				// B4. Assign color data & alpha data
-				//CColor outCol = modulateColor(outPressure);
-				CColor outCol = basic.currentFGColor;
-				//float outOpacity = modulateOpacity(outPressure);
-				float outOpacity = clampf(outPressure, 0.0f, 1.0f);
-				// B5. Place the next Shard
-				createNewShard(lastShardID, outPos, outDir, outScale,
-					outCol, outOpacity, outPressure,
-					outRotation, outTiltx, outTilty, outVelocity);
-				//std::cout << "STROKE::NEWSHARD::POS=(" << shards.back().get()->pos.x << ", "
-				//	<< shards.back().get()->pos.y << ", " << shards.back().get()->pos.z
-				//	<< ")::SHARDCOUNT=" << shardCount << std::endl;
-				lastShardID++;
-				shardCount++;
+
+				generateShards(shardCount, lastShardID, outPos, outDir, outScale,
+					basic.currentFGColor, basic.currentBGColor,
+					outPressure, outRotation, outTiltx, outTilty, outVelocity);
+
 				// B7. Break if the next anchor would not be placable.
 				if (usedLen + spacingLen > segLen)
 				{
@@ -383,7 +515,6 @@ void Stroke::processNewAnchor()
 	}
 
 	// Render the new Shards
-
 	// Do first-time setup
 	if (fragData.anchors.size() == 1)
 	{
@@ -409,16 +540,9 @@ void Stroke::processNewAnchor()
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, compositeSize.x, compositeSize.y, 0, GL_RGBA, GL_FLOAT, 0);
 		glBindTexture(GL_TEXTURE_2D, compTempColorBuffer);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, compositeSize.x, compositeSize.y, 0, GL_RGBA, GL_FLOAT, 0);
-	}
-	if (shards.size() == 0)
-	{
-		// Clear buffers
+		// Clear compBuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, compBuffer);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, compTempBuffer);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearColor(basic.currentFGColor.r, basic.currentFGColor.g, basic.currentFGColor.b, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -426,15 +550,13 @@ void Stroke::processNewAnchor()
 	// Check if the bounding box needs to be resized
 	glm::ivec3 oldPos = compositePos;
 	glm::ivec2 oldSize = compositeSize;
-
-	int padding = int((sqrt(tipSize * tipSize * 2) / 2));
 	glm::vec3 newPos = fragData.anchors.back().pos;
 	bool didUpdate = false;
 
-	if (newPos.x + padding > compMaxX) { compMaxX = (int)newPos.x + padding; didUpdate = true; }
-	if (newPos.y < compMaxY + padding) { compMaxY = (int)newPos.y - padding; didUpdate = true; }
-	if (newPos.x - padding < compMinX) { compMinX = (int)newPos.x - padding; compositePos.x = compMinX; didUpdate = true; }
-	if (newPos.y > compMinY - padding) { compMinY = (int)newPos.y + padding; compositePos.y = compMinY; didUpdate = true; }
+	if (newPos.x + compositePadding > compMaxX) { compMaxX = (int)newPos.x + compositePadding; didUpdate = true; }
+	if (newPos.y < compMaxY + compositePadding) { compMaxY = (int)newPos.y - compositePadding; didUpdate = true; }
+	if (newPos.x - compositePadding < compMinX) { compMinX = (int)newPos.x - compositePadding; compositePos.x = compMinX; didUpdate = true; }
+	if (newPos.y > compMinY - compositePadding) { compMinY = (int)newPos.y + compositePadding; compositePos.y = compMinY; didUpdate = true; }
 
 	if (didUpdate)
 	{
@@ -461,16 +583,15 @@ void Stroke::processNewAnchor()
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, compositeSize.x, compositeSize.y, 0, GL_RGBA, GL_FLOAT, 0);
 		// Clear buffers
 		glBindFramebuffer(GL_FRAMEBUFFER, compBuffer);
-		glClearColor(strokeColor.r, strokeColor.g, strokeColor.b, 0.0f);
-		//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearColor(basic.currentFGColor.r, basic.currentFGColor.g, basic.currentFGColor.b, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, compTempBuffer);
-		glClearColor(strokeColor.r, strokeColor.g, strokeColor.b, 0.0f);
-		//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearColor(basic.currentFGColor.r, basic.currentFGColor.g, basic.currentFGColor.b, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 		// 3. Manually blit the old data into the new frame
 		glTextureSubImage2D(compColorBuffer, 0, offset.x, offset.y, oldSize.x, oldSize.y, GL_RGBA, GL_FLOAT, oldData);
 		delete[] oldData;
@@ -486,15 +607,17 @@ void Stroke::processNewAnchor()
 	for (int i = (int)shardFirst; i < (int)shards.size(); i++)
 	{
 		// Draw the shard on it's own buffer texture
-		//glBindFramebuffer(GL_FRAMEBUFFER, compBuffer);
+		StrokeShard* obj = &shards[i];
 
 		glBindFramebuffer(GL_FRAMEBUFFER, compTempBuffer);
-		//glBindFramebuffer(GL_FRAMEBUFFER, compBuffer);
-		glClearColor(strokeColor.r, strokeColor.g, strokeColor.b, 0.0f);
-		//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBlendEquation(GL_MAX);
+		glClearColor(obj->color.r, obj->color.g, obj->color.b, 0.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glBlendEquation(GL_FUNC_ADD);
+
+		glBlendEquationSeparate(GL_MAX, GL_MAX);
+		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
 		// Later, a single shader should be used that handles all of this without needing to swap
 		// to a different program
@@ -506,21 +629,21 @@ void Stroke::processNewAnchor()
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, TEX0);
 
-		StrokeShard* obj = &shards[i];
-
 		glm::vec3 transPos = (glm::vec3(compositePos) - obj->pos);
 		transPos.y = compositeSize.y - transPos.y;
 		transPos.x = -(compositeSize.x + transPos.x);
 
 		modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(modelMatrix, transPos);
+		
+		modelMatrix = glm::translate(modelMatrix, transPos + glm::vec3(image.offsetX, image.offsetY, 0.0f));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(obj->scale));
 		if (isnan(obj->dir.x) || isnan(obj->dir.y))
 		{
 			modelMatrix = glm::rotate(modelMatrix, 0.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 		}
 		else
 		{
-			modelMatrix = glm::rotate(modelMatrix, atan2(obj->dir.x, obj->dir.y), glm::vec3(0.0f, 0.0f, 1.0f));
+			modelMatrix = glm::rotate(modelMatrix, atan2(obj->dir.x, obj->dir.y) + glm::radians(image.rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 		}
 		shader->setMat4("model", modelMatrix);
 		// Drawing with opacity by pressure enabled
@@ -528,8 +651,8 @@ void Stroke::processNewAnchor()
 		shader->setVec4("rgba", rgba);
 		// Flow with pressure disabled, set to constant
 		// This is a flat reductive multiplier to the resulting opacity of the shard (brush tip)
-		shader->setFloat("flow",
-			(alpha.usePressureFlow) ? lerpf(alpha.minFlow, alpha.maxFlow, obj->pressure) : alpha.maxFlow);
+		shader->setFloat("flow", obj->flow);
+		shader->setFloat("opacity", obj->opacity);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -537,16 +660,21 @@ void Stroke::processNewAnchor()
 		// calculating the alpha by hand, then using MAX to
 		// get the correct 'opacity' effect.
 		glBindFramebuffer(GL_FRAMEBUFFER, compBuffer);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBlendEquation(GL_MAX);
+		//glClearColor(obj->color.r, obj->color.g, obj->color.b, 0.0f);
+		
+		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Old Blend Function Pre-Color-Dynamics
+		//glBlendEquation(GL_MAX); // Old Blend Equation Pre-Color-Dynamics
+		
+		glBlendEquationSeparate(GL_FUNC_ADD, GL_MAX);
+		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+
 		compositeFrameShader->use();
 		compositeFrameShader->setInt("dstTex", 0);
 		compositeFrameShader->setInt("srcTex", 1);
 		compositeFrameShader->setBool("preMultiply", true);
 		// Drawing with opacity by pressure enabled, this clamps the resulting alpha to the current pressure,
 		// regardless of flow build up, ie. flow builds up the opacity to the current allowed max.
-		compositeFrameShader->setFloat("opacity",
-			(alpha.usePressureOpacity) ? lerpf(alpha.minOpacity, 1.0f, obj->pressure) : 1.0f);
+		compositeFrameShader->setFloat("opacity", obj->opacity);
 		glBindVertexArray(quadVAO);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, compColorBuffer);
@@ -585,12 +713,10 @@ void Stroke::rebuildAnchorShards(int anchorID)
 // Data Functions
 // Need a custom setVertData for stroke specific needs
 // This sets the vert data for the brush tip itself
-void Stroke::setVertData_stroke(float size)
+void Stroke::setVertData_stroke(float size, float scaleX, float scaleY)
 {
-	float x = -size / 2.0f;
-	float y = size / 2.0f;
-	float tx = 1.0f;
-	float ty = 1.0f;
+	float x = (-size / 2.0f) * scaleX; float y = (size / 2.0f) * scaleY;
+	float tx = 1.0f; float ty = 1.0f;
 	// Now create a new float array with these bounds
 	float newData[20] = {
 		// The top and bottom are swapped so that 0,0 is in the upper left corner
@@ -623,22 +749,18 @@ void Stroke::setVertData_composite(int width, int height)
 	//int size = (width >= height) ? width : height;
 	compositeSize = glm::ivec2(abs(width), abs(height));
 	float ratio = (float)width / (float)height;
-	float vx = (float)width;
-	float vy = (float)-height;
-	float tx = 1.0f;
-	float ty = 1.0f;
+	float vx = (float)width; float vy = (float)-height;
+	float tx = 1.0f; float ty = 1.0f;
 	// Now create a new float array with these bounds
 	if (ratio >= 1.0f)
 	{
 		tx = 1.0f;
 		ty = tx / ratio;
-		//vy = vx / ratio;
 	}
 	else
 	{
 		ty = 1.0f;
 		tx = ty * ratio;
-		//vx = vy * ratio;
 	}
 	// Now create a new float array with these bounds
 	float newData[20] = {
@@ -650,10 +772,7 @@ void Stroke::setVertData_composite(int width, int height)
 		0, 0, 0.0f,				0,0 // top left
 	};
 	// Overwrite the old data with the new data
-	for (int i = 0; i < 20; i++)
-	{
-		compositeVerts[i] = newData[i];
-	}
+	for (int i = 0; i < 20; i++) { compositeVerts[i] = newData[i]; }
 }
 
 // Line Drawing Functions
@@ -724,24 +843,30 @@ void Stroke::draw(ShaderTransform xform)
 		{
 			drawDebugData(xform);
 		}
-
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBlendEquation(GL_FUNC_ADD);
-
 		modelMatrix = glm::mat4(1.0f);
 		modelMatrix = glm::translate(xform.m, glm::vec3(compositePos));
 
-		compositeShader->use();
-		compositeShader->setInt("texture1", 0);
-		compositeShader->setMat4("projection", xform.p);
-		compositeShader->setMat4("view", xform.v);
-		compositeShader->setMat4("model", modelMatrix);
-		compositeShader->setFloat("strokeOpacity", alpha.maxOpacity);
-		glBindVertexArray(compVAO);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, compColorBuffer);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		setCompositeShaderUniforms(xform);
+		if (effects.isEnabled)
+		{
+			glBindVertexArray(compVAO);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, compColorBuffer);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, effects.gradient.gradient.textureID);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		}
+		else
+		{
+			glBindVertexArray(compVAO);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, compColorBuffer);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		}
+		
 	}
 	if (drawShapeLines && lineLoop != nullptr)
 	{
@@ -749,7 +874,7 @@ void Stroke::draw(ShaderTransform xform)
 		debugLineShader->setMat4("projection", xform.p);
 		debugLineShader->setMat4("view", xform.v);
 		
-		glm::vec4 color = glm::vec4(strokeColor.makeVec3(), 1.0f);
+		glm::vec4 color = glm::vec4(basic.currentFGColor.makeVec3(), 1.0f);
 		debugLineShader->setVec4("lineColor", color);
 		glPointSize(lineSize);
 		glBindVertexArray(linesVAO);
@@ -811,12 +936,7 @@ void Stroke::render(ShaderTransform xform, unsigned int targetBuffer)
 		modelMatrix = glm::mat4(1.0f);
 		modelMatrix = glm::translate(xform.m, glm::vec3(compositePos));
 
-		compositeShader->use();
-		compositeShader->setInt("texture1", 0);
-		compositeShader->setMat4("projection", xform.p);
-		compositeShader->setMat4("view", xform.v);
-		compositeShader->setMat4("model", modelMatrix);
-		compositeShader->setFloat("strokeOpacity", alpha.maxOpacity);
+		setCompositeShaderUniforms(xform);
 		glBindVertexArray(compVAO);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, compColorBuffer);
@@ -895,6 +1015,7 @@ void Stroke::drawDebugData(ShaderTransform xform)
 	//for (int i = 0; i < (int)shards.size(); i++)
 	for (int i = 0; i < (int)shards.size(); i++)
 	{
+		StrokeShard* obj = &shards[i];
 		// Draw the shard on it's own buffer texture
 		glBindFramebuffer(GL_FRAMEBUFFER, tempbuffer);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -910,8 +1031,6 @@ void Stroke::drawDebugData(ShaderTransform xform)
 		glBindVertexArray(VAO);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, TEX0);
-
-		StrokeShard* obj = &shards[i];
 
 		modelMatrix = glm::mat4(1.0f);
 		modelMatrix = glm::translate(xform.m, obj->pos);
@@ -961,4 +1080,154 @@ void Stroke::drawDebugData(ShaderTransform xform)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, frameColorbuffer);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void Stroke::setCompositeShaderUniforms(ShaderTransform xform)
+{
+	compositeShader->use();
+	compositeShader->setInt("texture1", 0);
+	compositeShader->setInt("texture2", 1);
+	compositeShader->setMat4("projection", xform.p);
+	compositeShader->setMat4("view", xform.v);
+	compositeShader->setMat4("model", modelMatrix);
+	compositeShader->setFloat("strokeOpacity", alpha.maxOpacity);
+	// Set Effects Uniforms
+	if (effects.isEnabled)
+	{
+		compositeShader->setInt("fx_count", effects.effectsCount);
+		compositeShader->setFloat("fx_totalBlend", effects.totalBlend);
+		compositeShader->setFloat("fx_totalMask_alphaCenter", effects.totalMask_alphaCenter);
+		compositeShader->setFloat("fx_totalMask_alphaRange", effects.totalMask_alphaRange);
+		compositeShader->setIntArray("fx_slots", 16, effects.effectsOrdering);
+
+		compositeShader->setVec3("fx_avgDir", dir_average);
+		compositeShader->setVec3("fx_dirPointA", dirIntersectA);
+		compositeShader->setVec3("fx_dirPointB", dirIntersectB);
+		glm::vec4 fillArea = glm::vec4(fillX.x, fillX.y, fillY.x, fillY.y);
+		compositeShader->setVec4("fx_gen_area", fillArea);
+		compositeShader->setFloat("fx_isPortrait", (isPortrait) ? 1.0f : 0.0f);
+
+		if (effects.fill.isEnabled)
+		{
+			compositeShader->setBool("fx_doFill_byCenter", effects.fill.maskUsingCenter);
+			compositeShader->setBool("fx_doFill_byAngle", effects.fill.maskUsingAngle);
+
+			compositeShader->setFloat("fx_fill_XMask", (effects.fill.finalMaskX) ? 1.0f : 0.0f);
+			compositeShader->setFloat("fx_fill_XMask_invert", (effects.fill.finalMaskXInvert) ? 1.0f : 0.0f);
+			compositeShader->setFloat("fx_fill_YMask", (effects.fill.finalMaskY) ? 1.0f : 0.0f);
+			compositeShader->setFloat("fx_fill_YMask_invert", (effects.fill.finalMaskYInvert) ? 1.0f : 0.0f);
+
+			compositeShader->setFloat("fx_fill_XMaskVariance", effects.fill.maskX_variance);
+			compositeShader->setFloat("fx_fill_YMaskVariance", effects.fill.maskY_variance);
+			compositeShader->setFloat("fx_fill_XChunkSize", effects.fill.finalChunkSizeX);
+			compositeShader->setFloat("fx_fill_YChunkSize", effects.fill.finalChunkSizeY);
+
+			compositeShader->setFloat("fx_fill_angle", effects.fill.maskAngle);
+
+
+			glm::vec2 fillCenter = glm::vec2(
+				(center.x - fillX.x) + effects.fill.maskCenter_offsetX,
+				(center.y - fillY.x) + effects.fill.maskCenter_offsetY);
+			compositeShader->setVec2("fx_fill_center", fillCenter);
+			compositeShader->setFloat("fx_fill_center_invert", (effects.fill.finalMaskCenterInvert) ? 1.0f : 0.0f);
+			compositeShader->setFloat("fx_fill_combineCenter", (effects.fill.combineCenterMask) ? 1.0f : 0.0f);
+
+			glm::vec4 fillColor = effects.fill.finalColor.makeVec4();
+			compositeShader->setVec4("fx_fillColor", fillColor);
+			int channel = effects.fill.getChannelMask();
+			compositeShader->setInt("fx_fillChannelMask", channel);
+		}
+		if (effects.gradient.isEnabled)
+		{
+			compositeShader->setFloat("fx_gradient_mixAmount", effects.gradient.mixAmount);
+		}
+		if (effects.posterize.isEnabled)
+		{
+			compositeShader->setFloat("fx_poster_mixAmount", effects.posterize.mixAmount);
+			compositeShader->setFloat("fx_poster_levels", effects.posterize.levels);
+			float modifier = (effects.posterize.useValueRange) ? clampf((shardValue_max - shardValue_min), 0.1f, 1.0f) : 1.0f;
+			compositeShader->setFloat("fx_poster_levelModifier", modifier);
+			compositeShader->setFloat("fx_poster_gamma", effects.posterize.gamma);
+		}
+		if (effects.invert.isEnabled)
+		{
+			compositeShader->setFloat("fx_invert_mixAmount", effects.invert.mixAmount);
+			compositeShader->setFloat("fx_invert_red", (float)effects.invert.invertRed);
+			compositeShader->setFloat("fx_invert_green", (float)effects.invert.invertGreen);
+			compositeShader->setFloat("fx_invert_blue", (float)effects.invert.invertBlue);
+		}
+		if (effects.threshold.isEnabled)
+		{
+			compositeShader->setFloat("fx_threshold_level", effects.threshold.level);
+			glm::vec3 thresholdMixers = glm::vec3(effects.threshold.mixAmount, effects.threshold.mixLower, effects.threshold.mixUpper);
+			compositeShader->setVec3("fx_threshold_mixAmount", thresholdMixers);
+			glm::vec3 lowColor = effects.threshold.lowColor.makeVec3();
+			glm::vec3 upperColor = effects.threshold.upperColor.makeVec3();
+			compositeShader->setVec3("fx_threshold_lowColor", lowColor);
+			compositeShader->setVec3("fx_threshold_upperColor", upperColor);
+		}
+		if (effects.brightContrast.isEnabled)
+		{
+			compositeShader->setFloat("fx_bright_mixAmount", effects.brightContrast.mixAmount);
+			compositeShader->setFloat("fx_bright_brightness", effects.brightContrast.finalBrightness);
+			compositeShader->setFloat("fx_bright_brightMix", effects.brightContrast.brightnessMix);
+			compositeShader->setFloat("fx_bright_contrast", effects.brightContrast.finalContrast);
+			compositeShader->setFloat("fx_bright_contrastMix", effects.brightContrast.contrastMix);
+		}
+		if (effects.hsv.isEnabled)
+		{
+			glm::vec3 hsv = glm::vec3(
+				effects.hsv.finalHue, effects.hsv.finalSat,
+				effects.hsv.finalVal);
+			compositeShader->setVec3("fx_hsv_color", hsv);
+			compositeShader->setFloat("fx_hsv_mixAmount", effects.hsv.mixAmount);
+		}
+		if (effects.power.isEnabled)
+		{
+			compositeShader->setFloat("fx_power_mixAmount", effects.power.mixAmount);
+			glm::vec3 gammaChannels = glm::vec3(effects.power.gammaRed, effects.power.gammaGreen, effects.power.gammaBlue);
+			compositeShader->setVec3("fx_power_gamma", gammaChannels);
+		}
+		if (effects.modulo.isEnabled)
+		{
+			compositeShader->setFloat("fx_modulo_mixAmount", effects.modulo.mixAmount);
+			compositeShader->setFloat("fx_modulo_valueA", effects.modulo.valueA);
+			compositeShader->setFloat("fx_modulo_valueB", effects.modulo.valueB);
+			compositeShader->setFloat("fx_modulo_useX", (float)effects.modulo.useX);
+			compositeShader->setFloat("fx_modulo_useY", (float)effects.modulo.useY);
+			compositeShader->setFloat("fx_modulo_useDir", (float)effects.modulo.useDirection);
+			glm::vec3 moduloXMix = glm::vec3(effects.modulo.XMixRed, effects.modulo.XMixGreen, effects.modulo.XMixBlue);
+			compositeShader->setVec3("fx_modulo_XChannels", moduloXMix);
+			glm::vec3 moduloYMix = glm::vec3(effects.modulo.YMixRed, effects.modulo.YMixGreen, effects.modulo.YMixBlue);
+			compositeShader->setVec3("fx_modulo_YChannels", moduloYMix);
+			glm::vec3 moduloDirMix = glm::vec3(effects.modulo.DirMixRed, effects.modulo.DirMixGreen, effects.modulo.DirMixBlue);
+			compositeShader->setVec3("fx_modulo_DirChannels", moduloDirMix);
+		}
+		if (effects.blur.isEnabled)
+		{
+			glm::vec4 blurChannels = glm::vec4(
+				effects.blur.mixRed, effects.blur.mixGreen,
+				effects.blur.mixBlue, effects.blur.mixAlpha);
+			compositeShader->setVec4("fx_blur_mixChannels", blurChannels);
+			compositeShader->setFloat("fx_blur_mixAmount", effects.blur.mixAmount);
+			compositeShader->setFloat("fx_blur_quality", effects.blur.quality);
+			compositeShader->setFloat("fx_blur_direction", effects.blur.directions);
+			compositeShader->setFloat("fx_blur_radius", effects.blur.radius);
+		}
+	}
+	else
+	{
+		compositeShader->setInt("fx_count", 0);
+		compositeShader->setFloat("fx_totalBlend", 0.0f);
+		compositeShader->setFloat("fx_totalMask_alphaCenter", effects.totalMask_alphaCenter);
+		compositeShader->setFloat("fx_totalMask_alphaRange", effects.totalMask_alphaRange);
+		compositeShader->setIntArray("fx_slots", 16, effects.effectsOrdering);
+		compositeShader->setBool("fx_doFill", false);
+		compositeShader->setBool("fx_doGradient", false);
+		compositeShader->setBool("fx_doThreshold", false);
+		compositeShader->setBool("fx_doPosterize", false);
+		compositeShader->setBool("fx_doInvert", false);
+		compositeShader->setBool("fx_doBrightContrast", false);
+		compositeShader->setBool("fx_doHSV", false);
+	}
 }

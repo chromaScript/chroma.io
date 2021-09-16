@@ -155,7 +155,6 @@ void dragSlider(num select, num index)
 
 void dragGraph(num select, num index)
 {
-	print "HSL GRAPH DRAG";
 	if (select == 1 || select == 0)
 	{
 		graphBeingDragged = true;
@@ -261,5 +260,5 @@ void hslSliders_globalNotification(array num color, bool isBG)
 }
 
 bindCallbackEvent("updateFGColor", "hslSliders_FG", hslSliders_globalNotification);
-bindCallbackEvent("updateBGColor", "hslSliders_FG", hslSliders_globalNotification);
+bindCallbackEvent("updateBGColor", "hslSliders_BG", hslSliders_globalNotification);
 

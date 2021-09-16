@@ -277,6 +277,11 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env,
 		this->objName = "bindCallbackEvent";
 		this->obj = std::make_shared<CStd_fBindCallbackEvent>(env, app);
 		break;
+	case CCallableTypes::_CStd_fTriggerStoredEvent:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "triggerStoredEvent");
+		this->objName = "triggerStoredEvent";
+		this->obj = std::make_shared<CStd_fTriggerStoredEvent>(env, app);
+		break;
 	case CCallableTypes::_CStd_cApp:
 		this->objType = CLiteral(CLiteralTypes::_CClass, "App");
 		this->objName = "App";
@@ -312,6 +317,16 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env,
 		this->objName = "sweepTestRoot_byID";
 		this->obj = std::make_shared<CStd_fSweepTestRoot_byID>(env, app.get()->getUI());
 		break;
+	case CCallableTypes::_CStd_fGetParent:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "getParent");
+		this->objName = "getParent";
+		this->obj = std::make_shared<CStd_fGetParent>(env, app.get()->getUI());
+		break;
+	case CCallableTypes::_CStd_fGetRoot:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "getRoot");
+		this->objName = "getRoot";
+		this->obj = std::make_shared<CStd_fGetRoot>(env, app.get()->getUI());
+		break;
 	case CCallableTypes::_CStd_fSetProperty:
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "setProperty");
 		this->objName = "setProperty";
@@ -341,6 +356,11 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env,
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "setChildProperty_byType");
 		this->objName = "setChildProperty_byType";
 		this->obj = std::make_shared<CStd_fSetChildProperty_byType>(env, app.get()->getUI());
+		break;
+	case CCallableTypes::_CStd_fGetChildProperty_byType:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "getChildProperty_byType");
+		this->objName = "getChildProperty_byType";
+		this->obj = std::make_shared<CStd_fGetChildProperty_byType>(env, app.get()->getUI());
 		break;
 	case CCallableTypes::_CStd_fSetClassProperty:
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "setClassProperty");
@@ -394,6 +414,11 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env)
 		this->objName = "toString";
 		this->obj = std::make_shared<CStd_fToString>(env);
 		break;
+	case CCallableTypes::_CStd_fVecSize:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "vecSize");
+		this->objName = "vecSize";
+		this->obj = std::make_shared<CStd_fVecSize>(env);
+		break;
 	case CCallableTypes::_CStd_fToNum:
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "toNum");
 		this->objName = "toNum";
@@ -403,6 +428,11 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env)
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "keyToString");
 		this->objName = "keyToString";
 		this->obj = std::make_shared<CStd_fKeyToString>(env);
+		break;
+	case CCallableTypes::_CStd_fMakeKeySig:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "makeKeySig");
+		this->objName = "makeKeySig";
+		this->obj = std::make_shared<CStd_fMakeKeySig>(env);
 		break;
 	// Math Functions
 	case CCallableTypes::_CStd_fLineIntersect2D:
@@ -471,6 +501,11 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env)
 		this->objName = "getWindowSize";
 		this->obj = std::make_shared<CStd_cfGetWindowSize>(env);
 		break;
+	case CCallableTypes::_CStd_cfGetWindowPosition:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "getWindowPosition");
+		this->objName = "getWindowPosition";
+		this->obj = std::make_shared<CStd_cfGetWindowPosition>(env);
+		break;
 	case CCallableTypes::_CStd_cfMinimize:
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "minimize");
 		this->objName = "minimize";
@@ -491,7 +526,37 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env)
 		this->objName = "isValidKeybind_tool";
 		this->obj = std::make_shared<CStd_cfIsValidKeybind_Tool>(env);
 		break;
+	case CCallableTypes::_CStd_cfIsValidKeybind_AlphaOnly:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "isValidKeybind_alphaOnly");
+		this->objName = "isValidKeybind_alphaOnly";
+		this->obj = std::make_shared<CStd_cfIsValidKeybind_AlphaOnly>(env);
+		break;
+	case CCallableTypes::_CStd_cfIsValidKeybind_SymbolOrChar:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "isValidKeybind_symbolOrChar");
+		this->objName = "isValidKeybind_symbolOrChar";
+		this->obj = std::make_shared<CStd_cfIsValidKeybind_SymbolOrChar>(env);
+		break;
+	case CCallableTypes::_CStd_cfIsValidKeybind_ModOnly:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "isValidKeybind_modOnly");
+		this->objName = "isValidKeybind_modOnly";
+		this->obj = std::make_shared<CStd_cfIsValidKeybind_ModOnly>(env);
+		break;
+	case CCallableTypes::_CStd_cfMoveAppWindow:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "moveAppWindow");
+		this->objName = "moveAppWindow";
+		this->obj = std::make_shared<CStd_cfMoveAppWindow>(env);
+		break;
+	case CCallableTypes::_CStd_cfResizeAppWindow:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "resizeAppWindow");
+		this->objName = "resizeAppWindow";
+		this->obj = std::make_shared<CStd_cfResizeAppWindow>(env);
+		break;
 	// Ui Functions
+	case CCallableTypes::_CStd_cfCheckWidgetIDTable:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "checkWidgetIDTable");
+		this->objName = "checkWidgetIDTable";
+		this->obj = std::make_shared<CStd_cfCheckWidgetIDTable>(env);
+		break;
 	case CCallableTypes::_CStd_cfPreventBlurCallback:
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "preventBlurCallback");
 		this->objName = "preventBlurCallback";
@@ -532,6 +597,16 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env)
 		this->objName = "getWidget_byID";
 		this->obj = std::make_shared<CStd_cfGetWidget_byID>(env);
 		break;
+	case CCallableTypes::_CStd_cfDeleteWidget_byID:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "deleteWidget_byID");
+		this->objName = "deleteWidget_byID";
+		this->obj = std::make_shared<CStd_cfDeleteWidget_byID>(env);
+		break;
+	case CCallableTypes::_CStd_cfSortTargetWidgetChildren_byMacro:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "sortTargetWidgetChildren_byMacro");
+		this->objName = "sortTargetWidgetChildren_byMacro";
+		this->obj = std::make_shared<CStd_cfSortTargetWidgetChildren_byMacro>(env);
+		break;
 	case CCallableTypes::_CStd_cfSetFGColor_HSL:
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "setFGColor_HSL");
 		this->objName = "setFGColor_HSL";
@@ -541,6 +616,26 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env)
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "setBGColor_HSL");
 		this->objName = "setBGColor_HSL";
 		this->obj = std::make_shared<CStd_cfSetBGColor_HSL>(env);
+		break;
+	case CCallableTypes::_CStd_cfResetFGBGColor:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "resetFGBGColor");
+		this->objName = "resetFGBGColor";
+		this->obj = std::make_shared<CStd_cfResetFGBGColor>(env);
+		break;
+	case CCallableTypes::_CStd_cfSwapFGBGColor:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "swapFGBGColor");
+		this->objName = "swapFGBGColor";
+		this->obj = std::make_shared<CStd_cfSwapFGBGColor>(env);
+		break;
+	case CCallableTypes::_CStd_cfCreateNewDocument:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "createNewDocument");
+		this->objName = "createNewDocument";
+		this->obj = std::make_shared<CStd_cfCreateNewDocument>(env);
+		break;
+	case CCallableTypes::_CStd_cfCloseDocument:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "closeDocument");
+		this->objName = "closeDocument";
+		this->obj = std::make_shared<CStd_cfCloseDocument>(env);
 		break;
 	// Toolbox Functions
 	case CCallableTypes::_CStd_cfCheckValidIOCombination:
@@ -573,11 +668,41 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env)
 		this->objName = "getActiveToolProp";
 		this->obj = std::make_shared<CStd_cfGetActiveToolProp>(env);
 		break;
+	case CCallableTypes::_CStd_cfSetActiveToolInterest:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "setActiveToolInterest");
+		this->objName = "setActiveToolInterest";
+		this->obj = std::make_shared<CStd_cfSetActiveToolInterest>(env);
+		break;
+	case CCallableTypes::_CStd_cfGetActiveToolInterest:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "getActiveToolInterest");
+		this->objName = "getActiveToolInterest";
+		this->obj = std::make_shared<CStd_cfGetActiveToolInterest>(env);
+		break;
+	case CCallableTypes::_CStd_cfExportAllTools:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "exportAllTools");
+		this->objName = "exportAllTools";
+		this->obj = std::make_shared<CStd_cfExportAllTools>(env);
+		break;
 		// Widget Functions
+	case CCallableTypes::_CStd_cfRebuildOutofBoundsWidgets:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "rebuildOutofBoundsWidgets");
+		this->objName = "rebuildOutofBoundsWidgets";
+		this->obj = std::make_shared<CStd_cfRebuildOutofBoundsWidgets>(env);
+		break;
 	case CCallableTypes::_CStd_cfSetProperty:
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "setProperty");
 		this->objName = "setProperty";
 		this->obj = std::make_shared<CStd_cfSetProperty>(env);
+		break;
+	case CCallableTypes::_CStd_cfSetChildProperty_byClass:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "setChildProperty_byClass");
+		this->objName = "setChildProperty_byClass";
+		this->obj = std::make_shared<CStd_cfSetChildProperty_byClass>(env);
+		break;
+	case CCallableTypes::_CStd_cfGetChildrenProperties:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "getChildrenProperties");
+		this->objName = "getChildrenProperties";
+		this->obj = std::make_shared<CStd_cfGetChildrenProperties>(env);
 		break;
 	case CCallableTypes::_CStd_cfGetProperty:
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "getProperty");
@@ -588,6 +713,26 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env)
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "setPosition");
 		this->objName = "setPosition";
 		this->obj = std::make_shared<CStd_cfSetPosition>(env);
+		break;
+	case CCallableTypes::_CStd_cfSetChildOrder_byID:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "setChildOrder_byID");
+		this->objName = "setChildOrder_byID";
+		this->obj = std::make_shared<CStd_cfSetChildOrder_byID>(env);
+		break;
+	case CCallableTypes::_CStd_cfAddChildWidget_Prototype:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "addChildWidget_prototype");
+		this->objName = "addChildWidget_prototype";
+		this->obj = std::make_shared<CStd_cfAddChildWidget_Prototype>(env);
+		break;
+	case CCallableTypes::_CStd_cfRemoveChildWidget_byID:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "removeChildWidget_byID");
+		this->objName = "removeChildWidget_byID";
+		this->obj = std::make_shared<CStd_cfRemoveChildWidget_byID>(env);
+		break;
+	case CCallableTypes::_CStd_cfRemoveChildWidgets_byClass:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "removeChildWidgets_byClass");
+		this->objName = "removeChildWidgets_byClass";
+		this->obj = std::make_shared<CStd_cfRemoveChildWidgets_byClass>(env);
 		break;
 		// Style Functions
 	case CCallableTypes::_CStd_cfSetProperty_byName:

@@ -14,6 +14,8 @@ ctrl-find on the entire project.
 ## Interesting/Planned Feature Ideas
 ## 
 ################################################################
+0. FILE FORMAT - '.ti' file - credit to John Lam
+
 1. Timer Widget
 	-Count up/down, calendar-based events (read system time, not internet)
 	-Play sounds from a file???
@@ -210,6 +212,71 @@ ctrl-find on the entire project.
 	-Create a system to easily send camera movement instructions, would be useful for animation
 	-With this system, could also create a way of rendering an animation to a floating frame like in Blender
 	-Implement an alternative camera pan mode that moves to the click destination
+24. Layer Menu Hotkey System
+	-Popup with scroll-bar to go through layers for selection
+	-'Alphabet Style' key-bind system to select layers, give each layer a key at creation
+
+################################################################
+##
+## CRITICAL FEATURES LIST
+## Planned features that must exist for the program to be viable + notes about progress
+##
+################################################################
+1. Basic Camera Control & Drawing - Done
+	-Zoom, Pan, and Rotate functionality, and a basic amount of ability to render inputs to the screen.
+2. Scriptable UI and Interface - Done (Probably?)
+	-Ability to directly send instructions to the application from exterior files not included in the
+	compiled program.
+	-Support to customize the UI using external files
+	-Ability to directly manipulate the program's UI, Tools, and Rendering using scripts
+	-This is essentially done, although may need to be moved to a "byte-compiler" system later, rather
+	than the current "virtual-machine" style implementation.
+3. Rendering With a Concept of Opacity & Flow - 90% Done
+	-Ability to break rendering into multiple calculations and correctly render using opacity and flow
+	in a way that's familiar to other drawing programs
+	-This has been mostly achieved, although there are still issues regarding color dynamics.
+		-The "glClearColor" disrupts the correct color at lower opacities and trends it back towards
+		the current sampled FG/BG colors
+4. Highly Customizable Tool Settings - 50% Done with high potential to hit 90-100%
+	-Ability to use common Photoshop shortcuts for axis-constrained drawing & click-shift-click lines (Done++)
+	-High degree of control over Tool settings in ways that current programs don't offer (So far so good)
+	-While large challenges remain in this area, progress so far indicates that this feature set should
+	be complete without much issue.
+5. Layers, Groups and Other "Big Data" Image Manipulation - 0%
+	-Any successful drawing program must at a point introduce layers.
+	-This necessarily means controlling flow of memory between hardware components, under time pressure
+	-If successful, layers provide the ground-work for several other features such as selections, groups,
+	blend modes, complex editing, filter layers, layer-shaders (Layer Styles in PS)
+	-Layers represent a significant technological hurdle given current GPU-focused rendering pipeline.
+	-Current progress is hypothetical at best, and involves data-tiling and other techniques to condense data.
+	
+-------------------------------- Minimum Viability Point --------------------------------
+-Features beyond layers are above and beyond what's needed to "use" the program for drawing/painting. Reaching
+this point represents a critical milestone and potential for longevity of the program.
+
+6. 2.5D / Vector Drawing Support
+	-Full support for exposing the existing 2.5D nature of the drawing engine.
+	-Ability to move/adjust "anchor" or "vertex" points for brush strokes
+	-Smoothing support
+	-Ability to use other tools to manipulate vertices via erase, settings editing, and transformations.
+	-The groundwork for this is laid, and the engine currently operates in this fashion, but none of the
+	tools to manipulate anchor points exist currently.
+7. Smudge and Mixer Brush Tools
+	-While not 'necessary' in the strictest sense, these are critical tools for any serious painting application.
+	-Realistic paint handling is not desirable or wanted, but digital-style paint-moving effects are critical.
+	-Implementation of these provide for relatively easy translation into clone-stamps, healing-brushes,
+	and other complex tool-types.
+8. Robust Transform Tools
+	-At a minimum, must match or exceed Photoshop's transform tools.
+	-This may be easier than imagined, given ability to leverage GPU and 3D math to manipulate textures.
+9. Big Canvas Support
+	-Not strictly necessary, but a minimum of 10k x 10k should be supported, if not double that.
+10	-Likely already supported via implementations for Text/Line widgets, although a "text-layer" would be good to have,
+	along with additional formatting, justification, and font-attribute support
+11. Assisted Drawing Tools
+	-Support for perspective grids, as well as Procreate-style assisted drawing tools for polygons, circles/ellipses,
+	and other geometric primatives.
+	-The math for these should be relatively straight forwards once some basic knowledge of curves is obtained.
 
 
 ################################################################
@@ -228,7 +295,7 @@ can be done in the background.
 2. Design a name, logo, and file extension for the chroma.io filetype
 
 ////////////////
-// 0.0.12 - Documentation Update && Bug Squishing (May cut this short if it gets boring)
+// 0.0.13 - Documentation Update && Bug Squishing (May cut this short if it gets boring)
 ////////////////
 0-1. Check every "Note:" "Warning:" and "Suggestion:" comment
 0. Go over the entire code-base and clean up code/comments/formatting
@@ -264,7 +331,7 @@ wealk_ptr is good for double-linked lists, and useful for infrequently trafficke
 performance code.
 
 ////////////////
-// 0.0.11 - The Interface & Script pt 2 Update
+// 0.0.12 - The Interface & Script pt 2 Update
 ////////////////
 0. Add grab/resize functionality to window
 1. Write the .plugin parser in the same way as the others
@@ -298,7 +365,7 @@ prototype method when plugins are loaded. Need this for things like layers, tool
 15. Make all widget vertex data use Position, Color/Alpha, Tex-Coord as their vertex data.
 
 ////////////////
-// 0.0.10 - The History, Console & Macro/Action/Script Update
+// 0.0.11 - The History, Console & Macro/Action/Script Update
 ////////////////
 0. Add a history state to the program.
 1-1. Add persistent state to the program so that it restores it's previous state
@@ -309,14 +376,14 @@ after closing
 3. Add a app function that will save/load/run 
 
 ////////////////
-// 0.0.9 - Data Visualization Update
+// 0.0.10 - Data Visualization Update
 ////////////////
 0. Anchor manipulation, bezier curves & selecting/moving strokes
 1. Add the select object tool
 3-3. Selection tools and data manipulation (Transform)
 
 ////////////////
-// 0.0.8 - Layers & Groups
+// 0.0.9 - Layers & Groups
 ////////////////
 3-2. Make the Layers/Groups/Masks panel
 3-1. Layers, blending modes, groups, masks, etc.
@@ -327,17 +394,45 @@ the openGL max-Texture area (8192 x 8192, for my graphics card at least), will l
 the canvas size otherwise. (Can implement this now or later depending on complexity)
 
 ////////////////
+// 0.0.7 - Output Engine V2 Update
+////////////////
+The Stroke output is well established at this stage. Add support for new output types with maximum
+compatibility with existing input types
+Gradient Output Prototype, similar in construction to Fill, but with more parameters
+Paint Bucket Output
+Fill Output Prototype
+Pattern Output
+Filter/Shader Output
+Mesh/3D Input/Outputs
+Strech & Fill type outputs similar to HEAVYPAINT, likely based on 3D mesh creation
+Develop new input types beyond existing inputs, if ideas present themselves.
+
+////////////////
 // 0.0.7 - Tool Engine V1 Update
 ////////////////
 0. Add additional input/output tool methods that can be done without needing to
 fix the layer/canvas tiling bottleneck. 
 2. Flesh out the engine for applying various brush/tool settings
-3. Add tool preset saving/loading, serialization of preset configs into external files
+4. Need to add a "binding" type script-tool that allows the user to "bind" a property of a widget, to internal variables.
+	This would for instance allow binding the "value" of a text-line to a tool-setting variable. Ideally, a function could
+	be bound as well in order to do math to set a widget position (this could also be simpler like preset functions).
+	Then, give the user control over updating/reading the binding in the script with app.ui.getWidgetByID().refreshBinding(), as
+	well as app.ui.getWidgetByID().refreshBindingsTree(), the latter of which would propegate updates from that widget down the tree.
+	The goal of this is to reduce the number of "getWidgetByID()" calls in scripts.
+4-1. Additionally, a get/setActiveToolProp_Multi(interestMaskName), that returns an array of ANY type objects, would be useful. This
+	would allow a user to query an active tool and return/set an array of settings as a batch. This would reduce the amount of
+	calls to app.toolbox.get/setActiveToolProp() when updating UI elements.
 6. Add anchor culling during the output_draw method
 7. Make the tool settings panel & the subtool panel (CSP-like toolbar)
 8-2. Add Opacity property for style so that images use that instead of background-color-alpha
 8-1. Images & Textures manager class
 8. Support to change background-texture
+9. Make sure that when deleting & addding widgets, the WidgetIDTables and WidgetClassTables get updated correctly
+10. Already listed for 0.0.11, but vector, array & string access or functions would be useful for this update.
+11. Fix support for "onrelease" events. These should trigger after one or two frames, and should be added to a queue system once
+a widget with "onrelease" is clicked. This guarantees the firing of the event. As well, adding a "onreleasenow" might be useful
+for if it's desireable to have something that triggers immediately when the mouse comes up. 
+12. Add support for "onscrollup" and "onscrolldown" callbacks for widgets.
 
 
 ################################################################
@@ -346,6 +441,18 @@ fix the layer/canvas tiling bottleneck.
 ## Work From the Bottom Up
 ##
 ################################################################
+0.0.6d
+
+
+
+0.0.6c
+-Support for overflow is limited to only both X and Y currently. Add support for independent X/Y overflow settings later
+-Note that when adding new widgets from a prototype, the WidgetClassTable is not correctly updated.
+-Overflow calculations for when a widget extends horizontally or below the target overflow parent still need calculating.
+	-See the "tsf_effects_sizeBarWrapper" widget for example of this behavior.
+-Setting the "min-scale" factor of the Character settings to 0.000 allows the program to enter infinite loop when drawing.
+	-Either clamp the low-end to 0.001, or set a minimum dot-size in the Stroke shard-generator
+
 0.0.6b
 -While apparently correct for current widget suite, this update is introducing many updates to the UI engine's sizing
 and location calculations and the changes may have broken things that were once working with past
@@ -358,6 +465,29 @@ after clicking the canvas or another widget. The main-menu should have lost focu
 -Introduction of the z-index property required a modestly sized update to the mouse-event callback triggers for
 widgets. It's not yet been tested thoroughly enough to verify that the new system is as clean as previously.
 	-This issue can be removed around the time 0.0.8 is finished as long as any newly found UI issues are resolved
+-The stylus lags significantly when hovering UI widgets or generally doing anything with script callbacks
+	-This generally seems to be because the stylus is not polled like the mouse is. This is good for drawing because
+	it means that the program never misses a stylus input, but when handling UI events, polling is preferable.
+		-Need to develop a way to poll or otherwise cull inputs when the stylus is active and hovering the UI
+		-Should only poll movement events. Cannot risk throwing out clicks and releases.
+-There are still issues present with the way brush strokes are rendered. When handling color dynamics, the alpha is correct,
+but colors behave as if they're addititve. The RGB channels should mix as is the case in Photoshop
+	-This issue is now fixed, although only to reveal a new issue. The color mixing and layering of shards is correct and matches
+	Photoshop-style behavior, however, as shard opacity approaches 0, the color returns towards the stroke-color. In Photoshop,
+	each "dot" or shard, is the true hue/saturation/lightness with color-dynamics applied regardless of opacity.
+		-This behavior isn't necessarily incorrect, but it's not the expected mixing behavior for Photoshop accustomed users.
+-An issue is apparent resulting from unknown OpenGL or potentially C++ copy/move semantics and destructors
+	-When utilizing a script that every 0.2 to 0.5 seconds toggles between closing the current canvas, and creating a new canvas,
+	after a certain point, a VBO for a widget fails to bind correctly and results in cascading openGL failures
+	-The toggle create/destroy script may run up until the canvas is about at UEID 2255, (or about 2-3 minutes), at which point
+	a widget seeking to render itself is no longer able to bind it's VBO, triggering a GL:1282 INVALID_OPERATION error
+	-Thus far, the offending VBO seems to be consistent at #455, and the offending widget will change if a new widget is placed
+	before it in the layout.
+	-The culprit for this behavior isn't currently known, although the offending VBO tends to be associated with Text/Line widgets
+	-The toggle create/close document script doesn't appear to be linked, although this error has never before been seen
+	during normal use case scenarios.
+	-It's worth noting as well, that nothing about the offending widget appears out of order. The VBO is non-0, thus valid, and
+	the data being rendered is solid, but openGL no longer claims that the VBO is valid, and cannot bind it.
 
 0.0.6a
 -The onclick callback gets triggered accidentally for some reason on brushSettingsHUD when using the sliders
@@ -418,6 +548,62 @@ windows (console/terminal) then the program locks up
 ##
 ################################################################
 ////////////////
+// 0.0.6d
+////////////////
+Notes:
+-Development of Tool Settings related widget interfaces, expanding available tool settings, and general QOL improvements
+
+
+Updates:
+
+
+Known Issues:
+
+
+////////////////
+// 0.0.6c
+////////////////
+Notes:
+-Development of Tool Settings related widget interfaces, expanding available tool settings, and general QOL improvements
+-Development of Tool File read/writer, using a simple flat bracketed structure of tool settings as human-readable data
+	-This .CTF file is not encrypted or otherwise obfuscated. All settings are readable and the settingsSig/subSig 
+	are listed as well as a hint for users making scripts.
+
+
+Updates:
+-Added the TFSettingsWriter class and related classes, which is a interpreter and writer for tool files and is responsible
+for loading and saving tool file presets to external .ctf files.
+-Added several "Effects" Tool Settings classes which are rendered using the shader
+-Added "Character" settings
+-Added the ability to move the Application Window, notably while keeping the undecorated window. The menuBar has
+an ondrag effect that moves the application
+-Allowed Spacebar to be bound for tool hotkeys
+-Added the Reset & Swap FG/BG color native functions to the script engine and plugged those into the HSL_SLIDERS widget
+	-These are also hard-bound to D & X keys currently
+-Completed preliminary version of the ChromaToolFile console, which handles reading and writing tool files (.ctf)
+-Added preliminary config.txt file inside Application.cpp constructor in order to read window width/height
+	-Also added support for storing the downscaleFactor for the WinStylusHandler inside the confit.txt file. The stylus
+	handler will write the downscale factor to the file, and then on the next program load, it will use that if it not 0
+	-Users can "reset" their downscaling by editing that number to 0 in the .txt file.
+-Added support for overflow to the widget shader, and overflow: hidden to the widget class
+-Fixed existing issues with adding PROTO type widgets to the prototypeTable in UserInterface. These are now available
+to create copies of.
+-Solved most current issues with the Effects List Sort Box, it now works correctly without bugs mostly
+-Added the implementation for Posterize and Invert settings and added the effects to the UI and shader
+-Added the implementation and shader support for Modulo, Power, and Blur Effects settings
+-Added support for Brightness/Contrast and HSV effects filters.
+-Added soft support for 'Character' settings, only pressure to scale with noise variation.
+
+
+Known Issues:
+-Support for overflow is limited to only both X and Y currently. Add support for independent X/Y overflow settings later
+-Note that when adding new widgets from a prototype, the WidgetClassTable is not correctly updated.
+-Overflow calculations for when a widget extends horizontally or below the target overflow parent still need calculating.
+	-See the "tsf_effects_sizeBarWrapper" widget for example of this behavior.
+-Setting the "min-scale" factor of the Character settings to 0.000 allows the program to enter infinite loop when drawing.
+	-Either clamp the low-end to 0.001, or set a minimum dot-size in the Stroke shard-generator
+
+////////////////
 // 0.0.6b
 ////////////////
 Notes:
@@ -456,6 +642,9 @@ inherits it's dimensions should now have it's margin/border subtracted from the 
 -Completed the first pass of the Create New Tool Popup
 	-Does not have the color boxes enabled.
 	-Only handles the very most basic parameters for tool creation.
+-Added many settings sliders, toggle boxes, and input boxes for the TSF widget, which expose settings for
+the Zoom, Pan, Rotate, MetaData, ContinuousControl, Alpha, Image, Color, Scatter, and Rake settings.
+	-Some of these settings aren't yet implemented despite having the settings exposed to the UI
 
 Known Issues:
 -While apparently correct for current widget suite, this update is introducing many updates to the UI engine's sizing
@@ -469,6 +658,29 @@ after clicking the canvas or another widget. The main-menu should have lost focu
 -Introduction of the z-index property required a modestly sized update to the mouse-event callback triggers for
 widgets. It's not yet been tested thoroughly enough to verify that the new system is as clean as previously.
 	-This issue can be removed around the time 0.0.8 is finished as long as any newly found UI issues are resolved
+-The stylus lags significantly when hovering UI widgets or generally doing anything with script callbacks
+	-This generally seems to be because the stylus is not polled like the mouse is. This is good for drawing because
+	it means that the program never misses a stylus input, but when handling UI events, polling is preferable.
+		-Need to develop a way to poll or otherwise cull inputs when the stylus is active and hovering the UI
+		-Should only poll movement events. Cannot risk throwing out clicks and releases.
+-There are still issues present with the way brush strokes are rendered. When handling color dynamics, the alpha is correct,
+but colors behave as if they're addititve. The RGB channels should mix as is the case in Photoshop
+	-This issue is now fixed, although only to reveal a new issue. The color mixing and layering of shards is correct and matches
+	Photoshop-style behavior, however, as shard opacity approaches 0, the color returns towards the stroke-color. In Photoshop,
+	each "dot" or shard, is the true hue/saturation/lightness with color-dynamics applied regardless of opacity.
+		-This behavior isn't necessarily incorrect, but it's not the expected mixing behavior for Photoshop accustomed users.
+-An issue is apparent resulting from unknown OpenGL or potentially C++ copy/move semantics and destructors
+	-When utilizing a script that every 0.2 to 0.5 seconds toggles between closing the current canvas, and creating a new canvas,
+	after a certain point, a VBO for a widget fails to bind correctly and results in cascading openGL failures
+	-The toggle create/destroy script may run up until the canvas is about at UEID 2255, (or about 2-3 minutes), at which point
+	a widget seeking to render itself is no longer able to bind it's VBO, triggering a GL:1282 INVALID_OPERATION error
+	-Thus far, the offending VBO seems to be consistent at #455, and the offending widget will change if a new widget is placed
+	before it in the layout.
+	-The culprit for this behavior isn't currently known, although the offending VBO tends to be associated with Text/Line widgets
+	-The toggle create/close document script doesn't appear to be linked, although this error has never before been seen
+	during normal use case scenarios.
+	-It's worth noting as well, that nothing about the offending widget appears out of order. The VBO is non-0, thus valid, and
+	the data being rendered is solid, but openGL no longer claims that the VBO is valid, and cannot bind it.
 
 ////////////////
 // 0.0.6a

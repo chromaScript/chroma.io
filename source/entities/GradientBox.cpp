@@ -50,6 +50,14 @@ void GradientBox::buildWidget()
 	glBindVertexArray(0);
 }
 
+void GradientBox::clearData()
+{
+	glDeleteTextures(1, &this->gbTEX0);
+	glDeleteBuffers(1, &this->gbVBO);
+	glDeleteBuffers(1, &this->gbEBO);
+	glDeleteVertexArrays(1, &this->gbVAO);
+}
+
 void GradientBox::setVertData_gradientBox()
 {
 	float ox = (2 * (float(transform.boundBox.x1) / WINDOW_WIDTH)) - 1;
@@ -128,6 +136,14 @@ void GradientBox::drawSelf(ShaderTransform xform)
 	glm::vec3 backgroundColor;
 	glm::vec3 fillColor = style.fillColor.makeVec3();
 	glm::vec2 screenLocation;
+	int overflowValue = (applyOverflowMask && !overflowTarget.expired()) ? 0 : 1;
+	glm::vec4 overflowBoxMask = glm::vec4(0.0f);
+	// Calculate the overflowMask if needed (Note that the box is pre-calculated, but given an offset per-frame)
+	// offsetBox is given as BottomLeft.xy, TopRight.xy
+	if (overflowValue == 0)
+	{
+		overflowBoxMask = calculateOverflowMask();
+	}
 	// Draw the drop shadow if applicable
 	if (style.boxShadowSizeX != 0 || style.boxShadowSizeY != 0)
 	{
@@ -145,6 +161,9 @@ void GradientBox::drawSelf(ShaderTransform xform)
 		shader->setBool("useFillColor", false);
 		shader->setVec3("fillColor", fillColor);
 		shader->setFloat("fillAlpha", style.fillAlpha);
+		// Set the Overflow Values
+		shader->setInt("useOverflow", overflowValue);
+		shader->setVec4("overflowBox", overflowBoxMask);
 		glBindVertexArray(gbVAO);
 		//glActiveTexture(GL_TEXTURE0);
 		//glBindTexture(GL_TEXTURE_2D, TEX0);
@@ -163,6 +182,9 @@ void GradientBox::drawSelf(ShaderTransform xform)
 	shader->setBool("useFillColor", false);
 	shader->setVec3("fillColor", fillColor);
 	shader->setFloat("fillAlpha", style.fillAlpha);
+	// Set the Overflow Values
+	shader->setInt("useOverflow", overflowValue);
+	shader->setVec4("overflowBox", overflowBoxMask);
 	glBindVertexArray(gbVAO);
 	//glActiveTexture(GL_TEXTURE0);
 	//glBindTexture(GL_TEXTURE_2D, TEX0);

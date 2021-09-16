@@ -1,0 +1,76 @@
+#cndocp_wrapper {
+	width: $cndocp_minWidth$;
+	height: $cndocp_minHeight$;
+	background-color: $global::tone33$;
+	box-shadow-size: 3, 3;
+	box-shadow-color: black;
+	visibility: hidden;
+}
+
+.cndocp_titleTextWrapper {
+	min-width: 24;
+	min-height: 16;
+	margin-top: 2;
+	background-color: $global::darkGrey$;
+	background-color-alpha: 0.0;
+	overflow-X: auto;
+}
+
+#cndocp_contentWrapper {
+	width: inherit;
+	height: fill;
+	border-top: 4;
+}
+
+.cndocp_lineWrapper {
+	width: $innerContWidth$;
+	height: 22;
+	margin-left: 26;
+	margin-right: 26;
+	margin-top: 4;
+	border-top: 2;
+}
+.cndocp_nameWrapper {
+	width: $documentNameContWidth$;
+	height: 22;
+	margin-left: 12;
+	margin-right: 12;
+	margin-top: 4;
+	border-top: 2;
+}
+.cndocp_buttonWrapper
+{
+	width: $buttonContWidth$;
+	height: 22;
+	margin-left: 26;
+	margin-right: 26;
+	margin-top: 4;
+	border-top: 2;
+}
+
+.cndocp_buttonWrap
+{
+	width: 62;
+	height: inherit;
+	float:left;
+	background-color: $global::tone29$;
+}
+
+.cndocp_inputWrap
+{
+	width: 92;
+	height: inherit;
+	float: right;
+	background-color: $global::tone29$;
+}
+
+.cndocp_text
+{
+	margin-top: 2;
+}
+.cndocp_input
+{
+	margin-top: 2;
+	margin-left: 4;
+	width: inherit;
+}

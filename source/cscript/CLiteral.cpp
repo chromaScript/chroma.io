@@ -63,6 +63,12 @@ CLiteral::CLiteral(std::shared_ptr<CToken> token)
 	case CTokenType::_THIS:
 		this->type = CLiteralTypes::_CThis;
 		break;
+	case CTokenType::FUNCTION:
+		this->type = CLiteralTypes::_CFunction;
+		break;
+	case CTokenType::FUNCTION_ARRAY:
+		this->type = CLiteralTypes::_CFunction_Array;
+		break;
 	case CTokenType::NIL:
 	default:
 		this->type = CLiteralTypes::_CNil;

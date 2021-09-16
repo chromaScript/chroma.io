@@ -131,7 +131,7 @@ std::shared_ptr<LStmt> LParser::prototypeStmt()
 {
 	if (openTags.size() != 0) { openTags.clear(); }
 	openTags.push_back(advance());
-	int line = openTags.back().get()->line;
+ 	int line = openTags.back().get()->line;
 	std::shared_ptr<LToken> type = previous();
 
 	std::vector<std::shared_ptr<LExpr>> attributes;
@@ -143,7 +143,7 @@ std::shared_ptr<LStmt> LParser::prototypeStmt()
 		std::shared_ptr<LExpr> attrib = rootAttrib();
 		if (attrib != nullptr)
 		{
-			attributes.push_back(rootAttrib());
+			attributes.push_back(attrib);
 		}
 	}
 	consume(LTokenType::ANGLE_RIGHT, "[parser:0301] Expect closing '>' after opening 'PROTOTYPE' tag.");

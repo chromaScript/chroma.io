@@ -196,7 +196,7 @@ glm::ivec2 Fonts::findSizeTextLine(std::string textLine,
 void Fonts::renderTextLine(std::shared_ptr<Shader> shader, glm::vec4 textColor, float alpha, std::string textLine,
 	std::shared_ptr<CachedFace> thisFace, std::shared_ptr<CachedCharBitmap> thisCurrentBitmap, 
 	glm::vec2 startLoc, glm::ivec2 offsetPos,
-	int VAO, int VBO, int EBO)
+	int VAO, int VBO, int EBO, int overflowValue, glm::vec4 overflowBox)
 {
 	// Setup the Shader
 	shader->use();
@@ -204,6 +204,9 @@ void Fonts::renderTextLine(std::shared_ptr<Shader> shader, glm::vec4 textColor, 
 	shader->setFloat("textAlpha", alpha);
 	shader->setInt("texture1", 0);
 	shader->setBool("renderText", true);
+	// Set the Overflow Values
+	shader->setInt("useOverflow", overflowValue);
+	shader->setVec4("overflowBox", overflowBox);
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(VAO);
 	
@@ -217,7 +220,9 @@ void Fonts::renderTextLine(std::shared_ptr<Shader> shader, glm::vec4 textColor, 
 
 	// Iterate over the text string
 	std::string::const_iterator c_iter;
-	for (c_iter = textLine.begin(); c_iter != textLine.end(); c_iter++)
+	// update content of VBO memory
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+ 	for (c_iter = textLine.begin(); c_iter != textLine.end(); c_iter++)
 	{
 		FaceCharacter character = thisCurrentBitmap.get()->bitmaps[*c_iter];
 
@@ -240,11 +245,10 @@ void Fonts::renderTextLine(std::shared_ptr<Shader> shader, glm::vec4 textColor, 
 			xpos, ypos,	0.0f,				0.0f, 0.0f,  // bottom left
 			xpos, ypos - h, 0.0f,			0.0f, 1.0f // top left
 		};
-
 		// Render the glyph texture
 		glBindTexture(GL_TEXTURE_2D, character.texID);
 		// update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(verticies1), verticies1); // be sure to use glBufferSubData and not glBufferData
 		// Render quad
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -259,7 +263,7 @@ void Fonts::renderTextInput(std::shared_ptr<Shader> textShader, std::string text
 	std::shared_ptr<CachedFace> thisFace, std::shared_ptr<CachedCharBitmap> thisCurrentBitmap,
 	glm::vec2 startLoc, glm::ivec2 offsetPos, glm::vec4 textColor, glm::vec4 highlightColor, glm::vec4 focusColor,
 	std::vector<unsigned int> buffers, glm::ivec4 widgetBounds, int cursorPos, int selectStart, int selectEnd,
-	bool drawCursor, bool drawSelection, bool calculateVertData, float* cursorData, float* selectionData)
+	bool drawCursor, bool drawSelection, bool calculateVertData, float* cursorData, float* selectionData, int overflowValue, glm::vec4 overflowBox)
 {
 
 	// Setup the location variables and scale
@@ -336,6 +340,9 @@ void Fonts::renderTextInput(std::shared_ptr<Shader> textShader, std::string text
 	textShader->setVec4("highlightColor", highlightColor);
 	textShader->setFloat("textAlpha", 1.0f);
 	textShader->setInt("texture1", 0);
+	// Set the Overflow Values
+	textShader->setInt("useOverflow", overflowValue);
+	textShader->setVec4("overflowBox", overflowBox);
 	
 	if (drawSelection)
 	{

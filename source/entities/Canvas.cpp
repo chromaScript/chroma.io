@@ -18,11 +18,11 @@
 extern std::shared_ptr<Application> chromaIO;
 
 // Constructor / Destructor
-Canvas::Canvas(int width, int height, std::shared_ptr<Shader> shader)
+Canvas::Canvas(std::string documentName, int width, int height, std::shared_ptr<Shader> shader)
 {
 	// Properties
 	generateUEID();
-	this->name = name;
+	this->name = documentName;
 	highlight = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	// Transforms, VertData & PxData
 	setTransform(0.0f);
@@ -39,7 +39,7 @@ Canvas::Canvas(int width, int height, std::shared_ptr<Shader> shader)
 	compositeFrameShader = chromaIO.get()->getCompositeFrameShader();
 	compositeShader = chromaIO.get()->getCompositeShader();
 	std::cout << "NEW::CANVAS::UEID=" << UEID
-		<< "::NAME=" << name.c_str() << std::endl;
+		<< "::NAME=" << documentName.c_str() << std::endl;
 	// Set up the render target buffer
 	glGenFramebuffers(1, &renderBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, renderBuffer);
@@ -58,23 +58,49 @@ Canvas::Canvas(int width, int height, std::shared_ptr<Shader> shader)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 };
 
+Canvas::~Canvas()
+{
+	glDeleteBuffers(1, &renderBuffer);
+	glDeleteTextures(1, &renderColorBuffer);
+	layers.shrink_to_fit();
+	compositeFrameShader.reset();
+	compositeShader.reset();
+}
+
 // Canvas Properties Functions
 
 // Container Functions
-std::shared_ptr<Layer> Canvas::newDataLayer(glm::ivec2 dimensions, std::string name, CColor fill, std::shared_ptr<Shader> shader)
+std::weak_ptr<Layer> Canvas::newDataLayer(glm::ivec2 dimensions, std::string name, CColor fill, std::shared_ptr<Shader> shader)
 {
 	layers.emplace_back(std::make_shared<DataLayer>(dimensions, name, fill, shader));
 	setActiveLayer(layers.back());
 	return activeLayer;
 }
-void Canvas::setActiveLayer(std::shared_ptr<Layer> select)
+void Canvas::setActiveLayer(std::weak_ptr<Layer> select)
 {
 	activeLayer = select;
 }
-std::shared_ptr<Layer> Canvas::getActiveLayer()
+std::weak_ptr<Layer> Canvas::getActiveLayer()
 {
 	return activeLayer;
 }
+bool Canvas::close(bool saveBeforeExit)
+{
+	if (saveBeforeExit)
+	{
+		chromaIO.get()->renderCanvas_toFile(nullptr);
+	}
+	for (std::shared_ptr<Layer> layer : layers)
+	{
+		layer.get()->clearLayer();
+		layer.get()->deleteBuffers();
+		layer.reset();
+	}
+	activeLayer.reset();
+	layers.clear();
+	return true;
+}
+
 // Render Functions
 // Activate the shader program, Bind the vertex and texture to use, then Draw Elements (Rectangle)
 void Canvas::draw(ShaderTransform xform)

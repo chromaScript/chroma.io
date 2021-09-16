@@ -431,6 +431,94 @@ std::vector<std::shared_ptr<SToken>> SLexer::scanTokens(std::string source)
 					break;
 					//
 				case 'd':
+					if (source[startSearch + 1] == 'e' &&
+						source[startSearch + 2] == 'f' &&
+						source[startSearch + 3] == 'a' &&
+						source[startSearch + 4] == 'u' &&
+						source[startSearch + 5] == 'l' &&
+						source[startSearch + 6] == 't' &&
+						(!isalpha(source[startSearch + 7])))
+					{
+						addToken(STokenType::DEFAULT, line);
+						currentIndex += 7;
+						break;
+					}
+					if (source[startSearch + 1] == 'e' &&
+						source[startSearch + 2] == 'g' &&
+						source[startSearch + 3] == 'r' &&
+						source[startSearch + 4] == 'e' &&
+						source[startSearch + 5] == 'e' &&
+						source[startSearch + 6] == '-')
+					{
+						if (source[startSearch + 7] == 'w' &&
+							source[startSearch + 8] == 'h' &&
+							source[startSearch + 9] == 'o' &&
+							source[startSearch + 10] == 'l' &&
+							source[startSearch + 11] == 'e' &&
+							(!isalpha(source[startSearch + 12])))
+						{
+							addToken(STokenType::DEGREE_WHOLE, line);
+							currentIndex += 12;
+							break;
+						}
+						if (source[startSearch + 7] == 'a' &&
+							source[startSearch + 8] == 'l' &&
+							source[startSearch + 9] == 'l' &&
+							(!isalpha(source[startSearch + 10])))
+						{
+							addToken(STokenType::DEGREE_ALL, line);
+							currentIndex += 10;
+							break;
+						}
+						if (source[startSearch + 7] == '1' &&
+							source[startSearch + 8] == 'd' &&
+							(!isalpha(source[startSearch + 9])))
+						{
+							addToken(STokenType::DEGREE_1D, line);
+							currentIndex += 9;
+							break;
+						}
+						if (source[startSearch + 7] == '2' &&
+							source[startSearch + 8] == 'd' &&
+							(!isalpha(source[startSearch + 9])))
+						{
+							addToken(STokenType::DEGREE_2D, line);
+							currentIndex += 9;
+							break;
+						}
+						if (source[startSearch + 7] == '3' &&
+							source[startSearch + 8] == 'd' &&
+							(!isalpha(source[startSearch + 9])))
+						{
+							addToken(STokenType::DEGREE_3D, line);
+							currentIndex += 9;
+							break;
+						}
+						if (source[startSearch + 7] == '4' &&
+							source[startSearch + 8] == 'd' &&
+							(!isalpha(source[startSearch + 9])))
+						{
+							addToken(STokenType::DEGREE_4D, line);
+							currentIndex += 9;
+							break;
+						}
+						if (source[startSearch + 7] == '5' &&
+							source[startSearch + 8] == 'd' &&
+							(!isalpha(source[startSearch + 9])))
+						{
+							addToken(STokenType::DEGREE_5D, line);
+							currentIndex += 9;
+							break;
+						}
+						if (source[startSearch + 7] == '6' &&
+							source[startSearch + 8] == 'd' &&
+							(!isalpha(source[startSearch + 9])))
+						{
+							addToken(STokenType::DEGREE_6D, line);
+							currentIndex += 9;
+							break;
+						}
+					}
 					if (source[startSearch + 1] == 'i' &&
 						source[startSearch + 2] == 'm' &&
 						source[startSearch + 3] == 'e' &&
@@ -813,6 +901,20 @@ std::vector<std::shared_ptr<SToken>> SLexer::scanTokens(std::string source)
 						source[startSearch + 2] == 'w' &&
 						source[startSearch + 3] == 'e' &&
 						source[startSearch + 4] == 'r' &&
+						source[startSearch + 5] == 'c' &&
+						source[startSearch + 6] == 'a' &&
+						source[startSearch + 7] == 's' &&
+						source[startSearch + 8] == 'e' &&
+						(!isalpha(source[startSearch + 9])))
+					{
+						addToken(STokenType::LOWERCASE, line);
+						currentIndex += 9;
+						break;
+					}
+					if (source[startSearch + 1] == 'o' &&
+						source[startSearch + 2] == 'w' &&
+						source[startSearch + 3] == 'e' &&
+						source[startSearch + 4] == 'r' &&
 						source[startSearch + 5] == '-')
 					{
 						if (source[startSearch + 6] == 'c' &&
@@ -1018,6 +1120,15 @@ std::vector<std::shared_ptr<SToken>> SLexer::scanTokens(std::string source)
 						break;
 					}
 					if (source[startSearch + 1] == 'o' &&
+						source[startSearch + 2] == 'n' &&
+						source[startSearch + 3] == 'e' &&
+						(!isalpha(source[startSearch + 4])))
+					{
+						addToken(STokenType::NONE, line);
+						currentIndex += 4;
+						break;
+					}
+					if (source[startSearch + 1] == 'o' &&
 						source[startSearch + 2] == 'r' &&
 						source[startSearch + 3] == 'e' &&
 						source[startSearch + 4] == 'p' &&
@@ -1030,8 +1141,85 @@ std::vector<std::shared_ptr<SToken>> SLexer::scanTokens(std::string source)
 						currentIndex += 8;
 						break;
 					}
+					if (source[startSearch + 1] == 'u' &&
+						source[startSearch + 2] == 'm' &&
+						source[startSearch + 3] == 'b' &&
+						source[startSearch + 4] == 'e' &&
+						source[startSearch + 5] == 'r' &&
+						source[startSearch + 6] == '-')
+					{
+						if (source[startSearch + 7] == 'w' &&
+							source[startSearch + 8] == 'h' &&
+							source[startSearch + 9] == 'o' &&
+							source[startSearch + 10] == 'l' &&
+							source[startSearch + 11] == 'e' &&
+							(!isalpha(source[startSearch + 12])))
+						{
+							addToken(STokenType::NUMBER_WHOLE, line);
+							currentIndex += 12;
+							break;
+						}
+						if (source[startSearch + 7] == 'a' &&
+							source[startSearch + 8] == 'l' &&
+							source[startSearch + 9] == 'l' &&
+							(!isalpha(source[startSearch + 10])))
+						{
+							addToken(STokenType::NUMBER_ALL, line);
+							currentIndex += 10;
+							break;
+						}
+						if (source[startSearch + 7] == '1' &&
+							source[startSearch + 8] == 'd' &&
+							(!isalpha(source[startSearch + 9])))
+						{
+							addToken(STokenType::NUMBER_1D, line);
+							currentIndex += 9;
+							break;
+						}
+						if (source[startSearch + 7] == '2' &&
+							source[startSearch + 8] == 'd' &&
+							(!isalpha(source[startSearch + 9])))
+						{
+							addToken(STokenType::NUMBER_2D, line);
+							currentIndex += 9;
+							break;
+						}
+						if (source[startSearch + 7] == '3' &&
+							source[startSearch + 8] == 'd' &&
+							(!isalpha(source[startSearch + 9])))
+						{
+							addToken(STokenType::NUMBER_3D, line);
+							currentIndex += 9;
+							break;
+						}
+						if (source[startSearch + 7] == '4' &&
+							source[startSearch + 8] == 'd' &&
+							(!isalpha(source[startSearch + 9])))
+						{
+							addToken(STokenType::NUMBER_4D, line);
+							currentIndex += 9;
+							break;
+						}
+						if (source[startSearch + 7] == '5' &&
+							source[startSearch + 8] == 'd' &&
+							(!isalpha(source[startSearch + 9])))
+						{
+							addToken(STokenType::NUMBER_5D, line);
+							currentIndex += 9;
+							break;
+						}
+						if (source[startSearch + 7] == '6' &&
+							source[startSearch + 8] == 'd' &&
+							(!isalpha(source[startSearch + 9])))
+						{
+							addToken(STokenType::NUMBER_6D, line);
+							currentIndex += 9;
+							break;
+						}
+					}
 					else { goto identifier; }
 					break;
+
 					//
 				case 'o':
 					if (source[startSearch + 1] == 'v' &&
@@ -1090,6 +1278,83 @@ std::vector<std::shared_ptr<SToken>> SLexer::scanTokens(std::string source)
 					break;
 					//
 				case 'p':
+					if (source[startSearch + 1] == 'e' &&
+						source[startSearch + 2] == 'r' &&
+						source[startSearch + 3] == 'c' &&
+						source[startSearch + 4] == 'e' &&
+						source[startSearch + 5] == 'n' &&
+						source[startSearch + 6] == 't' &&
+						source[startSearch + 7] == '-')
+					{
+						if (source[startSearch + 8] == 'w' &&
+							source[startSearch + 9] == 'h' &&
+							source[startSearch + 10] == 'o' &&
+							source[startSearch + 11] == 'l' &&
+							source[startSearch + 12] == 'e' &&
+							(!isalpha(source[startSearch + 13])))
+						{
+							addToken(STokenType::PERCENT_WHOLE, line);
+							currentIndex += 13;
+							break;
+						}
+						if (source[startSearch + 8] == 'a' &&
+							source[startSearch + 9] == 'l' &&
+							source[startSearch + 10] == 'l' &&
+							(!isalpha(source[startSearch + 11])))
+						{
+							addToken(STokenType::PERCENT_ALL, line);
+							currentIndex += 11;
+							break;
+						}
+						if (source[startSearch + 8] == '1' &&
+							source[startSearch + 9] == 'd' &&
+							(!isalpha(source[startSearch + 10])))
+						{
+							addToken(STokenType::PERCENT_1D, line);
+							currentIndex += 10;
+							break;
+						}
+						if (source[startSearch + 8] == '2' &&
+							source[startSearch + 9] == 'd' &&
+							(!isalpha(source[startSearch + 10])))
+						{
+							addToken(STokenType::PERCENT_2D, line);
+							currentIndex += 10;
+							break;
+						}
+						if (source[startSearch + 8] == '3' &&
+							source[startSearch + 9] == 'd' &&
+							(!isalpha(source[startSearch + 10])))
+						{
+							addToken(STokenType::PERCENT_3D, line);
+							currentIndex += 10;
+							break;
+						}
+						if (source[startSearch + 8] == '4' &&
+							source[startSearch + 9] == 'd' &&
+							(!isalpha(source[startSearch + 10])))
+						{
+							addToken(STokenType::PERCENT_4D, line);
+							currentIndex += 10;
+							break;
+						}
+						if (source[startSearch + 8] == '5' &&
+							source[startSearch + 9] == 'd' &&
+							(!isalpha(source[startSearch + 10])))
+						{
+							addToken(STokenType::PERCENT_5D, line);
+							currentIndex += 10;
+							break;
+						}
+						if (source[startSearch + 8] == '6' &&
+							source[startSearch + 9] == 'd' &&
+							(!isalpha(source[startSearch + 10])))
+						{
+							addToken(STokenType::PERCENT_6D, line);
+							currentIndex += 10;
+							break;
+						}
+					}
 					if (source[startSearch + 1] == 'o' &&
 						source[startSearch + 2] == 's' &&
 						source[startSearch + 3] == 'i' &&
@@ -1169,6 +1434,22 @@ std::vector<std::shared_ptr<SToken>> SLexer::scanTokens(std::string source)
 					break;
 					//
 				case 't':
+					if (source[startSearch + 1] == 'e' &&
+						source[startSearch + 2] == 'x' &&
+						source[startSearch + 3] == 't' &&
+						source[startSearch + 4] == '-' &&
+						source[startSearch + 5] == 'f' &&
+						source[startSearch + 6] == 'o' &&
+						source[startSearch + 7] == 'r' &&
+						source[startSearch + 8] == 'm' &&
+						source[startSearch + 9] == 'a' &&
+						source[startSearch + 10] == 't' &&
+						(!isalpha(source[startSearch + 11])))
+					{
+						addToken(STokenType::TEXT_FORMAT, line);
+						currentIndex += 11;
+						break;
+					}
 					if (source[startSearch + 1] == 'o' &&
 						source[startSearch + 2] == 'p' &&
 						(!isalpha(source[startSearch + 3])))
@@ -1190,6 +1471,20 @@ std::vector<std::shared_ptr<SToken>> SLexer::scanTokens(std::string source)
 					break;
 					//
 				case 'u':
+					if (source[startSearch + 1] == 'p' &&
+						source[startSearch + 2] == 'p' &&
+						source[startSearch + 3] == 'e' &&
+						source[startSearch + 4] == 'r' &&
+						source[startSearch + 5] == 'c' &&
+						source[startSearch + 6] == 'a' &&
+						source[startSearch + 7] == 's' &&
+						source[startSearch + 8] == 'e' &&
+						(!isalpha(source[startSearch + 9])))
+					{
+						addToken(STokenType::UPPERCASE, line);
+						currentIndex += 9;
+						break;
+					}
 					if (source[startSearch + 1] == 'p' &&
 						source[startSearch + 2] == 'p' &&
 						source[startSearch + 3] == 'e' &&

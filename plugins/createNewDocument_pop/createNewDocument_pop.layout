@@ -1,0 +1,81 @@
+<ROOT id="createNewDocument_pop" defaultPosition="150,80">
+<V_BOX id="cndocp_wrapper" onresize="global::createNewDocument_pop::resizeCNDocP()">
+	<H_BOX id="cndocp_titleBar" class="popupTitle"
+	ondragstart="moveWidget(0, &quot;createNewDocument_pop&quot;)" 
+	ondrag="moveWidget(1, &quot;createNewDocument_pop&quot;)">
+		<H_BOX class="cndocp_titleTextWrapper">
+			<TEXT class="text16default, barlow16" value="CREATE NEW DOCUMENT"></TEXT>
+		</H_BOX>
+		<H_BOX class="titleButton" 
+			onmouseenter="titleButtonHover(0)" onmouseleave="titleButtonHover(1)"
+			onclick="titleButtonHover(1); exitCNDocP();">
+			<IMAGE class="titleButtonImage, titleClose"></IMAGE></H_BOX>
+	</H_BOX>
+	<V_BOX id="cndocp_contentWrapper">
+		<H_BOX class="cndocp_nameWrapper">
+			<TEXT class="barlow14, cndocp_text" value="NAME:"></TEXT>
+			<H_BOX class="cndocp_inputWrap" style="border-left: 6;width:fill;">
+				<LINE id="cndocp_docName" class="barlow14, cndocp_input, textInputColor" value="document name..."></LINE>
+			</H_BOX>
+		</H_BOX>
+		<H_BOX class="cndocp_lineWrapper">
+			<TEXT class="barlow14, cndocp_text" value="WIDTH:"></TEXT>
+			<H_BOX class="cndocp_inputWrap">
+				<LINE id="cndocp_width" class="barlow14, cndocp_input, textInputColor, numberWhole" value="0"></LINE>
+			</H_BOX>
+		</H_BOX>
+		<H_BOX class="cndocp_lineWrapper">
+			<TEXT class="barlow14, cndocp_text" value="HEIGHT:"></TEXT>
+			<H_BOX class="cndocp_inputWrap">
+				<LINE id="cndocp_height" class="barlow14, cndocp_input, textInputColor, numberWhole" value="0"></LINE>
+			</H_BOX>
+		</H_BOX>
+		<H_BOX class="cndocp_buttonWrapper">
+			<H_BOX class="cndocp_buttonWrap"
+				onmouseenter="global::hoverMidGreyButton(0)" 
+				onmouseleave="global::hoverMidGreyButton(1)"
+				onclick="commitCNDocP();">
+				<TEXT class="barlow14, cndocp_text" style="float:center;" value="CREATE"></TEXT>
+			</H_BOX>
+			<H_BOX class="cndocp_buttonWrap" style="float:right;"
+				onmouseenter="global::hoverMidGreyButton(0)" 
+				onmouseleave="global::hoverMidGreyButton(1)"
+				onclick="exitCNDocP();">
+				<TEXT class="barlow14, cndocp_text" style="float:center;" value="CANCEL"></TEXT>
+			</H_BOX>
+		</H_BOX>
+	</V_BOX>
+	
+// RESIZE BOXES
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()" 
+		ondragstart="resizeWidget(0, 0, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		ondrag="resizeWidget(1, 0, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		ondragend="resizeWidget(2, 0, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		class="resizeBarLeft"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()" 
+		ondragstart="resizeWidget(0, 0, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		ondrag="resizeWidget(1, 0, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		ondragend="resizeWidget(2, 0, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		class="resizeBarRight"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 1, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		ondrag="resizeWidget(1, 1, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		ondragend="resizeWidget(2, 1, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"		
+		class="resizeBarBottom"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 2, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		ondrag="resizeWidget(1, 2, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		ondragend="resizeWidget(2, 2, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"		
+		class="resizeBarBottomLeft"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 2, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		ondrag="resizeWidget(1, 2, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		ondragend="resizeWidget(2, 2, &quot;cndocp_wrapper&quot;, cndocp_minWidth, cndocp_minHeight)"
+		class="resizeBarBottomRight"></H_BOX>
+</V_BOX>
+</ROOT>

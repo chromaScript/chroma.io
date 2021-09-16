@@ -10,6 +10,8 @@
 #include "include/cscript/CInterpreter.h"
 #include "include/cscript/CObject.h"
 
+#include "include/ctoolfile/ChromaToolFile.h"
+
 #ifndef APPLICATION_H
 #include "include/Application.h"
 #endif
@@ -23,16 +25,16 @@ extern std::shared_ptr<Application> chromaIO;
 
 Toolbox::Toolbox()
 {
-	pointer = std::make_shared<CustomCursor>("./assets/textures/T_cursorPointer16_D.png", CURSOR_POINTER, CURSOR_ULCORNER);
-	hand = std::make_shared<CustomCursor>("./assets/textures/T_cursorHand16_D.png", CURSOR_HAND, CURSOR_UCENTER);
-	grab = std::make_shared<CustomCursor>("./assets/textures/T_cursorGrab16_D.png", CURSOR_GRAB, CURSOR_UCENTER);
-	rotate = std::make_shared<CustomCursor>("./assets/textures/T_cursorRotate16_D.png", CURSOR_ROTATE, CURSOR_ULCORNER);
-	zoomScrub = std::make_shared<CustomCursor>("./assets/textures/T_cursorZoomScrub16_D.png", CURSOR_ZOOMSCRUB, CURSOR_ULCORNER);
-	zoomIn = std::make_shared<CustomCursor>("./assets/textures/T_cursorZoomIn16_D.png", CURSOR_ZOOMIN, CURSOR_ULCORNER);
-	zoomOut = std::make_shared<CustomCursor>("./assets/textures/T_cursorZoomOut16_D.png", CURSOR_ZOOMOUT, CURSOR_ULCORNER);
-	brush = std::make_shared<CustomCursor>("./assets/textures/T_cursorBrush16_D.png", CURSOR_BRUSH, CURSOR_ULCORNER);
-	dropper = std::make_shared<CustomCursor>("./assets/textures/T_cursorDropper16_D.png", CURSOR_DROPPER, CURSOR_LLCORNER);
-	circleSmall = std::make_shared<CustomCursor>("./assets/textures/T_cursorCircleSmall16_D.png", CURSOR_CIRCLESMALL, CURSOR_CENTER);
+	pointer = std::make_shared<CustomCursor>("./assets/textures/T_cursorPointer16_D.png", CURSOR_POINTER, CURSOR_ULCORNER, "Pointer");
+	hand = std::make_shared<CustomCursor>("./assets/textures/T_cursorHand16_D.png", CURSOR_HAND, CURSOR_UCENTER, "Hand");
+	grab = std::make_shared<CustomCursor>("./assets/textures/T_cursorGrab16_D.png", CURSOR_GRAB, CURSOR_UCENTER, "Grab");
+	rotate = std::make_shared<CustomCursor>("./assets/textures/T_cursorRotate16_D.png", CURSOR_ROTATE, CURSOR_ULCORNER, "Rotate");
+	zoomScrub = std::make_shared<CustomCursor>("./assets/textures/T_cursorZoomScrub16_D.png", CURSOR_ZOOMSCRUB, CURSOR_ULCORNER, "Zoom");
+	zoomIn = std::make_shared<CustomCursor>("./assets/textures/T_cursorZoomIn16_D.png", CURSOR_ZOOMIN, CURSOR_ULCORNER, "Zoom In");
+	zoomOut = std::make_shared<CustomCursor>("./assets/textures/T_cursorZoomOut16_D.png", CURSOR_ZOOMOUT, CURSOR_ULCORNER, "Zoom Out");
+	brush = std::make_shared<CustomCursor>("./assets/textures/T_cursorBrush16_D.png", CURSOR_BRUSH, CURSOR_ULCORNER, "Brush");
+	dropper = std::make_shared<CustomCursor>("./assets/textures/T_cursorDropper16_D.png", CURSOR_DROPPER, CURSOR_LLCORNER, "Dropper");
+	circleSmall = std::make_shared<CustomCursor>("./assets/textures/T_cursorCircleSmall16_D.png", CURSOR_CIRCLESMALL, CURSOR_CENTER, "Circle Small");
 }
 
 // Cursor Functions
@@ -65,17 +67,46 @@ std::shared_ptr<CustomCursor> Toolbox::getCursor(int name)
 	}
 }
 
-void Toolbox::initializeTools(bool isNew)
+void Toolbox::initializeTools(bool checkExisting, bool createNew)
 {
-	if (isNew == true)
+	if (checkExisting)
+	{
+		bool result = chromaIO.get()->toolFileConsole.get()->loadFiles_default(chromaIO.get()->toolbox);
+		//bool result = true;
+		// Result will return true if the application doesn't find any tool files to load. In this scenario
+		// it will currently load the default tools instead.
+
+		if (result == true)
+		{
+			createDefaultTools();
+		}
+		return;
+	}
+	else if (checkExisting == false && createNew == true)
 	{
 		// Load default tools
 		createDefaultTools();
+		return;
 	}
 	else
 	{
 		// Read tool presets from config file
+		createDefaultTools();
+		return;
 	}
+}
+bool Toolbox::exportTools(bool exportAll, std::vector<int> selectedToolIDs, bool overwrite, bool useDefaultRoot, std::filesystem::path rootDir)
+{
+	bool result = false;
+	if (exportAll)
+	{
+		result = chromaIO.get()->toolFileConsole.get()->writeFiles_defualt(tools, overwrite, rootDir, useDefaultRoot);
+	}
+	else
+	{
+		// Export selected tools
+	}
+	return result;
 }
 
 bool Toolbox::createCustomTool(
@@ -92,9 +123,23 @@ bool Toolbox::createCustomTool(
 	int outputID = convertIOStringToMacro(2, outputMethod);
 	int keybind = createKeySig(modBit, glfwKey);
 
-	if (!chromaIO.get()->isValidKeybind_tool(modBit, glfwKey)) { return false; }
-	if (!checkValidIOCombination(nullptr, inputID, outputID)) { return false; }
-	if (!checkValidControlScheme(nullptr, inputID, controlID)) { return false; }
+	glm::bvec3 result = glm::bvec3(true, true, true);
+	if (!chromaIO.get()->isValidKeybind_tool(modBit, glfwKey)) 
+	{ 
+		result.x = false; 
+	}
+	if (!checkValidIOCombination(nullptr, inputID, outputID)) 
+	{ 
+		result.y = false; 
+	}
+	if (!checkValidControlScheme(nullptr, inputID, controlID)) 
+	{ 
+		result.z = false; 
+	}
+	if (result.x == false || result.y == false || result.z == false)
+	{
+		return false;
+	}
 
 	tools.emplace_back(
 		std::make_shared<Tool>(getCursor(cursorUpEnum), getCursor(cursorDownEnum), toolID, toolName,
@@ -108,134 +153,141 @@ bool Toolbox::createCustomTool(
 
 void Toolbox::createDefaultTools()
 {
+	std::vector<std::string> tags = {""};
 	// Later this will be read using a config file, likely XML or some human-readable format for easy editing
 	tools.emplace_back(
 		std::make_shared<Tool>(pointer, pointer, DT_NO_TOOL, "Pointer",
 			IN_NO_INPUT, OUT_NO_OUTPUT,
-			TSetType::continuous,
-			INPUT_KEY_F1, shared_from_this())); 
-	tools.back().get()->initializeTool(TSetType::continuous);
+			TSetType::usedefault,
+			INPUT_KEY_F1, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
+	tools.back().get()->initializeTool(TSetType::usedefault);
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(hand, grab, DT_PAN, "Pan Camera", 
 			IN_PAN, OUT_CAMERAPAN,
-			TSetType::continuous,
+			TSetType::pan,
 			INPUT_KEY_H, shared_from_this()));
-	tools.back().get()->initializeTool(TSetType::continuous);
+	tools.back().get()->initializeTool(TSetType::pan);
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(rotate, rotate, DT_ROTATE, "Rotate Camera", 
 			IN_ROTATE, OUT_CAMERAROTATE,
-			TSetType::continuous,
-			INPUT_KEY_R, shared_from_this()));
-	tools.back().get()->initializeTool(TSetType::continuous);
+			TSetType::rotate,
+			INPUT_KEY_R, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
+	tools.back().get()->initializeTool(TSetType::rotate);
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(zoomIn, zoomOut, DT_ZOOM_SCRUB, "Zoom Camera", 
 			IN_ZOOM, OUT_CAMERAZOOM,
-			TSetType::continuous,
+			TSetType::zoom,
 			INPUT_KEY_Z, shared_from_this()));
-	tools.back().get()->initializeTool(TSetType::continuous);
+	tools.back().get()->initializeTool(TSetType::zoom);
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(brush, circleSmall, DT_BRUSH, "Brush",
 			IN_DRAW, OUT_STROKE,
 			TSetType::continuous,
-			INPUT_KEY_B, shared_from_this()));
+			INPUT_KEY_B, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::continuous);
-	//
+	/*//
 	tools.emplace_back(
 		std::make_shared<Tool>(brush, circleSmall, DT_STROKE_LASSO, "Lasso",
 			IN_LASSO, OUT_STROKE,
 			TSetType::continuous,
-			INPUT_KEY_L, shared_from_this()));
+			INPUT_KEY_L, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::continuous);
-	//
+	*///
 	tools.emplace_back(
 		std::make_shared<Tool>(brush, circleSmall, DT_STROKE_RECTANGLE, "Rectangle Brush",
 			IN_POLYGON, OUT_STROKE,
 			TSetType::onepoint,
-			INPUT_KEY_W, shared_from_this()));
+			INPUT_KEY_W, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::onepoint);
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(hand, circleSmall, DT_STROKE_SHAPELINE, "Shape-Line Brush",
 			IN_SHAPELINE, OUT_STROKE,
 			TSetType::drag,
-			INPUT_KEY_T, shared_from_this()));
+			INPUT_KEY_T, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::drag);
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(hand, circleSmall, DT_STROKE_SHAPELINE, "Shape-Draw Brush",
 			IN_SHAPEDRAW, OUT_STROKE,
 			TSetType::continuous,
-			INPUT_KEY_K, shared_from_this()));
+			INPUT_KEY_K, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::continuous);
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(hand, circleSmall, DT_STROKE_SHAPEFIELDPOINTS, "Drag-Shape Field Brush",
 			IN_SHAPEFIELD, OUT_STROKE,
 			TSetType::drag,
-			INPUT_KEY_Q, shared_from_this()));
+			INPUT_KEY_Q, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::drag);
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(hand, circleSmall, DT_STROKE_SHAPEFIELDPOINTS, "Box-Shape Field Brush",
 			IN_SHAPEFIELD, OUT_STROKE,
 			TSetType::onepoint,
-			INPUT_KEY_D, shared_from_this()));
+			INPUT_KEY_S, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::onepoint);
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(brush, circleSmall, DT_STROKE_VORTEX, "Vortex Brush",
 			IN_VORTEX, OUT_STROKE,
 			TSetType::continuous,
-			INPUT_KEY_E, shared_from_this()));
+			INPUT_KEY_E, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::continuous);
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(brush, circleSmall, DT_STROKE_VORTEX, "Radial Field Brush",
 			IN_VORTEX, OUT_STROKE,
 			TSetType::drag,
-			INPUT_KEY_O, shared_from_this()));
+			INPUT_KEY_O, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::drag);
-	//
-	tools.emplace_back(
-		std::make_shared<Tool>(hand, circleSmall, DT_STROKE_SCANLINE, "Scanline Brush",
-			IN_RAKE, OUT_STROKE,
-			TSetType::continuous,
-			INPUT_KEY_S, shared_from_this()));
-	tools.back().get()->initializeTool(TSetType::continuous);
-	tools.back().get()->getRake()->pushToCanvasEdge = true;
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(brush, circleSmall, DT_STROKE_RAKE, "Rake Brush",
 			IN_RAKE, OUT_STROKE,
 			TSetType::continuous,
-			INPUT_KEY_A, shared_from_this()));
+			INPUT_KEY_A, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::continuous);
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(brush, circleSmall, DT_STROKE_FAN, "Fan Brush",
 			IN_FAN, OUT_STROKE,
 			TSetType::continuous,
-			INPUT_KEY_F, shared_from_this()));
+			INPUT_KEY_F, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::continuous);
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(brush, circleSmall, DT_STROKE_FAN, "Fan Airbrush",
 			IN_FAN, OUT_STROKE,
 			TSetType::continuous,
-			INPUT_KEY_F_SHIFT, shared_from_this()));
+			INPUT_KEY_F_SHIFT, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::continuous);
-	tools.back().get()->getFan()->airbrushMode = true;
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(dropper, dropper, DT_COLORPICKER, "Color Picker",
 			IN_SAMPLER, OUT_SAMPLER,
-			TSetType::continuous,
-			INPUT_KEY_I, shared_from_this()));
-	tools.back().get()->initializeTool(TSetType::continuous);
+			TSetType::sampler,
+			INPUT_KEY_I, shared_from_this(),
+			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
+	tools.back().get()->initializeTool(TSetType::sampler);
 	//
 	/* // Tool is broken for now
 	tools.emplace_back(
@@ -306,8 +358,25 @@ void Toolbox::notifyColorChange(CColor input, bool isBG)
 		activeTool.get()->setBGColor(input, false);
 	}
 }
+void Toolbox::notifyCursorChange(bool isDown, bool updateSavedCursor)
+{
+	if (isDown) 
+	{ 
+		chromaIO.get()->ui.get()->updateCursorImage(activeTool.get()->cursorDown);
+		if (updateSavedCursor) { chromaIO.get()->ui.get()->savedCursor = activeTool.get()->cursorDown; }
+	}
+	else 
+	{ 
+		chromaIO.get()->ui.get()->updateCursorImage(activeTool.get()->cursorUp); 
+		if (updateSavedCursor) { chromaIO.get()->ui.get()->savedCursor = activeTool.get()->cursorUp; }
+	}
+}
 
 std::shared_ptr<Tool> Toolbox::getActiveTool() { return activeTool; }
+std::shared_ptr<Tool> Toolbox::getTool_lastCreated()
+{
+	return tools.back();
+}
 
 // Callback Functions
 bool Toolbox::bindCallback(std::shared_ptr<CInterpreter> interpreter,
@@ -476,16 +545,17 @@ bool Toolbox::checkValidControlScheme(std::shared_ptr<CInterpreter> interpreter,
 
 	switch (inputMacro)
 	{
+	case IN_ROTATE: if (controlMacro == CONTROL_ROTATE) { return true; } break;
+	case IN_ZOOM: if (controlMacro == CONTROL_ZOOM) { return true; } break;
+	case IN_PAN: if (controlMacro == CONTROL_PAN) { return true; } break;
+	case IN_SAMPLER: if (controlMacro == CONTROL_SAMPLER) { return true; } break;
+		//
 	case IN_DRAG: if (controlMacro == CONTROL_CONTINUOUS) { return true; } break;
-	case IN_ROTATE: if (controlMacro == CONTROL_DEFAULT) { return true; } break;
-	case IN_ZOOM: if (controlMacro == CONTROL_DEFAULT) { return true; } break;
 	case IN_DRAW: if (controlMacro == CONTROL_CONTINUOUS) { return true; } break;
 	case IN_LINE: if (controlMacro == CONTROL_DRAG) { return true; } break;
 	case IN_LASSO: if (controlMacro == CONTROL_CONTINUOUS) { return true; } break;
 	case IN_POLYGON: if (controlMacro == CONTROL_ONEPOINT) { return true; } break;
-	case IN_PAN: if (controlMacro == CONTROL_DEFAULT) { return true; } break;
 	case IN_POINT: if (controlMacro == CONTROL_CONTINUOUS) { return true; } break;
-	case IN_SAMPLER: if (controlMacro == CONTROL_DEFAULT) { return true; } break;
 	case IN_SHAPEFIELD: if (controlMacro == CONTROL_ONEPOINT || controlMacro == CONTROL_DRAG) { return true; } break;
 	case IN_VORTEX: if (controlMacro == CONTROL_CONTINUOUS || controlMacro == CONTROL_DRAG) { return true; } break;
 	case IN_RAKE: if (controlMacro == CONTROL_CONTINUOUS) { return true; } break;
@@ -505,7 +575,7 @@ int Toolbox::convertIOStringToMacro(int kind, std::string name)
 	stringToLower(nameFixed);
 	if (kind == 1) // INPUT METHOD
 	{
-		if (nameFixed == "noinputMacro") { return IN_NO_INPUT; }
+		if (nameFixed == "noinputMacro" || nameFixed == "noinput") { return IN_NO_INPUT; }
 		if (nameFixed == "drag") { return IN_DRAG; }
 		if (nameFixed == "rotate" || nameFixed == "inrotate" || nameFixed == "rotatecamera" || nameFixed == "camerarotate") { return IN_ROTATE; }
 		if (nameFixed == "zoom" || nameFixed == "inzoom" || nameFixed == "zoomcamera" || nameFixed == "camerazoom") { return IN_ZOOM; }
@@ -526,7 +596,7 @@ int Toolbox::convertIOStringToMacro(int kind, std::string name)
 	}
 	else if (kind == 2) // OUTPUT METHOD
 	{
-		if (nameFixed == "nooutput") { return OUT_NO_OUTPUT; }
+		if (nameFixed == "nooutputMacro" || nameFixed == "nooutput") { return OUT_NO_OUTPUT; }
 		if (nameFixed == "pan" || nameFixed == "outpan" || nameFixed == "pancamera" || nameFixed == "camerapan") { return OUT_CAMERAPAN; }
 		if (nameFixed == "rotate" || nameFixed == "outrotate" || nameFixed == "rotatecamera" || nameFixed == "camerarotate") { return OUT_CAMERAROTATE; }
 		if (nameFixed == "zoom" || nameFixed == "outzoom" || nameFixed == "zoomcamera" || nameFixed == "camerazoom") { return OUT_CAMERAZOOM; }
@@ -534,18 +604,22 @@ int Toolbox::convertIOStringToMacro(int kind, std::string name)
 		if (nameFixed == "shape") { return OUT_SHAPE; }
 		if (nameFixed == "gradient") { return OUT_GRADIENT; }
 		if (nameFixed == "fill") { return OUT_FILL; }
-		if (nameFixed == "sampler" || nameFixed == "eyedropper" || nameFixed == "colorpicker") { return OUT_SAMPLER; }
+		if (nameFixed == "sampler" || nameFixed == "eyedropper" || nameFixed == "colorpicker" || nameFixed == "colorsample") { return OUT_SAMPLER; }
 		if (nameFixed == "selection") { return OUT_SELECTION; }
 	}
 	else if (kind == 3) // CONTROL SCHEME
 	{
-		if (nameFixed == "default" || nameFixed == "usedefault") { return CONTROL_DEFAULT; }
+		if (nameFixed == "default" || nameFixed == "usedefault" || nameFixed == "null") { return CONTROL_DEFAULT; }
 		if (nameFixed == "continuous") { return CONTROL_CONTINUOUS; }
 		if (nameFixed == "drag") { return CONTROL_DRAG; }
 		if (nameFixed == "onepoint") { return CONTROL_ONEPOINT; }
 		if (nameFixed == "twopoint") { return CONTROL_TWOPOINT; }
 		if (nameFixed == "threepoint") { return CONTROL_THREEPOINT; }
 		if (nameFixed == "fourpoint") { return CONTROL_FOURPOINT; }
+		if (nameFixed == "sampler" || nameFixed == "eyedropper" || nameFixed == "colorpicker" || nameFixed == "colorsample") { return CONTROL_SAMPLER; }
+		if (nameFixed == "pan" || nameFixed == "outpan" || nameFixed == "pancamera" || nameFixed == "camerapan") { return CONTROL_PAN; }
+		if (nameFixed == "rotate" || nameFixed == "outrotate" || nameFixed == "rotatecamera" || nameFixed == "camerarotate") { return CONTROL_ROTATE; }
+		if (nameFixed == "zoom" || nameFixed == "outzoom" || nameFixed == "zoomcamera" || nameFixed == "camerazoom") { return CONTROL_ZOOM; }
 	}
 	else { return -1; }
 }
@@ -561,6 +635,10 @@ TSetType Toolbox::convertControlMacro(int macro)
 	case CONTROL_TWOPOINT: return TSetType::twopoint;
 	case CONTROL_THREEPOINT: return TSetType::threepoint;
 	case CONTROL_FOURPOINT: return TSetType::fourpoint;
+	case CONTROL_SAMPLER: return TSetType::sampler;
+	case CONTROL_PAN: return TSetType::pan;
+	case CONTROL_ROTATE: return TSetType::rotate;
+	case CONTROL_ZOOM: return TSetType::zoom;
 	default:
 		return TSetType::usedefault;
 	}

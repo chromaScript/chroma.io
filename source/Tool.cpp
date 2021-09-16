@@ -11,6 +11,7 @@
 #include "include/cscript/CInterpreter.h"
 
 #include "include/ToolSettings.h"
+#include "include/toolSettings/effects/TSet_Effects.h"
 
 #include <string>
 #include <iostream>
@@ -36,6 +37,32 @@ Tool::Tool(
 	this->outID = outID;
 	std::cout << "TOOL::CONSTRUCTOR::REGISTERED::ID-" << id << "-::NAME-" << name << std::endl;
 }
+Tool::Tool(
+	std::shared_ptr<CustomCursor> cursorUp,
+	std::shared_ptr<CustomCursor> cursorDown,
+	int id, std::string n,
+	int inID, int outID,
+	TSetType controlScheme,
+	int key, std::shared_ptr<Toolbox> owner,
+	std::vector<std::string> tags, std::string category, std::string type, std::string date, std::string author)
+{
+	this->cursorUp = cursorUp;
+	this->cursorDown = cursorDown;
+	this->id = id;
+	this->name = n;
+	this->keySig = key;
+	this->owner = owner;
+	this->inID = inID;
+	this->outID = outID;
+	this->tags = tags;
+	this->category = category;
+	this->toolType = type;
+	this->date = date;
+	this->author = author;
+	std::cout << "TOOL::CONSTRUCTOR::REGISTERED::ID-" << id << "-::NAME-" << name << std::endl;
+}
+
+
 Tool::~Tool()
 {
 	std::cout << "TOOL::DESTRUCTOR::TOOL_DESTROYED::ID-" << id << "-::NAME-" << name << std::endl;
@@ -168,6 +195,24 @@ void Tool::buildSettings()
 				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::alpha, std::make_unique<TSet_Alpha>()));
 			}
 			break;
+		case TSetType::color:
+			if (matchMask(TSetType::color, outputMask))
+			{
+				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::color, std::make_unique<TSet_Color>()));
+			}
+			break;
+		case TSetType::effects:
+			if (matchMask(TSetType::effects, outputMask))
+			{
+				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::effects, std::make_unique<TSet_Effects>()));
+			}
+			break;
+		case TSetType::character:
+			if (matchMask(TSetType::character, outputMask))
+			{
+				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::character, std::make_unique<TSet_Character>()));
+			}
+			break;
 		case TSetType::smoothing:
 			if (matchMask(TSetType::smoothing, outputMask))
 			{
@@ -222,8 +267,53 @@ void Tool::buildSettings()
 				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::polyline, std::make_unique<TSet_PolyLine>()));
 			}
 			break;
+		case TSetType::gradient:
+			if (matchMask(TSetType::gradient, outputMask))
+			{
+				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::gradient, std::make_unique<TSet_Gradient>()));
+			}
+			break;
+		case TSetType::fill:
+			if (matchMask(TSetType::fill, outputMask))
+			{
+				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::fill, std::make_unique<TSet_Fill>()));
+			}
+			break;
+		case TSetType::shader:
+			if (matchMask(TSetType::shader, outputMask))
+			{
+				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::shader, std::make_unique<TSet_Shader>()));
+			}
+			break;
+		case TSetType::filter:
+			if (matchMask(TSetType::filter, outputMask))
+			{
+				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::filter, std::make_unique<TSet_Filter>()));
+			}
+			break;
+		case TSetType::antiAliasing:
+			if (matchMask(TSetType::antiAliasing, outputMask))
+			{
+				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::antiAliasing, std::make_unique<TSet_AntiAliasing>()));
+			}
+			break;
+		case TSetType::pattern:
+			if (matchMask(TSetType::pattern, outputMask))
+			{
+				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::pattern, std::make_unique<TSet_Pattern>()));
+			}
+			break;
 		case TSetType::sampler:
-			settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::sampler, std::make_unique<TSet_Sampler>()));
+			if (matchMask(TSetType::sampler, outputMask))
+			{
+				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::sampler, std::make_unique<TSet_Sampler>()));
+			}
+			break;
+		case TSetType::scatter:
+			if (matchMask(TSetType::scatter, outputMask))
+			{
+				settings.insert(std::pair<TSetType, std::unique_ptr<ToolSettings>>(TSetType::scatter, std::make_unique<TSet_Scatter>()));
+			}
 			break;
 		}
 	}
@@ -353,6 +443,22 @@ TSet_Basic* Tool::getBasic()
 	}
 	return nullptr;
 }
+TSet_Blend* Tool::getBlend()
+{
+	if (settings.count(TSetType::blend) == 1)
+	{
+		return dynamic_cast<TSet_Blend*>(settings.at(TSetType::blend).get());
+	}
+	return nullptr;
+}
+TSet_Character* Tool::getCharacter()
+{
+	if (settings.count(TSetType::character) == 1)
+	{
+		return dynamic_cast<TSet_Character*>(settings.at(TSetType::character).get());
+	}
+	return nullptr;
+}
 TSet_Smoothing* Tool::getSmoothing()
 {
 	if (settings.count(TSetType::smoothing) == 1)
@@ -377,6 +483,14 @@ TSet_Polygon* Tool::getPolygon()
 	}
 	return nullptr;
 }
+TSet_PolyLine* Tool::getPolyLine()
+{
+	if (settings.count(TSetType::polyline) == 1)
+	{
+		return dynamic_cast<TSet_PolyLine*>(settings.at(TSetType::polyline).get());
+	}
+	return nullptr;
+}
 TSet_Field* Tool::getField()
 {
 	if (settings.count(TSetType::field) == 1)
@@ -390,6 +504,38 @@ TSet_Alpha* Tool::getAlpha()
 	if (settings.count(TSetType::alpha) == 1)
 	{
 		return dynamic_cast<TSet_Alpha*>(settings.at(TSetType::alpha).get());
+	}
+	return nullptr;
+}
+TSet_Color* Tool::getColor()
+{
+	if (settings.count(TSetType::color) == 1)
+	{
+		return dynamic_cast<TSet_Color*>(settings.at(TSetType::color).get());
+	}
+	return nullptr;
+}
+TSet_Scatter* Tool::getScatter()
+{
+	if (settings.count(TSetType::scatter) == 1)
+	{
+		return dynamic_cast<TSet_Scatter*>(settings.at(TSetType::scatter).get());
+	}
+	return nullptr;
+}
+TSet_Effects* Tool::getEffects()
+{
+	if (settings.count(TSetType::effects) == 1)
+	{
+		return dynamic_cast<TSet_Effects*>(settings.at(TSetType::effects).get());
+	}
+	return nullptr;
+}
+TSet_Vector* Tool::getVector()
+{
+	if (settings.count(TSetType::vector) == 1)
+	{
+		return dynamic_cast<TSet_Vector*>(settings.at(TSetType::vector).get());
 	}
 	return nullptr;
 }
@@ -417,14 +563,55 @@ TSet_Rake* Tool::getRake()
 	}
 	return nullptr;
 }
-TSet_PolyLine* Tool::getPolyLine()
+TSet_Gradient* Tool::getGradient()
 {
-	if (settings.count(TSetType::polyline) == 1)
+	if (settings.count(TSetType::gradient) == 1)
 	{
-		return dynamic_cast<TSet_PolyLine*>(settings.at(TSetType::polyline).get());
+		return dynamic_cast<TSet_Gradient*>(settings.at(TSetType::gradient).get());
 	}
 	return nullptr;
 }
+TSet_Fill* Tool::getFill()
+{
+	if (settings.count(TSetType::fill) == 1)
+	{
+		return dynamic_cast<TSet_Fill*>(settings.at(TSetType::fill).get());
+	}
+	return nullptr;
+}
+TSet_Shader* Tool::getShader()
+{
+	if (settings.count(TSetType::shader) == 1)
+	{
+		return dynamic_cast<TSet_Shader*>(settings.at(TSetType::shader).get());
+	}
+	return nullptr;
+}
+TSet_Filter* Tool::getFilter()
+{
+	if (settings.count(TSetType::filter) == 1)
+	{
+		return dynamic_cast<TSet_Filter*>(settings.at(TSetType::filter).get());
+	}
+	return nullptr;
+}
+TSet_AntiAliasing* Tool::getAntiAliasing()
+{
+	if (settings.count(TSetType::antiAliasing) == 1)
+	{
+		return dynamic_cast<TSet_AntiAliasing*>(settings.at(TSetType::antiAliasing).get());
+	}
+	return nullptr;
+}
+TSet_Pattern* Tool::getPattern()
+{
+	if (settings.count(TSetType::pattern) == 1)
+	{
+		return dynamic_cast<TSet_Pattern*>(settings.at(TSetType::pattern).get());
+	}
+	return nullptr;
+}
+
 
 
 
@@ -498,77 +685,281 @@ bool Tool::checkInterestMask(std::shared_ptr<CInterpreter> interpreter, std::str
 {
 	TSetType query = stringToTSetType(name);
 	// Return false if the settings name was invalid
-	if (query == TSetType::null) { return false; }
-	else 
+	return checkInterestMask(query);
+}
+bool Tool::checkInterestMask(TSetType interest)
+{
+	// Return false if the settings name was invalid
+	if (interest == TSetType::null) { return false; }
+	else
 	{
 		bool inputMatch = false, outputMatch = false;
-		switch (query)
+		switch (interest)
 		{
 		case TSetType::drag:
 		case TSetType::continuous:
 		case TSetType::onepoint:
 		case TSetType::twopoint:
 		case TSetType::threepoint:
-			for (TSetType mask : input.get()->interestMask)
-			{
-				if (mask == query) { return true; }
-			}
+			if (input->controlScheme == interest) { return true; }
 			break;
 		default:
 			for (TSetType mask : input.get()->interestMask)
 			{
-				if (mask == query) { inputMatch = true; }
+				if (mask == interest) { inputMatch = true; }
 			}
 			for (TSetType mask : output.get()->interestMask)
 			{
-				if (mask == query) { outputMatch = true; }
+				if (mask == interest) { outputMatch = true; }
 			}
 			if (inputMatch && outputMatch) { return true; }
 			else { return false; }
 		}
-		return false; 
+		return false;
 	}
 }
 
+std::shared_ptr<CObject> Tool::putInterest(
+	std::shared_ptr<CInterpreter> interpreter, TSetType interest, std::shared_ptr<CObject> object, bool isGet)
+{
+	switch (interest)
+	{
+	case TSetType::metadata:
+		// Meta-Data Settings - Cannot enable/disable
+		return std::make_shared<CObject>(true);
+		break;
+	case TSetType::zoom:
+		if (settings.count(TSetType::zoom))
+		{
+			if (!isGet) { getZoom()->isEnabled = std::get<bool>(object.get()->obj); }
+			return std::make_shared<CObject>(getZoom()->isEnabled);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case TSetType::image:
+		if (settings.count(TSetType::image))
+		{
+			if (!isGet) { getImage()->isEnabled = std::get<bool>(object.get()->obj); }
+			return std::make_shared<CObject>(getImage()->isEnabled);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case TSetType::character:
+		if (settings.count(TSetType::character))
+		{
+			if (!isGet) { getCharacter()->isEnabled = std::get<bool>(object.get()->obj); }
+			return std::make_shared<CObject>(getCharacter()->isEnabled);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case TSetType::scatter: 
+		if (settings.count(TSetType::scatter))
+		{
+			if (!isGet) { getScatter()->isEnabled = std::get<bool>(object.get()->obj); }
+			return std::make_shared<CObject>(getScatter()->isEnabled);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case TSetType::color:
+		if (settings.count(TSetType::color))
+		{
+			if (!isGet) { getColor()->isEnabled = std::get<bool>(object.get()->obj); }
+			return std::make_shared<CObject>(getColor()->isEnabled);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case TSetType::alpha:
+		if (settings.count(TSetType::alpha))
+		{
+			if (!isGet) { getAlpha()->isEnabled = std::get<bool>(object.get()->obj); }
+			return std::make_shared<CObject>(getAlpha()->isEnabled);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case TSetType::effects:
+		if (settings.count(TSetType::effects))
+		{
+			if (!isGet) { getEffects()->isEnabled = std::get<bool>(object.get()->obj); }
+			return std::make_shared<CObject>(getEffects()->isEnabled);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	}
+	return std::make_shared<CObject>(nullptr);
+}
+
 std::shared_ptr<CObject> Tool::putProperty(
-	std::shared_ptr<CInterpreter> interpreter, int settingsSig, std::shared_ptr<CObject> object, bool isGet)
+	std::shared_ptr<CInterpreter> interpreter, int settingsSig, 
+	int subSig, std::shared_ptr<CObject> object, bool isGet, 
+	bool getAsPercentage, bool asString)
 {
 	int coreSelect = settingsSig / 100;
+
 	switch (coreSelect)
 	{
-	case 0: break;
-	case 1: break;
-	case 2: break;
-	case 3: break;
+	case 0:
+		// Meta-Data Settings
+		return putMetaData(interpreter, settingsSig, subSig, object, isGet, asString);
+		break;
+	case 1:
+		if (settings.count(TSetType::pan))
+		{
+			return getPan()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 2:
+		if (settings.count(TSetType::zoom))
+		{
+			return getZoom()->putProperty(
+				interpreter, shared_from_this(), 
+				settingsSig, subSig, object, 
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 3:
+		if (settings.count(TSetType::rotate))
+		{
+			return getRotate()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
 	case 4:
 		if (settings.count(TSetType::continuous))
 		{
-			return getContinuousControl()->putProperty(interpreter, shared_from_this(), settingsSig, object, isGet);
+			return getContinuousControl()->putProperty(
+				interpreter, shared_from_this(), 
+				settingsSig, subSig, object, 
+				isGet, getAsPercentage, asString);
 		}
 		else { return std::make_shared<CObject>(nullptr); }
 		break;
-	case 5: break;
-	case 6: break;
-	case 7: break;
-	case 8: break;
-	case 20: break;
-	case 21: break;
+	case 5:
+		if (settings.count(TSetType::drag))
+		{
+			return getDragControl()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 6:
+		if (settings.count(TSetType::onepoint))
+		{
+			return getOnePointControl()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 7:
+		if (settings.count(TSetType::twopoint))
+		{
+			return getTwoPointControl()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 8:
+		if (settings.count(TSetType::threepoint))
+		{
+			return getThreePointControl()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 9:
+		if (settings.count(TSetType::sampler))
+		{
+			return getSampler()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 20:
+		if (settings.count(TSetType::blend))
+		{
+			return getBlend()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 21:
+		if (settings.count(TSetType::basic))
+		{
+			return getBasic()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
 	case 22:
 		if (settings.count(TSetType::image)) 
 		{
-			return getImage()->putProperty(interpreter, shared_from_this(), settingsSig, object, isGet); 
+			return getImage()->putProperty(
+				interpreter, shared_from_this(), 
+				settingsSig, subSig, object, 
+				isGet, getAsPercentage, asString);
 		}
 		else { return std::make_shared<CObject>(nullptr); }
 		break;
-	case 23: break;
+	case 23:
+		if (settings.count(TSetType::character))
+		{
+			return getCharacter()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
 	case 24: break;
 	case 25: break;
-	case 26: break;
-	case 27: break;
+	case 26:
+		if (settings.count(TSetType::scatter))
+		{
+			return getScatter()->putProperty(
+				interpreter, shared_from_this(), 
+				settingsSig, subSig, object, 
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 27:
+		if (settings.count(TSetType::color))
+		{
+			return getColor()->putProperty(
+				interpreter, shared_from_this(), 
+				settingsSig, subSig, object, 
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
 	case 28:
 		if (settings.count(TSetType::alpha))
 		{
-			return getAlpha()->putProperty(interpreter, shared_from_this(), settingsSig, object, isGet);
+			return getAlpha()->putProperty(
+				interpreter, shared_from_this(), 
+				settingsSig, subSig, object, 
+				isGet, getAsPercentage, asString);
 		}
 		else { return std::make_shared<CObject>(nullptr); }
 		break;
@@ -584,16 +975,394 @@ std::shared_ptr<CObject> Tool::putProperty(
 	case 38: break;
 	case 48: break;
 	case 49: break;
-	case 50: break;
+	case 50:
+		if (settings.count(TSetType::vector))
+		{
+			return getVector()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 51:
+		if (settings.count(TSetType::polygon))
+		{
+			return getPolygon()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 52:
+		if (settings.count(TSetType::polyline))
+		{
+			return getPolyLine()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 53:
+		// getMesh
+	case 54:
+		if (settings.count(TSetType::vortex))
+		{
+			return getVortex()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 55:
+		if (settings.count(TSetType::fan))
+		{
+			return getFan()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 56:
+		if (settings.count(TSetType::rake))
+		{
+			return getRake()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
+	case 57: break;
+	case 58: break;
+	case 59: break;
+	case 60:
+		if (settings.count(TSetType::field))
+		{
+			return getField()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
 	case 61: break;
 	case 62: break;
 	case 63: break;
 	case 70: break;
 	case 76: break;
-	case 82: break;
-	case 91: break;
+	case 80:
+	case 81:
+	case 82:
+	case 83:
+	case 84:
+	case 85:
+	case 86:
+	case 87:
+	case 88:
+	case 89:
+	case 90:
+	case 91:
+	case 95:
+		// All FX related settings are dispatched from Effects
+		if (settings.count(TSetType::effects))
+		{
+			return getEffects()->putProperty(
+				interpreter, shared_from_this(),
+				settingsSig, subSig, object,
+				isGet, getAsPercentage, asString);
+		}
+		else { return std::make_shared<CObject>(nullptr); }
+		break;
 	case 98: break;
 	case 99: break;
 	}
 	return std::make_shared<CObject>(nullptr);
+}
+
+std::shared_ptr<CObject> Tool::putMetaData(
+	std::shared_ptr<CInterpreter> interpreter, int settingsSig, int subSig, std::shared_ptr<CObject> object, bool isGet, bool asString)
+{
+	int value = 0;
+	std::string string = "";
+	TSetType type = TSetType::null;
+	MethodType method = MethodType::noInput;
+	if (!isGet && (object.get()->obj.index() == 0 || 
+		object.get()->objType.type == CLiteralTypes::_CNil)) 
+	{ 
+		return std::make_shared<CObject>(nullptr); 
+	}
+
+	switch (settingsSig)
+	{
+	case 0:
+		if (!isGet) 
+		{ 
+			// Suggestion : Add an ID validator here to check duplicate ID numbers
+			id = std::get<double>(object.get()->obj); 
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(id, settingsSig, subSig, "id", false)); }
+			return std::make_shared<CObject>((double)id);
+		}
+		break;
+	case 1:
+		if (!isGet)
+		{
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(inID, settingsSig, subSig, "inID", false)); }
+			return std::make_shared<CObject>((double)inID);
+		}
+		break;
+	case 2:
+		if (!isGet)
+		{
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(outID, settingsSig, subSig, "outID", false)); }
+			return std::make_shared<CObject>((double)outID);
+		}
+		break;
+	case 3:
+		if (!isGet)
+		{
+			name = std::get<std::string>(object.get()->obj);
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(name, settingsSig, subSig, "name")); }
+			return std::make_shared<CObject>(name);
+		}
+		break;
+	case 8:
+		if (!isGet)
+		{
+			useTipAsIcon = std::get<bool>(object.get()->obj);
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(useTipAsIcon, settingsSig, subSig, "useTipAsIcon")); }
+			return std::make_shared<CObject>(useTipAsIcon);
+		}
+		break;
+	case 15:
+		if (!isGet)
+		{
+			tags = stringVec_fromCommaSeparated(std::get<std::string>(object.get()->obj), false);
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(tags, settingsSig, subSig, "tags")); }
+			return std::make_shared<CObject>(tags);
+		}
+		break;
+	case 16:
+		if (!isGet)
+		{
+			category = std::get<std::string>(object.get()->obj);
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(category, settingsSig, subSig, "category")); }
+			return std::make_shared<CObject>(category);
+		}
+		break;
+	case 17:
+		if (!isGet)
+		{
+			toolType = std::get<std::string>(object.get()->obj);
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(toolType, settingsSig, subSig, "toolType")); }
+			return std::make_shared<CObject>(toolType);
+		}
+		break;
+	case 18:
+		if (!isGet)
+		{
+			date = std::get<std::string>(object.get()->obj);
+		}
+		else
+		{
+			// Note : Adding "" around the date for safety when pulling as a string value for writing .ctf files
+			if (asString) { return std::make_shared<CObject>(makeSettingString(date, settingsSig, subSig, "date")); }
+			return std::make_shared<CObject>(date);
+		}
+		break;
+	case 19:
+		if (!isGet)
+		{
+			author = std::get<std::string>(object.get()->obj);
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(author, settingsSig, subSig, "author")); }
+			return std::make_shared<CObject>(author);
+		}
+		break;
+	// Key Bind Type
+	case 20:
+		if (!isGet)
+		{
+			bindType = (int)std::get<double>(object.get()->obj);
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(bindType, settingsSig, subSig, "bindType", false)); }
+			return std::make_shared<CObject>((double)bindType);
+		}
+		break;
+	// Key Bindings
+	case 21:
+		if (!isGet)
+		{
+			keySig = (int)std::get<double>(object.get()->obj);
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(keySig, settingsSig, subSig, "keySig", false)); }
+			return std::make_shared<CObject>(keySigToString(keySig));
+		}
+		break;
+	case 24:
+		if (!isGet)
+		{
+			value = convertCursorName(stringToLower(std::get<std::string>(object.get()->obj)));
+			cursorUp = owner.get()->getCursor(value);
+			owner.get()->notifyCursorChange(false, true);
+		}
+		else
+		{
+			string = cursorUp.get()->getName();
+			if (asString) { return std::make_shared<CObject>(makeSettingString(string, settingsSig, subSig, "cursorUp")); }
+			return std::make_shared<CObject>(stringToUpper(string));
+		}
+		break;
+	case 25:
+		if (!isGet)
+		{
+			value = convertCursorName(stringToLower(std::get<std::string>(object.get()->obj)));
+			cursorDown = owner.get()->getCursor(value);
+			owner.get()->notifyCursorChange(true, false);
+		}
+		else
+		{
+			string = cursorDown.get()->getName();
+			if (asString) { return std::make_shared<CObject>(makeSettingString(string, settingsSig, subSig, "cursorDown")); }
+			return std::make_shared<CObject>(stringToUpper(string));
+		}
+		break;
+	case 30:
+		if (!isGet)
+		{
+			
+		}
+		else
+		{
+			string = input.get()->getName();
+			if (asString) { return std::make_shared<CObject>(makeSettingString(string, settingsSig, subSig, "input")); }
+			return std::make_shared<CObject>(stringToUpper(string));
+		}
+		break;
+	case 31:
+		if (!isGet)
+		{
+
+		}
+		else
+		{
+			string = output.get()->getName();
+			if (asString) { return std::make_shared<CObject>(makeSettingString(string, settingsSig, subSig, "output")); }
+			return std::make_shared<CObject>(stringToUpper(string));
+		}
+		break;
+	case 32:
+		if (!isGet)
+		{
+
+		}
+		else
+		{
+			type = input.get()->controlScheme;
+			method = input.get()->type;
+			string = "NULL";
+			switch (method)
+			{
+			case MethodType::pan: string = "PAN"; break;
+			case MethodType::zoom: string = "ZOOM"; break;
+			case MethodType::rotate: string = "ROTATE"; break;
+			case MethodType::sampler: string = "SAMPLER"; break;
+			default:
+				switch (type)
+				{
+				case TSetType::continuous: string = "CONTINUOUS"; break;
+				case TSetType::drag: string = "DRAG"; break;
+				case TSetType::onepoint: string = "ONE POINT"; break;
+				case TSetType::twopoint: string = "TWO POINT"; break;
+				case TSetType::threepoint: string = "THREE POINT"; break;
+				}
+				break;
+			}
+
+			if (asString) { return std::make_shared<CObject>(makeSettingString(string, settingsSig, subSig, "controlScheme")); }
+			return std::make_shared<CObject>(string);
+		}
+		
+		break;
+	case 41:
+		if (!isGet)
+		{
+			activeSettingsPage = (int)std::round(std::get<double>(object.get()->obj));
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(activeSettingsPage, settingsSig, subSig, "activeSettingsPage", false)); }
+			return std::make_shared<CObject>((double)activeSettingsPage);
+		}
+		break;
+	case 51:
+		if (!isGet)
+		{
+			lockSettings = std::get<bool>(object.get()->obj);
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(lockSettings, settingsSig, subSig, "lockSettings")); }
+			return std::make_shared<CObject>(lockSettings);
+		}
+		break;
+	case 52:
+		if (!isGet)
+		{
+			autoSaveSettings = std::get<bool>(object.get()->obj);
+		}
+		else
+		{
+			if (asString) { return std::make_shared<CObject>(makeSettingString(autoSaveSettings, settingsSig, subSig, "autoSaveSettings")); }
+			return std::make_shared<CObject>(autoSaveSettings);
+		}
+		break;
+	}
+	return std::make_shared<CObject>(nullptr);
+}
+
+// Serialize all tool settings for saving
+void Tool::serializeToolData()
+{
+
+}
+
+// Return serialized tool data to requester
+std::vector<char> Tool::getSerialData()
+{
+	return serialData;
 }

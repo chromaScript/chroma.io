@@ -35,6 +35,9 @@ CToken::CToken(CTokenType arr, CTokenType type, std::string lexeme, int line)
 	this->line = line;
 	switch (type)
 	{
+	case CTokenType::ANY:
+		this->type = CTokenType::ANY_ARRAY;
+		break;
 	case CTokenType::NUM:
 		this->type = CTokenType::NUM_ARRAY;
 		break;

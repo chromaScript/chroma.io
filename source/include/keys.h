@@ -79,6 +79,7 @@
 #define INPUT_KEY_R_SHIFT 821
 #define INPUT_KEY_S 830
 #define INPUT_KEY_S_SHIFT 831
+#define INPUT_KEY_S_CTRL 832
 #define INPUT_KEY_T 840
 #define INPUT_KEY_T_SHIFT 841
 #define INPUT_KEY_U 850
@@ -485,9 +486,22 @@ inline std::string keySigToString(int modBit, int glfwKey, int keySig)
 
 inline std::string keySigToString(int sig)
 {
-	int modBit = sig % 10;
-	int glfwKey = int((sig - modBit) / 10);
-	return keySigToString(modBit, glfwKey, sig);
+	if (sig <= 0)
+	{
+		return "NONE";
+	}
+	else if (sig <= 8)
+	{
+		int modBit = sig;
+		int glfwKey = 0;
+		return keySigToString(modBit, glfwKey, sig);
+	}
+	else
+	{
+		int modBit = sig % 10;
+		int glfwKey = int((sig - modBit) / 10);
+		return keySigToString(modBit, glfwKey, sig);
+	}
 }
 // Check Key Signatures
 inline bool isKeySig_escape(int sig)
@@ -539,6 +553,23 @@ inline bool isKeySig_outOfBounds(int sig)
 {
 	// OUT OF BOUNDS SIGNATURE
 	if (sig >= 3487 || sig < 320) { return true; }
+	return false;
+}
+inline bool isKeySig_alphaOnly(int sig)
+{
+	if (sig >= 650 && sig <= 907) { return true; }
+	return false;
+}
+inline bool isKeySig_numericOnly(int sig)
+{
+	if (sig >= 480 && sig <= 577) { return true; }
+	return false;
+}
+inline bool isKeySig_punctuation(int sig)
+{
+	if (sig >= 590 && sig <= 617) { return true; }
+	if (sig >= 390 && sig <= 477) { return true; }
+	if (sig >= 910 && sig <= 937) { return true; }
 	return false;
 }
 #endif

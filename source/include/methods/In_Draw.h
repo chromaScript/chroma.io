@@ -3,6 +3,8 @@
 
 #include "InputMethod.h"
 #include "../ToolSettings.h"
+#include "../toolSettings/ToolSettings_Forward.h"
+#include "../structs.h"
 
 #include <glm.hpp>
 class Application;
@@ -24,18 +26,31 @@ private:
 	//float constraintAngle = AXIS_EMPTY;
 	// Tool Settings
 	TSet_Smoothing smoothing;
+	TSet_Image image;
 protected:
 public:
 	In_Draw(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
 	{
+		this->type = MethodType::draw;
 		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::continuous; }
-		interestMask = { TSetType::basic, TSetType::smoothing, TSetType::image, TSetType::alpha };
+		interestMask = { 
+			TSetType::basic, 
+			TSetType::smoothing, 
+			TSetType::character,
+			TSetType::image, 
+			TSetType::scatter, 
+			TSetType::alpha, 
+			TSetType::color,
+			TSetType::scatter,
+			TSetType::effects
+		};
 		fragData.constantSize = false;
 		fragData.linearStream = true;
 		fragData.centerAboutOrigin = false;
 		fragData.connectEnds = false;
 		this->maxBufferLength = 80;
 		this->anchorIDCount = 0;
+		this->name = "Draw";
 	};
 	virtual int move(Application* sender, MouseEvent dat);
 	virtual int click(Application* sender, MouseEvent dat);

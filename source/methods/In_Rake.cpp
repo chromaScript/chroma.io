@@ -1,6 +1,7 @@
 #include "../include/methods/In_Rake.h"
 #include "../include/methods/InputMethod.h"
 #include "../include/ToolSettings.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/Tool.h"
 
 #ifndef APPLICATION_H
@@ -29,22 +30,27 @@ int In_Rake::move(Application* sender, MouseEvent dat)
 	bool isNew = (splineData.anchors.front().flag == FLAG_NEW_INPUT) ? true : false;
 	if (controlScheme == TSetType::continuous)
 	{
-		if (!continuousMove(sender, dat, &continuous, &smoothing, true, splinePos, splineDir)) { return INPUT_WAIT; }
+		if (!continuousMove(sender, dat, &continuous, &smoothing, true, continuous.anchorSpacing, splinePos, splineDir)) 
+		{ 
+			return INPUT_WAIT; 
+		}
 	}
 
 	splineIDCount++;
-	splineData.anchors.push_back(FragmentAnchor(data.start.flag, splineIDCount, splinePos, splineDir, 1.0f,
-		FHANDLE_LINEAR, false, splinePos,
-		FHANDLE_LINEAR, false, splinePos,
-		FHANDLE_REL_INDEPENDENT,
-		data.inputEvents.back().pressure, data.inputEvents.back().tiltx,
-		data.inputEvents.back().tilty, data.inputEvents.back().rotation,
-		(float)data.inputEvents.back().time, sender->getMouseVelocity(), 1.0f));
+	splineData.anchors.push_back(
+		FragmentAnchor(
+			data.start.flag, splineIDCount, splinePos, splineDir, 1.0f,
+			FHANDLE_LINEAR, false, splinePos,
+			FHANDLE_LINEAR, false, splinePos,
+			FHANDLE_REL_INDEPENDENT,
+			data.inputEvents.back().pressure, data.inputEvents.back().tiltx,
+			data.inputEvents.back().tilty, data.inputEvents.back().rotation,
+			(float)data.inputEvents.back().time, sender->getMouseVelocity(), 1.0f));
 
 	glm::vec3 fragDir = splineDir * glm::quat(glm::vec3(0, 0, glm::radians(90.f)));
 	glm::vec3 fragPos = glm::vec3(0);
 
-	if (rake.pointsShapeMode == TSetProp::linear)
+	if (rake.rakeShape == TSetProp::linear)
 	{
 		float lengthIncrement = 0.0f;
 		glm::vec3 startPos = glm::vec3(0.0f);
@@ -117,7 +123,7 @@ int In_Rake::move(Application* sender, MouseEvent dat)
 			glm::vec3 pointB = glm::vec3(pointSelector[indexB], 0.0f);
 			//std::cout << indexA << ", " << indexB << std::endl;
 			//std::cout << vec2VecToString({ topIntersect, bottomIntersect, leftIntersect, rightIntersect }) << std::endl;
-			lengthIncrement = -glm::length(pointA - pointB) / (rake.points * 2);
+			lengthIncrement = -glm::length(pointA - pointB) / (rake.pointsCount * 2);
 			startPos = (pointA.y > pointB.y) ? pointB : pointA;
 			
 			/*
@@ -136,38 +142,44 @@ int In_Rake::move(Application* sender, MouseEvent dat)
 			*/
 
 			anchorIDCount++;
-			fragData.anchors.push_back(FragmentAnchor(data.start.flag, anchorIDCount, pointA, glm::vec3(fragDir.x, fragDir.y * -1, fragDir.z), 1.0f,
-				FHANDLE_LINEAR, false, pointA,
-				FHANDLE_LINEAR, false, pointA,
-				FHANDLE_REL_INDEPENDENT,
-				data.inputEvents.back().pressure, data.inputEvents.back().tiltx,
-				data.inputEvents.back().tilty, data.inputEvents.back().rotation,
-				(float)data.inputEvents.back().time, sender->getMouseVelocity(), 1.0f));
-
-			anchorIDCount++;
-			fragData.anchors.push_back(FragmentAnchor(data.start.flag, anchorIDCount, pointB, glm::vec3(fragDir.x, fragDir.y * -1, fragDir.z), 1.0f,
-				FHANDLE_LINEAR, false, pointB,
-				FHANDLE_LINEAR, false, pointB,
-				FHANDLE_REL_INDEPENDENT,
-				data.inputEvents.back().pressure, data.inputEvents.back().tiltx,
-				data.inputEvents.back().tilty, data.inputEvents.back().rotation,
-				(float)data.inputEvents.back().time, sender->getMouseVelocity(), 1.0f));
-		}
-		else
-		{
-			lengthIncrement = rake.size / (rake.points * 2);
-			startPos = splinePos + (fragDir * (rake.size / 2.0f));
-			for (int i = 0; i < (rake.points * 2) + 3; i++)
-			{
-				anchorIDCount++;
-				fragPos = startPos - (fragDir * (lengthIncrement * i));
-				fragData.anchors.push_back(FragmentAnchor(data.start.flag, anchorIDCount, fragPos, glm::vec3(fragDir.x, fragDir.y * -1, fragDir.z), 1.0f,
-					FHANDLE_LINEAR, false, fragPos,
-					FHANDLE_LINEAR, false, fragPos,
+			fragData.anchors.push_back(
+				FragmentAnchor(
+					data.start.flag, anchorIDCount, pointA, glm::vec3(fragDir.x, fragDir.y * -1, fragDir.z), 1.0f,
+					FHANDLE_LINEAR, false, pointA,
+					FHANDLE_LINEAR, false, pointA,
 					FHANDLE_REL_INDEPENDENT,
 					data.inputEvents.back().pressure, data.inputEvents.back().tiltx,
 					data.inputEvents.back().tilty, data.inputEvents.back().rotation,
 					(float)data.inputEvents.back().time, sender->getMouseVelocity(), 1.0f));
+
+			anchorIDCount++;
+			fragData.anchors.push_back(
+				FragmentAnchor(
+					data.start.flag, anchorIDCount, pointB, glm::vec3(fragDir.x, fragDir.y * -1, fragDir.z), 1.0f,
+					FHANDLE_LINEAR, false, pointB,
+					FHANDLE_LINEAR, false, pointB,
+					FHANDLE_REL_INDEPENDENT,
+					data.inputEvents.back().pressure, data.inputEvents.back().tiltx,
+					data.inputEvents.back().tilty, data.inputEvents.back().rotation,
+					(float)data.inputEvents.back().time, sender->getMouseVelocity(), 1.0f));
+		}
+		else
+		{
+			lengthIncrement = rake.size / (rake.pointsCount * 2);
+			startPos = splinePos + (fragDir * (rake.size / 2.0f));
+			for (int i = 0; i < (rake.pointsCount * 2) + 3; i++)
+			{
+				anchorIDCount++;
+				fragPos = startPos - (fragDir * (lengthIncrement * i));
+				fragData.anchors.push_back(
+					FragmentAnchor(
+						data.start.flag, anchorIDCount, fragPos, glm::vec3(fragDir.x, fragDir.y * -1, fragDir.z), 1.0f,
+						FHANDLE_LINEAR, false, fragPos,
+						FHANDLE_LINEAR, false, fragPos,
+						FHANDLE_REL_INDEPENDENT,
+						data.inputEvents.back().pressure, data.inputEvents.back().tiltx,
+						data.inputEvents.back().tilty, data.inputEvents.back().rotation,
+						(float)data.inputEvents.back().time, sender->getMouseVelocity(), 1.0f));
 			}
 		}
 
@@ -237,8 +249,9 @@ int In_Rake::click(Application* sender, MouseEvent dat)
 			{
 			case TSetType::continuous:
 			default:
+				owner.get()->getContinuousControl()->updateTrueSpacing(owner, sender->getCanvasDimensions().x, sender->getCanvasDimensions().y);
 				continuous = *owner.get()->getContinuousControl();
-				continuous.anchorSpacing = 30.0f;
+				continuous.clearConstraint();
 			}
 			rake = *owner.get()->getRake();
 			smoothing = *owner.get()->getSmoothing();

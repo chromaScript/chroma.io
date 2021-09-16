@@ -8,7 +8,15 @@
 // Constructor / Destructor
 VisualEntity::~VisualEntity()
 {
-
+	delete[] composite;
+	delete[] data;
+}
+void VisualEntity::deleteBuffers()
+{
+	glDeleteTextures(1, &this->TEX0);
+	glDeleteBuffers(1, &this->VBO);
+	glDeleteBuffers(1, &this->EBO);
+	glDeleteVertexArrays(1, &this->VAO);
 }
 
 // UEID functions
@@ -52,6 +60,10 @@ int VisualEntity::getiArea() { return transform.boundBox.x2 * transform.boundBox
 // This does data for the brush tip image
 void VisualEntity::initializeData(int area)
 {
+	//if (sizeof(this->data) > sizeof(float)) { 
+	//	delete[]data; 
+	//}
+	didInitializeData = true;
 	this->data = new unsigned char[(size_t)area * 4];
 }
 // Fill Data, used to completely overwrite a layer with input color, (temporarily) assumes Alpha value is always 1
@@ -70,6 +82,7 @@ void VisualEntity::fillData(int area, CColor_uc fill)
 // Set the Data to an image from file
 void VisualEntity::setData_toImage(const char* texPath, int *width, int *height)
 {
+	if (this->data != nullptr) { delete[]data; }
 	data = loadImageData(texPath, width, height, &channelCount, true);
 }
 void VisualEntity::clearData(int area)
@@ -158,7 +171,7 @@ void VisualEntity::bindBuffers()
 void VisualEntity::bindTexture(int width, int height)
 {
 	// Make a new texture ID, then bind that as the texture to work on
-	glGenTextures(1, &TEX0);
+	if (TEX0 == 0) { glGenTextures(1, &TEX0); }
 	glBindTexture(GL_TEXTURE_2D, TEX0);
 	// Set the texture wrapping parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -176,5 +189,30 @@ void VisualEntity::bindTexture(int width, int height)
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	}
 	 // Note: Need to also use composite data later.
-	glGenerateMipmap(GL_TEXTURE_2D);
+	//glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+// A utility for binding textures from non-rendering components (Tool Settings, Image Manager, etc.) into
+// rendering entities (Brush Strokes, Gradients, Widgets, etc.).
+unsigned int VisualEntity::bindTexture_utility(int channelCount, int width, int height, unsigned int &texID, unsigned char* data)
+{
+	// Make a new texture ID, then bind that as the texture to work on
+	if (texID == 0) { glGenTextures(1, &texID); }
+	glBindTexture(GL_TEXTURE_2D, texID);
+	// Set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// Set texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Bind the texture2D buffer with the data, and generate mipmaps
+	if (channelCount == 3)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	}
+	else
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	}
+	return texID;
 }

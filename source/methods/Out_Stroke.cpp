@@ -17,6 +17,8 @@
 #include "../include/Tool.h"
 #endif
 
+#include "../include/toolSettings/ToolSettings_Forward.h"
+
 #include <ext/matrix_projection.hpp>
 
 #include <memory>
@@ -38,17 +40,17 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 			// Begin new stroke, pass copies of the tool settings to the new stroke
 			// Only the settings that the stroke needs to render will get passed. Settings for
 			// things like smoothing and correction do not get passed along.
-			activeFrag = sender->getUI()->getCanvas()->getActiveLayer().get()->createNewStroke(
-				sender->getShardShader(),
-				owner.get()->getBasic(),
-				owner.get()->getImage(),
-				owner.get()->getAlpha());
-			activeFrag.get()->fragData.constantSize = dat->constantSize;
-			activeFrag.get()->fragData.linearStream = dat->linearStream;
-			activeFrag.get()->fragData.connectEnds = dat->connectEnds;
-			lastAnchorIndex = 0;
-			lastAnchorArrayIndex = 0;
-			std::cout << "OUT_STROKE::CREATENEWSTROKE::CONST_POSITION= " << std::endl;
+			if (!sender->getUI()->getCanvas()->getActiveLayer().expired())
+			{
+				activeFrag = sender->getUI()->getCanvas()->getActiveLayer().lock()->createNewStroke(
+					sender->getShardShader(), owner);
+				activeFrag.get()->fragData.constantSize = dat->constantSize;
+				activeFrag.get()->fragData.linearStream = dat->linearStream;
+				activeFrag.get()->fragData.connectEnds = dat->connectEnds;
+				lastAnchorIndex = 0;
+				lastAnchorArrayIndex = 0;
+				std::cout << "OUT_STROKE::CREATENEWSTROKE::CONST_POSITION= " << std::endl;
+			}
 		}
 		// Prevent bad pointer access, should not trigger this, but checking just in case
 		if (activeFrag == nullptr) { return; }
@@ -98,18 +100,19 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 			// Begin new stroke, pass copies of the tool settings to the new stroke
 			// Only the settings that the stroke needs to render will get passed. Settings for
 			// things like smoothing and correction do not get passed along.
-			activeFrag = sender->getUI()->getCanvas()->getActiveLayer().get()->createNewStroke(
-				sender->getShardShader(),
-				owner.get()->getBasic(),
-				owner.get()->getImage(),
-				owner.get()->getAlpha());
-			std::cout << "OUT_STROKE::CREATENEWSTROKE::CONST_VERTCOUNT= " << std::endl;
-			activeFrag.get()->fragData.constantSize = dat->constantSize;
-			activeFrag.get()->fragData.linearStream = dat->linearStream;
-			activeFrag.get()->fragData.connectEnds = dat->connectEnds;
-			lastAnchorIndex = 0;
-			activeFrag.get()->fragData.transform = dat->transform;
-			activeFrag.get()->fragData.anchors = dat->anchors;
+			if (!sender->getUI()->getCanvas()->getActiveLayer().expired())
+			{
+				activeFrag = sender->getUI()->getCanvas()->getActiveLayer().lock()->createNewStroke(
+					sender->getShardShader(), owner);
+				std::cout << "OUT_STROKE::CREATENEWSTROKE::CONST_VERTCOUNT= " << std::endl;
+				activeFrag.get()->fragData.constantSize = dat->constantSize;
+				activeFrag.get()->fragData.linearStream = dat->linearStream;
+				activeFrag.get()->fragData.connectEnds = dat->connectEnds;
+				lastAnchorIndex = 0;
+				activeFrag.get()->fragData.transform = dat->transform;
+				activeFrag.get()->fragData.anchors = dat->anchors;
+			}
+			
 		}
 		if (lastAnchorIndex != dat->anchors.front().ID)
 		{
@@ -138,19 +141,20 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 		// Non-linear stream with either constant or varying size
 		if (dat->anchors.front().flag == FLAG_NEW_INPUT)
 		{
-			activeFrag = sender->getUI()->getCanvas()->getActiveLayer().get()->createNewStroke(
-				sender->getShardShader(),
-				owner.get()->getBasic(),
-				owner.get()->getImage(),
-				owner.get()->getAlpha());
-			std::cout << "OUT_STROKE::CREATENEWSTROKE::NON_LINEAR_STREAM= " << std::endl;
-			lastAnchorIndex = 0;
-			activeFrag.get()->fragData.constantSize = dat->constantSize;
-			activeFrag.get()->fragData.linearStream = dat->linearStream;
-			activeFrag.get()->fragData.connectEnds = dat->connectEnds;
-			activeFrag.get()->fragData.transform = dat->transform;
-			//activeFrag.get()->fragData.anchors = dat->anchors;
-			activeFrag.get()->setBoundsDraw(dat->transform);
+			if (!sender->getUI()->getCanvas()->getActiveLayer().expired())
+			{
+				activeFrag = sender->getUI()->getCanvas()->getActiveLayer().lock()->createNewStroke(
+					sender->getShardShader(), owner);
+				std::cout << "OUT_STROKE::CREATENEWSTROKE::NON_LINEAR_STREAM= " << std::endl;
+				lastAnchorIndex = 0;
+				activeFrag.get()->fragData.constantSize = dat->constantSize;
+				activeFrag.get()->fragData.linearStream = dat->linearStream;
+				activeFrag.get()->fragData.connectEnds = dat->connectEnds;
+				activeFrag.get()->fragData.transform = dat->transform;
+				//activeFrag.get()->fragData.anchors = dat->anchors;
+				activeFrag.get()->setBoundsDraw(dat->transform);
+			}
+			
 		}
 		if (lastAnchorIndex != dat->anchors.back().ID)
 		{

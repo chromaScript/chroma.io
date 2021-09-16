@@ -46,6 +46,51 @@
     <Filter Include="Header Files\cstyle">
       <UniqueIdentifier>{436275cc-5661-4f65-87d3-d2a6061ee574}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ctoolfile">
+      <UniqueIdentifier>{ac05b50d-edae-48dc-bfdd-11a747f8a4b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ctoolfile">
+      <UniqueIdentifier>{6011e960-182d-41f8-bb62-3b0c399da32f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{6058283b-a996-498e-bcde-9b3e3e68c1a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cscript\lib">
+      <UniqueIdentifier>{263d2548-76ba-4add-980c-c6dfd0846d88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cscript\lib">
+      <UniqueIdentifier>{d6622d9e-0189-4699-8243-30db1d2c6435}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\toolSettings">
+      <UniqueIdentifier>{07b3977d-8aa0-4bce-a419-a03e98564146}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\toolSettings">
+      <UniqueIdentifier>{590c3f8f-9838-4c05-a641-2e30c8e38e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\toolSettings\controls">
+      <UniqueIdentifier>{1e89323a-2a1e-48f7-ab7a-098eb9e84c43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\toolSettings\effects">
+      <UniqueIdentifier>{f67e6104-9482-4e8f-864d-8916e03bb649}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\toolSettings\gen">
+      <UniqueIdentifier>{c887c2e6-a04c-4b04-9306-c0b76ceb40e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\toolSettings\method">
+      <UniqueIdentifier>{d62f7a11-133b-40ce-a249-73d8450552ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\toolSettings\controls">
+      <UniqueIdentifier>{b3ef5195-f3a1-4a34-b9e0-b04693c57b9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\toolSettings\effects">
+      <UniqueIdentifier>{da11bce1-9995-46b9-a13d-f45eff94d3ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\toolSettings\gen">
+      <UniqueIdentifier>{af0a8af0-d24c-4f8a-bb7f-01b3f8d40521}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\toolSettings\method">
+      <UniqueIdentifier>{c10349f5-aafc-4b43-9a70-39e18e03ab0a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\glad.c">
@@ -243,9 +288,6 @@
     <ClCompile Include="source\clayout\ChromaLayout.cpp">
       <Filter>Source Files\clayout</Filter>
     </ClCompile>
-    <ClCompile Include="source\cscript\CCallable_Lib.cpp">
-      <Filter>Source Files\cscript</Filter>
-    </ClCompile>
     <ClCompile Include="source\clayout\LInterpreter.cpp">
       <Filter>Source Files\clayout</Filter>
     </ClCompile>
@@ -344,6 +386,243 @@
     </ClCompile>
     <ClCompile Include="source\entities\WidgetInterface.cpp">
       <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ctoolfile\ChromaToolFile.cpp">
+      <Filter>Source Files\ctoolfile</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ctoolfile\TFExpr.cpp">
+      <Filter>Source Files\ctoolfile</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ctoolfile\TFInterpreter.cpp">
+      <Filter>Source Files\ctoolfile</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ctoolfile\TFLexer.cpp">
+      <Filter>Source Files\ctoolfile</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ctoolfile\TFParser.cpp">
+      <Filter>Source Files\ctoolfile</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ctoolfile\TFStmt.cpp">
+      <Filter>Source Files\ctoolfile</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ctoolfile\TFToken.cpp">
+      <Filter>Source Files\ctoolfile</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ctoolfile\TFWriter.cpp">
+      <Filter>Source Files\ctoolfile</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ctoolfile\TFSettingsWriter.cpp">
+      <Filter>Source Files\ctoolfile</Filter>
+    </ClCompile>
+    <ClCompile Include="source\math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\lib\CCLib_App.cpp">
+      <Filter>Source Files\cscript\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\lib\CCLib_STD.cpp">
+      <Filter>Source Files\cscript\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\lib\CCLib_STDWidget.cpp">
+      <Filter>Source Files\cscript\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\lib\CCLib_Style.cpp">
+      <Filter>Source Files\cscript\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\lib\CCLib_Toolbox.cpp">
+      <Filter>Source Files\cscript\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\lib\CCLib_UI.cpp">
+      <Filter>Source Files\cscript\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\lib\CCLib_Widget.cpp">
+      <Filter>Source Files\cscript\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\controls\TSet_ContinuousControl.cpp">
+      <Filter>Source Files\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\controls\TSet_DragControl.cpp">
+      <Filter>Source Files\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\controls\TSet_OnePointControl.cpp">
+      <Filter>Source Files\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\controls\TSet_Pan.cpp">
+      <Filter>Source Files\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\controls\TSet_Rotate.cpp">
+      <Filter>Source Files\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\controls\TSet_Sampler.cpp">
+      <Filter>Source Files\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\controls\TSet_ThreePointControl.cpp">
+      <Filter>Source Files\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\controls\TSet_TwoPointControl.cpp">
+      <Filter>Source Files\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\controls\TSet_Zoom.cpp">
+      <Filter>Source Files\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_Effects.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_BrightContrast.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_Fill.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_Gradient.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_HSV.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_Invert.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_Posterize.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_Threshold.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Alpha.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_AntiAliasing.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Basic.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Blend.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Character.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Color.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Distance.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Grain.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Image.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Mixing.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_MultiTip.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Pattern.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Repeat.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Scatter.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Smoothing.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Texture.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_WetEdges.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\method\TSet_Fan.cpp">
+      <Filter>Source Files\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\method\TSet_Field.cpp">
+      <Filter>Source Files\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\method\TSet_Fill.cpp">
+      <Filter>Source Files\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\method\TSet_Filter.cpp">
+      <Filter>Source Files\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\method\TSet_Gradient.cpp">
+      <Filter>Source Files\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\method\TSet_Mesh.cpp">
+      <Filter>Source Files\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\method\TSet_Polygon.cpp">
+      <Filter>Source Files\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\method\TSet_PolyLine.cpp">
+      <Filter>Source Files\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\method\TSet_Rake.cpp">
+      <Filter>Source Files\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\method\TSet_Shader.cpp">
+      <Filter>Source Files\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\method\TSet_Vector.cpp">
+      <Filter>Source Files\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\method\TSet_Vortex.cpp">
+      <Filter>Source Files\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\cscript\lib\CCLib_Document.cpp">
+      <Filter>Source Files\cscript\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\gen\TSet_Reference.cpp">
+      <Filter>Source Files\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_ClampHSV.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_ClampRGB.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_Colorize.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_ColorRamp.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_FillDirection.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_FillSimple.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_GaussianBlur.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_Modulo.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_PerlinNoise.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_Power.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_TextureComplex.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_TextureSimple.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_Toon.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\toolSettings\effects\TSet_FX_Voronoise.cpp">
+      <Filter>Source Files\toolSettings\effects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -530,9 +809,6 @@
     <ClInclude Include="source\include\cscript\CLiteral.h">
       <Filter>Header Files\cscript</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\cscript\CReturn.h">
-      <Filter>Header Files\cscript</Filter>
-    </ClInclude>
     <ClInclude Include="source\include\cscript\COptimizerRed.h">
       <Filter>Header Files\cscript</Filter>
     </ClInclude>
@@ -692,72 +968,327 @@
     <ClInclude Include="source\include\entities\WidgetInterface.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="source\shaders\canvasShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\canvasShader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\layerShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\layerShader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\shardShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\shardShader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\widgetShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\textShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\textShader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\widgetShader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\frameShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\frameShader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\compositeShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\compositeShader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\compositeFrameShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\compositeFrameShader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\debugLineShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\debugLineShader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\gradientBoxShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="source\shaders\gradientBoxShader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
+    <ClInclude Include="source\include\ctoolfile\ChromaToolFile.h">
+      <Filter>Header Files\ctoolfile</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\ctoolfile\TFEnums.h">
+      <Filter>Header Files\ctoolfile</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\ctoolfile\TFExpr.h">
+      <Filter>Header Files\ctoolfile</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\ctoolfile\TFInterpreter.h">
+      <Filter>Header Files\ctoolfile</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\ctoolfile\TFLexer.h">
+      <Filter>Header Files\ctoolfile</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\ctoolfile\TFParser.h">
+      <Filter>Header Files\ctoolfile</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\ctoolfile\TFStmt.h">
+      <Filter>Header Files\ctoolfile</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\ctoolfile\TFToken.h">
+      <Filter>Header Files\ctoolfile</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\ctoolfile\TFVisitors.h">
+      <Filter>Header Files\ctoolfile</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\ctoolfile\TFForward.h">
+      <Filter>Header Files\ctoolfile</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\ctoolfile\TFWriter.h">
+      <Filter>Header Files\ctoolfile</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\ctoolfile\TFSettingsWriter.h">
+      <Filter>Header Files\ctoolfile</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\CReturn.h">
+      <Filter>Header Files\cscript</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\lib\CCLib_App.h">
+      <Filter>Header Files\cscript\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\lib\CCLib_STD.h">
+      <Filter>Header Files\cscript\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\lib\CCLib_STDWidget.h">
+      <Filter>Header Files\cscript\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\lib\CCLib_Style.h">
+      <Filter>Header Files\cscript\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\lib\CCLib_Toolbox.h">
+      <Filter>Header Files\cscript\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\lib\CCLib_UI.h">
+      <Filter>Header Files\cscript\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\lib\CCLib_Widget.h">
+      <Filter>Header Files\cscript\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\controls\TSet_ContinuousControl.h">
+      <Filter>Header Files\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\controls\TSet_DragControl.h">
+      <Filter>Header Files\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\controls\TSet_OnePointControl.h">
+      <Filter>Header Files\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\controls\TSet_Pan.h">
+      <Filter>Header Files\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\controls\TSet_Rotate.h">
+      <Filter>Header Files\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\controls\TSet_Sampler.h">
+      <Filter>Header Files\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\controls\TSet_ThreePointControl.h">
+      <Filter>Header Files\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\controls\TSet_TwoPointControl.h">
+      <Filter>Header Files\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\controls\TSet_Zoom.h">
+      <Filter>Header Files\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_Effects.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_BrightContrast.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Fill.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Gradient.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_HSV.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Invert.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Posterize.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Threshold.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Alpha.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_AntiAliasing.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Basic.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Blend.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Character.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Color.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Distance.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Grain.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Image.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Mixing.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_MultiTip.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Pattern.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Repeat.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Scatter.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Smoothing.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Texture.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_WetEdges.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\method\TSet_Fan.h">
+      <Filter>Header Files\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\method\TSet_Field.h">
+      <Filter>Header Files\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\method\TSet_Fill.h">
+      <Filter>Header Files\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\method\TSet_Filter.h">
+      <Filter>Header Files\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\method\TSet_Gradient.h">
+      <Filter>Header Files\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\method\TSet_Mesh.h">
+      <Filter>Header Files\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\method\TSet_Polygon.h">
+      <Filter>Header Files\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\method\TSet_PolyLine.h">
+      <Filter>Header Files\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\method\TSet_Rake.h">
+      <Filter>Header Files\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\method\TSet_Shader.h">
+      <Filter>Header Files\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\method\TSet_Vector.h">
+      <Filter>Header Files\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\method\TSet_Vortex.h">
+      <Filter>Header Files\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\cscript\lib\CCLib_Document.h">
+      <Filter>Header Files\cscript\lib</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\ToolSettings_Forward.h">
+      <Filter>Header Files\toolSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\gen\TSet_Reference.h">
+      <Filter>Header Files\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_ClampHSV.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_ClampRGB.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Colorize.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_ColorRamp.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_FillDirection.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_FillSimple.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_GaussianBlur.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Modulo.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_PerlinNoise.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Power.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_TextureComplex.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_TextureSimple.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Toon.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Voronoise.h">
+      <Filter>Header Files\toolSettings\effects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt">
       <Filter>Program Info</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\canvasShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\canvasShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\compositeFrameShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\compositeFrameShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\compositeShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\compositeShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\debugCanvasShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\debugCanvasShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\debugLineShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\debugLineShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\frameShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\frameShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\gradientBoxShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\gradientBoxShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\layerShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\layerShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\shardShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\shardShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\textShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\textShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\widgetShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\widgetShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

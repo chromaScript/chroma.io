@@ -14,6 +14,7 @@ public:
 		std::weak_ptr<WidgetStyle> style,
 		std::shared_ptr<Shader> shader);
 	virtual void buildWidget();
+	virtual void clearData();
 
 	// Dimension Functions
 	virtual glm::ivec2 getSizeByChildren();

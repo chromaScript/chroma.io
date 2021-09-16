@@ -15,13 +15,13 @@
 		<H_BOX class="cntp_dropContainer">
 			<TEXT class="barlow14, cntp_text14" value="INPUT:"></TEXT>
 			<H_BOX class="cntp_dropWrapper"
-			onmouseenter="hoverDropdown(0)" 
-			onmouseleave="hoverDropdown(1)"
+			onmouseenter="global::hoverDropdown(0)" 
+			onmouseleave="global::hoverDropdown(1)"
 			onfocus="toggleDrop(0)"
 			onblur="toggleDrop(1)">
 				<V_BOX class="cntp_dropTop">
 					<TEXT id="cntp_inputMethod" class="barlow14" style="margin-left:4;" value="NO INPUT"></TEXT>
-					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(1, &quot;NO INPUT&quot;)">
+					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(0, 1, &quot;NO INPUT&quot;)">
 						<H_BOX class="cntp_dropItem"
 						onmouseenter="hoverDropOptions(0, 0, &quot;NO INPUT&quot;)"
 						onclick="clickDropOption(0, &quot;NO INPUT&quot;)">
@@ -94,13 +94,13 @@
 		<H_BOX class="cntp_dropContainer">
 			<TEXT class="barlow14, cntp_text14" value="CONTROL:"></TEXT>
 			<H_BOX class="cntp_dropWrapper"
-			onmouseenter="hoverDropdown(0)" 
-			onmouseleave="hoverDropdown(1)"
+			onmouseenter="global::hoverDropdown(0)" 
+			onmouseleave="global::hoverDropdown(1)"
 			onfocus="toggleDrop(0)"
 			onblur="toggleDrop(1)">
 				<V_BOX class="cntp_dropTop">
 					<TEXT id="cntp_controlScheme" class="barlow14" style="margin-left:4;" value="NO CONTROL"></TEXT>
-					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(1, &quot;USE DEFAULT&quot;)">
+					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(1, 1, &quot;USE DEFAULT&quot;)">
 						<H_BOX class="cntp_dropItem"
 						onmouseenter="hoverDropOptions(1, 0, &quot;USE DEFAULT&quot;)"
 						onclick="clickDropOption(1, &quot;USE DEFAULT&quot;)">
@@ -137,13 +137,13 @@
 		<H_BOX class="cntp_dropContainer">
 			<TEXT class="barlow14, cntp_text14" value="OUTPUT:"></TEXT>
 			<H_BOX class="cntp_dropWrapper"
-			onmouseenter="hoverDropdown(0)" 
-			onmouseleave="hoverDropdown(1)"
+			onmouseenter="global::hoverDropdown(0)" 
+			onmouseleave="global::hoverDropdown(1)"
 			onfocus="toggleDrop(0)"
 			onblur="toggleDrop(1)">
 				<V_BOX class="cntp_dropTop">
 					<TEXT id="cntp_outputMethod" class="barlow14" style="margin-left:4;" value="NO OUTPUT"></TEXT>
-					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(1, &quot;NO OUTPUT&quot;)">
+					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(2, 1, &quot;NO OUTPUT&quot;)">
 						<H_BOX class="cntp_dropItem"
 						onmouseenter="hoverDropOptions(2, 0, &quot;NO OUTPUT&quot;)"
 						onclick="clickDropOption(2, &quot;NO OUTPUT&quot;)">
@@ -194,13 +194,13 @@
 		<H_BOX class="cntp_cursorContainer">
 			<TEXT class="barlow14, cntp_text14" style="border-right:4;" value="HOVER:"></TEXT>
 			<H_BOX class="cntp_dropWrapperCursor"
-			onmouseenter="hoverDropdown(0)" 
-			onmouseleave="hoverDropdown(1)"
+			onmouseenter="global::hoverDropdown(0)" 
+			onmouseleave="global::hoverDropdown(1)"
 			onfocus="toggleDrop(0)"
 			onblur="toggleDrop(1)">
 				<V_BOX class="cntp_dropTop">
 					<TEXT id="cntp_cursorHover" class="barlow14" style="margin-left:4;" value="POINTER"></TEXT>
-					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(1, &quot;POINTER&quot;)">
+					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(3, 1, &quot;POINTER&quot;)">
 						<H_BOX class="cntp_dropItem"
 						onmouseenter="hoverDropOptions(3, 0, &quot;POINTER&quot;)"
 						onclick="clickDropOption(3, &quot;POINTER&quot;)">
@@ -247,13 +247,13 @@
 			</H_BOX>
 			<TEXT class="barlow14, cntp_text14" style="float:right;border-right:4;" value="PRESS:"></TEXT>
 			<H_BOX class="cntp_dropWrapperCursor"
-			onmouseenter="hoverDropdown(0)" 
-			onmouseleave="hoverDropdown(1)"
+			onmouseenter="global::hoverDropdown(0)" 
+			onmouseleave="global::hoverDropdown(1)"
 			onfocus="toggleDrop(0)"
 			onblur="toggleDrop(1)">
 				<V_BOX class="cntp_dropTop">
 					<TEXT id="cntp_cursorPress" class="barlow14" style="margin-left:4;" value="POINTER"></TEXT>
-					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(1, &quot;POINTER&quot;)">
+					<V_BOX class="cntp_dropList" onmouseleave="hoverDropOptions(4, 1, &quot;POINTER&quot;)">
 						<H_BOX class="cntp_dropItem"
 						onmouseenter="hoverDropOptions(4, 0, &quot;POINTER&quot;)"
 						onclick="clickDropOption(4, &quot;POINTER&quot;)">
@@ -311,8 +311,8 @@
 			<TEXT class="barlow14, cntp_text14" value="KEYBIND:"></TEXT>
 			<H_BOX class="cntp_nameInnerAlign">
 				<H_BOX id="cntp_keyBind"
-				onmouseenter="hoverMainButton(0)" 
-				onmouseleave="hoverMainButton(1)"
+				onmouseenter="global::hoverMidGreyButton(0)" 
+				onmouseleave="global::hoverMidGreyButton(1)"
 				onclick="startKeyCapture()"><TEXT id="cntp_keyBindText" class="barlow14" style="margin-left:4;" value="SET KEY..."></TEXT></H_BOX>
 				<TEXT class="barlow14" value="ID #:"></TEXT>
 				<H_BOX id="cntp_idNum">
@@ -346,12 +346,12 @@
 	// CREATE NEW TOOL BUTTONS
 		<H_BOX class="cntp_buttonContainer">
 			<H_BOX class="cntp_mainButton" style="float:left;"
-			onmouseenter="hoverMainButton(0)" 
-			onmouseleave="hoverMainButton(1)"
+			onmouseenter="global::hoverMidGreyButton(0)" 
+			onmouseleave="global::hoverMidGreyButton(1)"
 			onclick="commitCNTP()"><TEXT class="barlow16" style="float:center;margin-top:1;" value="CREATE TOOL"></TEXT></H_BOX>
 			<H_BOX class="cntp_mainButton" style="float:right;"
-			onmouseenter="hoverMainButton(0)" 
-			onmouseleave="hoverMainButton(1)"
+			onmouseenter="global::hoverMidGreyButton(0)" 
+			onmouseleave="global::hoverMidGreyButton(1)"
 			onclick="exitCNTP()"><TEXT class="barlow16" style="float:center;margin-top:1;" value="CANCEL"></TEXT></H_BOX>
 		</H_BOX>
 	</V_BOX>

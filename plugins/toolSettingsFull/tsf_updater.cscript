@@ -1,0 +1,977 @@
+void updateToolData()
+{
+	
+	app.ui.getWidget_byID("tsf_interestWrapper").setChildProperty_byClass("tsf_interest", "visibility", "hidden");
+	num savedPage = app.toolbox.getActiveToolProp(41, -1, false, false);
+		
+	update_meta();
+	update_control();
+	update_inputs();
+	update_basic();
+	update_image();
+	update_character();
+	update_alpha();
+	update_color();
+	update_scatter();
+	update_effects();
+}
+
+void update_meta()
+{
+	app.ui.getWidget_byID("tsf_interestMetadata").setProperty("visibility", "visible");
+	
+	if (tsf_currentSettingsPage == 0)
+	{
+		app.ui.getWidget_byID("tsf_bodyMetadata").setProperty("visibility", "visible");
+		if (true) // If the page is dirty, update it
+		{
+			// Text and ID Data
+			app.ui.getWidget_byID("tsf_meta_ID").setProperty("value", toString(app.toolbox.getActiveToolProp(0, -1, false, false)));
+			app.ui.getWidget_byID("tsf_meta_name").setProperty("value", app.toolbox.getActiveToolProp(3, -1, false, false));
+			app.ui.getWidget_byID("tsf_meta_category").setProperty("value", app.toolbox.getActiveToolProp(16, -1, false, false));
+			app.ui.getWidget_byID("tsf_meta_date").setProperty("value", app.toolbox.getActiveToolProp(18, -1, false, false));
+			app.ui.getWidget_byID("tsf_meta_author").setProperty("value", app.toolbox.getActiveToolProp(19, -1, false, false));
+			
+			// Tool Data
+			num bindType = app.toolbox.getActiveToolProp(20, -1, false, false);
+			// print bindType;
+			if (bindType == 0)
+			{
+				clickDropOption(5, "STANDARD", false);
+				app.ui.getWidget_byID("tsf_meta_keyStandard").setProperty("value", app.toolbox.getActiveToolProp(21, -1, false, false));
+			}
+			else if (bindType == 1)
+			{
+				clickDropOption(5, "ALPHABET", false);
+			}
+			else if (bindType == 2)
+			{
+				clickDropOption(5, "SWITCH", false);
+			}
+			app.ui.getWidget_byID("tsf_meta_cursorHover").setProperty("value", app.toolbox.getActiveToolProp(24, -1, false, false));
+			app.ui.getWidget_byID("tsf_meta_cursorPress").setProperty("value", app.toolbox.getActiveToolProp(25, -1, false, false));
+			
+			// Input / Output / Control / SubControl
+			inputStore = app.toolbox.getActiveToolProp(30, -1, false, false);
+			app.ui.getWidget_byID("tsf_meta_inputMethod").setProperty("value", inputStore);
+			outputStore = app.toolbox.getActiveToolProp(31, -1, false, false);
+			app.ui.getWidget_byID("tsf_meta_outputMethod").setProperty("value", outputStore);
+		}
+	}
+}
+
+void update_control()
+{
+	string controlMode = app.toolbox.getActiveToolProp(32, -1, false, false);
+	if (controlMode == "CONTINUOUS") { update_continuous(); }
+	if (controlMode == "DRAG") { update_drag(); }
+	if (controlMode == "ONE POINT") { update_onepoint(); }
+	if (controlMode == "TWO POINT") { update_twopoint(); }
+	if (controlMode == "THREE POINT") { update_threepoint(); }
+	if (controlMode == "ZOOM") { update_zoom(); }
+	if (controlMode == "PAN") { update_pan(); }
+	if (controlMode == "ROTATE") { update_rotate(); }
+	if (controlMode == "SAMPLER") { update_sampler(); }
+}
+
+void update_inputs()
+{
+	string inputType = app.toolbox.getActiveToolProp(30, -1, false, false);
+	if (inputType == "RAKE") { update_rake(); }
+}
+
+void update_zoom()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("zoom"))
+	{
+		app.ui.getWidget_byID("tsf_interestControl_zoom").setProperty("visibility", "visible");
+		
+		if (tsf_currentSettingsPage == 6)
+		{
+			app.ui.getWidget_byID("tsf_bodyControl_zoom").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				currentMaxLeft = app.ui.getWidget_byID("tsf_zoom_sliderBox_distance").getProperty("size-X");
+				// Zoom Factor Sliders
+				app.ui.getWidget_byID("tsf_zoom_slider_zoomMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(201, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_zoom_zoomMin").setProperty("value", 
+					app.toolbox.getActiveToolProp(201, -1, false, false));
+				app.ui.getWidget_byID("tsf_zoom_slider_zoomMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(202, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_zoom_zoomMax").setProperty("value", 
+					app.toolbox.getActiveToolProp(202, -1, false, false));
+				
+				currentMaxLeft = app.ui.getWidget_byID("tsf_zoom_sliderBox_speed").getProperty("size-X");
+				// Zoom Speed
+				app.ui.getWidget_byID("tsf_zoom_slider_speed").setProperty("left", 
+					app.toolbox.getActiveToolProp(220, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_zoom_speed").setProperty("value", 
+					app.toolbox.getActiveToolProp(220, -1, false, false));
+					
+				currentMaxLeft = app.ui.getWidget_byID("tsf_zoom_sliderBox_stepAmount").getProperty("size-X");
+				// Zoom Step Amount
+				app.ui.getWidget_byID("tsf_zoom_slider_stepAmount").setProperty("left", 
+					app.toolbox.getActiveToolProp(210, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_zoom_stepAmount").setProperty("value", 
+					app.toolbox.getActiveToolProp(210, -1, false, false));
+					
+				// Toggle Boxes
+				//tsf_updateCheckbox("tsf_alpha_toggle_opacity", 2800, -1);
+				//tsf_updateCheckbox("tsf_alpha_toggle_flow", 2810, -1);
+			}
+		}
+		else if (tsf_currentSettingsPage != 6 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10)
+		{
+			tsf_clickInterest(6, "tsf_interestControl_zoom");
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestControl_zoom").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage != 6 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10) { 
+			tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_rotate()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("rotate"))
+	{
+		app.ui.getWidget_byID("tsf_interestControl_rotate").setProperty("visibility", "visible");
+		
+		if (tsf_currentSettingsPage == 8)
+		{
+			app.ui.getWidget_byID("tsf_bodyControl_rotate").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				// Rotate Speed Sliders
+				currentMaxLeft = app.ui.getWidget_byID("tsf_rotate_sliderBox_speed").getProperty("size-X");
+				app.ui.getWidget_byID("tsf_rotate_slider_speed").setProperty("left", 
+					app.toolbox.getActiveToolProp(301, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_rotate_speed").setProperty("value", 
+					app.toolbox.getActiveToolProp(301, -1, false, false));
+				
+				// Snap Key Angles
+				app.ui.getWidget_byID("tsf_rotate_angleA").setProperty("value", 
+					app.toolbox.getActiveToolProp(311, -1, false, false));
+				app.ui.getWidget_byID("tsf_rotate_angleB").setProperty("value", 
+					app.toolbox.getActiveToolProp(313, -1, false, false));
+				app.ui.getWidget_byID("tsf_rotate_angleC").setProperty("value", 
+					app.toolbox.getActiveToolProp(315, -1, false, false));
+				app.ui.getWidget_byID("tsf_rotate_snapKeyA").setProperty("value", 
+					keyToString(app.toolbox.getActiveToolProp(310, -1, false, false), 0));
+				app.ui.getWidget_byID("tsf_rotate_snapKeyB").setProperty("value", 
+					keyToString(app.toolbox.getActiveToolProp(312, -1, false, false), 0));
+				app.ui.getWidget_byID("tsf_rotate_snapKeyC").setProperty("value", 
+					keyToString(app.toolbox.getActiveToolProp(314, -1, false, false), 0));	
+					
+				// Snap Tolerance
+				currentMaxLeft = app.ui.getWidget_byID("tsf_rotate_sliderBox_snapToleranceA").getProperty("size-X");
+				app.ui.getWidget_byID("tsf_rotate_slider_snapToleranceA").setProperty("left", 
+					app.toolbox.getActiveToolProp(320, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_rotate_snapToleranceA").setProperty("value", 
+					app.toolbox.getActiveToolProp(320, -1, false, false));
+				// Toggle Boxes
+				tsf_updateCheckbox("tsf_rotate_toggle_aboutCursor", 300, -1);
+			}
+		}
+		else if (tsf_currentSettingsPage != 8 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10)
+		{
+			tsf_clickInterest(8, "tsf_interestControl_rotate");
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestControl_rotate").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage != 8 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10) { 
+			tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_pan()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("pan"))
+	{
+		app.ui.getWidget_byID("tsf_interestControl_pan").setProperty("visibility", "visible");
+		
+		if (tsf_currentSettingsPage == 7)
+		{
+			app.ui.getWidget_byID("tsf_bodyControl_pan").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				//
+				tsf_updateCheckbox("tsf_pan_toggle_constrainCanvas", 100, -1);
+				tsf_updateCheckbox("tsf_pan_toggle_constrainRelative", 101, -1);
+				
+				currentMaxLeft = app.ui.getWidget_byID("tsf_pan_sliderBox_constrainAmount").getProperty("size-X");
+				app.ui.getWidget_byID("tsf_pan_slider_constrain").setProperty("left", 
+					app.toolbox.getActiveToolProp(102, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_pan_constrain").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(102, -1, false, false)));
+				//
+				
+				currentMaxLeft = app.ui.getWidget_byID("tsf_pan_sliderBox_friction").getProperty("size-X");
+				tsf_updateCheckbox("tsf_pan_toggle_flickPanning", 110, -1);
+				app.ui.getWidget_byID("tsf_pan_slider_friction").setProperty("left", 
+					app.toolbox.getActiveToolProp(111, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_pan_friction").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(111, -1, false, false)));
+					
+				currentMaxLeft = app.ui.getWidget_byID("tsf_pan_sliderBox_force").getProperty("size-X");
+				app.ui.getWidget_byID("tsf_pan_slider_force").setProperty("left", 
+					app.toolbox.getActiveToolProp(112, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_pan_force").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(112, -1, false, false)));
+				
+				//
+				currentMaxLeft = app.ui.getWidget_byID("tsf_pan_sliderBox_speed").getProperty("size-X");
+				app.ui.getWidget_byID("tsf_pan_slider_speed").setProperty("left", 
+					app.toolbox.getActiveToolProp(113, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_pan_speed").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(113, -1, false, false)));
+				
+				app.ui.getWidget_byID("tsf_pan_slowKey").setProperty("value", 
+					keyToString(app.toolbox.getActiveToolProp(116, -1, false, false), 0));
+					
+				currentMaxLeft = app.ui.getWidget_byID("tsf_pan_sliderBox_slowFactor").getProperty("size-X");
+				app.ui.getWidget_byID("tsf_pan_slider_slowFactor").setProperty("left", 
+					app.toolbox.getActiveToolProp(117, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_pan_slowFactor").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(117, -1, false, false)));
+					
+				//
+				tsf_updateCheckbox("tsf_pan_toggle_clickTarget", 120, -1);
+				app.ui.getWidget_byID("tsf_pan_clickTarKey").setProperty("value", 
+					keyToString(app.toolbox.getActiveToolProp(122, -1, false, false), 0));
+				//
+				tsf_updateCheckbox("tsf_pan_toggle_lockX", 130, -1);
+				app.ui.getWidget_byID("tsf_pan_lockXKey").setProperty("value", 
+					keyToString(app.toolbox.getActiveToolProp(131, -1, false, false), 0));
+				tsf_updateCheckbox("tsf_pan_toggle_lockY", 132, -1);
+				app.ui.getWidget_byID("tsf_pan_lockYKey").setProperty("value", 
+					keyToString(app.toolbox.getActiveToolProp(133, -1, false, false), 0));
+				tsf_updateCheckbox("tsf_pan_toggle_lockAngle", 134, -1);
+				app.ui.getWidget_byID("tsf_pan_angleLockKey").setProperty("value", 
+					keyToString(app.toolbox.getActiveToolProp(136, -1, false, false), 0));
+					
+				currentMaxLeft = app.ui.getWidget_byID("tsf_pan_sliderBox_angleLock").getProperty("size-X");
+				app.ui.getWidget_byID("tsf_pan_slider_angleLock").setProperty("left", 
+					app.toolbox.getActiveToolProp(135, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_pan_angleLock").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(135, -1, false, false)));
+				
+			}
+		}
+		else if (tsf_currentSettingsPage != 7 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10)
+		{
+			tsf_clickInterest(7, "tsf_interestControl_pan");
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestControl_pan").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage != 7 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10) { 
+			tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_sampler()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("sampler"))
+	{
+		app.ui.getWidget_byID("tsf_interestControl_sampler").setProperty("visibility", "visible");
+		if (tsf_currentSettingsPage == 9)
+		{
+			// app.ui.getWidget_byID("tsf_bodyControl_pan").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				//currentMaxLeft = app.ui.getWidget_byID("tsf_zoom_sliderBox_distance").getProperty("size-X");
+			}
+		}
+		else if (tsf_currentSettingsPage != 9 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10)
+		{
+			tsf_clickInterest(9, "tsf_interestControl_sampler");
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestControl_sampler").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage != 9 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10) { 
+			tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_continuous()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("continuous"))
+	{
+		app.ui.getWidget_byID("tsf_interestControl_continuous").setProperty("visibility", "visible");
+		if (tsf_currentSettingsPage == 1)
+		{
+			app.ui.getWidget_byID("tsf_bodyControl_continuous").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				currentMaxLeft = app.ui.getWidget_byID("tsf_cont_sliderBox_spacing").getProperty("size-X");
+				// Spacing
+				
+				app.ui.getWidget_byID("tsf_cont_slider_spacing").setProperty("left", 
+					app.toolbox.getActiveToolProp(402, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_cont_spacing").setProperty("value", 
+					app.toolbox.getActiveToolProp(402, -1, false, false));
+				tsf_updateCheckbox("tsf_cont_toggle_relativeSpacing", 403, -1);
+				tsf_updateCheckbox("tsf_cont_toggle_useCanvas", 404, -1);
+				
+				// Scatter Angle Sliders
+				app.ui.getWidget_byID("tsf_cont_slider_angleMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(406, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_cont_angleMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(406, -1, false, false)));
+				app.ui.getWidget_byID("tsf_cont_slider_angleMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(407, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_cont_angleMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(407, -1, false, false)));
+				app.ui.getWidget_byID("tsf_cont_angleBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(408, -1, false, false)));
+				
+				currentMaxLeft = app.ui.getWidget_byID("tsf_cont_sliderBox_distX").getProperty("size-X");
+				// Distance X Sliders
+				app.ui.getWidget_byID("tsf_cont_slider_distXMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(412, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_cont_distXMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(412, -1, false, false)));
+				app.ui.getWidget_byID("tsf_cont_slider_distXMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(413, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_cont_distXMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(413, -1, false, false)));
+				app.ui.getWidget_byID("tsf_cont_distXBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(414, -1, false, false)));
+					
+				// Distance Y Sliders
+				app.ui.getWidget_byID("tsf_cont_slider_distYMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(415, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_cont_distYMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(415, -1, false, false)));
+				app.ui.getWidget_byID("tsf_cont_slider_distYMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(416, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_cont_distYMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(416, -1, false, false)));
+				app.ui.getWidget_byID("tsf_cont_distYBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(417, -1, false, false)));
+					
+				// Toggle Boxes
+				tsf_updateCheckbox("tsf_cont_toggle_angle", 405, -1);
+				tsf_updateCheckbox("tsf_cont_toggle_direction", 410, -1);
+				tsf_updateCheckbox("tsf_cont_toggle_relative", 411, -1);
+				
+				// Constraint Threshold
+				app.ui.getWidget_byID("tsf_cont_slider_constraintThreshold").setProperty("left", 
+					app.toolbox.getActiveToolProp(430, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_cont_constraintThreshold").setProperty("value", 
+					app.toolbox.getActiveToolProp(430, -1, false, false));
+					
+				// Constraint Keys Angles
+				app.ui.getWidget_byID("tsf_cont_constraintA").setProperty("value", 
+					app.toolbox.getActiveToolProp(432, -1, false, false));
+				app.ui.getWidget_byID("tsf_cont_constraintB").setProperty("value", 
+					app.toolbox.getActiveToolProp(436, -1, false, false));
+				app.ui.getWidget_byID("tsf_cont_constraintC").setProperty("value", 
+					app.toolbox.getActiveToolProp(441, -1, false, false));
+				app.ui.getWidget_byID("tsf_cont_constraintD").setProperty("value", 
+					app.toolbox.getActiveToolProp(446, -1, false, false));
+				app.ui.getWidget_byID("tsf_cont_constraintKeyA").setProperty("value", 
+					keyToString(app.toolbox.getActiveToolProp(433, -1, false, false), 0));
+				app.ui.getWidget_byID("tsf_cont_constraintKeyB").setProperty("value", 
+					keyToString(app.toolbox.getActiveToolProp(437, -1, false, false), 0));
+				app.ui.getWidget_byID("tsf_cont_constraintKeyC").setProperty("value", 
+					keyToString(app.toolbox.getActiveToolProp(442, -1, false, false), 0));
+				app.ui.getWidget_byID("tsf_cont_constraintKeyD").setProperty("value", 
+					keyToString(app.toolbox.getActiveToolProp(447, -1, false, false), 0));
+				tsf_updateCheckbox("tsf_cont_toggle_constraintA", 431, -1);
+				tsf_updateCheckbox("tsf_cont_toggle_constraintB", 435, -1);
+				tsf_updateCheckbox("tsf_cont_toggle_constraintC", 440, -1);
+				tsf_updateCheckbox("tsf_cont_toggle_constraintD", 445, -1);
+			}
+		}
+		else if (tsf_currentSettingsPage != 1 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10)
+		{
+			tsf_clickInterest(1, "tsf_interestControl_continuous");
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestControl_continuous").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage != 1 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10) { 
+			tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_drag()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("drag"))
+	{
+		app.ui.getWidget_byID("tsf_interestControl_drag").setProperty("visibility", "visible");
+		if (tsf_currentSettingsPage == 2)
+		{
+			// app.ui.getWidget_byID("tsf_bodyControl_drag").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				// currentMaxLeft = app.ui.getWidget_byID("tsf_cont_sliderBox_spacing").getProperty("size-X");
+			}
+		}
+		else if (tsf_currentSettingsPage != 2 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10)
+		{
+			tsf_clickInterest(2, "tsf_interestControl_drag");
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestControl_continuous").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage != 2 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10) { 
+			tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_onepoint()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("onepoint"))
+	{
+		app.ui.getWidget_byID("tsf_interestControl_onePoint").setProperty("visibility", "visible");
+		if (tsf_currentSettingsPage == 3)
+		{
+			// app.ui.getWidget_byID("tsf_bodyControl_onePoint").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				//currentMaxLeft = app.ui.getWidget_byID("tsf_cont_sliderBox_spacing").getProperty("size-X");
+			}
+		}
+		else if (tsf_currentSettingsPage != 3 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10)
+		{
+			tsf_clickInterest(3, "tsf_interestControl_onePoint");
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestControl_onePoint").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage != 3 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10) { 
+			tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_twopoint()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("twopoint"))
+	{
+		app.ui.getWidget_byID("tsf_interestControl_twoPoint").setProperty("visibility", "visible");
+		if (tsf_currentSettingsPage == 4)
+		{
+			// app.ui.getWidget_byID("tsf_bodyControl_onePoint").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				//currentMaxLeft = app.ui.getWidget_byID("tsf_cont_sliderBox_spacing").getProperty("size-X");
+			}
+		}
+		else if (tsf_currentSettingsPage != 4 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10)
+		{
+			tsf_clickInterest(4, "tsf_interestControl_twoPoint");
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestControl_twoPoint").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage != 4 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10) { 
+			tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_threepoint()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("threepoint"))
+	{
+		app.ui.getWidget_byID("tsf_interestControl_threePoint").setProperty("visibility", "visible");
+		if (tsf_currentSettingsPage == 5)
+		{
+			// app.ui.getWidget_byID("tsf_bodyControl_onePoint").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				//currentMaxLeft = app.ui.getWidget_byID("tsf_cont_sliderBox_spacing").getProperty("size-X");
+			}
+		}
+		else if (tsf_currentSettingsPage != 5 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10)
+		{
+			tsf_clickInterest(5, "tsf_interestControl_threePoint");
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestControl_threePoint").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage != 5 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10) { 
+			tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_rake()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("rake"))
+	{
+		app.ui.getWidget_byID("tsf_interestRake").setProperty("visibility", "visible");
+		if (tsf_currentSettingsPage == 30)
+		{
+			app.ui.getWidget_byID("tsf_bodyRake").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				//currentMaxLeft = app.ui.getWidget_byID("tsf_cont_sliderBox_spacing").getProperty("size-X");
+				tsf_updateCheckbox("tsf_rake_toggle_relativeSize", 5601, -1);
+				tsf_updateCheckbox("tsf_rake_toggle_pushToCanvas", 5602, -1);
+				
+				currentMaxLeft = app.ui.getWidget_byID("tsf_rake_sliderBox_size").getProperty("size-X");
+				app.ui.getWidget_byID("tsf_rake_slider_size").setProperty("left", 
+					app.toolbox.getActiveToolProp(5600, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_rake_size").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(5600, -1, false, false)));
+					
+				// Size Dynamics Sliders
+				tsf_updateCheckbox("tsf_rake_toggle_sizeDynamic", 5603, -1);
+				
+				currentMaxLeft = app.ui.getWidget_byID("tsf_rake_sliderBox_sizeTotal").getProperty("size-X");
+				
+				app.ui.getWidget_byID("tsf_rake_slider_sizeTotalMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(5604, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_rake_sizeTotalMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(5604, -1, false, false)));
+				app.ui.getWidget_byID("tsf_rake_slider_sizeTotalMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(5605, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_rake_sizeTotalMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(5605, -1, false, false)));
+				app.ui.getWidget_byID("tsf_rake_sizeTotalBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(5606, -1, false, false)));
+					
+				currentMaxLeft = app.ui.getWidget_byID("tsf_rake_sliderBox_sizeNoise").getProperty("size-X");
+				
+				app.ui.getWidget_byID("tsf_rake_slider_sizeNoiseMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(5607, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_rake_sizeNoiseMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(5607, -1, false, false)));
+				app.ui.getWidget_byID("tsf_rake_slider_sizeNoiseMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(5608, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_rake_sizeNoiseMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(5608, -1, false, false)));
+				app.ui.getWidget_byID("tsf_rake_sizeNoiseBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(5609, -1, false, false)));
+			}
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestRake").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage != 30) { 
+			tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_basic()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("basic"))
+	{
+		app.ui.getWidget_byID("tsf_interestBasic").setProperty("visibility", "visible");
+		
+		if (tsf_currentSettingsPage == 11)
+		{
+			app.ui.getWidget_byID("tsf_bodyBasic").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				//currentMaxLeft = app.ui.getWidget_byID("tsf_alpha_sliderBox_opacity").getProperty("size-X");
+			}
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestBasic").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage == 11) { tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_image()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("image"))
+	{
+		app.ui.getWidget_byID("tsf_interestImage").setProperty("visibility", "visible");
+		if (app.toolbox.getActiveToolInterest("image")) { 
+			app.ui.getWidget_byID("tsf_interestImage").setChildProperty_byClass("tsf_interestCheck", "fill-color", global::midGrey); }
+		else { app.ui.getWidget_byID("tsf_interestImage").setChildProperty_byClass("tsf_interestCheck", "fill-color", global::slateGrey); }
+		
+		if (tsf_currentSettingsPage == 12)
+		{
+			app.ui.getWidget_byID("tsf_bodyImage").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				// Tip Size
+				currentMaxLeft = app.ui.getWidget_byID("tsf_image_sliderBox_tipSize").getProperty("size-X");
+				
+				app.ui.getWidget_byID("tsf_image_slider_tipSize").setProperty("left", 
+					app.toolbox.getActiveToolProp(2201, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_image_tipSize").setProperty("value", 
+					app.toolbox.getActiveToolProp(2201, -1, false, false));
+					
+				// Tip Spacing
+				currentMaxLeft = app.ui.getWidget_byID("tsf_image_sliderBox_spacing").getProperty("size-X");
+				
+				app.ui.getWidget_byID("tsf_image_slider_spacing").setProperty("left", 
+					app.toolbox.getActiveToolProp(2203, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_image_spacing").setProperty("value", 
+					app.toolbox.getActiveToolProp(2203, -1, false, false));
+					
+				// Toggle Boxes
+				tsf_updateCheckbox("tsf_image_toggle_relativeSpacing", 2202, -1);
+			}
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestImage").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage == 12) { tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_character()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("character"))
+	{
+		app.ui.getWidget_byID("tsf_interestCharacter").setProperty("visibility", "visible");
+		if (app.toolbox.getActiveToolInterest("character")) { 
+			app.ui.getWidget_byID("tsf_interestCharacter").setChildProperty_byClass("tsf_interestCheck", "fill-color", global::midGrey); }
+		else { app.ui.getWidget_byID("tsf_interestCharacter").setChildProperty_byClass("tsf_interestCheck", "fill-color", global::slateGrey); }
+		
+		if (tsf_currentSettingsPage == 13)
+		{
+			app.ui.getWidget_byID("tsf_bodyCharacter").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				currentMaxLeft = app.ui.getWidget_byID("tsf_character_sliderBox_scale").getProperty("size-X");
+				// Opacity Sliders
+				app.ui.getWidget_byID("tsf_character_slider_scaleMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2331, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_character_scaleMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2331, -1, false, false)));
+				app.ui.getWidget_byID("tsf_character_slider_scaleMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2332, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_character_scaleMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2332, -1, false, false)));
+				
+				currentMaxLeft = app.ui.getWidget_byID("tsf_character_sliderBox_scaleNoise").getProperty("size-X");
+				// Flow Sliders
+				app.ui.getWidget_byID("tsf_character_slider_scaleNoiseMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2333, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_character_scaleNoiseMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2333, -1, false, false)));
+				app.ui.getWidget_byID("tsf_character_slider_scaleNoiseMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2334, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_character_scaleNoiseMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2334, -1, false, false)));
+					
+				// Toggle Boxes
+				tsf_updateCheckbox("tsf_character_toggle_scale", 2330, -1);
+			}
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestCharacter").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage == 13) { tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_alpha()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("alpha"))
+	{
+		app.ui.getWidget_byID("tsf_interestAlpha").setProperty("visibility", "visible");
+		if (app.toolbox.getActiveToolInterest("alpha")) { 
+			app.ui.getWidget_byID("tsf_interestAlpha").setChildProperty_byClass("tsf_interestCheck", "fill-color", global::midGrey); }
+		else { app.ui.getWidget_byID("tsf_interestAlpha").setChildProperty_byClass("tsf_interestCheck", "fill-color", global::slateGrey); }
+		
+		if (tsf_currentSettingsPage == 15)
+		{
+			app.ui.getWidget_byID("tsf_bodyAlpha").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				currentMaxLeft = app.ui.getWidget_byID("tsf_alpha_sliderBox_opacity").getProperty("size-X");
+				// Opacity Sliders
+				app.ui.getWidget_byID("tsf_alpha_slider_opacityMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2801, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_alpha_opacityMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2801, -1, false, false)));
+				app.ui.getWidget_byID("tsf_alpha_slider_opacityMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2802, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_alpha_opacityMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2802, -1, false, false)));
+				app.ui.getWidget_byID("tsf_alpha_opacityBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2803, -1, false, false)));
+				
+				currentMaxLeft = app.ui.getWidget_byID("tsf_alpha_sliderBox_flow").getProperty("size-X");
+				// Flow Sliders
+				app.ui.getWidget_byID("tsf_alpha_slider_flowMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2811, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_alpha_flowMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2811, -1, false, false)));
+				app.ui.getWidget_byID("tsf_alpha_slider_flowMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2812, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_alpha_flowMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2812, -1, false, false)));
+				app.ui.getWidget_byID("tsf_alpha_flowBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2813, -1, false, false)));
+					
+				// Toggle Boxes
+				tsf_updateCheckbox("tsf_alpha_toggle_opacity", 2800, -1);
+				tsf_updateCheckbox("tsf_alpha_toggle_flow", 2810, -1);
+			}
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestAlpha").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage == 15) { tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_color()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("color"))
+	{
+		app.ui.getWidget_byID("tsf_interestColor").setProperty("visibility", "visible");
+		if (app.toolbox.getActiveToolInterest("color")) { 
+			app.ui.getWidget_byID("tsf_interestColor").setChildProperty_byClass("tsf_interestCheck", "fill-color", global::midGrey); }
+		else { app.ui.getWidget_byID("tsf_interestColor").setChildProperty_byClass("tsf_interestCheck", "fill-color", global::slateGrey); }
+		
+		if (tsf_currentSettingsPage == 16)
+		{
+			app.ui.getWidget_byID("tsf_bodyColor").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				currentMaxLeft = app.ui.getWidget_byID("tsf_color_sliderBox_bgHue").getProperty("size-X");
+				
+				// BG Hue
+				app.ui.getWidget_byID("tsf_color_slider_bgHueMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2713, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_color_bgHueMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2713, -1, false, false)));
+				app.ui.getWidget_byID("tsf_color_slider_bgHueMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2714, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_color_bgHueMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2714, -1, false, false)));
+				app.ui.getWidget_byID("tsf_color_bgHueBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2715, -1, false, false)));
+				
+				// BG Saturation
+				app.ui.getWidget_byID("tsf_color_slider_bgSatMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2716, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_color_bgSatMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2716, -1, false, false)));
+				app.ui.getWidget_byID("tsf_color_slider_bgSatMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2717, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_color_bgSatMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2717, -1, false, false)));
+				app.ui.getWidget_byID("tsf_color_bgSatBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2718, -1, false, false)));
+				
+				// BG Luminance
+				app.ui.getWidget_byID("tsf_color_slider_bgLumMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2719, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_color_bgLumMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2719, -1, false, false)));
+				app.ui.getWidget_byID("tsf_color_slider_bgLumMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2720, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_color_bgLumMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2720, -1, false, false)));
+				app.ui.getWidget_byID("tsf_color_bgLumBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2721, -1, false, false)));
+					
+				currentMaxLeft = app.ui.getWidget_byID("tsf_color_sliderBox_finalHue").getProperty("size-X");
+				
+				// Final Hue
+				app.ui.getWidget_byID("tsf_color_slider_finalHueMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2733, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_color_finalHueMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2733, -1, false, false)));
+				app.ui.getWidget_byID("tsf_color_slider_finalHueMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2734, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_color_finalHueMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2734, -1, false, false)));
+				app.ui.getWidget_byID("tsf_color_finalHueBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2735, -1, false, false)));
+				
+				// Final Saturation
+				app.ui.getWidget_byID("tsf_color_slider_finalSatMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2736, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_color_finalSatMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2736, -1, false, false)));
+				app.ui.getWidget_byID("tsf_color_slider_finalSatMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2737, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_color_finalSatMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2737, -1, false, false)));
+				app.ui.getWidget_byID("tsf_color_finalSatBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2738, -1, false, false)));
+				
+				// Final Luminance
+				app.ui.getWidget_byID("tsf_color_slider_finalLumMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2739, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_color_finalLumMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2739, -1, false, false)));
+				app.ui.getWidget_byID("tsf_color_slider_finalLumMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2740, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_color_finalLumMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2740, -1, false, false)));
+				app.ui.getWidget_byID("tsf_color_finalLumBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2741, -1, false, false)));
+					
+				// Toggle Boxes
+				tsf_updateCheckbox("tsf_color_toggle_mixBG", 2700, -1);
+				tsf_updateCheckbox("tsf_color_toggle_enableBG", 2710, -1);
+				tsf_updateCheckbox("tsf_color_toggle_enableFG", 2730, -1);
+			}
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestColor").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage == 16) { tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_scatter()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("scatter"))
+	{
+		app.ui.getWidget_byID("tsf_interestScatter").setProperty("visibility", "visible");
+		if (app.toolbox.getActiveToolInterest("scatter")) { 
+			app.ui.getWidget_byID("tsf_interestScatter").setChildProperty_byClass("tsf_interestCheck", "fill-color", global::midGrey); }
+		else { app.ui.getWidget_byID("tsf_interestScatter").setChildProperty_byClass("tsf_interestCheck", "fill-color", global::slateGrey); }
+		
+		if (tsf_currentSettingsPage == 17)
+		{
+			app.ui.getWidget_byID("tsf_bodyScatter").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				currentMaxLeft = app.ui.getWidget_byID("tsf_scatter_sliderBox_angle").getProperty("size-X");
+				
+				// Scatter Angle Sliders
+				app.ui.getWidget_byID("tsf_scatter_slider_angleMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2612, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_scatter_angleMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2612, -1, false, false)));
+				app.ui.getWidget_byID("tsf_scatter_slider_angleMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2613, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_scatter_angleMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2613, -1, false, false)));
+				app.ui.getWidget_byID("tsf_scatter_angleBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2614, -1, false, false)));
+				
+				currentMaxLeft = app.ui.getWidget_byID("tsf_scatter_sliderBox_distX").getProperty("size-X");
+				// Distance X Sliders
+				app.ui.getWidget_byID("tsf_scatter_slider_distXMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2622, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_scatter_distXMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2622, -1, false, false)));
+				app.ui.getWidget_byID("tsf_scatter_slider_distXMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2623, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_scatter_distXMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2623, -1, false, false)));
+				app.ui.getWidget_byID("tsf_scatter_distXBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2624, -1, false, false)));
+					
+				// Distance Y Sliders
+				app.ui.getWidget_byID("tsf_scatter_slider_distYMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2625, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_scatter_distYMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2625, -1, false, false)));
+				app.ui.getWidget_byID("tsf_scatter_slider_distYMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2626, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_scatter_distYMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2626, -1, false, false)));
+				app.ui.getWidget_byID("tsf_scatter_distYBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2627, -1, false, false)));
+				
+				currentMaxLeft = app.ui.getWidget_byID("tsf_scatter_sliderBox_count").getProperty("size-X");
+				// Count Sliders
+				app.ui.getWidget_byID("tsf_scatter_slider_countMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(2632, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_scatter_countMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2632, -1, false, false)));
+				app.ui.getWidget_byID("tsf_scatter_slider_countMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(2633, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_scatter_countMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2633, -1, false, false)));
+				app.ui.getWidget_byID("tsf_scatter_countBias").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(2634, -1, false, false)));
+				
+				// Toggle Boxes
+				tsf_updateCheckbox("tsf_scatter_toggle_angle", 2600, -1);
+				tsf_updateCheckbox("tsf_scatter_toggle_direction", 2616, -1);
+				tsf_updateCheckbox("tsf_scatter_toggle_relative", 2617, -1);
+			}
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestScatter").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage == 17) { tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}
+
+void update_effects()
+{
+	if (app.toolbox.checkActiveToolSettingsMask("effects"))
+	{
+		app.ui.getWidget_byID("tsf_interestEffects").setProperty("visibility", "visible");
+		if (app.toolbox.getActiveToolInterest("effects")) { 
+			app.ui.getWidget_byID("tsf_interestEffects").setChildProperty_byClass("tsf_interestCheck", "fill-color", global::midGrey); }
+		else { app.ui.getWidget_byID("tsf_interestEffects").setChildProperty_byClass("tsf_interestCheck", "fill-color", global::slateGrey); }
+		
+		if (tsf_currentSettingsPage == 24)
+		{
+			app.ui.getWidget_byID("tsf_bodyEffects").setProperty("visibility", "visible");
+			if (true) // If the page is dirty, update it
+			{
+				app.ui.sortTargetWidgetChildren_byMacro("tsf_effects_scrollBox_list", "id", "effectsOrdering", true);
+				// Update enable/disable buttons
+				tsf_updateCheckbox("tsf_fx_toggle_fill", 8010, -1);
+				tsf_updateCheckbox("tsf_fx_toggle_gradient", 8011, -1);
+				tsf_updateCheckbox("tsf_fx_toggle_posterize", 8012, -1);
+				tsf_updateCheckbox("tsf_fx_toggle_invert", 8013, -1);
+				tsf_updateCheckbox("tsf_fx_toggle_threshold", 8014, -1);
+				tsf_updateCheckbox("tsf_fx_toggle_contrast", 8015, -1);
+				tsf_updateCheckbox("tsf_fx_toggle_hsv", 8016, -1);
+				tsf_updateCheckbox("tsf_fx_toggle_power", 8017, -1);
+				tsf_updateCheckbox("tsf_fx_toggle_modulo", 8018, -1);
+				tsf_updateCheckbox("tsf_fx_toggle_blur", 8024, -1);
+				// Total Blend
+				currentMaxLeft = app.ui.getWidget_byID("tsf_effects_sliderBox_totalMix").getProperty("size-X");
+				
+				app.ui.getWidget_byID("tsf_effects_slider_totalMix").setProperty("left", 
+					app.toolbox.getActiveToolProp(8050, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_effects_totalMix").setProperty("value", 
+					app.toolbox.getActiveToolProp(8050, -1, false, false));
+					
+				// Total Blend Alpha Mask
+				currentMaxLeft = app.ui.getWidget_byID("tsf_effects_sliderBox_alphaMask").getProperty("size-X");
+				
+				app.ui.getWidget_byID("tsf_effects_slider_alphaMaskMin").setProperty("left", 
+					app.toolbox.getActiveToolProp(8051, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_effects_alphaMaskMin").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(8051, -1, false, false)));
+				app.ui.getWidget_byID("tsf_effects_slider_alphaMaskMax").setProperty("left", 
+					app.toolbox.getActiveToolProp(8052, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+				app.ui.getWidget_byID("tsf_effects_alphaMaskMax").setProperty("value", 
+					toString(app.toolbox.getActiveToolProp(8052, -1, false, false)));
+					
+				// Hide All FX bodies
+				clearActiveEffectsItem();
+			}
+		}
+	}
+	else 
+	{ 
+		app.ui.getWidget_byID("tsf_interestEffects").setProperty("visibility", "hidden"); 
+		if (tsf_currentSettingsPage == 24) { tsf_clickInterest(0, "tsf_interestMetadata"); } 
+	}
+}

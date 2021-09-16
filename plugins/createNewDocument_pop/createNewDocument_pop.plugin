@@ -1,0 +1,7 @@
+<NAME=Create New Document Popup>
+<VERSION=1.0>
+<ABOUT=chroma.IO Create New Document Popup>
+<NAMESPACE=createNewDocument_pop>
+<LAYOUT_PATH=createNewDocument_pop.layout>
+<STYLE_PATH=createNewDocument_pop.style>
+<SCRIPT_PATH=createNewDocument_pop.cscript>

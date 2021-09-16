@@ -315,6 +315,10 @@ void ChromaScript::loadLibraries(std::shared_ptr<CEnvironment> env)
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fClock, 
 			global.get()->lookupEnvironment("clock", true)));
+	env.get()->define("vecSize",
+		std::make_shared<CObject>(
+			CCallableTypes::_CStd_fVecSize,
+			global.get()->lookupEnvironment("vecSize", true)));
 	env.get()->define("toString",
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fToString,
@@ -327,6 +331,10 @@ void ChromaScript::loadLibraries(std::shared_ptr<CEnvironment> env)
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fKeyToString,
 			global.get()->lookupEnvironment("keyToString", true)));
+	env.get()->define("makeKeySig",
+		std::make_shared<CObject>(
+			CCallableTypes::_CStd_fMakeKeySig,
+			global.get()->lookupEnvironment("makeKeySig", true)));
 	env.get()->define("fibonacci", 
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fFibonacci, 
@@ -377,6 +385,11 @@ void ChromaScript::loadLibraries(std::shared_ptr<CEnvironment> env)
 			CCallableTypes::_CStd_fCancelTimerEvent,
 			global.get()->lookupEnvironment("cancelTimerEvent", true),
 			owner));
+	env.get()->define("triggerStoredEvent",
+		std::make_shared<CObject>(
+			CCallableTypes::_CStd_fTriggerStoredEvent,
+			global.get()->lookupEnvironment("triggerStoredEvent", true),
+			owner));
 	env.get()->define("bindCallbackEvent",
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fBindCallbackEvent,
@@ -402,6 +415,16 @@ void ChromaScript::loadLibraries(std::shared_ptr<CEnvironment> env)
 			CCallableTypes::_CStd_fSweepTestRoot_byID,
 			global.get()->lookupEnvironment("sweepTestRoot_byID", true),
 			owner));
+	env.get()->define("getParent",
+		std::make_shared<CObject>(
+			CCallableTypes::_CStd_fGetParent,
+			global.get()->lookupEnvironment("getParent", true),
+			owner));
+	env.get()->define("getRoot",
+		std::make_shared<CObject>(
+			CCallableTypes::_CStd_fGetRoot,
+			global.get()->lookupEnvironment("getRoot", true),
+			owner));
 	env.get()->define("setProperty", 
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fSetProperty, 
@@ -421,6 +444,11 @@ void ChromaScript::loadLibraries(std::shared_ptr<CEnvironment> env)
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fSetChildProperty_byType,
 			global.get()->lookupEnvironment("setChildProperty_byType", true),
+			owner));
+	env.get()->define("getChildProperty_byType",
+		std::make_shared<CObject>(
+			CCallableTypes::_CStd_fGetChildProperty_byType,
+			global.get()->lookupEnvironment("getChildProperty_byType", true),
 			owner));
 	env.get()->define("setChildProperty_byID",
 		std::make_shared<CObject>(
@@ -774,6 +802,8 @@ double ChromaScript::toNum(std::shared_ptr<CObject> obj)
 	{
 		return (double)INT_MIN;
 	}
+	std::string string = "";
+	double num = 0;
 	std::vector<std::shared_ptr<CObject>> container;
 	switch (obj.get()->objType.type)
 	{
@@ -784,7 +814,9 @@ double ChromaScript::toNum(std::shared_ptr<CObject> obj)
 		return std::get<double>(obj.get()->obj);
 		break;
 	case CLiteralTypes::_CString:
-		return std::stod(std::get<std::string>(obj.get()->obj));
+		string = std::get<std::string>(obj.get()->obj);
+		if (string != "") { return std::stod(std::get<std::string>(obj.get()->obj)); }
+		return 0;
 		break;
 	case CLiteralTypes::_CBool_Array:
 	case CLiteralTypes::_CNumber_Array:

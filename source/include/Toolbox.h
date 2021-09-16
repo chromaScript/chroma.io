@@ -88,9 +88,10 @@ private:
 	std::shared_ptr<CustomCursor> brush;
 	std::shared_ptr<CustomCursor> dropper;
 	std::shared_ptr<CustomCursor> circleSmall;
-	// Tool Variables
+// Tool Variables
 	std::vector<std::shared_ptr<Tool>> tools;
 	std::shared_ptr<Tool> activeTool;
+
 protected:
 public:
 	Toolbox();
@@ -117,7 +118,8 @@ public:
 	void moveCallback(std::shared_ptr<CInterpreter> interpreter, double xpos, double ypos);
 	void endCallback(std::shared_ptr<CInterpreter> interpreter, double xpos, double ypos);
 	// Tool Functions
-	void initializeTools(bool isNew);
+	void initializeTools(bool checkExisting, bool createNew);
+	bool exportTools(bool exportAll, std::vector<int> selectedToolIDs, bool overwrite, bool useDefaultRoot, std::filesystem::path rootDir);
 	bool createCustomTool(
 		std::string cursorUp, std::string cursorDown,
 		int toolID, std::string toolName,
@@ -127,8 +129,10 @@ public:
 	void setActiveTool_byID(int id);
 	void setActiveTool_byIndex(int i);
 	void notifyColorChange(CColor input, bool isBG);
+	void notifyCursorChange(bool isDown, bool updateSavedCursor);
 	int checkToolHotkeys(int sig);
 	std::shared_ptr<Tool> getActiveTool();
+	std::shared_ptr<Tool> getTool_lastCreated();
 };
 
 #endif

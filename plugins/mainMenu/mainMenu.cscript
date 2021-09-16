@@ -10,6 +10,10 @@ array num mediumGrey = {0.62, 0.62, 0.62, 1.0};
 array num lightGrey = {0.76, 0.76, 0.76, 1.0};
 array num offWhite = {0.92, 0.92, 0.92, 1.0};
 
+array num windowMove_startPos = {0, 0};
+array num windowMove_startMouse = {0, 0};
+array num windowResize_startPos = {0, 0};
+
 void toggleMainDrops(bool override)
 {
 	if (mainDropsHidden && !override)
@@ -98,5 +102,28 @@ void winButtonHover(num switch)
 	{
 		resetClassProperty("mm_button", "background-color-alpha");
 		resetClassProperty("mm_buttonImage", "fill-color");
+	}
+}
+
+void moveAppWindow(num select)
+{
+	if (select == 0)
+	{
+		windowMove_startPos = app.getWindowPosition();
+		windowMove_startMouse = getMousePos_relative();
+
+	}
+	else if (select == 1)
+	{
+		array num currentMouse = getMousePos_relative();
+		app.moveAppWindow(
+			windowMove_startPos[0] + (currentMouse[0] - windowMove_startMouse[0]), 
+			windowMove_startPos[1] + (currentMouse[1] - windowMove_startMouse[1]));
+		windowMove_startPos = app.getWindowPosition();
+		windowMove_startMouse = getMousePos_relative();
+	}
+	else if (select == 2)
+	{
+	
 	}
 }

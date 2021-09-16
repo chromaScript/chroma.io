@@ -21,6 +21,8 @@ class WidgetStyle;
 #include "clayout/ChromaLayout.h"
 #include "cstyle/ChromaStyle.h"
 #include "cscript/CCallable.h"
+#include "ctoolfile/ChromaToolFile.h"
+#include "entities/Canvas.h"
 
 #include <vector>
 #include <memory>
@@ -94,12 +96,16 @@ private:
 	// Stylus Variables
 	WinStylusHandler* stylusHandler_win = new WinStylusHandler();
 	IRealTimeStylus* stylus_win = nullptr;
+	double storedDownscaleFactor = 0;
 
 	// Camera variables
 	std::shared_ptr<Camera> camera = nullptr;
 	bool dynamicPan = false;
 
 	// Callback Arrays
+	std::map<std::string, std::shared_ptr<CFunction>> storedEventListenerCallbacks;
+	std::map<std::string, std::shared_ptr<CFunction>> keyListenerAllBlockingCallbacks;
+	std::map<std::string, std::shared_ptr<CFunction>> keyListenerAllCallbacks;
 	std::map<std::string, std::shared_ptr<CFunction>> keyListenerBlockingCallbacks;
 	std::map<std::string, std::shared_ptr<CFunction>> keyListenerCallbacks;
 	std::map<std::string, std::shared_ptr<CFunction>> canvasRightClickPressCallbacks;
@@ -139,8 +145,8 @@ public:
 	std::shared_ptr<ChromaScript> scriptConsole = nullptr;
 	std::shared_ptr<ChromaStyle> styleConsole = nullptr;
 	std::shared_ptr<ChromaLayout> layoutConsole = nullptr;
-
-// Callback Arrays
+	// File Consoles
+	std::shared_ptr<ChromaToolFile> toolFileConsole = nullptr;
 
 
 	// Constructors
@@ -154,12 +160,15 @@ public:
 
 	// Window Functions
 	void createNewWindow(int width, int height);
+	void moveApplication(int xpos, int ypos);
+	void resizeApplication(int width, int height);
 	void closeApplication();
 	void minimizeApplication();
 	void maximizeApplication();
 	void setWindowProperties(); // By framebufferSize
 	void setWindowProperties(int width, int height); // By initialization / indirect framebufferSize
 	GLFWwindow* getWindow();
+	glm::ivec2 getWindowPosition();
 	int getWindowWidth();
 	int getWindowHeight();
 	float getWindowRatio();
@@ -188,6 +197,8 @@ public:
 	void releaseWinStylus();
 	WinStylusHandler* getWinStylusHandler();
 	IRealTimeStylus* getWinStylus();
+	double getStoredDownscaleFactor();
+	void saveDownscaleFactor(double factor);
 
 	// Camera Functions
 	void createOrthoCamera();
@@ -202,7 +213,7 @@ public:
 	std::shared_ptr<UI> getUI();
 
 	// Canvas Functions
-	void renderCanvas_toFile();
+	void renderCanvas_toFile(std::shared_ptr<Canvas> target);
 	glm::ivec2 getCanvasDimensions();
 
 	// Callback Functions
@@ -225,6 +236,9 @@ public:
 	bool getIsDoingInput() { return isDoingInput; }
 	// I/O Keybind Functions
 	bool isValidKeybind_tool(int modKey, int glfwKey);
+	bool isValidKeybind_alphaOnly(int modKey, int glfwKey);
+	bool isValidKeybind_symbolOrChar(int modKey, int glfwKey);
+	bool isValidKeybind_modOnly(int modKey, int glfwKey);
 	// I/O Key Functions
 	int getKeyState(int namedKey) { return glfwGetKey(appWindow, namedKey); }
 	void keyEventHandler(int sig, int action);
@@ -235,6 +249,7 @@ public:
 	void clearMouseHold(double time);
 	void clickEventHandler(int button, int action, MouseEvent mouseEvent, bool clearHold);
 	void mousePosEventHandler(MouseEvent mouseEvent);
+	void mouseScrollEventHandler(MouseEvent mouseEvent);
 	MousePosition getMousePosition(bool isUIFetch);
 	float getMouseVelocity() { return mouseVelocity; }
 	std::vector<MouseEvent> getMouseBuffer();
@@ -247,6 +262,9 @@ public:
 
 	// Render Fucntions
 	void clearScreen();
+
+	// Callback Functions
+	bool triggerStoredEventCallback(std::string callbackID);
 
 	// Miscellaneous Functions
 	double getTime() { return glfwGetTime(); }

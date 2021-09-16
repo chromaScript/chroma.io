@@ -4,6 +4,7 @@
 #include <rtscom_i.c>
 #include <wtypes.h>
 #include <msinkaut.h>
+#include <filesystem>
 
 #ifndef APPLICATION_H
 #include "include/Application.h"
@@ -17,6 +18,7 @@
 #include "include/methods/InputMethod.h"
 #include "include/WinStylusHandler.h"
 #include "include/keys.h"
+#include "include/entities/Canvas.h"
 
 #include "include/entities/WidgetStyle.h"
 #include "include/entities/Line.h"
@@ -33,53 +35,81 @@ Application::Application()
 }
 Application::Application(int width, int height)
 {
-	createNewWindow(width, height);
-	// Note that in an application that is not using windowed-full-screen mode (no title bar), the
-	// actual window width and height will vary from the size of the window as "created"
-	// Usually the height is height - title bar.
-	setWindowProperties(width, height);
+	// Read the config.txt file into a string
+	std::filesystem::path root = std::filesystem::current_path() /= std::filesystem::path("config");
+	if (std::filesystem::exists(root) && std::filesystem::is_directory(root))
+	{
+		std::filesystem::path configPath = root /= std::filesystem::path("config.txt");
+		std::string configString = "";
+		readFileToString(configString, configPath);
+		// Identify Window Dimensions to load with
+		size_t widthPos = configString.find("WINDOW_WIDTH:") + std::string("WINDOW_WIDTH:").size();
+		size_t widthTerminal = configString.find_first_of(";", widthPos);
+		std::string widthStr = configString.substr(widthPos, widthTerminal - widthPos);
+		stringRemoveSpace(widthStr);
+		size_t heightPos = configString.find("WINDOW_HEIGHT:") + std::string("WINDOW_HEIGHT:").size();
+		size_t heightTerminal = configString.find_first_of(";", heightPos);
+		std::string heightStr = configString.substr(heightPos, heightTerminal - heightPos);
+		stringRemoveSpace(heightStr);
+
+		int widthConfig = std::stoi(widthStr); int heightConfig = std::stoi(heightStr);
+
+		size_t tabDownFactorPos = configString.find("WINTABLET_DOWNSCALEFACTOR:") + std::string("WINTABLET_DOWNSCALEFACTOR:").size();
+		size_t tabDownFactorTerminal = configString.find_first_of(";", tabDownFactorPos);
+		std::string tabDownFactorStr = configString.substr(tabDownFactorPos, tabDownFactorTerminal - tabDownFactorPos);
+		stringRemoveSpace(tabDownFactorStr);
+		storedDownscaleFactor = std::stod(tabDownFactorStr);
+
+		createNewWindow(widthConfig, heightConfig);
+		setWindowProperties(widthConfig, heightConfig);
+	}
+	else
+	{
+		createNewWindow(width, height);
+		setWindowProperties(width, height);
+	}
 }
 // Shader Functions
 void Application::initializeShaders()
 {
 	compositeShader = std::make_shared<Shader>(
-		"source/shaders/compositeShader.vert", "source/shaders/compositeShader.frag", "COMPOSITE_SHADER");
+		"shaders/compositeShader.vert", "shaders/compositeShader.frag", "COMPOSITE_SHADER");
 	std::cout << "APPLICATION::COMPOSITE_SHADER::BOUND" << std::endl;
 	//
 	compositeFrameShader = std::make_shared<Shader>(
-		"source/shaders/compositeFrameShader.vert", "source/shaders/compositeFrameShader.frag", "COMPOSITE_FRAME_SHADER");
+		"shaders/compositeFrameShader.vert", "shaders/compositeFrameShader.frag", "COMPOSITE_FRAME_SHADER");
 	std::cout << "APPLICATION::COMPOSITE_FRAME_SHADER::BOUND" << std::endl;
 	//
 	frameShader = std::make_shared<Shader>(
-		"source/shaders/frameShader.vert", "source/shaders/frameShader.frag", "FRAME_SHADER");
+		"shaders/frameShader.vert", "shaders/frameShader.frag", "FRAME_SHADER");
 	std::cout << "APPLICATION::FRAME_SHADER::BOUND" << std::endl;
 	//
 	canvasShader = std::make_shared<Shader>(
-		"source/shaders/canvasShader.vert", "source/shaders/canvasShader.frag", "CANVAS_SHADER");
+		"shaders/canvasShader.vert", "shaders/canvasShader.frag", "CANVAS_SHADER");
 	std::cout << "APPLICATION::CANVAS_SHADER::BOUND" << std::endl;
 	//
 	layerShader = std::make_shared<Shader>(
-		"source/shaders/layerShader.vert", "source/shaders/layerShader.frag", "LAYER_SHADER");
+		"shaders/layerShader.vert", "shaders/layerShader.frag", "LAYER_SHADER");
 	std::cout << "APPLICATION::LAYER_SHADER::BOUND" << std::endl;
 	//
 	shardShader = std::make_shared<Shader>(
-		"source/shaders/shardShader.vert", "source/shaders/shardShader.frag", "SHARD_SHADER");
+		"shaders/shardShader.vert", "shaders/shardShader.frag", "SHARD_SHADER");
 	std::cout << "APPLICATION::STROKE_SHADER::BOUND" << std::endl;
 	//
 	widgetShader = std::make_shared<Shader>(
-		"source/shaders/widgetShader.vert", "source/shaders/widgetShader.frag", "WIDGET_SHADER");
+		"shaders/widgetShader.vert", "shaders/widgetShader.frag", "WIDGET_SHADER");
 	std::cout << "APPLICATION::WIDGET_SHADER::BOUND" << std::endl;
 	//
 	textShader = std::make_shared<Shader>(
-		"source/shaders/textShader.vert", "source/shaders/textShader.frag", "TEXT_SHADER");
+		"shaders/textShader.vert", "shaders/textShader.frag", "TEXT_SHADER");
 	std::cout << "APPLICATION::TEXT_SHADER::BOUND" << std::endl;
 	//
 	debugLineShader = std::make_shared<Shader>(
-		"source/shaders/debugLineShader.vert", "source/shaders/debugLineShader.frag", "DEBUG_LINE_SHADER");
+		"shaders/debugLineShader.vert", "shaders/debugLineShader.frag", "DEBUG_LINE_SHADER");
 	std::cout << "APPLICATION::DEBUG_LINE_SHADER::BOUND" << std::endl;
 	//
 	gradientBoxShader = std::make_shared<Shader>(
-		"source/shaders/gradientBoxShader.vert", "source/shaders/gradientBoxShader.frag", "GRADIENT_BOX_SHADER");
+		"shaders/gradientBoxShader.vert", "shaders/gradientBoxShader.frag", "GRADIENT_BOX_SHADER");
 	std::cout << "APPLICATION::GRADIENT_BOX_SHADER::BOUND" << std::endl;
 	//
 }
@@ -121,6 +151,16 @@ void Application::createNewWindow(int width, int height)
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(appWindow);
+}
+void Application::moveApplication(int xpos, int ypos)
+{
+	glfwSetWindowPos(appWindow, xpos, ypos);
+}
+void Application::resizeApplication(int width, int height)
+{
+	glfwSetWindowSize(appWindow, width, height);
+
+	ui.get()->buildAllWidgetTrees();
 }
 void Application::closeApplication()
 {
@@ -164,12 +204,19 @@ void Application::setWindowProperties(int width, int height)
 	{
 		isLandscape = false;
 	}
-	winWidth = width;
-	winHeight = height;
+	winWidth = WINDOW_WIDTH = width;
+	winHeight = WINDOW_HEIGHT = height;
+
 }
 void Application::setWindowColor(glm::vec4 color)
 {
 	bgColor = color;
+}
+glm::ivec2 Application::getWindowPosition()
+{
+	int xpos, ypos;
+	glfwGetWindowPos(appWindow, &xpos, &ypos);
+	return glm::ivec2(xpos, ypos);
 }
 GLFWwindow* Application::getWindow() { return appWindow; }
 int Application::getWindowWidth() { return winWidth; }
@@ -257,6 +304,17 @@ bool Application::createWinStylus()
 		return false;
 	}
 	std::cout << "APPLICATION::CREATEWINSTYLUS::FINISHED" << std::endl;
+	// Apply saved config.txt values to the stylus
+	if (storedDownscaleFactor == 0)
+	{
+		stylusHandler_win->resetCalibration();
+	}
+	else
+	{
+		stylusHandler_win->stopCalibration();
+		stylusHandler_win->downscaleFactor = storedDownscaleFactor;
+	}
+	
 	return true;
 }
 void Application::releaseWinStylus()
@@ -289,14 +347,55 @@ IRealTimeStylus* Application::getWinStylus()
 	}
 	return stylus_win;
 }
+double Application::getStoredDownscaleFactor() { return storedDownscaleFactor; }
+void Application::saveDownscaleFactor(double factor) 
+{ 
+	storedDownscaleFactor = factor; 
+
+	std::filesystem::path root = std::filesystem::current_path() /= std::filesystem::path("config");
+	if (std::filesystem::exists(root) && std::filesystem::is_directory(root))
+	{
+		std::filesystem::path configPath = root /= std::filesystem::path("config.txt");
+		std::string configString = "";
+		readFileToString(configString, configPath);
+
+		size_t tabDownFactorPos = configString.find("WINTABLET_DOWNSCALEFACTOR:") + std::string("WINTABLET_DOWNSCALEFACTOR:").size();
+		size_t tabDownFactorTerminal = configString.find_first_of(";", tabDownFactorPos);
+		std::string newFactorStr = " " + std::to_string(storedDownscaleFactor);
+		configString.replace(tabDownFactorPos, tabDownFactorTerminal - tabDownFactorPos, newFactorStr);
+
+		std::string outPath = configPath.string();
+		FILE* outFile;
+		errno_t err;
+		err = fopen_s(&outFile, outPath.c_str(), "wb");
+		if (err != 0) { return; }
+
+		fprintf(outFile, configString.c_str());
+
+		fclose(outFile);
+	}
+}
+
 
 // Camera Functions
 void Application::createOrthoCamera() 
 { 
-	camera = std::make_shared<Camera>(
-		0.05f, 0.05f, 0.05f, 
-		winRatio, 
-		ui.get()->getCanvas()->getDimensions());
+	glm::ivec2 dimensions = glm::ivec2(0, 0);
+	if (ui.get()->getDocumentsCount() == 0)
+	{
+		camera = std::make_shared<Camera>(
+			0.05f, 0.05f, 0.05f,
+			winRatio,
+			glm::ivec2(512, 512));
+	}
+	else
+	{
+		camera = std::make_shared<Camera>(
+			0.05f, 0.05f, 0.05f,
+			winRatio,
+			ui.get()->getCanvas()->getDimensions());
+	}
+	
 }
 std::shared_ptr<Camera> Application::getCamera() { return camera; }
 
@@ -312,8 +411,9 @@ glm::ivec2 Application::getCanvasDimensions()
 { 
 	return ui.get()->getCanvas().get()->getDimensions(); 
 }
-void Application::renderCanvas_toFile()
+void Application::renderCanvas_toFile(std::shared_ptr<Canvas> target)
 {
+	if (ui.get()->activeCanvas == nullptr) { return; }
 	float* result = ui.get()->getCanvas().get()->renderCanvas();
 	glm::ivec2 dimensions = getCanvasDimensions();
 
@@ -461,6 +561,14 @@ bool Application::bindCallback(std::shared_ptr<CInterpreter> interpreter,
 	std::vector<std::shared_ptr<CToken>> paramTypes;
 	switch (callType)
 	{
+	case CCallbackType::storedEventListener:
+		// scriptSignature - void function()  
+		paramTypes = callFunc.get()->funcDeclaration.get()->paramsTypes;
+		if (paramTypes.size() != 0) { validSignature = false; }
+		if (callFunc.get()->funcDeclaration.get()->returnType.get()->type != CTokenType::_VOID) { validSignature = false; }
+		break;
+	case CCallbackType::keyListenerAll:
+	case CCallbackType::keyListenerAll_blocking:
 	case CCallbackType::keyListener:
 	case CCallbackType::keyListener_blocking:
 		// scriptSignature - bool function(num modBit, num glfwKey)  
@@ -488,6 +596,15 @@ bool Application::bindCallback(std::shared_ptr<CInterpreter> interpreter,
 	// Then if there were no errors, bind the callback
 	switch (callType)
 	{
+	case CCallbackType::storedEventListener:
+		storedEventListenerCallbacks.insert(std::pair<std::string, std::shared_ptr<CFunction>>(callerID, callFunc));
+		break;
+	case CCallbackType::keyListenerAll:
+		keyListenerAllCallbacks.insert(std::pair<std::string, std::shared_ptr<CFunction>>(callerID, callFunc));
+		break;
+	case CCallbackType::keyListenerAll_blocking:
+		keyListenerAllBlockingCallbacks.insert(std::pair<std::string, std::shared_ptr<CFunction>>(callerID, callFunc));
+		break;
 	case CCallbackType::keyListener:
 		keyListenerCallbacks.insert(std::pair<std::string, std::shared_ptr<CFunction>>(callerID, callFunc));
 		break;
@@ -505,10 +622,6 @@ bool Application::bindCallback(std::shared_ptr<CInterpreter> interpreter,
 void Application::updateTimerCallbacks(double time)
 {
 	if (timerCallbackMap.size() == 0) { return; }
-	if (time >= 15)
-	{
-		int i = 0;
-	}
 	double nowTime = glfwGetTime();
 	std::vector<std::string> clearIDs;
 	for (auto& timer : timerCallbackMap)
@@ -568,13 +681,53 @@ void Application::cancelTimerCallback(std::string id)
 	}
 }
 
+bool Application::triggerStoredEventCallback(std::string callbackID)
+{
+	if (storedEventListenerCallbacks.count(callbackID) == 0) { return false; }
+	else
+	{
+		std::vector<std::shared_ptr<CObject>> args;
+		storedEventListenerCallbacks.at(callbackID).get()->call(scriptConsole.get()->getInterpreter(), &args);
+		storedEventListenerCallbacks.erase(callbackID);
+		return true;
+	}
+}
+
 // Keyboard Callback & Set Callbacks
 void Application::keyEventHandler(int sig, int action)
 {
 	// Debug Setting: PRINT
 	bool debugPrint = false;
 
-	// First filter the input through keyListener callbacks
+	// First filter the input through keyListenerAll callbacks
+	if (keyListenerAllCallbacks.size() != 0 || keyListenerAllBlockingCallbacks.size() != 0)
+	{
+		// Build The Arguments
+		std::vector<std::shared_ptr<CObject>> args;
+		args.push_back(std::make_shared<CObject>(double(sig % 10)));
+		args.push_back(std::make_shared<CObject>(double((sig - (sig % 10)) / 10)));
+		if (keyListenerAllCallbacks.size() != 0)
+		{
+			// Call the functions
+			for (auto const& item : keyListenerAllCallbacks)
+			{
+				item.second.get()->call(scriptConsole.get()->getInterpreter(), &args);
+			}
+			keyListenerAllCallbacks.clear();
+		}
+		if (keyListenerAllBlockingCallbacks.size() != 0)
+		{
+			// Call the functions
+			for (auto const& item : keyListenerAllBlockingCallbacks)
+			{
+				item.second.get()->call(scriptConsole.get()->getInterpreter(), &args);
+			}
+			keyListenerAllBlockingCallbacks.clear();
+			// The key is absorbed so the function returns here.
+			return;
+		}
+	}
+	// Next filter the input through keyListener callbacks
 	if (!isKeySig_modKey(sig) && (keyListenerCallbacks.size() != 0 || keyListenerBlockingCallbacks.size() != 0))
 	{
 		// Build The Arguments
@@ -598,11 +751,9 @@ void Application::keyEventHandler(int sig, int action)
 				item.second.get()->call(scriptConsole.get()->getInterpreter(), &args);
 			}
 			keyListenerBlockingCallbacks.clear();
+			// The key is absorbed so the function returns here.
+			return;
 		}
-	}
-	if (sig == INPUT_KEY_LEFT_SHIFT)
-	{
-		int i = 034;
 	}
 	// Second check if a text box or entry field is in focus
 	if (ui.get()->activeInputType != LTokenType::NIL && !ui.get()->activeInputWidget.expired())
@@ -619,12 +770,12 @@ void Application::keyEventHandler(int sig, int action)
 	{
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
-			std::cout << "KEYEVENTHANDLER::ABORT" << std::endl;
+			if (debugPrint) { std::cout << "KEYEVENTHANDLER::ABORT" << std::endl; }
 			return;
 		}
 		else if (action == GLFW_RELEASE && (sig / 10) == keyWatchSig)
 		{
-			std::cout << "KEYEVENTHANDLER::KEYWATCHSIG::RELEASED::=" << keyWatchSig << std::endl;
+			if (debugPrint) { std::cout << "KEYEVENTHANDLER::KEYWATCHSIG::RELEASED::=" << keyWatchSig << std::endl; }
 			keyWatchSig = 0;
 			return;
 		}
@@ -651,11 +802,6 @@ void Application::keyEventHandler(int sig, int action)
 	if (isKeySig_delete(sig)) // DELETE
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "DELETE" << std::endl; }
-		return;
-	}
-	if (isKeySig_space(sig)) // SPACE
-	{
-		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "SPACE" << std::endl; }
 		return;
 	}
 	if (isKeySig_arrows(sig)) // RIGHT / LEFT / DOWN / UP ARROWS
@@ -694,26 +840,36 @@ void Application::keyEventHandler(int sig, int action)
 		// Only interested in watching non-modifier keys, so divide by 10 to remove modifier bit
 		// The modifier bit is always set regardless of application state, so tools will still know the modifier state
 		keyWatchSig = sig / 10;
-		std::cout << "KEYEVENTHANDLER::KEYWATCHSIG::SET::=" << keyWatchSig << std::endl;
+		if (debugPrint == true) { std::cout << "KEYEVENTHANDLER::KEYWATCHSIG::SET::=" << keyWatchSig << std::endl; }
 	}
 
 	
 	// 1. Query Context (If a popup, submenu, dropdown, or alternate window is in focus)
 	// Check if the active popup should block the input from falling through here
 	if (ui.get()->checkPopupBlocking()) { return; }
-	// 2. Query Tools (While more numerous in binds than Menus/Actions/Macros, they are more often used)
+	// 2. Block Release and Repeat actions
+	if (action != GLFW_PRESS) { return; }
+	// 3. Query Tools (While more numerous in binds than Menus/Actions/Macros, they are more often used)
 	int tIndex = toolbox->checkToolHotkeys(sig);
 	if (tIndex != -1 && !isDoingInput)
 	{
 		toolbox->setActiveTool_byIndex(tIndex);
 		ui->updateCursorImage(toolbox->getActiveTool()->getCursorUp());
 	}
-	// 3. Query UI Non-Tool Buttons (This may just be included in actions/macros for simplicity, as they have similar outputs)
-	// 4. Query Actions/Macros (Could be more or less binds than Menus, but they are more important)
-	// 5. Query Menus (Least important keybinds, and potentially the fewest in number for users with a lot of tools/macros/actions)
-	if (sig == 832)
+	// 4. Query UI Non-Tool Buttons (This may just be included in actions/macros for simplicity, as they have similar outputs)
+	// 5. Query Actions/Macros (Could be more or less binds than Menus, but they are more important)
+	// 6. Query Menus (Least important keybinds, and potentially the fewest in number for users with a lot of tools/macros/actions)
+	if (sig == INPUT_KEY_S_CTRL)
 	{
-		renderCanvas_toFile();
+		renderCanvas_toFile(ui.get()->getCanvas());
+	}
+	if (sig == INPUT_KEY_D) // D
+	{
+		ui.get()->resetFGBGColor(black, white);
+	}
+	if (sig == INPUT_KEY_X) // X
+	{
+		ui.get()->swapFGBGColor();
 	}
 }
 
@@ -759,12 +915,43 @@ bool Application::isValidKeybind_tool(int modKey, int glfwKey)
 		isKeySig_delete(keySig) ||
 		isKeySig_pagination(keySig) ||
 		isKeySig_enterTabBackInsert(keySig) ||
-		isKeySig_space(keySig) ||
 		isKeySig_outOfBounds(keySig))
 	{
 		return false;
 	}
 	return true;
+}
+bool Application::isValidKeybind_alphaOnly(int modKey, int glfwKey)
+{
+	if (modKey > 0) { return false; }
+	int keySig = (glfwKey * 10) + modKey;
+	if (isKeySig_alphaOnly(keySig))
+	{
+		return true;
+	}
+	return false;
+}
+bool Application::isValidKeybind_symbolOrChar(int modKey, int glfwKey)
+{
+	if (modKey > 0) { return false; }
+	int keySig = (glfwKey * 10) + modKey;
+	if (isKeySig_alphaOnly(keySig) ||
+		isKeySig_numericOnly(keySig) ||
+		isKeySig_punctuation(keySig))
+	{
+		return true;
+	}
+	return false;
+}
+bool Application::isValidKeybind_modOnly(int modKey, int glfwKey)
+{
+	if (modKey == 0) { return false; }
+	int keySig = (glfwKey * 10) + modKey;
+	if (isKeySig_modKey(keySig))
+	{
+		return true;
+	}
+	return false;
 }
 
 // Update the Mouse Buffer
@@ -988,6 +1175,7 @@ void Application::clickEventHandler(int button, int action, MouseEvent mouseEven
 	// 1a. Allow the input functions to reject bad data when starting a new input
 	// 1b. Also allow accounting for tools that should not update the cursor through their I/O functions
 	//int i = toolbox->getActiveTool()->getInput()->click(mouseEvent);
+	if (ui.get()->activeCanvas == nullptr) { return; }
 	int i = toolbox->sendClick(this, mouseEvent);
 	switch (i)
 	{
@@ -1129,6 +1317,12 @@ void Application::mousePosEventHandler(MouseEvent mouseEvent)
 	}
 }
 
+void Application::mouseScrollEventHandler(MouseEvent mouseEvent)
+{
+	// Widget Collision & Intercept
+
+	// Canvas Intercept (Pan camera up/down)
+}
 
 // Color Functions
 CColor Application::sampleScreen(int x, int y)

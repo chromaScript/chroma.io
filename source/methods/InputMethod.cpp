@@ -1,5 +1,6 @@
 #include "../include/methods/InputMethod.h"
 #include "../include/ToolSettings.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/Tool.h"
 
 #ifndef APPLICATION_H
@@ -18,7 +19,7 @@
 
 bool InputMethod::continuousMove(Application* sender, MouseEvent dat, 
 	TSet_ContinuousControl* continuousControl, TSet_Smoothing* smoothing,
-	bool useSplineData, glm::vec3& outPos, glm::vec3 &outDir)
+	bool useSplineData, float vertexSpacing, glm::vec3& outPos, glm::vec3 &outDir)
 {
 	VertexData* target = (useSplineData) ? &splineData : &fragData;
 	
@@ -117,8 +118,8 @@ bool InputMethod::continuousMove(Application* sender, MouseEvent dat,
 	}
 
 
-	// Return and do not add an anchor if the length is less than the diagonal of 1 pixel * anchorSpacing
-	if (length < ROOT2 * continuousControl->anchorSpacing) { return false; }
+	// Return and do not add an anchor if the length is less than the diagonal of 1 pixel * vertexSpacing
+	if (length < ROOT2 * vertexSpacing) { return false; }
 	if (continuousControl->activated)
 	{
 		glm::vec3 perpLineP2 = outPos + (continuousControl->perpendicular * 100.0f);
@@ -131,7 +132,7 @@ bool InputMethod::continuousMove(Application* sender, MouseEvent dat,
 		// Must recheck the length again after adjustment, otherwise the input gets sluggish as it piles
 		// up anchors on top of eachother
 		length = glm::length(outPos - target->anchors.back().pos);
-		if (length < ROOT2 * continuousControl->anchorSpacing) { return false; }
+		if (length < ROOT2 * vertexSpacing) { return false; }
 	}
 	else
 	{

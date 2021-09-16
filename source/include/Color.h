@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <glm.hpp>
+#include <iostream>
 
 struct CColor_hsl
 {
@@ -27,6 +28,12 @@ struct CColor_hsl
 		s = saturationPercent;
 		l = luminancePercent;
 		a = alpha;
+	}
+	void mixColor(CColor_hsl* second, float amount)
+	{
+		this->h = lerpd(this->h, second->h, (double)amount);
+		this->s = lerpd(this->s, second->s, (double)amount);
+		this->l = lerpd(this->l, second->l, (double)amount);
 	}
 };
 
@@ -100,6 +107,16 @@ struct CColor
 	glm::vec4 makeVec4()
 	{
 		return glm::vec4(r, g, b, a);
+	}
+	void mixColor(CColor* second, float amount)
+	{
+		this->r = lerpf(this->r, second->r, amount);
+		this->g = lerpf(this->g, second->g, amount);
+		this->b = lerpf(this->b, second->b, amount);
+	}
+	float makeGreyscale()
+	{
+		return clampf((this->r * 0.21) + (this->g * 0.72) + (this->b * 0.07), 0, 1);
 	}
 };
 
@@ -193,6 +210,7 @@ inline double HSL_conversionTest(double tempC, double temp1, double temp2)
 		}
 	}
 }
+
 // Convert vec3 RGB as 0-1 double, to HSL, with HSL output as Degree, Percent, Percent
 inline CColor_hsl RGB_toHSL(glm::dvec3 input)
 {
@@ -241,7 +259,8 @@ inline CColor_hsl RGB_toHSL(glm::dvec3 input)
 			hue = 4.0 + ((r - g) / (max - min));
 		}
 		hue *= 60.0;
-		if (hue < 0.0) { hue = 360; }
+		if (hue < 0.0) { hue = 360 + hue; }
+		else if (hue < -60.0) { hue = 360; }
 	}
 	return CColor_hsl(hue, saturation, luminance);
 }
@@ -277,6 +296,33 @@ inline CColor percentValue_toRGB(double percent)
 	float clampPercent = clampf((float)percent, 0.0f, 1.0f);
 	return CColor(clampPercent, clampPercent, clampPercent);
 }
+
+struct GradientNode
+{
+	float position = 0.0f;
+	CColor color = black;
+};
+
+struct Gradient
+{
+	std::vector<GradientNode> nodes;
+	unsigned int textureID = 0;
+	int textureResolution = 64;
+	unsigned char texture[64 * 4] = { 0 };
+	void generateTexture() 
+	{
+		for (int i = 0; i < textureResolution; i++)
+		{
+			// Generate rainbow sample
+			CColor sampleRGB = HSL_toRGB(glm::dvec3((double)i / 64.0, 1.0, 0.5));
+			CColor_uc sample = sampleRGB.makeCColor_uc();
+			texture[(i * 4)] = sample.r;
+			texture[(i * 4) + 1] = sample.g;
+			texture[(i * 4) + 2] = sample.b;
+			texture[(i * 4) + 3] = 255;
+		}
+	}
+};
 
 #endif // !COLOR_H
 

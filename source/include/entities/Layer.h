@@ -7,6 +7,8 @@
 #include "../Shader.h"
 #include "../Color.h"
 
+class Tool;
+
 #include <vector>
 
 class Layer : public VisualEntity
@@ -30,7 +32,9 @@ public:
 	void clearLocks();
 	LayerProperties getProperties();
 	// Container Functions
-	std::shared_ptr<Stroke> createNewStroke(std::shared_ptr<Shader> shader, TSet_Basic* basic, TSet_Image* image, TSet_Alpha* alpha);
+	std::shared_ptr<Stroke> createNewStroke(std::shared_ptr<Shader> shader, std::shared_ptr<Tool> tool);
+	// Management Functions
+	bool clearLayer();
 	// Render f\Functions
 	virtual void render(ShaderTransform xform, unsigned int targetBuffer) = 0;
 	virtual void draw(ShaderTransform xform) = 0;

@@ -28,8 +28,8 @@
 					<H_BOX id="fgColor"></H_BOX>
 				</V_BOX>
 				<H_BOX class="buttonContainer">
-					<IMAGE id="resetColor"></IMAGE>
-					<IMAGE id="swapColor"></IMAGE>
+					<IMAGE onclick="app.ui.resetFGBGColor();" id="resetColor"></IMAGE>
+					<IMAGE onclick="app.ui.swapFGBGColor();" id="swapColor"></IMAGE>
 				</H_BOX>
 			</V_BOX>
 			<V_BOX id="rightContainer">

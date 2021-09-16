@@ -1,6 +1,7 @@
 #include "../include/methods/In_Draw.h"
 #include "../include/methods/InputMethod.h"
 #include "../include/ToolSettings.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/Tool.h"
 
 #ifndef APPLICATION_H
@@ -23,11 +24,12 @@ int In_Draw::move(Application* sender, MouseEvent dat)
 		pos.x - fragData.anchors.back().pos.x,
 		fragData.anchors.back().pos.y - pos.y,
 		0.0f));
+	fragData.activeModKey = dat.modKey;
 
 	bool isNew = (fragData.anchors.front().flag == FLAG_NEW_INPUT) ? true : false;
 	if (controlScheme == TSetType::continuous)
 	{
-		if (!continuousMove(sender, dat, &continuous, &smoothing, false, pos, dir)) { return INPUT_WAIT; }
+		if (!continuousMove(sender, dat, &continuous, &smoothing, false, continuous.trueSpacing, pos, dir)) { return INPUT_WAIT; }
 	}
 
 	anchorIDCount++;
@@ -54,10 +56,21 @@ int In_Draw::click(Application* sender, MouseEvent dat)
 		// Clear any constraint variables, these should not remain constant between different
 		// press events of the same stroke
 		continuous.clearConstraint();
+		fragData.activeModKey = dat.modKey;
 		// Scenario in which 'Shift' is used to connect the end of the anchors to the next one
 		// Keep previous anchor data and simply continue adding to it
 		if (dat.modKey == INPUT_MOD_SHIFT)
 		{
+			// Copy new continuous data
+			switch (controlScheme)
+			{
+			case TSetType::continuous:
+			default:
+				owner.get()->getContinuousControl()->updateTrueSpacing(owner, sender->getCanvasDimensions().x, sender->getCanvasDimensions().y);
+				continuous.~TSet_ContinuousControl();
+				continuous = *owner.get()->getContinuousControl();
+				continuous.clearConstraint();
+			}
 			// Reset the end-input && end-time
 			data.end.reset();
 			fragData.endTime = 0.0;
@@ -90,13 +103,19 @@ int In_Draw::click(Application* sender, MouseEvent dat)
 			// settings were in place at that time is what the output will
 			// use to render the input. After this point, the verticies and tool settings
 			// for the output fragment may only be changed using vertex/anchor manipulation tools
+			if (owner.get()->checkInterestMask(TSetType::image)) { image = *owner.get()->getImage(); }
+			else { image.isEnabled = false; }
+			if (owner.get()->checkInterestMask(TSetType::smoothing)) { smoothing = *owner.get()->getSmoothing(); }
+			else { image.isEnabled = false; }
+
 			switch (controlScheme)
 			{
 			case TSetType::continuous:
 			default:
+				owner.get()->getContinuousControl()->updateTrueSpacing(owner, sender->getCanvasDimensions().x, sender->getCanvasDimensions().y);
 				continuous = *owner.get()->getContinuousControl();
 			}
-			smoothing = *owner.get()->getSmoothing();
+			
 			// Reset the data
 			data.reset();
 			data.start = dat;
@@ -129,6 +148,7 @@ int In_Draw::click(Application* sender, MouseEvent dat)
 	{
 		data.end = dat;
 		if (fragData.anchors.size() == 1) { fragData.anchors.back().flag = FLAG_NULL; }
+		fragData.activeModKey = dat.modKey;
 		fragData.endTime = (float)data.end.time;
 		wasHandled = INPUT_ALLOW_RELEASE;
 		std::cout << "IN_DRAW::CLICK::ALLOW_RELEASE" << std::endl;

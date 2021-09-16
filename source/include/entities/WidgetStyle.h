@@ -48,17 +48,49 @@
 #define UI_FLOATING_CENTER 1
 #define UI_FLOATING_RIGHT 2
 
-// Rendering Property Valuese
+// Rendering Property Values
 #define UI_OVERFLOW_NONE -1
 #define UI_OVERFLOW_VISIBLE 0
 #define UI_OVERFLOW_HIDDEN 1
 #define UI_OVERFLOW_SCROLL 2
 #define UI_OVERFLOW_AUTO 3
+#define UI_OVERFLOW_BLOCK 4
+#define UI_OVERFLOW_AUTOBLOCK 5
 
-// Visibility Property Valuese
+// Visibility Property Values
 #define UI_VISIBILITY_NONE -1
 #define UI_VISIBILITY_HIDE 0
 #define UI_VISIBILITY_SHOW 1
+
+// Format Property Values
+#define UI_TEXTFORMAT_DEFAULT 0
+#define UI_TEXTFORMAT_NONE 0
+#define UI_TEXTFORMAT_PERCENT_WHOLE 1
+#define UI_TEXTFORMAT_PERCENT_ALL 2
+#define UI_TEXTFORMAT_PERCENT_1D 3
+#define UI_TEXTFORMAT_PERCENT_2D 4
+#define UI_TEXTFORMAT_PERCENT_3D 5
+#define UI_TEXTFORMAT_PERCENT_4D 6
+#define UI_TEXTFORMAT_PERCENT_5D 7
+#define UI_TEXTFORMAT_PERCENT_6D 8
+#define UI_TEXTFORMAT_NUMBER_WHOLE 20
+#define UI_TEXTFORMAT_NUMBER_ALL 21
+#define UI_TEXTFORMAT_NUMBER_1D 22
+#define UI_TEXTFORMAT_NUMBER_2D 23
+#define UI_TEXTFORMAT_NUMBER_3D 24
+#define UI_TEXTFORMAT_NUMBER_4D 25
+#define UI_TEXTFORMAT_NUMBER_5D 26
+#define UI_TEXTFORMAT_NUMBER_6D 27
+#define UI_TEXTFORMAT_DEGREE_WHOLE 30
+#define UI_TEXTFORMAT_DEGREE_ALL 31
+#define UI_TEXTFORMAT_DEGREE_1D 32
+#define UI_TEXTFORMAT_DEGREE_2D 33
+#define UI_TEXTFORMAT_DEGREE_3D 34
+#define UI_TEXTFORMAT_DEGREE_4D 35
+#define UI_TEXTFORMAT_DEGREE_5D 36
+#define UI_TEXTFORMAT_DEGREE_6D 37
+#define UI_TEXTFORMAT_UPPERCASE 81
+#define UI_TEXTFORMAT_LOWERCASE 82
 
 struct CBorder
 {
@@ -192,6 +224,7 @@ public:
 	int overflowY; // Whether overflow should be clipped to the widget in rendering
 	std::filesystem::path fontPath;
 	int fontSize;
+	int textFormat;
 	std::map<unsigned char, CColor> vertexColor;
 	// Constructor
 	WidgetStyle();
@@ -242,6 +275,7 @@ public:
 	void evaluateAnchoringProperty(int& anchoring, std::string* value);
 	void evaluateFloatingProperty(int& floating, std::string* value);
 	void evaluateVisibilityProperty(int& visibility, std::string* value);
+	void evaluateTextFormatProperty(int& position, std::string* value);
 	void evaluateOverflowProperty(int& overflow, std::string* value);
 	void evaluateDoubleOverflowProperty(int& overflowX, int& overflowY, std::string* value);
 	void evaluateBoolProperty(bool& prop, std::string* value, bool defaultValue);

@@ -12,6 +12,8 @@ protected:
 public:
 	In_NoInput(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
 	{
+		this->type = MethodType::noInput;
+		this->name = "No Input";
 	}
 	virtual int move(Application* sender, MouseEvent dat)
 	{

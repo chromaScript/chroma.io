@@ -1,0 +1,804 @@
+num interestHeight = 16;
+
+array num toolSettingPosOffset = {0, 0};
+num tsf_interestWidth = 116;
+num tsf_minWidth = 480;
+num tsf_minHeight = 230;
+num tsf_settingsLine_height = 18;
+num tsf_inputSlider_minMax_width = 6;
+num tsf_scrollbar_height = 18;
+num tsf_bodyScroll_height = 32;
+num tsf_effects_height = 90;
+num tsf_listBox_dragBarHeight = 12;
+num tsf_effects_mousePos = 0;
+
+bool tsf_isHidden = false;
+
+num meta_storeKeyMod = -1;
+num meta_storeKey = -1;
+array num meta_alphaKeys = {0, 0, 0, 0};
+num meta_alphaIndex = 0;
+
+num modOnly_storeKeyMod = -1;
+num modOnly_storeKey = -1;
+num modOnly_key_targetKeyID = -1;
+
+bool sliderBeingDragged = false;
+
+num tsf_currentSettingsPage = 0;
+
+num currentMaxTop = 0;
+num currentSlideBoxHeight = 0;
+
+num currentMaxLeft = 0;
+num currentMin = 0;
+num currentMax = 0;
+bool isMinDrag = false;
+
+string bindTypeStore = "STANDARD";
+string inputStore = "NO INPUT";
+string controlStore = "USE DEFAULT";
+string outputStore = "NO OUTPUT";
+string cursorHoverStore = "POINTER";
+string cursorPressStore = "POINTER";
+
+string lastControlPage = "";
+
+string activeEffectsID = "";
+num activeEffectsToggleID = 0;
+
+void tsf_dragBodyScroll(num selector)
+{
+	num ypos = getMousePos_relative()[1];
+	if (selector == 0)
+	{
+		sliderBeingDragged = true;
+		currentMaxTop = getProperty("size-Y");
+		currentSlideBoxHeight = app.ui.getWidget_byID("tsf_settingsContainer").getProperty("size-Y");
+	}
+	else if (selector == 1)
+	{
+		// Fix ypos value
+		ypos = clamp(ypos, 0, currentMaxTop - tsf_bodyScroll_height);
+		
+		setChildProperty_byID("tsf_body_scrollBar", "top", ypos);
+		num topPos = (ypos / (currentMaxTop - tsf_bodyScroll_height)) * (clamp(currentSlideBoxHeight - 40, 0, 3000));
+		app.ui.getWidget_byID("tsf_settingsContainer").setProperty("margin-top", -topPos);
+	}
+	else if (selector == 2)
+	{
+		sliderBeingDragged = false;
+	}
+}
+
+void tsf_hoverInterest(num switch)
+{
+	if (switch == 0)
+	{
+		setChildProperty_byType("TEXT", "fill-color", highMidGrey);
+	}
+	else if (switch == 1)
+	{
+		setChildProperty_byType("TEXT", "fill-color", offWhite);
+	}
+}
+
+void tsf_clickInterest(num page, string activeWidgetID)
+{
+	print clock();
+	setClassProperty("tsf_interestName", "background-color", global::darkGreyLight);
+	setClassProperty("tsf_settingsBlockWrapper", "visibility", "hidden");
+	
+	// Metadata and Control Interest Handling
+	if (page >= 0 && page <= 10)
+	{
+		if (page == 0)
+		{
+			tsf_currentSettingsPage = 0;
+			app.ui.getWidget_byID("tsf_interestMetadata").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_meta();
+		}
+		else if (page == 1)
+		{
+			tsf_currentSettingsPage = 1;
+			app.ui.getWidget_byID("tsf_interestControl_continuous").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_continuous();
+		}
+		else if (page == 2)
+		{
+			tsf_currentSettingsPage = 2;
+			app.ui.getWidget_byID("tsf_interestControl_drag").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_drag();
+		}
+		else if (page == 3)
+		{
+			tsf_currentSettingsPage = 3;
+			app.ui.getWidget_byID("tsf_interestControl_onePoint").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_onepoint();
+		}
+		else if (page == 4)
+		{
+			tsf_currentSettingsPage = 4;
+			app.ui.getWidget_byID("tsf_interestControl_twoPoint").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_twopoint();
+		}
+		else if (page == 5)
+		{
+			tsf_currentSettingsPage = 5;
+			app.ui.getWidget_byID("tsf_interestControl_threePoint").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_threepoint();
+		}
+		else if (page == 6 && app.toolbox.checkActiveToolSettingsMask("zoom"))
+		{
+			tsf_currentSettingsPage = 6;
+			app.ui.getWidget_byID("tsf_interestControl_zoom").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_zoom();
+		}
+		else if (page == 7)
+		{
+			tsf_currentSettingsPage = 7;
+			app.ui.getWidget_byID("tsf_interestControl_pan").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_pan();
+		}
+		else if (page == 8 && app.toolbox.checkActiveToolSettingsMask("rotate"))
+		{
+			tsf_currentSettingsPage = 8;
+			app.ui.getWidget_byID("tsf_interestControl_rotate").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_rotate();
+		}
+		else if (page == 9)
+		{
+			tsf_currentSettingsPage = 9;
+			app.ui.getWidget_byID("tsf_interestControl_sampler").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_sampler();
+		}
+	}
+	// Input Specific Interest Handling
+	else if (page >= 30 && page <= 50)
+	{
+		if (page == 30)
+		{
+			tsf_currentSettingsPage = 30;
+			app.ui.getWidget_byID("tsf_interestRake").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_rake();
+		}
+	}
+	// Generic Interest Handling
+	else if (page > 10 && page < 30)
+	{
+		if (page == 11 && app.toolbox.checkActiveToolSettingsMask("basic"))
+		{
+			tsf_currentSettingsPage = 11;
+			app.ui.getWidget_byID("tsf_interestBasic").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_basic();
+		}
+		else if (page == 12 && app.toolbox.checkActiveToolSettingsMask("image"))
+		{
+			tsf_currentSettingsPage = 12;
+			app.ui.getWidget_byID("tsf_interestImage").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_image();
+		}
+		else if (page == 13 && app.toolbox.checkActiveToolSettingsMask("character"))
+		{
+			tsf_currentSettingsPage = 13;
+			app.ui.getWidget_byID("tsf_interestCharacter").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_character();
+		}
+		else if (page == 15 && app.toolbox.checkActiveToolSettingsMask("alpha"))
+		{
+			tsf_currentSettingsPage = 15;
+			app.ui.getWidget_byID("tsf_interestAlpha").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_alpha();
+		}
+		else if (page == 16 && app.toolbox.checkActiveToolSettingsMask("color"))
+		{
+			tsf_currentSettingsPage = 16;
+			app.ui.getWidget_byID("tsf_interestColor").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_color();
+		}
+		else if (page == 17 && app.toolbox.checkActiveToolSettingsMask("scatter"))
+		{
+			tsf_currentSettingsPage = 17;
+			app.ui.getWidget_byID("tsf_interestScatter").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_scatter();
+		}
+		else if (page == 24 && app.toolbox.checkActiveToolSettingsMask("effects"))
+		{
+			tsf_currentSettingsPage = 24;
+			app.ui.getWidget_byID("tsf_interestEffects").setChildProperty_byClass("tsf_interestName", "background-color", global::midMidGrey);
+			update_effects();
+		}
+	}
+	
+	
+	print clock();
+}
+
+void setToolData_Meta(num settingSig, num subSig, bool isEntry)
+{
+	if (settingSig == 0)
+	{
+		if (isEntry) 
+		{
+			app.toolbox.setActiveToolProp(0, -1, toNum(app.ui.getWidget_byID("tsf_meta_ID").getProperty("value")), false);
+		}
+		else { app.ui.getWidget_byID("tsf_meta_ID").setProperty("value", toString(app.toolbox.getActiveToolProp(0, -1, false, false))); }
+	}
+	else if (settingSig == 3)
+	{
+		if (isEntry) 
+		{
+			app.toolbox.setActiveToolProp(3, -1, toString(app.ui.getWidget_byID("tsf_meta_name").getProperty("value")), false);
+		}
+		else { app.ui.getWidget_byID("tsf_meta_name").setProperty("value", toString(app.toolbox.getActiveToolProp(3, -1, false, false))); }
+	}
+	else if (settingSig == 16)
+	{
+		if (isEntry)
+		{
+			app.toolbox.setActiveToolProp(16, -1, toString(app.ui.getWidget_byID("tsf_meta_category").getProperty("value")), false);
+		}
+		else { app.ui.getWidget_byID("tsf_meta_category").setProperty("value", toString(app.toolbox.getActiveToolProp(16, -1, false, false))); }
+	}
+	else if (settingSig == 18)
+	{
+		if (isEntry)
+		{
+			app.toolbox.setActiveToolProp(18, -1, toString(app.ui.getWidget_byID("tsf_meta_date").getProperty("value")), false);
+		}
+		else { app.ui.getWidget_byID("tsf_meta_date").setProperty("value", toString(app.toolbox.getActiveToolProp(18, -1, false, false))); }
+	}
+	else if (settingSig == 19)
+	{
+		if (isEntry)
+		{
+			app.toolbox.setActiveToolProp(19, -1, toString(app.ui.getWidget_byID("tsf_meta_author").getProperty("value")), false);
+		}
+		else { app.ui.getWidget_byID("tsf_meta_author").setProperty("value", toString(app.toolbox.getActiveToolProp(19, -1, false, false))); }
+	}
+}
+
+void tsf_toggleInterest(string interestName)
+{
+	if (interestName == "" || interestName == "null") { return; }
+	if (app.toolbox.getActiveToolInterest(interestName))
+	{
+		app.toolbox.setActiveToolInterest(interestName, false);
+		setChildProperty_byClass("tsf_interestCheck", "fill-color", global::slateGrey);
+	}
+	else
+	{
+		app.toolbox.setActiveToolInterest(interestName, true);
+		setChildProperty_byClass("tsf_interestCheck", "fill-color", global::midGrey);
+	}
+}
+
+void tsf_hoverInterestCheck(num selector, string interestName)
+{
+	if (selector == 0)
+	{
+		setProperty("fill-color", global::highMidGrey);
+	}
+	else if (selector == 1)
+	{
+		bool interest = app.toolbox.getActiveToolInterest(interestName);
+		if (interest)
+		{
+			setProperty("fill-color", global::midGrey);
+		}
+		else
+		{
+			setProperty("fill-color", global::slateGrey);
+		}
+	}
+}
+
+void tsf_toggleSetting(num settingID)
+{
+	bool settingValue = app.toolbox.getActiveToolProp(settingID, -1, false, false);
+	if (settingValue)
+	{
+		setProperty("fill-color", global::darkGrey);
+		app.toolbox.setActiveToolProp(settingID, -1, false, false);
+	}
+	else
+	{
+		setProperty("fill-color", global::midGrey);
+		app.toolbox.setActiveToolProp(settingID, -1, true, false);
+	}
+}
+
+void tsf_hoverToggle(num selector, num settingID)
+{
+	if (selector == 0)
+	{
+		setProperty("fill-color", global::highMidGrey);
+	}
+	else if (selector == 1)
+	{
+		bool result = app.toolbox.getActiveToolProp(settingID, -1, false, false);
+		if (result)
+		{
+			setProperty("fill-color", global::midGrey);
+		}
+		else
+		{
+			setProperty("fill-color", global::slateGrey);
+		}
+	}
+}
+
+void tsf_fx_sideButton(num selector)
+{
+	if (selector == 0)
+	{
+		setProperty("background-color", global::highMidGrey);
+	}
+	else if (selector == 1)
+	{
+		setProperty("background-color", global::darkGreyLight);
+	}
+	else if (selector == 2)
+	{
+		print "applesauce";
+		setChildProperty_byClass("tsf_lisBox_sideButtonImg", "fill-color", global::midGrey);
+	}
+}
+
+void tsf_fx_sizeBar(num selector)
+{
+	if (selector == 0)
+	{
+		sliderBeingDragged = true;
+		tsf_effects_height = app.ui.getWidget_byID("tsf_effects_listWrapper").getProperty("size-Y");
+		tsf_effects_mousePos = getMousePos()[1];
+	}
+	else if (selector == 1)
+	{
+		num ypos = getMousePos()[1];
+		num height = clamp(tsf_effects_height - (tsf_effects_mousePos - ypos), tsf_listBox_dragBarHeight * 2, 250);
+		app.ui.getWidget_byID("tsf_effects_listWrapper").setProperty("height", height);
+		app.ui.getWidget_byID("tsf_effects_sizeBarWrapper").setProperty("top", height - tsf_listBox_dragBarHeight);
+	}
+	else if (selector == 2)
+	{
+		sliderBeingDragged = false;
+		tsf_effects_height = app.ui.getWidget_byID("tsf_effects_listWrapper").getProperty("size-Y");
+	}
+}
+
+void tsf_updateCheckbox(string widgetID, num settingID, num subID)
+{
+	bool result = app.toolbox.getActiveToolProp(settingID, subID, false, false);
+	if (result)
+	{
+		app.ui.getWidget_byID(widgetID).setProperty("value", "on");
+		app.ui.getWidget_byID(widgetID).setProperty("fill-color", global::midGrey);
+	}
+	else
+	{
+		app.ui.getWidget_byID(widgetID).setProperty("value", "off");
+		app.ui.getWidget_byID(widgetID).setProperty("fill-color", global::darkGrey);
+	}
+}
+
+void movePanel(num select)
+{
+	if (select == 0)
+	{
+		toolSettingPosOffset = getMousePos_relative();
+	}
+	else if (select == 1)
+	{
+		array num pos = getMousePos();
+		app.ui.getWidget_byID("tsf_wrapper").setPosition(pos[0] - toolSettingPosOffset[0], pos[1] - toolSettingPosOffset[1]);
+	}
+}
+
+void tsf_meta_getKey()
+{
+	meta_storeKeyMod = global::keyCap_modBitStore;
+	meta_storeKey = global::keyCap_keyStore;
+	app.toolbox.setActiveToolProp(21, -1, makeKeySig(meta_storeKeyMod, meta_storeKey), false);
+}
+
+void tsf_modOnly_getKey()
+{
+	modOnly_storeKeyMod = global::keyCap_modBitStore;
+	modOnly_storeKey = global::keyCap_keyStore;
+	app.toolbox.setActiveToolProp(modOnly_key_targetKeyID, -1, modOnly_storeKeyMod, false);
+}
+
+void tsf_removeBinding(num settingID, num subID, string textID)
+{
+	app.toolbox.setActiveToolProp(settingID, subID, 0, false);
+	app.ui.getWidget_byID(textID).setProperty("value", keyToString(0, 0));
+}
+
+void tsf_meta_getAlphaKey()
+{
+	
+}
+
+void hoverDropOptions(num type, num switch, string value, string parentID)
+{
+	if (switch == 0)
+	{
+		app.ui.getWidget_byID(parentID).setChildProperty_byClass("tsf_dropText", "fill-color", global::midGrey);
+		app.ui.getWidget_byID(parentID).setChildProperty_byClass("tsf_dropItem", "background-color", global::darkGrey);
+		
+		if (type <= 2)
+		{
+			string input = app.ui.getWidget_byID("tsf_meta_inputMethod").getProperty("value");
+			string control = app.ui.getWidget_byID("tsf_meta_controlScheme").getProperty("value");
+			string output = app.ui.getWidget_byID("tsf_meta_outputMethod").getProperty("value");
+			
+			bool result = true;
+			if (type == 0 && outputStore != "NO OUTPUT")
+			{
+				if (!app.toolbox.checkValidIOCombination(value, outputStore)) { result = false; }
+			}
+			else if (type == 1 && inputStore != "NO INPUT")
+			{
+				if (!app.toolbox.checkValidControlScheme(inputStore, value)) { result = false; }
+			}
+			else if (type == 2 && inputStore != "NO INPUT")
+			{
+				if (!app.toolbox.checkValidIOCombination(inputStore, value)) { result = false; }
+			}
+			
+			// Use the result to determine background color
+			if (!result)
+			{
+				setChildProperty_byType("TEXT", "fill-color", global::darkGrey);
+				setProperty("background-color", global::redButtonBG);
+			}
+			else
+			{
+				setChildProperty_byType("TEXT", "fill-color", global::lightGrey);
+				setProperty("background-color", global::midGrey);
+			}
+		}
+		else
+		{
+			setChildProperty_byType("TEXT", "fill-color", global::lightGrey);
+			setProperty("background-color", global::midGrey);
+		}
+	}
+	else if (switch == 1)
+	{
+		app.ui.getWidget_byID(parentID).setChildProperty_byClass("tsf_dropText", "fill-color", global::lightGrey);
+		app.ui.getWidget_byID(parentID).setChildProperty_byClass("tsf_dropItem", "background-color", global::darkGrey);
+	}
+}
+
+void clickDropOption(num type, string valueIn, bool setToolProp)
+{
+	// print valueIn;
+	if (type == 0)
+	{
+		if (outputStore != "NO OUTPUT")
+		{
+			if (!app.toolbox.checkValidIOCombination(valueIn, outputStore)) { return; }
+		}
+		inputStore = valueIn;
+		app.ui.getWidget_byID("tsf_meta_inputMethod").setProperty("value", valueIn);
+	}
+	else if (type == 1)
+	{
+		if (inputStore != "NO INPUT")
+		{
+			if (!app.toolbox.checkValidControlScheme(inputStore, valueIn)) { return; }
+		}
+		controlStore = valueIn;
+		app.ui.getWidget_byID("tsf_meta_controlScheme").setProperty("value", valueIn);
+	}
+	else if (type == 2)
+	{
+		if (inputStore != "NO OUTPUT")
+		{
+			if (!app.toolbox.checkValidIOCombination(inputStore, valueIn)) { return; }
+		}
+		outputStore = valueIn;
+		app.ui.getWidget_byID("tsf_meta_outputMethod").setProperty("value", valueIn);
+	}
+	else if (type == 3)
+	{
+		cursorHoverStore = valueIn;
+		app.ui.getWidget_byID("tsf_meta_cursorHover").setProperty("value", valueIn);
+		app.toolbox.setActiveToolProp(24, -1, valueIn, false);
+	}
+	else if (type == 4)
+	{
+		cursorPressStore = valueIn;
+		app.ui.getWidget_byID("tsf_meta_cursorPress").setProperty("value", valueIn);
+		app.toolbox.setActiveToolProp(25, -1, valueIn, false);
+	}
+	else if (type == 5)
+	{
+		setClassProperty("tsf_bindOption", "visibility", "hide");
+		if (valueIn == "STANDARD")
+		{
+			app.ui.getWidget_byID("tsf_meta_bindStandard").setProperty("visibility", "show");
+			if (setToolProp) { app.toolbox.setActiveToolProp(20, -1, 0, false); }
+		}
+		else if (valueIn == "ALPHABET")
+		{
+			app.ui.getWidget_byID("tsf_meta_bindAlphabet").setProperty("visibility", "show");
+			if (setToolProp) { app.toolbox.setActiveToolProp(20, -1, 1, false); }
+		}
+		else if (valueIn == "SWITCH")
+		{
+			app.ui.getWidget_byID("tsf_meta_bindSwitch").setProperty("visibility", "show");
+			if (setToolProp) { app.toolbox.setActiveToolProp(20, -1, 2, false); }
+		}
+
+		bindTypeStore = valueIn;
+		app.ui.getWidget_byID("tsf_meta_bindType").setProperty("value", valueIn);
+	}
+	setClassProperty("tsf_dropText", "fill-color", global::lightGrey);
+}
+
+void dragScrollbar(num type, string boxID)
+{
+	num ypos = getMousePos_relative()[1];
+	if (type == 0)
+	{
+		sliderBeingDragged = true;
+		currentMaxTop = getProperty("size-Y");
+		currentSlideBoxHeight = app.ui.getWidget_byID(boxID).getProperty("size-Y");
+	}
+	else if (type == 1)
+	{
+		// Fix xpos value and establish left position with snapping
+		ypos = clamp(ypos, 0, currentMaxTop - tsf_scrollbar_height);
+		
+		setChildProperty_byClass("tsf_listBox_scrollBar", "top", ypos);
+		num topPos = (ypos / (currentMaxTop - tsf_scrollbar_height)) * (clamp(currentSlideBoxHeight - 40, 0, 3000));
+		app.ui.getWidget_byID(boxID).setProperty("top", -topPos);
+	}
+	else if (type == 2)
+	{
+		sliderBeingDragged = false;
+	}
+}
+
+void dragSingleSlider(num type, num select, bool updateText, string textID)
+{
+	num xpos = getMousePos_relative()[0];
+	
+	if (type == 0)
+	{
+		sliderBeingDragged = true;
+		currentMaxLeft = getProperty("size-X");
+	}
+	else if (type == 1)
+	{
+		// Fix xpos value and establish left position with snapping
+		xpos = clamp(xpos, 0, currentMaxLeft - tsf_inputSlider_minMax_width);
+		num pos = (currentMaxLeft - tsf_inputSlider_minMax_width) / 2;
+		if (xpos <= pos - 2 || xpos >= pos + 2) { pos = xpos; }
+		
+		setChildProperty_byClass("tsf_inputSlider_single", "left", pos);
+		app.toolbox.setActiveToolProp(select, -1, pos / (currentMaxLeft - tsf_inputSlider_minMax_width), true);
+		
+		if (updateText)
+		{
+			app.ui.getWidget_byID(textID).setProperty("value", app.toolbox.getActiveToolProp(select, -1, false, false));
+		}
+	}
+	else if (type == 2)
+	{
+		sliderBeingDragged = false;
+	}
+}
+
+void dragMinMaxSlider(num type, num select, bool updateText, string minTextID, string maxTextID)
+{
+	num xpos = getMousePos_relative()[0];
+	num ypos = getMousePos_relative()[1];
+	
+	if (type == 0)
+	{
+		sliderBeingDragged = true;
+		currentMaxLeft = getProperty("size-X");
+		isMinDrag = ypos > (tsf_settingsLine_height / 2);
+	}
+	else if (type == 1)
+	{
+		// Fix xpos value and establish left position with snapping
+		xpos = clamp(xpos, 0, currentMaxLeft - tsf_inputSlider_minMax_width);
+		num pos = (currentMaxLeft - tsf_inputSlider_minMax_width) / 2;
+		if (xpos <= pos - 2 || xpos >= pos + 2) { pos = xpos; }
+		
+		if (isMinDrag)
+		{
+			setChildProperty_byClass("tsf_inputSlider_min", "left", pos);
+			app.toolbox.setActiveToolProp(select, -1, pos / (currentMaxLeft - tsf_inputSlider_minMax_width), true);
+		}
+		else
+		{
+			setChildProperty_byClass("tsf_inputSlider_max", "left", pos);
+			app.toolbox.setActiveToolProp(select + 1, -1, pos / (currentMaxLeft - tsf_inputSlider_minMax_width), true);
+		}
+		
+		if (updateText)
+		{
+			if (isMinDrag) { app.ui.getWidget_byID(minTextID).setProperty("value", app.toolbox.getActiveToolProp(select, -1, false, false)); }
+			else { app.ui.getWidget_byID(maxTextID).setProperty("value", app.toolbox.getActiveToolProp(select + 1, -1, false, false)); }
+		}
+	}
+	else if (type == 2)
+	{
+		sliderBeingDragged = false;
+	}
+}
+
+void settingsTextTrigger(num settingsID, num subID, bool isEntry)
+{
+	if (!isEntry)
+	{
+		setProperty("value", app.toolbox.getActiveToolProp(settingsID, subID, false, false));
+	}
+	else
+	{
+		app.toolbox.setActiveToolProp(settingsID, subID, toNum(getProperty("value")), false);
+		setProperty("value", app.toolbox.getActiveToolProp(settingsID, subID, false, false));
+	}
+}
+
+void settingsTextTrigger_slider(num settingsID, num subID, bool isEntry, string sliderID, string sliderBoxID)
+{
+	if (!isEntry)
+	{
+		setProperty("value", app.toolbox.getActiveToolProp(settingsID, subID, false, false));
+	}
+	else
+	{
+		app.toolbox.setActiveToolProp(settingsID, subID, toNum(getProperty("value")), false);
+		setProperty("value", app.toolbox.getActiveToolProp(settingsID, subID, false, false));
+	}
+	currentMaxLeft = app.ui.getWidget_byID(sliderBoxID).getProperty("size-X");
+	
+	app.ui.getWidget_byID(sliderID).setProperty("left", 
+		app.toolbox.getActiveToolProp(settingsID, subID, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
+}
+
+void toggleEffectsDrop(num selector)
+{
+	if (selector == 0)
+	{
+		app.ui.getWidget_byID("tsf_fx_button_addFX").setProperty("fill-color", global::lightGrey);
+		app.ui.getWidget_byID("tsf_effects_dropListCont").setProperty("visibility", "visible");
+		app.ui.getWidget_byID("tsf_effects_dropListCont").rebuildOutofBoundsWidgets();
+		app.ui.setFocus_byID("tsf_effects_dropListCont");
+		app.ui.preventBlurCallback();
+	}
+	else if (selector == 2 || selector == 3)
+	{
+		if (selector != 3 && hitTestWidget_byID("tsf_effects_dropListCont")) { return; }
+		app.ui.getWidget_byID("tsf_fx_button_addFX").setProperty("fill-color", global::midGrey);
+		app.ui.getWidget_byID("tsf_effects_dropListCont").setProperty("visibility", "hidden");
+		app.ui.getWidget_byID("tsf_effects_dropListCont").rebuildOutofBoundsWidgets();
+	}
+}
+
+void hoverEffectsDrop(num selector)
+{
+	if (selector == 0)
+	{
+		setProperty("background-color", global::lowMidGrey);
+	}
+	else if (selector == 1)
+	{
+		
+		setProperty("background-color", global::darkGreyLight);
+	}
+}
+
+void addListItem_effects(string toggleID, num toggleSettingID)
+{
+	string childID = getProperty("value");
+	string checkVis = app.ui.getWidget_byID(childID).getProperty("visibility");
+	if (checkVis != "hide") { return; }
+	app.ui.getWidget_byID(childID).setProperty("visibility", "visible");
+	app.toolbox.setActiveToolProp(8098, -2, childID, false);
+	
+	tsf_updateCheckbox(toggleID, toggleSettingID, -1);
+	app.ui.sortTargetWidgetChildren_byMacro("tsf_effects_scrollBox_list", "id", "effectsOrdering", true);
+	
+	toggleEffectsDrop(3);
+}
+
+void deleteEffectsItem(num selector)
+{
+	if (selector == 0 && activeEffectsID != "")
+	{
+		setChildProperty_byClass("tsf_lisBox_sideButtonImg", "fill-color", global::lightGrey);
+		app.toolbox.setActiveToolProp(activeEffectsToggleID, -1, false, false);
+		
+		array string childIDList = app.ui.getWidget_byID("tsf_effects_scrollBox_list").getChildrenProperties("id", true);
+		
+		app.toolbox.setActiveToolProp(8098, -1, childIDList, false);
+		print clock();
+		app.ui.sortTargetWidgetChildren_byMacro("tsf_effects_scrollBox_list", "id", "effectsOrdering", true);
+		print clock();
+	}
+}
+
+void moveEffectsItem(num amount)
+{
+
+	if (activeEffectsID == "") { return; }
+	setChildProperty_byClass("tsf_lisBox_sideButtonImg", "fill-color", global::lightGrey);
+	app.ui.getWidget_byID("tsf_effects_scrollBox_list").setChildOrder_byID(activeEffectsID, amount, true, false);
+	// Update the effects ordering!
+	array string childIDList = app.ui.getWidget_byID("tsf_effects_scrollBox_list").getChildrenProperties("id", true);
+	//print childIDList;
+	if (vecSize(childIDList) != 0)
+	{
+		app.toolbox.setActiveToolProp(8098, -1, childIDList, false);
+	}
+
+}
+
+void toggleEffectsItem()
+{
+	num settingID = toNum(getProperty("value"));
+	bool settingValue = app.toolbox.getActiveToolProp(settingID, -1, false, false);
+	if (settingValue)
+	{
+		setProperty("fill-color", global::darkGrey);
+		app.toolbox.setActiveToolProp(settingID, -1, false, false);
+	}
+	else
+	{
+		setProperty("fill-color", global::lightGrey);
+		app.toolbox.setActiveToolProp(settingID, -1, true, false);
+	}
+}
+
+void hoverEffectsItem(num selector)
+{
+	if (selector == 0) {
+		if (getProperty("value") == "inactive"){
+			setProperty("background-color-alpha", 0.4);
+		}
+		else{
+			setProperty("background-color-alpha", 0.8);
+		}
+	}
+	else if (selector == 1)
+	{
+		if (getProperty("value") == "inactive"){
+			setProperty("background-color-alpha", 0.2);
+		}
+		else{
+			setProperty("background-color-alpha", 0.6);
+		}
+	}
+}
+
+void clickEffectsItem(string bodyID, num toggleSettingSig)
+{
+	activeEffectsID = getProperty("id");
+	activeEffectsToggleID = toggleSettingSig;
+	
+	setClassProperty("tsf_listBox_item", "background-color-alpha", 0.2);
+	setClassProperty("tsf_listBox_item", "value", "inactive");
+	
+	setProperty("background-color-alpha", 0.6);
+	setProperty("value", "active");
+	update_fxBody(bodyID);
+}
+
+void clearActiveEffectsItem()
+{
+	activeEffectsID = ""; activeEffectsToggleID = 0;
+	
+	setClassProperty("tsf_listBox_item", "background-color-alpha", 0.2);
+	setClassProperty("tsf_listBox_item", "value", "inactive");
+	setClassProperty("tsf_bodyFX", "visibility", "hidden");
+}
+
+bindCallbackEvent("toolSwitch", "tsf_toolSwitch", updateToolData);

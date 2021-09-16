@@ -29,6 +29,7 @@ protected:
 	std::shared_ptr<Shader> shader;
 
 	// Data variables
+	bool didInitializeData = false;
 	unsigned char* data = nullptr; // Raster data for the layer (Non-recoverable with undo/history)
 	unsigned char* composite = nullptr; // Preview data for the layer (Composite is made when layer is out of focus, for preview/faster rendering)
 
@@ -88,10 +89,14 @@ public:
 	std::shared_ptr<Shader> getShader();
 	void generateBuffers(unsigned int* va, unsigned int* vb, unsigned int* eb, unsigned int* tx0);
 	void generateBuffers(unsigned int* va, unsigned int* vb, unsigned int* eb);
+	void deleteBuffers();
 	virtual void bindBuffers();
 	virtual void bindTexture(int width, int height);
 	virtual void render(ShaderTransform xform, unsigned int targetBuffer) = 0;
 	virtual void draw(ShaderTransform xform) = 0;
+
+	// Utilities
+	unsigned int bindTexture_utility(int channelCount, int width, int height, unsigned int& texID, unsigned char* data);
 };
 
 #endif

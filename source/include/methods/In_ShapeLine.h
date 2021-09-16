@@ -3,6 +3,7 @@
 
 #include "InputMethod.h"
 #include "../ToolSettings.h"
+#include "../toolSettings/ToolSettings_Forward.h"
 
 #include <glm.hpp>
 class Application;
@@ -18,13 +19,24 @@ protected:
 public:
 	In_ShapeLine(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
 	{
+		this->type = MethodType::shapeLine;
 		if (this->controlScheme == TSetType::usedefault) { this->controlScheme = TSetType::drag; }
-		interestMask = { TSetType::basic, TSetType::image, TSetType::polygon, TSetType::alpha };
+		interestMask = { 
+			TSetType::basic, 
+			TSetType::image, 
+			TSetType::character,
+			TSetType::polygon, 
+			TSetType::alpha,
+			TSetType::color,
+			TSetType::scatter,
+			TSetType::effects
+		};
 		fragData.constantSize = false;
 		fragData.linearStream = false;
 		fragData.connectEnds = true;
 		this->maxBufferLength = 10;
 		this->anchorIDCount = 0;
+		this->name = "Shape Line";
 	};
 	virtual int move(Application* sender, MouseEvent dat);
 	virtual int click(Application* sender, MouseEvent dat);

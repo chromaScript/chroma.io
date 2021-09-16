@@ -3,6 +3,7 @@
 #include "../include/Application.h"
 #include "../include/Camera.h"
 #include "../include/ToolSettings.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/Toolbox.h"
 #include "../include/Tool.h"
 
@@ -11,6 +12,7 @@
 void Out_RotateCamera::preview(Application* sender, VertexData* dat)
 {
 	if (dat->anchors.size() == 0) { return; }
+	rotate = *owner.get()->getRotate();
 	glm::vec2 p0 = glm::vec2(dat->transform.origin.x, dat->transform.origin.y);
 	glm::vec2 pA = glm::vec2(dat->anchors.front().pos.x, dat->anchors.front().pos.y);
 	glm::vec2 pB = glm::vec2(dat->anchors.back().pos.x, dat->anchors.back().pos.y);
@@ -19,7 +21,7 @@ void Out_RotateCamera::preview(Application* sender, VertexData* dat)
 	float angleA = glm::degrees(atan2(dirA.x, dirA.y));
 	float angleB = glm::degrees(atan2(dirB.x, dirB.y));
 	// 4. Find the amount to add to cameraRoll, then clamp just incase something odd happened
-	float increment = clampf((angleA - angleB), -1.0f, 1.0f);
+	float increment = clampf((angleA - angleB), -1.0f , 1.0f) * rotate.rotationSpeed;
 	//std::cout << "ROTATECAMERA::INCREMENT=" << increment << std::endl;
 	if (increment == 0) { return; }
 	// 5. Determine if snap controls are enabled
@@ -28,25 +30,25 @@ void Out_RotateCamera::preview(Application* sender, VertexData* dat)
 	{
 		sender->getCamera()->addRoll(-increment);
 	}
-	else if (snapType == INPUT_MOD_CTRL || snapType == INPUT_MOD_SHIFT || snapType == INPUT_MOD_ALT) // 45 degree // 15 degree // 5 degree
+	else if (snapType == rotate.snapAngleA_modKey || snapType == rotate.snapAngleB_modKey || snapType == rotate.snapAngleC_modKey) // 45 degree // 15 degree // 5 degree
 	{
 		// 1. Track the current virtual roll amount
 		snapRoll = snapRoll + increment;
 		//std::cout << "ROLL::=" << snapRoll << "TYPE::=" << snapType << std::endl;
-		float snapIncrement;
-		float snapAngle;
+		float snapIncrement = 45.0f;
+		float snapAngle = 0.0f;
 		// 2. Set the snap type
-		switch (snapType)
+		if (snapType == rotate.snapAngleA_modKey)
 		{
-		case INPUT_MOD_CTRL :
-			snapIncrement = 45.0f;
-			break;
-		case INPUT_MOD_SHIFT :
-			snapIncrement = 15.0f;
-			break;
-		case INPUT_MOD_ALT :
-			snapIncrement = 5.0f;
-			break;
+			snapIncrement = rotate.snapAngleA_angle;
+		}
+		else if (snapType == rotate.snapAngleB_modKey)
+		{
+			snapIncrement = rotate.snapAngleB_angle;
+		}
+		else if (snapType == rotate.snapAngleC_modKey)
+		{
+			snapIncrement = rotate.snapAngleC_angle;
 		}
 		// 3. Add the real roll to the virtual roll and divide by the snap angle
 		float currentAngle = sender->getCamera()->getRoll();
@@ -58,7 +60,8 @@ void Out_RotateCamera::preview(Application* sender, VertexData* dat)
 		{
 			snapAngle = round(j) * snapIncrement;
 			// 5. If the angle to snap to is not the current angle, snap camera to the next increment
-			float l = 1.05f + ((snapIncrement - 5.0f / 40.f) * (1.5f - 1.05f)); // Find the tolerance lerp value. A lower tolerance means it snaps to the next angle faster, important for smaller snapIncrements.
+			float l = rotate.snapTolerance_factorA + 
+				((snapIncrement - TSET_ROTATE_ANGLESNAP_MIN / TSET_ROTATE_ANGLESNAP_MAX) * (1.5f - rotate.snapTolerance_factorA)); // Find the tolerance lerp value. A lower tolerance means it snaps to the next angle faster, important for smaller snapIncrements.
 			if (abs(currentAngle - snapAngle) >= snapIncrement / l)
 			{
 				sender->getCamera()->setRoll(snapAngle);

@@ -53,10 +53,6 @@ class UI
 private:
 	std::shared_ptr<Application> owner; // Note: Change to weak_ptr
 
-	// Canvas Variables
-	std::vector<std::shared_ptr<Canvas>> documents; // Note: Change to smart pointers
-	std::shared_ptr<Canvas> activeCanvas;
-
 	// Font variables
 	std::shared_ptr<Fonts> fontHandler;
 
@@ -72,6 +68,10 @@ private:
 	std::deque<std::string> popupTags;
 	std::deque<std::weak_ptr<Widget>> popupWidgets;
 	std::map<std::weak_ptr<Widget>, std::shared_ptr<CFunction>, std::owner_less<std::weak_ptr<Widget>>> popupEscCallbacks;
+
+// Rebuild Widgets
+	std::vector<int> rebuildWidgetIDList;
+	std::vector<std::weak_ptr<Widget>> rebuildWidgets;
 
 // Resize Widgets
 	std::vector<std::weak_ptr<Widget>> resizeWidgets;
@@ -170,14 +170,21 @@ public:
 	bool interruptBlur = false;
 	bool interruptFocus = false;
 
+// Canvas Variables
+	std::vector<std::shared_ptr<Canvas>> documents;
+	std::shared_ptr<Canvas> activeCanvas;
+
 	// Constructors
 	UI(std::shared_ptr<Application>);
 
+	// Documents
+
+	size_t getDocumentsCount() { return documents.size(); }
 	// Utility Functions
 	void stepThroughWidgetTree(std::shared_ptr<Widget> treeRoot, bool doTopDown, bool doBottomUp, bool doPlacement);
-	void sizeWidgetByChildren(std::shared_ptr<Widget> target);
-	void sizeWidgetByParent(std::shared_ptr<Widget> target);
-	void updateWidgetLocation(std::shared_ptr<Widget> target);
+	void sizeWidgetByChildren(Widget* target);
+	void sizeWidgetByParent(Widget* target);
+	void updateWidgetLocation(Widget* target);
 	int loadFont(std::filesystem::path fontPath);
 	// Builders
 	std::shared_ptr<Widget> createWidget(
@@ -186,10 +193,14 @@ public:
 		std::weak_ptr<Widget> parent,
 		std::weak_ptr<WidgetStyle> style,
 		std::shared_ptr<Shader> shader);
+	std::shared_ptr<Widget> createWidget_fromPrototype(
+		std::shared_ptr<Widget> targetWidget, std::string protoID, std::string childID, std::vector<std::string> extraClasses);
 	void initializeInterface();
 	void buildAllWidgetTrees();
 	void buildWidgetHierarchy();
+	void requestWidgetHierarchyRebuild(std::weak_ptr<Widget> target);
 	void rebuildWidgetHierarchy(std::weak_ptr<Widget> target);
+	void clearRebuildRequests();
 	// Plugin Header Files (.plugin)
 	void findPlugins();
 	void loadPlugins();
@@ -210,12 +221,18 @@ public:
 	std::pair<CColor, CColor> getColors() { return std::pair<CColor, CColor>(fgColor, bgColor); }
 	void updateFGColor(CColor color, int xpos, int ypos);
 	void updateBGColor(CColor color, int xpos, int ypos);
+	void resetFGBGColor(CColor fg, CColor bg);
+	void swapFGBGColor();
 
 	// Canvas Functions
-	void newDocument(int width, int height, bool setAsActive);
+	bool newDocument(std::string docName, int width, int height, bool setAsActive);
+	bool closeDocument(std::string docName, int docID, bool closeActive, bool saveBeforeExit);
 	void setCanvas(std::shared_ptr<Canvas> c);
 	bool canvasHitTest(glm::vec3 worldPos);
 	std::shared_ptr<Canvas> getCanvas();
+
+	// Widget Table Variables
+	void addToClassTable(std::string className, std::string rootID);
 
 	// Widget Variables
 	void putActiveInputWidget(std::weak_ptr<Widget> widget, bool isClear, bool withBlur, int eventType);
@@ -244,6 +261,14 @@ public:
 	std::vector<std::weak_ptr<Widget>> getWidgetsByClass(std::string className, std::string idExclusion);
 	std::vector<std::weak_ptr<Widget>> getWidgetsByType(std::string typeName, std::string idExclusion);
 	std::weak_ptr<Widget> getRootWidgetByID(std::string rootID);
+	// Widget Delete
+	bool deleteWidget_byID(std::shared_ptr<CInterpreter> interpreter, std::string lookup);
+	// Widget Sorting
+	bool sortTargetWidgetChildren(std::shared_ptr<CInterpreter> interpreter,
+		std::string lookup, std::string sortValue, std::string macroName, bool setVisible);
+	bool sortChildren_effectsOrdering(std::shared_ptr<CInterpreter> interpreter,
+		std::string lookup, std::string sortValue, bool setVisible);
+	std::string sortEffectsOrdering_matchValue(std::vector<std::string>* widgetValues, std::string fxSearchStr);
 
 	// Cursor Functions
 	bool widgetSweepTest(MouseEvent input);

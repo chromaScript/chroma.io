@@ -1,6 +1,7 @@
 #include "../include/methods/In_Sampler.h"
 #include "../include/methods/InputMethod.h"
 #include "../include/ToolSettings.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/Tool.h"
 
 #ifndef APPLICATION_H
@@ -17,6 +18,8 @@
 
 int In_Sampler::move(Application* sender, MouseEvent dat)
 {
+	fragData.activeModKey = dat.modKey;
+
 	// If the array is empty, insert the first element, otherwise overwrite it with the passed MouseEvent
 	if (data.inputEvents.size() < maxBufferLength) { data.inputEvents.push_back(dat); }
 	else { data.inputEvents.erase(data.inputEvents.begin()); data.inputEvents.push_back(dat); }
@@ -66,6 +69,7 @@ int In_Sampler::click(Application* sender, MouseEvent dat)
 		data.reset();
 		data.start = dat;
 		data.inputModKey = dat.modKey;
+		fragData.activeModKey = dat.modKey;
 		// Push back a new data point
 		data.inputEvents.push_back(dat);
 		// Reset the fragData
@@ -101,6 +105,7 @@ int In_Sampler::click(Application* sender, MouseEvent dat)
 	{
 		// For Drag, Only interested in the start, last mouseEvent, & end events
 		data.end = dat;
+		fragData.activeModKey = dat.modKey;
 		fragData.endTime = (float)data.end.time;
 		wasHandled = INPUT_ALLOW_RELEASE;
 		//std::cout << "IN_POINT::CLICK::ALLOW_RELEASE" << std::endl;

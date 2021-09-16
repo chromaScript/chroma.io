@@ -1,0 +1,281 @@
+[header]
+
+metadata 
+{
+ID=0::SID=-1::id = 65 ;
+ID=1::SID=-1::inID = 17 ;
+ID=2::SID=-1::outID = 103 ;
+ID=3::SID=-1::name = "Rake Brush" ;
+ID=8::SID=-1::useTipAsIcon = "true" ;
+ID=15::SID=-1::tags = "" ;
+ID=16::SID=-1::category = "Default Tools" ;
+ID=17::SID=-1::toolType = "Default" ;
+ID=18::SID=-1::date = "08.15.21" ;
+ID=19::SID=-1::author = "chromaTinker" ;
+ID=20::SID=-1::bindType = 0 ;
+ID=21::SID=-1::keySig = 650 ;
+ID=24::SID=-1::cursorUp = "Brush" ;
+ID=25::SID=-1::cursorDown = "Circle Small" ;
+ID=30::SID=-1::input = "Rake" ;
+ID=31::SID=-1::output = "Stroke" ;
+ID=32::SID=-1::controlScheme = "CONTINUOUS" ;
+ID=41::SID=-1::activeSettingsPage = 0 ;
+ID=51::SID=-1::lockSettings = "false" ;
+ID=52::SID=-1::autoSaveSettings = "false" ;
+}
+
+continuous 
+{
+ID=400::SID=-1::defaultMode = "DRAW" ;
+ID=401::SID=-1::alternateModeKey = 4 ;
+ID=402::SID=-1::anchorSpacing = 5.000000 ;
+ID=403::SID=-1::relativeSpacing = "true" ;
+ID=404::SID=-1::useCanvas = "false" ;
+ID=405::SID=-1::useAngle = "false" ;
+ID=406::SID=-1::angleMin = 0.000000 ;
+ID=407::SID=-1::angleMax = 0.000000 ;
+ID=408::SID=-1::angleBias = 0.000000 ;
+ID=410::SID=-1::useDirection = "false" ;
+ID=411::SID=-1::relativeDistance = "false" ;
+ID=412::SID=-1::splineRandomXMin = 0.000000 ;
+ID=413::SID=-1::splineRandomXMax = 0.000000 ;
+ID=414::SID=-1::splineRandomXBias = 0.000000 ;
+ID=415::SID=-1::splineRandomYMin = 0.000000 ;
+ID=416::SID=-1::splineRandomYMax = 0.000000 ;
+ID=417::SID=-1::splineRandomYBias = 0.000000 ;
+ID=430::SID=-1::constraintLengthThreshold = 1.200000 ;
+ID=431::SID=-1::enableConstrainA = "true" ;
+ID=432::SID=-1::constrainA_angle = 0.000000 ;
+ID=433::SID=-1::constrainA_modKey = 1 ;
+ID=435::SID=-1::enableConstrainB = "true" ;
+ID=436::SID=-1::constrainB_angle = 90.000000 ;
+ID=437::SID=-1::constrainB_modKey = 1 ;
+ID=440::SID=-1::enableConstrainC = "true" ;
+ID=441::SID=-1::constrainC_angle = 45.000000 ;
+ID=442::SID=-1::constrainC_modKey = 1 ;
+ID=445::SID=-1::enableConstrainD = "true" ;
+ID=446::SID=-1::constrainD_angle = -45.000000 ;
+ID=447::SID=-1::constrainD_modKey = 1 ;
+ID=450::SID=-1::enableHotswapA = "false" ;
+ID=451::SID=-1::hotswapA_toolID = 0 ;
+ID=452::SID=-1::hotswapA_modKey = -1 ;
+ID=453::SID=-1::enableHotswapB = "false" ;
+ID=454::SID=-1::hotswapB_toolID = 0 ;
+ID=455::SID=-1::hotswapB_modKey = -1 ;
+ID=456::SID=-1::enableHotswapC = "false" ;
+ID=457::SID=-1::hotswapC_toolID = 0 ;
+ID=458::SID=-1::hotswapC_modKey = -1 ;
+ID=459::SID=-1::enableHotswapD = "false" ;
+ID=460::SID=-1::hotswapD_toolID = 0 ;
+ID=461::SID=-1::hotswapD_modKey = -1 ;
+}
+
+basic 
+{
+ID=-1::SID=-1::isEnabled = "false" ;
+}
+
+image 
+{
+ID=-1::SID=-1::isEnabled = "false" ;
+ID=2201::SID=-1::tipSize = 30 ;
+ID=2202::SID=-1::relativeSpacing = "true" ;
+ID=2203::SID=-1::spacing = 15.000000 ;
+ID=2205::SID=-1::NULL = "false" ;
+ID=2209::SID=-1::NULL = "false" ;
+ID=2210::SID=-1::NULL = "false" ;
+ID=2211::SID=-1::NULL = "false" ;
+ID=2212::SID=-1::NULL = "false" ;
+ID=2213::SID=-1::NULL = "false" ;
+ID=2214::SID=-1::NULL = "false" ;
+ID=2215::SID=-1::NULL = "false" ;
+ID=2216::SID=-1::NULL = "false" ;
+ID=2217::SID=-1::NULL = "false" ;
+ID=2218::SID=-1::NULL = "false" ;
+ID=2219::SID=-1::NULL = "false" ;
+ID=2220::SID=-1::NULL = "false" ;
+ID=22211::SID=-1::NULL = "false" ;
+ID=2230::SID=-1::NULL = "false" ;
+ID=2250::SID=-1::NULL = "false" ;
+ID=2251::SID=-1::NULL = "false" ;
+ID=2252::SID=-1::NULL = "false" ;
+ID=2253::SID=-1::NULL = "false" ;
+ID=2254::SID=-1::NULL = "false" ;
+ID=2255::SID=-1::NULL = "false" ;
+ID=2256::SID=-1::NULL = "false" ;
+ID=2257::SID=-1::NULL = "false" ;
+ID=2258::SID=-1::NULL = "false" ;
+ID=2259::SID=-1::NULL = "false" ;
+ID=2260::SID=-1::NULL = "false" ;
+}
+
+character 
+{
+ID=-1::SID=-1::isEnabled = "false" ;
+ID=2330::SID=-1::scale_usePressure = "false" ;
+ID=2331::SID=-1::scale_pressureMin = 1.000000 ;
+ID=2332::SID=-1::scale_pressureMax = 1.000000 ;
+ID=2333::SID=-1::scale_noiseMin = 0.000000 ;
+ID=2334::SID=-1::scale_noiseMax = 0.000000 ;
+}
+
+scatter 
+{
+ID=-1::SID=-1::isEnabled = "false" ;
+ID=2600::SID=-1::useAngle = "false" ;
+ID=2610::SID=-1::NULL = "false" ;
+ID=2611::SID=-1::NULL = "false" ;
+ID=2612::SID=-1::angleMin = 0.000000 ;
+ID=2613::SID=-1::angleMax = 0.000000 ;
+ID=2614::SID=-1::angleBias = 0.000000 ;
+ID=2616::SID=-1::useDirection = "false" ;
+ID=2617::SID=-1::relativeDistance = "true" ;
+ID=2620::SID=-1::NULL = "false" ;
+ID=2621::SID=-1::NULL = "false" ;
+ID=2622::SID=-1::distanceXMin = 0.000000 ;
+ID=2623::SID=-1::distanceXMax = 0.000000 ;
+ID=2624::SID=-1::distanceXBias = 0.000000 ;
+ID=2625::SID=-1::distanceYMin = 0.000000 ;
+ID=2626::SID=-1::distanceYMax = 0.000000 ;
+ID=2627::SID=-1::distanceYBias = 0.000000 ;
+ID=2630::SID=-1::NULL = "false" ;
+ID=2631::SID=-1::NULL = "false" ;
+ID=2632::SID=-1::countMin = 1.000000 ;
+ID=2633::SID=-1::countMax = 1.000000 ;
+ID=2634::SID=-1::NULL = "false" ;
+}
+
+color 
+{
+ID=-1::SID=-1::isEnabled = "false" ;
+ID=2700::SID=-1::enableMixBG = "false" ;
+ID=2701::SID=-1::NULL = "false" ;
+ID=2702::SID=-1::NULL = "false" ;
+ID=2710::SID=-1::enableBGDynamics = "false" ;
+ID=2711::SID=-1::NULL = "false" ;
+ID=2712::SID=-1::NULL = "false" ;
+ID=2713::SID=-1::BGHue_min = 0.000000 ;
+ID=2714::SID=-1::BGHue_max = 0.000000 ;
+ID=2715::SID=-1::BGHue_bias = 0.000000 ;
+ID=2716::SID=-1::BGSat_min = 0.000000 ;
+ID=2717::SID=-1::BGSat_max = 0.000000 ;
+ID=2718::SID=-1::BGSat_bias = 0.000000 ;
+ID=2719::SID=-1::BGValue_min = 0.000000 ;
+ID=2720::SID=-1::BGValue_max = 0.000000 ;
+ID=2721::SID=-1::BGValue_bias = 0.000000 ;
+ID=2730::SID=-1::enableFinalDynamics = "false" ;
+ID=2731::SID=-1::NULL = "false" ;
+ID=2732::SID=-1::NULL = "false" ;
+ID=2733::SID=-1::finalHue_min = 0.000000 ;
+ID=2734::SID=-1::finalHue_max = 0.000000 ;
+ID=2735::SID=-1::finalHue_bias = 0.000000 ;
+ID=2736::SID=-1::finalSat_min = 0.000000 ;
+ID=2737::SID=-1::finalSat_max = 0.000000 ;
+ID=2738::SID=-1::finalSat_bias = 0.000000 ;
+ID=2739::SID=-1::finalValue_min = 0.000000 ;
+ID=2740::SID=-1::finalValue_max = 0.000000 ;
+ID=2741::SID=-1::finalValue_bias = 0.000000 ;
+ID=2750::SID=-1::NULL = "false" ;
+ID=2751::SID=-1::NULL = "false" ;
+ID=2752::SID=-1::NULL = "false" ;
+ID=2753::SID=-1::NULL = "false" ;
+ID=2754::SID=-1::NULL = "false" ;
+ID=2755::SID=-1::NULL = "false" ;
+ID=2756::SID=-1::NULL = "false" ;
+ID=2760::SID=-1::NULL = "false" ;
+ID=2761::SID=-1::NULL = "false" ;
+ID=2762::SID=-1::NULL = "false" ;
+ID=2763::SID=-1::NULL = "false" ;
+ID=2764::SID=-1::NULL = "false" ;
+ID=2765::SID=-1::NULL = "false" ;
+ID=2766::SID=-1::NULL = "false" ;
+}
+
+alpha 
+{
+ID=-1::SID=-1::isEnabled = "false" ;
+ID=2800::SID=-1::usePressureOpacity = "true" ;
+ID=2801::SID=-1::minOpacity = 0.000000 ;
+ID=2802::SID=-1::maxOpacity = 1.000000 ;
+ID=2803::SID=-1::opacityBias = 0.000000 ;
+ID=2810::SID=-1::usePressureFlow = "true" ;
+ID=2811::SID=-1::minFlow = 0.200000 ;
+ID=2812::SID=-1::maxFlow = 0.800000 ;
+ID=2813::SID=-1::flowBias = 0.000000 ;
+}
+
+rake 
+{
+ID=-1::SID=-1::isEnabled = "false" ;
+ID=5600::SID=-1::size = 100.000000 ;
+ID=5601::SID=-1::sizeRelative = "true" ;
+ID=5602::SID=-1::pushToCanvasEdge = "false" ;
+ID=5603::SID=-1::usePressure_size = "true" ;
+ID=5604::SID=-1::sizeTotal_min = 60.000000 ;
+ID=5605::SID=-1::sizeTotal_max = 90.000000 ;
+ID=5606::SID=-1::sizeTotal_bias = 0.000000 ;
+ID=5607::SID=-1::sizeNoise_min = 0.300000 ;
+ID=5608::SID=-1::sizeNoise_max = -0.300000 ;
+ID=5609::SID=-1::sizeNoise_bias = 0.000000 ;
+ID=5610::SID=-1::useDirection = "true" ;
+ID=5611::SID=-1::splineOffsetX_min = 0.000000 ;
+ID=5612::SID=-1::splineOffsetX_max = 0.000000 ;
+ID=5613::SID=-1::splineOffsetY_min = 0.000000 ;
+ID=5614::SID=-1::splineOffsetY_max = 0.000000 ;
+ID=5615::SID=-1::rotation = 0.000000 ;
+ID=5616::SID=-1::usePressure_rotation = "false" ;
+ID=5617::SID=-1::rotationTotal_min = 0.000000 ;
+ID=5618::SID=-1::rotationTotal_max = 0.000000 ;
+ID=5619::SID=-1::rotationNoise_min = 0.000000 ;
+ID=5620::SID=-1::rotationNoise_max = 0.000000 ;
+ID=5630::SID=-1::mirrorPoints = "true" ;
+ID=5631::SID=-1::flipPoints = "false" ;
+ID=5632::SID=-1::pointsCount = 1 ;
+ID=5635::SID=-1::distribution = "UNIFORM" ;
+ID=5640::SID=-1::pointOffsetX_usePressure = "false" ;
+ID=5641::SID=-1::pointOffsetX_min = 0.000000 ;
+ID=5642::SID=-1::pointOffsetX_max = 0.000000 ;
+ID=5643::SID=-1::pointOffsetY_usePressure = "false" ;
+ID=5644::SID=-1::pointOffsetY_min = 0.000000 ;
+ID=5645::SID=-1::pointOffsetY_max = 0.000000 ;
+ID=5650::SID=-1::rakeShape = "LINEAR" ;
+ID=5651::SID=-1::shape_arrow_usePressure = "false" ;
+ID=5652::SID=-1::shape_arrow_angleMin = 0.000000 ;
+ID=5653::SID=-1::shape_arrow_angleMax = 0.000000 ;
+ID=5654::SID=-1::shape_bend_usePressure = "false" ;
+ID=5655::SID=-1::shape_bend_angleMin = 0.000000 ;
+ID=5656::SID=-1::shape_bend_angleMax = 0.000000 ;
+ID=5657::SID=-1::shape_cone_angleUsePressure = "false" ;
+ID=5658::SID=-1::shape_cone_angleMin = 0.000000 ;
+ID=5659::SID=-1::shape_cone_angleMax = 0.000000 ;
+ID=5660::SID=-1::shape_cone_radiusUsePressure = "false" ;
+ID=5661::SID=-1::shape_cone_radiusMin = 10.000000 ;
+ID=5662::SID=-1::shape_cone_radiusMax = 10.000000 ;
+ID=5670::SID=-1::connectionOrdering = "AXIS" ;
+}
+
+smoothing 
+{
+ID=-1::SID=-1::isEnabled = "false" ;
+}
+
+effects 
+{
+ID=-1::SID=-1::isEnabled = "false" ;
+ID=8050::SID=-1::totalBlend = 1.000000 ;
+ID=8051::SID=-1::totalMask_alphaCenter = 0.500000 ;
+ID=8052::SID=-1::totalMask_alphaRange = 1.000000 ;
+ID=8010::SID=-1::fill_isEnabled = "false" ;
+ID=8011::SID=-1::gradient_isEnabled = "false" ;
+ID=8012::SID=-1::posterize_isEnabled = "false" ;
+ID=8013::SID=-1::invert_isEnabled = "false" ;
+ID=8014::SID=-1::threshold_isEnabled = "false" ;
+ID=8015::SID=-1::brightContrast_isEnabled = "false" ;
+ID=8016::SID=-1::hsv_isEnabled = "false" ;
+ID=8017::SID=-1::power_isEnabled = "false" ;
+ID=8018::SID=-1::modulo_isEnabled = "false" ;
+ID=8024::SID=-1::blur_isEnabled = "false" ;
+ID=8098::SID=-1::effectsOrdering = "" ;
+}
+
+[end]

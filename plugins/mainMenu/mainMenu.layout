@@ -1,13 +1,14 @@
 <ROOT id="MenuTitleBar" defaultPosition="0,0">
-<H_BOX class="mm_titleBar" id="menuTitleBar" >
-	<H_BOX id="mm_menuTextBarWrapper" onblur="toggleMainDrops(true)" onfocus="" onmouseleave="titleHover(1)">
+<H_BOX class="mm_titleBar" id="menuTitleBar" ondragstart="moveAppWindow(0)" ondrag="moveAppWindow(1)" ondragend="moveAppWindow(2)">
+	<H_BOX id="mm_menuTextBarWrapper" style="margin-left:24;" onblur="toggleMainDrops(true)" onfocus="" onmouseleave="titleHover(1)">
 		// FILE DROP DOWN
-		<V_BOX class="mm_dropMenu" style="margin-left:24;" onmouseenter="titleHover(0)" onclick="toggleMainDrops(false)">
+		<V_BOX class="mm_dropMenu"  onmouseenter="titleHover(0)" onclick="toggleMainDrops(false)">
 			<H_BOX class="mm_menuTextWrapper" id="fileButton">
 				<TEXT class="mm_bigText" value="FILE" name="dropText"></TEXT>
 			</H_BOX>
 			<V_BOX class="mm_dropDownWrapperA" onmouseenter="dropHover(1)" name="mainDropWrapper">
-				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_new">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" 
+					onclick="hideMainDrops(); global::createNewDocument_pop::toggleCNDocP(0);" id="file_new">
 					<TEXT class="mm_smallText" value="NEW..."></TEXT>
 				</H_BOX>
 				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_open">
@@ -32,7 +33,8 @@
 					</V_BOX>
 				</H_BOX>
 				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>
-				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_close">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" 
+					onclick="hideMainDrops(); app.ui.closeDocument(&quot;active&quot;, -1, true, false);" id="file_close">
 					<TEXT class="mm_smallText" value="CLOSE"></TEXT>
 				</H_BOX>
 				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="file_closeAll">
@@ -183,6 +185,11 @@
 				</H_BOX>
 				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="toolBox_loadTools">
 					<TEXT class="mm_smallText" value="LOAD TOOLS..."></TEXT>
+				</H_BOX>
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" 
+					onclick="app.toolbox.exportAllTools(true, true, &quot;default&quot;);"  
+					id="toolBox_exportTools">
+					<TEXT class="mm_smallText" value="EXPORT ALL"></TEXT>
 				</H_BOX>
 				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="toolBox_saveTools">
 					<TEXT class="mm_smallText" value="SAVE TOOLS..."></TEXT>

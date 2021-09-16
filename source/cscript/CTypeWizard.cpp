@@ -1847,6 +1847,22 @@ bool CTypeWizard::matchTokens(std::shared_ptr<CToken> left, std::shared_ptr<CTok
 	// of a function that returns Any
 	if (left.get()->type == CTokenType::ANY) { return true; }
 	if (right.get()->type == CTokenType::ANY) { return true; }
+	if (right.get()->type == CTokenType::ANY_ARRAY) 
+	{ 
+		switch (left.get()->type)
+		{
+		case CTokenType::BOOL_ARRAY:
+		case CTokenType::NUM_ARRAY:
+		case CTokenType::IDENTIFIER_ARRAY:
+		case CTokenType::FUNCTION_ARRAY:
+		case CTokenType::STRING_ARRAY:
+		case CTokenType::VECTOR2_ARRAY:
+		case CTokenType::VECTOR3_ARRAY:
+		case CTokenType::VECTOR4_ARRAY:
+			return true;
+		}
+		return false;
+	}
 	// Else is regular function
 	switch (left.get()->type)
 	{
@@ -1939,7 +1955,11 @@ bool CTypeWizard::matchTokens(std::shared_ptr<CToken> left, std::shared_ptr<CTok
 bool CTypeWizard::matchType(std::shared_ptr<CToken> left, CTokenType right)
 {
 	CTokenType leftType = left.get()->type;
-	if (leftType != right)
+	if (leftType == CTokenType::ANY || right == CTokenType::ANY)
+	{
+		return true;
+	}
+	else if (leftType != right)
 	{
 		return false;
 	}

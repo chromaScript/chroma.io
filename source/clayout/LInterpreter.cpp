@@ -135,9 +135,18 @@ void LInterpreter::visit(std::shared_ptr<LStmt_Proto> stmt)
 	basicOnly = false;
 
 	// Make the widget (Can only be one child)
-	ui.get()->prototypeFactoryTable.insert(
+	std::shared_ptr<Widget> protoFirst = stmt.get()->childElements[0].get()->acceptBuilder(*this);
+	if (ui.get()->prototypeFactoryTable.count(stmt.get()->id) == 1)
+	{
+		ui.get()->prototypeFactoryTable.at(stmt.get()->id) = protoFirst;
+	}
+	else
+	{
+		ui.get()->prototypeFactoryTable.insert(
 		std::pair<std::string, std::shared_ptr<Widget>>(
 			stmt.get()->id, stmt.get()->childElements[0].get()->acceptBuilder(*this)));
+	}
+	
 	ui.get()->prototypeFactoryTable.at(stmt.get()->id).get()->isRoot = true;
 	ui.get()->prototypeFactoryTable.at(stmt.get()->id).get()->rootId = stmt.get()->id;
 	ui.get()->prototypeFactoryTable.at(stmt.get()->id).get()->setLocation((int)stmt.get()->defaultX, (int)stmt.get()->defaultY);

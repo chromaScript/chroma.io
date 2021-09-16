@@ -1,6 +1,7 @@
 #include "../include/methods/In_ShapeField.h"
 #include "../include/methods/InputMethod.h"
 #include "../include/ToolSettings.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/Tool.h"
 
 #ifndef APPLICATION_H
@@ -33,7 +34,8 @@ int In_ShapeField::move(Application* sender, MouseEvent dat)
 	}
 	
 	// Kick empty density input
-	if (field.density <= 0) { return INPUT_NOSIGNAL; }
+	//if (field.random_densityMin <= 0) { return INPUT_NOSIGNAL; }
+	if (false) { return INPUT_NOSIGNAL; } // Overriding while working on settings
 
 	// Clear the NEW TAG and erase the temporary holding vertex
 	if (fragData.anchors.size() == 1 && fragData.anchors.front().flag == FLAG_NEW_INPUT)
@@ -51,7 +53,8 @@ int In_ShapeField::move(Application* sender, MouseEvent dat)
 	std::default_random_engine generator;
 
 	// Generate verticies when field density is not constant, density = vertCount
-	if (!field.constantDensity)
+	//if (!field.constantDensity)
+	if (true) // Overriding while working on settings
 	{
 		
 		
@@ -62,7 +65,8 @@ int In_ShapeField::move(Application* sender, MouseEvent dat)
 		float dist1 = 0.0f;
 		float dist2 = 0.0f;
 		fragData.resetAnchors();
-		for (int k = 0; k < (int)field.density; k++)
+		//for (int k = 0; k < (int)field.density; k++)
+		for (int k = 0; k < 200; k++) // Overriding while working on settings
 		{
 			if (!field.constantSeed) { generator.seed((unsigned int)std::chrono::system_clock::now().time_since_epoch().count()); }
 			else { generator.seed(field.savedSeed); }
@@ -82,8 +86,8 @@ int In_ShapeField::move(Application* sender, MouseEvent dat)
 				//glm::mat4 matrix = glm::mat4(1.0f);
 				//dir = glm::rotate(dir, glm::radians((float)distribution(generator) * 360.0f), glm::vec3(0, 0, 1));
 			}
-			pressure = 1.0f - ((dist1 * field.pressureXInfluence * 
-				(1 - (field.pressureYInfluence / 2))) + (dist2 * field.pressureYInfluence * (1 - (field.pressureXInfluence / 2))));
+			pressure = 1.0f - ((dist1 * field.pressureXPosInfluence * 
+				(1 - (field.pressureYPosInfluence / 2))) + (dist2 * field.pressureYPosInfluence * (1 - (field.pressureXPosInfluence / 2))));
 
 			fragData.anchors.push_back(FragmentAnchor(FLAG_NULL, anchorIDCount, pos, dir, 0.0f,
 				FHANDLE_LINEAR, false, pos,
@@ -126,7 +130,8 @@ int In_ShapeField::click(Application* sender, MouseEvent dat)
 		data.inputEvents.push_back(dat);
 		// Reset the fragData
 		fragData.reset();
-		fragData.constantSize = (field.constantDensity) ? true : false;
+		//fragData.constantSize = (field.constantDensity) ? true : false;
+		fragData.constantSize = (true) ? true : false; // Overriding while working on settings
 		fragData.linearStream = false;
 		fragData.connectEnds = true;
 		// Switch on controlScheme

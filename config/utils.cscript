@@ -1,0 +1,111 @@
+string keyCap_storeTextID = "";
+string keyCap_storeBackID = "";
+num keyCap_modBitStore = -1;
+num keyCap_keyStore = -1;
+num keyCap_check = 0;
+
+string keyCap_eventID = "";
+
+string testVar = "";
+bool testBool = false;
+
+void beginKeyCapture(string textWidgetID, string bgWidgetID, string updateText, num checkAgainst, function storedEvent)
+{
+	print "beginKeyCapture";
+	keyCap_check = checkAgainst;
+	keyCap_storeTextID = textWidgetID; keyCap_storeBackID = bgWidgetID;
+	
+	setChildProperty_byType("TEXT", "value", updateText);
+	setProperty("background-color", darkGreyLight);
+	if (checkAgainst == 4)
+	{
+		bindCallbackEvent("keyListenerAll_blocking", "textWidgetID", finishKeyCapture);
+	}
+	else
+	{
+		bindCallbackEvent("keyListener_blocking", "textWidgetID", finishKeyCapture);
+	}
+	
+	keyCap_eventID = toString(storedEvent);
+	bindCallbackEvent("storedEventListener", keyCap_eventID, storedEvent);
+}
+
+bool finishKeyCapture(num modBit, num keyID)
+{
+	print modBit;
+	print keyID;
+	bool result = false;
+	if (keyCap_check == 1)
+	{
+		result = app.isValidKeybind_tool(modBit, keyID);
+	}
+	else if (keyCap_check == 2)
+	{
+		result = app.isValidKeybind_alphaOnly(modBit, keyID);
+	}
+	else if (keyCap_check == 3)
+	{
+		result = app.isValidKeybind_symbolOrChar(modBit, keyID);
+	}
+	else if (keyCap_check == 4)
+	{
+		result = app.isValidKeybind_modOnly(modBit, keyID);
+	}
+	
+	if (!result)
+	{
+		keyCap_modBitStore = -1; keyCap_keyStore = -1;
+		app.ui.getWidget_byID(keyCap_storeTextID).setProperty("value", "INVALID KEY");
+		app.ui.getWidget_byID(keyCap_storeBackID).setProperty("background-color", redButtonBG);
+	}
+	else
+	{
+		keyCap_modBitStore = modBit; keyCap_keyStore = keyID;
+		string keyString = keyToString(modBit, keyID);
+		app.ui.getWidget_byID(keyCap_storeTextID).setProperty("value", keyString);
+	}
+	
+	triggerStoredEvent(keyCap_eventID);
+	
+	keyCap_storeTextID = ""; keyCap_storeBackID = ""; keyCap_check = 0;
+	return true;
+}
+
+void hoverMidGreyButton(num switch)
+{
+	if (switch == 0)
+	{
+		setProperty("background-color", midGrey);
+		setChildProperty_byType("TEXT", "fill-color", offWhite);
+	}
+	else if (switch == 1)
+	{
+		setProperty("background-color", darkGreyLight);
+		setChildProperty_byType("TEXT", "fill-color", lightGrey);
+	}
+}
+
+void hoverDropdown(num switch)
+{
+	if (switch == 0)
+	{
+		setChildProperty_byType("TEXT", "fill-color", midGrey);
+	}
+	else if (switch == 1)
+	{
+		setChildProperty_byType("TEXT", "fill-color", lightGrey);
+	}
+}
+
+void toggleSimpleDrop(num switch, string className)
+{
+	if (switch == 0)
+	{
+		setClassProperty(className, "visibility", "hide");
+		setChildProperty_byClass(className, "visibility", "show");
+	}
+	else if (switch == 1)
+	{
+		setClassProperty(className, "visibility", "hide");
+	}
+}

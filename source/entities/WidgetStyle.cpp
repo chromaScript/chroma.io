@@ -52,13 +52,14 @@ WidgetStyle::WidgetStyle()
 	this->boxShadowSizeX = 0;
 	this->boxShadowSizeY = 0;
 	this->backgroundTexture = "";
-	this->overrideClipping = true;
+	this->overrideClipping = false;
 	this->visibility = UI_VISIBILITY_SHOW;
 	this->zIndex = 0;
 	this->overflowX = UI_OVERFLOW_NONE;
 	this->overflowY = UI_OVERFLOW_NONE;
 	this->fontPath = "";
 	this->fontSize = 0;
+	this->textFormat = UI_TEXTFORMAT_DEFAULT;
 }
 
 std::shared_ptr<WidgetStyle> WidgetStyle::makeCopy()
@@ -348,7 +349,11 @@ void WidgetStyle::resetProperty(std::shared_ptr<CInterpreter> interpreter,
 	case STokenType::FONT_SIZE:
 		fontSize = origStyle.fontSize;
 		break;
+	case STokenType::TEXT_FORMAT:
+		textFormat = origStyle.textFormat;
+		break;
 	default:
+		if (interpreter == nullptr) { break; }
 		interpreter.get()->console.get()->warning(
 			"[interpreter:6103] Invalid property name '" + name + "'passed to native function 'resetProperty' or 'resetClassProperty'.");
 		return;
@@ -500,7 +505,7 @@ std::shared_ptr<CObject> WidgetStyle::getSetProperty(
 		{
 			return std::make_shared<CObject>(propertyEnumToString("visibility", visibility));
 		}
-		evaluateVisibilityProperty(visibility, &fieldValue); triggerRebuild = true; break;
+		evaluateVisibilityProperty(this->visibility, &fieldValue); triggerRebuild = true; break;
 	case STokenType::ZINDEX:
 		if (isGet)
 		{
@@ -827,6 +832,12 @@ std::shared_ptr<CObject> WidgetStyle::getSetProperty(
 			return std::make_shared<CObject>((double)fontSize);
 		}
 		evaluateNumericStyleProperty(fontSize, &fieldValue); triggerRebuild = true; break;
+	case STokenType::TEXT_FORMAT:
+		if (isGet)
+		{
+			return std::make_shared<CObject>(propertyEnumToString("text-format", textFormat));
+		}
+		evaluateTextFormatProperty(textFormat, &fieldValue); break;
 	case STokenType::VERTEX_COLOR:
 		if (isGet && vertexColor.count(name.special) == 1)
 		{
@@ -922,7 +933,8 @@ std::shared_ptr<CObject> WidgetStyle::getSetProperty(
 		}
 		triggerRebuild = true; break;
 	default:
-		if (isGet)
+		if (interpreter == nullptr) { break; }
+		else if (isGet)
 		{
 			interpreter.get()->console.get()->warning(
 				"[interpreter:6103] Invalid property name '" + STokenTypeNames[size_t(name.type)] + "'passed to native function 'getProperty_byName'.");
@@ -1251,6 +1263,11 @@ void WidgetStyle::mergeStyle(std::shared_ptr<WidgetStyle> style)
 	{
 		this->fontSize = style.get()->fontSize;
 	}
+	// TextFormat
+	if (style.get()->textFormat != defaultStyle.textFormat)
+	{
+		this->textFormat = style.get()->textFormat;
+	}
 	// Vertex Color
 	// Warning: Incorrect copy method, using for testing only
 	if (style.get()->vertexColor.size() != 0)
@@ -1327,6 +1344,41 @@ std::string WidgetStyle::propertyEnumToString(std::string propSelect, int p)
 		case -1: return "none";
 		case 0: return "hide";
 		case 1: return "show";
+		default: return "none";
+		}
+	}
+	if (propSelect == "text-format")
+	{
+		switch (p)
+		{
+		case -1: return "none";
+		case 0: return "none";
+		case 1: return "percent-whole";
+		case 2: return "percent-all";
+		case 3: return "percent-1d";
+		case 4: return "percent-2d";
+		case 5: return "percent-3d";
+		case 6: return "percent-4d";
+		case 7: return "percent-5d";
+		case 8: return "percent-6d";
+		case 20: return "number-whole";
+		case 21: return "number-all";
+		case 22: return "number-1d";
+		case 23: return "number-2d";
+		case 24: return "number-3d";
+		case 25: return "number-4d";
+		case 26: return "number-5d";
+		case 27: return "number-6d";
+		case 30: return "degree-whole";
+		case 31: return "degree-all";
+		case 32: return "degree-1d";
+		case 33: return "degree-2d";
+		case 34: return "degree-3d";
+		case 35: return "degree-4d";
+		case 36: return "degree-5d";
+		case 37: return "degree-6d";
+		case 81: return "uppercase";
+		case 82: return "lowercase";
 		default: return "none";
 		}
 	}
@@ -1413,14 +1465,6 @@ void WidgetStyle::evaluateRelativeStyleProperty(float& prop, bool& makeRelative,
 			makeRelative = true;
 			return;
 		}
-		/*
-		else if (std::stof(*value) <= 1.0f && std::stof(*value) >= 0.0f)
-		{
-			prop = clampf(std::stof(*value), 0.0f, 1.0f);
-			makeRelative = true;
-			return;
-		}
-		*/
 		else
 		{
 			prop = floor(std::stof(*value));
@@ -1567,6 +1611,44 @@ void WidgetStyle::evaluateVisibilityProperty(int& visibility, std::string* value
 	else if (*value == "visible" || *value == "show" || *value == "true") { visibility = UI_VISIBILITY_SHOW; return; }
 	else { visibility = UI_VISIBILITY_NONE; }
 }
+void WidgetStyle::evaluateTextFormatProperty(int& textformat, std::string* value)
+{
+	// Warning : "inherit" & "noreport" set to always use default format for now. Change later
+	if (*value == "inherit") { textformat = UI_TEXTFORMAT_DEFAULT; return; }
+	else if (*value == "noreport") { textformat = UI_TEXTFORMAT_DEFAULT; return; }
+	else if (*value == "default" || *value == "none") { textformat = UI_TEXTFORMAT_DEFAULT; return; }
+	else if (*value != "") { 
+		
+		if (*value == "percent-whole") { textformat = UI_TEXTFORMAT_PERCENT_WHOLE; return; }
+		else if (*value == "percent-all") { textformat = UI_TEXTFORMAT_PERCENT_ALL; return; }
+		else if (*value == "percent-1d") { textformat = UI_TEXTFORMAT_PERCENT_1D; return; }
+		else if (*value == "percent-2d") { textformat = UI_TEXTFORMAT_PERCENT_2D; return; }
+		else if (*value == "percent-3d") { textformat = UI_TEXTFORMAT_PERCENT_3D; return; }
+		else if (*value == "percent-4d") { textformat = UI_TEXTFORMAT_PERCENT_4D; return; }
+		else if (*value == "percent-5d") { textformat = UI_TEXTFORMAT_PERCENT_5D; return; }
+		else if (*value == "percent-6d") { textformat = UI_TEXTFORMAT_PERCENT_6D; return; }
+		else if (*value == "number-whole") { textformat = UI_TEXTFORMAT_NUMBER_WHOLE; return; }
+		else if (*value == "number-all") { textformat = UI_TEXTFORMAT_NUMBER_ALL; return; }
+		else if (*value == "number-1d") { textformat = UI_TEXTFORMAT_NUMBER_1D; return; }
+		else if (*value == "number-2d") { textformat = UI_TEXTFORMAT_NUMBER_2D; return; }
+		else if (*value == "number-3d") { textformat = UI_TEXTFORMAT_NUMBER_3D; return; }
+		else if (*value == "number-4d") { textformat = UI_TEXTFORMAT_NUMBER_4D; return; }
+		else if (*value == "number-5d") { textformat = UI_TEXTFORMAT_NUMBER_5D; return; }
+		else if (*value == "number-6d") { textformat = UI_TEXTFORMAT_NUMBER_6D; return; }
+		else if (*value == "degree-whole") { textformat = UI_TEXTFORMAT_PERCENT_WHOLE; return; }
+		else if (*value == "degree-all") { textformat = UI_TEXTFORMAT_DEGREE_ALL; return; }
+		else if (*value == "degree-1d") { textformat = UI_TEXTFORMAT_DEGREE_1D; return; }
+		else if (*value == "degree-2d") { textformat = UI_TEXTFORMAT_DEGREE_2D; return; }
+		else if (*value == "degree-3d") { textformat = UI_TEXTFORMAT_DEGREE_3D; return; }
+		else if (*value == "degree-4d") { textformat = UI_TEXTFORMAT_DEGREE_4D; return; }
+		else if (*value == "degree-5d") { textformat = UI_TEXTFORMAT_DEGREE_5D; return; }
+		else if (*value == "degree-6d") { textformat = UI_TEXTFORMAT_DEGREE_6D; return; }
+		else if (*value == "uppercase") { textformat = UI_TEXTFORMAT_UPPERCASE; return; }
+		else if (*value == "lowercase") { textformat = UI_TEXTFORMAT_LOWERCASE; return; }
+		else textformat = UI_TEXTFORMAT_DEFAULT; return;
+	}
+	else { visibility = UI_TEXTFORMAT_DEFAULT; }
+}
 void WidgetStyle::evaluateBoolProperty(bool& prop, std::string* value, bool defaultValue)
 {
 	if (*value == "true") { prop = true; return; }
@@ -1599,6 +1681,8 @@ void WidgetStyle::evaluateDoubleOverflowProperty(int& overflowX, int& overflowY,
 	else if (xValue == "hidden") { overflowX = UI_OVERFLOW_HIDDEN; }
 	else if (xValue == "scroll") { overflowX = UI_OVERFLOW_SCROLL; }
 	else if (xValue == "auto") { overflowX = UI_OVERFLOW_AUTO; }
+	else if (xValue == "block") { overflowX = UI_OVERFLOW_BLOCK; return; }
+	else if (xValue == "autoblock") { overflowX = UI_OVERFLOW_AUTOBLOCK; return; }
 	else { overflowX = UI_OVERFLOW_NONE; }
 	if (yValue == "inherit") { overflowY = UI_WVALUE_INHERIT; }
 	else if (yValue == "noreport") { overflowY = UI_WVALUE_NOREPORT; }

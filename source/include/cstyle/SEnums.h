@@ -69,7 +69,8 @@ enum class STokenType
 	BOX_SHADOW_SIZE_Y,
 	BORDER, BORDER_TOP, BORDER_BOTTOM, BORDER_LEFT, BORDER_RIGHT,
 	MARGIN, MARGIN_TOP, MARGIN_BOTTOM, MARGIN_LEFT, MARGIN_RIGHT,
-	FONT_PATH, FONT_SIZE,
+	FONT_PATH, FONT_SIZE, TEXT_FORMAT,
+
 
 	// Named Property Values
 	INHERIT, FILL, MIN, MAX, NOREPORT, 
@@ -79,6 +80,10 @@ enum class STokenType
 	LOWER_LEFT, LOWER_CENTER, LOWER_RIGHT,
 	VISIBILE, SHOW, HIDDEN, HIDE,
 	SCROLL, AUTO,
+	NONE, DEFAULT, UPPERCASE, LOWERCASE,
+	PERCENT_WHOLE, PERCENT_ALL, PERCENT_1D, PERCENT_2D, PERCENT_3D, PERCENT_4D, PERCENT_5D, PERCENT_6D,
+	NUMBER_WHOLE, NUMBER_ALL, NUMBER_1D, NUMBER_2D, NUMBER_3D, NUMBER_4D, NUMBER_5D, NUMBER_6D,
+	DEGREE_WHOLE, DEGREE_ALL, DEGREE_1D, DEGREE_2D, DEGREE_3D, DEGREE_4D, DEGREE_5D, DEGREE_6D,
 
 	END
 };
@@ -147,7 +152,7 @@ inline std::vector<std::string> STokenTypeNames =
 	"box-shadow-size-Y",
 	"border", "border-top", "border-bottom", "border-left", "border-right",
 	"margin", "margin-top", "margin-bottom", "margin-left", "margin-right",
-	"font-path", "font-size",
+	"font-path", "font-size", "text-format",
 
 	// Named Property Values
 	"inherit", "fill", "min", "max", "noreport",
@@ -157,6 +162,10 @@ inline std::vector<std::string> STokenTypeNames =
 	"lower-left", "lower-center", "lower-right",
 	"visible", "show", "hidden", "hide",
 	"scroll", "auto",
+	"none", "default", "uppercase", "lowercase",
+	"percent-whole", "percent-all", "percent-1d", "percent-2d", "percent-3d", "percent-4d", "percent-5d", "percent-6d",
+	"number-whole", "number-all", "number-1d", "number-2d", "number-3d", "number-4d", "number-5d", "number-6d",
+	"degree-whole", "degree-all", "degree-1d", "degree-2d", "degree-3d", "degree-4d", "degree-5d", "degree-6d",
 
 	"end"
 };

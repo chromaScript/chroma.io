@@ -4,4 +4,4 @@
 <NAMESPACE=mainMenu>
 <LAYOUT_PATH=mainMenu.layout>
 <STYLE_PATH=mainMenu.style>
-<SCRIPT_PATH=mainMenu.cscript, mainMenu_extra.cscript, mainMenu_bonus.cscript>
+<SCRIPT_PATH=mainMenu.cscript>

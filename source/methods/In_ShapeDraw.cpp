@@ -1,6 +1,7 @@
 #include "../include/methods/In_ShapeDraw.h"
 #include "../include/methods/InputMethod.h"
 #include "../include/ToolSettings.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/Tool.h"
 
 #ifndef APPLICATION_H
@@ -27,7 +28,7 @@ int In_ShapeDraw::move(Application* sender, MouseEvent dat)
 	bool isNew = (splineData.anchors.front().flag == FLAG_NEW_INPUT) ? true : false;
 	if (controlScheme == TSetType::continuous)
 	{
-		if (!continuousMove(sender, dat, &continuous, nullptr, true, splinePos, splineDir)) { return INPUT_WAIT; }
+		if (!continuousMove(sender, dat, &continuous, nullptr, true, continuous.anchorSpacing, splinePos, splineDir)) { return INPUT_WAIT; }
 	}
 
 	splineIDCount++;

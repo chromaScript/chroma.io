@@ -11,6 +11,9 @@
 #include <iostream>
 #include <memory>
 
+extern int WINDOW_WIDTH;
+extern int WINDOW_HEIGHT;
+
 //Constructor
 Text::Text(std::map<std::string, std::string> basicAttribs,
 	std::weak_ptr<Widget> parent,
@@ -42,6 +45,13 @@ void Text::buildWidget()
 	setVertData_Widget();
 	bindBuffers();
 }
+void Text::clearData()
+{
+	uiHandler.reset();
+	thisFace.reset();
+	thisCurrentBitmap.reset();
+}
+
 // Initialize text data - Gets the fontPath, fontSize, thisFace and thisCurrentBitmap
 void Text::setTextData()
 {
@@ -121,6 +131,14 @@ void Text::drawSelf(ShaderTransform xform)
 {
 	glm::vec4 textColor;
 	glm::vec2 screenLocation;
+	int overflowValue = (applyOverflowMask && !overflowTarget.expired()) ? 0 : 1;
+	glm::vec4 overflowBoxMask = glm::vec4(0.0f);
+	// Calculate the overflowMask if needed (Note that the box is pre-calculated, but given an offset per-frame)
+	// offsetBox is given as BottomLeft.xy, TopRight.xy
+	if (overflowValue == 0)
+	{
+		overflowBoxMask = calculateOverflowMask();
+	}
 	// Draw the drop shadow if applicable
 	if (style.boxShadowSizeX != 0 || style.boxShadowSizeY != 0)
 	{
@@ -129,7 +147,7 @@ void Text::drawSelf(ShaderTransform xform)
 		uiHandler.get()->renderTextLine(shader, textColor, style.boxShadowAlpha, valueAttrib,
 			thisFace, thisCurrentBitmap,
 			screenLocation, glm::ivec2(transform.boundBox.x1, transform.boundBox.y1),
-			VAO, VBO, EBO);
+			this->VAO, this->VBO, this->EBO, overflowValue, overflowBoxMask);
 	}
 
 	screenLocation = getScreenLocation(0, 0, true);
@@ -137,5 +155,5 @@ void Text::drawSelf(ShaderTransform xform)
 	uiHandler.get()->renderTextLine(shader, textColor, style.fillAlpha, valueAttrib,
 		thisFace, thisCurrentBitmap, 
 		screenLocation, glm::ivec2(transform.boundBox.x1, transform.boundBox.y1),
-		VAO, VBO, EBO);
+		this->VAO, this->VBO, this->EBO, overflowValue, overflowBoxMask);
 }

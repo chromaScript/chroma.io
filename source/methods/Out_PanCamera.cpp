@@ -6,6 +6,7 @@
 #include "../include/Application.h"
 #include "../include/Camera.h"
 #include "../include/ToolSettings.h"
+#include "../include/toolSettings/ToolSettings_Forward.h"
 #include "../include/Toolbox.h"
 #include "../include/Tool.h"
 #include "../include/keys.h"

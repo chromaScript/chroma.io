@@ -362,6 +362,10 @@ void CInterpreter::visit(std::shared_ptr<CStmt_Variable> stmt)
 		currentAssignee = stmt.get()->name.get()->lexeme;
 		std::shared_ptr<CObject> var = currentEnvironment.get()->get(stmt.get()->name.get()->lexeme);
 		std::shared_ptr<CObject> assignment = stmt.get()->initializer.get()->acceptInterpreter(*this);
+		if (assignment.get()->objType.type == CLiteralTypes::_CNil)
+		{
+			return;
+		}
 		var.get()->obj = assignment.get()->obj;
 		currentAssignee = "";
 	}
@@ -1197,8 +1201,8 @@ std::shared_ptr<CObject> CInterpreter::matchType(std::shared_ptr<CToken> type, C
 	CLiteralTypes litType = tokenType_ToLiteralType(type.get()->type);
 	if (litType == CLiteralTypes::_CInstance || litType == CLiteralTypes::_CInstance_Array)
 	{
-		console.get()->error("[interpreter:0801] yellow - Encountered unfinished area of program.");
-		return std::make_shared<CObject>(nullptr);
+		if (type.get()->lexeme == query.litName) { return  std::make_shared<CObject>(true); }
+		return std::make_shared<CObject>(false);
 	}
 	else
 	{
