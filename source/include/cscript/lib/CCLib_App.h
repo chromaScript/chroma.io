@@ -119,5 +119,12 @@ public:
 	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
 	virtual std::string toString();
 };
+class CStd_cfZoomExtents : public CFunction
+{
+public:
+	CStd_cfZoomExtents(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
 
 #endif

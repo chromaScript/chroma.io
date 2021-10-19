@@ -1,6 +1,6 @@
-#include "include/Shader.h"
+#include "include/gladHelper.h"
 
-#include <glad/glad.h>
+#include "include/Shader.h"
 
 #include <string>
 #include <fstream>
@@ -120,6 +120,10 @@ void Shader::setInt(const std::string &name, int value) const
 void Shader::setIntArray(const std::string& name, int size, int* arr) const
 {
 	glUniform1iv(glGetUniformLocation(ID, name.c_str()), size, arr);
+}
+void Shader::setFloatArray(const std::string& name, int size, float* arr) const
+{
+	glUniform1fv(glGetUniformLocation(ID, name.c_str()), size, arr);
 }
 void Shader::setFloat(const std::string &name, float value) const
 {

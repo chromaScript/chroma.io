@@ -13,14 +13,12 @@
 #include "../../include/clayout/LEnums.h"
 #include "../../include/cscript/CObject.h"
 #include "../../include/cscript/CToken.h"
-#include "../../include/entities/WidgetStyle.h"
+#include "../../include/entities/widgets/WidgetStyle.h"
 
-#include "../../include/Application.h"
 #include "../../include/entities/UserInterface.h"
-#include "../../include/Toolbox.h"
-#include "../../include/entities/Widget.h"
-#include "../../include/structs.h"
-#include "../../include/keys.h"
+#include "../../include/tool/Toolbox.h"
+#include "../../include/entities/widgets/Widget.h"
+#include "../../include/input/keys.h"
 #include <glm.hpp>
 
 #include <GLFW/glfw3.h>
@@ -83,6 +81,9 @@ CStd_cApp::CStd_cApp(std::shared_ptr<CEnvironment> classEnv, std::shared_ptr<App
 	this->classEnv.get()->define(
 		"resizeAppWindow",
 		std::make_shared<CObject>(CCallableTypes::_CStd_cfResizeAppWindow, classEnv.get()->lookupEnvironment("resizeAppWindow", true)));
+	this->classEnv.get()->define(
+		"zoomExtents",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfZoomExtents, classEnv.get()->lookupEnvironment("zoomExtents", true)));
 	for (auto const& item : this->classEnv.get()->values)
 	{
 		std::shared_ptr<CStmt> func = std::get<std::shared_ptr<CFunction>>(item.second.get()->obj).get()->funcDeclaration;
@@ -350,8 +351,8 @@ CStd_cfIsValidKeybind_Tool::CStd_cfIsValidKeybind_Tool(std::shared_ptr<CEnvironm
 	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
 	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
 	std::vector<std::string> paramsNames;
-	paramsNames.push_back("modKeyBit");
 	paramsNames.push_back("glfwKey");
+	paramsNames.push_back("modKey");
 	this->funcDeclaration = std::make_shared<CStmt_Function>(
 		std::make_shared<CToken>(CTokenType::BOOL, -1), // returnType
 		std::make_shared<CToken>(CTokenType::IDENTIFIER, "isValidKeybind_tool", -1), // name
@@ -367,11 +368,11 @@ std::shared_ptr<CObject> CStd_cfIsValidKeybind_Tool::call(std::shared_ptr<CInter
 	// Get Args
 	std::vector<std::shared_ptr<CObject>> args = *arguments;
 	// Cast Arg 0 as string
-	int modKey = (int)std::get<double>(args[0].get()->obj);
-	int glfwKey = (int)std::get<double>(args[1].get()->obj);
+	int glfwKey = (int)std::get<double>(args[0].get()->obj);
+	int modKey = (int)std::get<double>(args[1].get()->obj);
 	// Fetch the appObj, always has the same value name
 	bool result = std::get<std::shared_ptr<Application>>(
-		interpreter.get()->currentEnvironment.get()->values.at("@appObj").get()->obj).get()->isValidKeybind_tool(modKey, glfwKey);
+		interpreter.get()->currentEnvironment.get()->values.at("@appObj").get()->obj).get()->isValidKeybind_tool(Keybind(glfwKey, modKey));
 	return std::make_shared<CObject>(result);
 }
 std::string CStd_cfIsValidKeybind_Tool::toString() { return funcDeclaration.get()->name.get()->lexeme; }
@@ -388,8 +389,8 @@ CStd_cfIsValidKeybind_AlphaOnly::CStd_cfIsValidKeybind_AlphaOnly(std::shared_ptr
 	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
 	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
 	std::vector<std::string> paramsNames;
-	paramsNames.push_back("modKeyBit");
 	paramsNames.push_back("glfwKey");
+	paramsNames.push_back("modKey");
 	this->funcDeclaration = std::make_shared<CStmt_Function>(
 		std::make_shared<CToken>(CTokenType::BOOL, -1), // returnType
 		std::make_shared<CToken>(CTokenType::IDENTIFIER, "isValidKeybind_tool", -1), // name
@@ -405,11 +406,11 @@ std::shared_ptr<CObject> CStd_cfIsValidKeybind_AlphaOnly::call(std::shared_ptr<C
 	// Get Args
 	std::vector<std::shared_ptr<CObject>> args = *arguments;
 	// Cast Arg 0 as string
-	int modKey = (int)std::get<double>(args[0].get()->obj);
-	int glfwKey = (int)std::get<double>(args[1].get()->obj);
+	int glfwKey = (int)std::get<double>(args[0].get()->obj);
+	int modKey = (int)std::get<double>(args[1].get()->obj);
 	// Fetch the appObj, always has the same value name
 	bool result = std::get<std::shared_ptr<Application>>(
-		interpreter.get()->currentEnvironment.get()->values.at("@appObj").get()->obj).get()->isValidKeybind_alphaOnly(modKey, glfwKey);
+		interpreter.get()->currentEnvironment.get()->values.at("@appObj").get()->obj).get()->isValidKeybind_alphaOnly(Keybind(glfwKey, modKey));
 	return std::make_shared<CObject>(result);
 }
 std::string CStd_cfIsValidKeybind_AlphaOnly::toString() { return funcDeclaration.get()->name.get()->lexeme; }
@@ -426,8 +427,8 @@ CStd_cfIsValidKeybind_SymbolOrChar::CStd_cfIsValidKeybind_SymbolOrChar(std::shar
 	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
 	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
 	std::vector<std::string> paramsNames;
-	paramsNames.push_back("modKeyBit");
 	paramsNames.push_back("glfwKey");
+	paramsNames.push_back("modKey");
 	this->funcDeclaration = std::make_shared<CStmt_Function>(
 		std::make_shared<CToken>(CTokenType::BOOL, -1), // returnType
 		std::make_shared<CToken>(CTokenType::IDENTIFIER, "isValidKeybind_symbolOrChar", -1), // name
@@ -443,11 +444,11 @@ std::shared_ptr<CObject> CStd_cfIsValidKeybind_SymbolOrChar::call(std::shared_pt
 	// Get Args
 	std::vector<std::shared_ptr<CObject>> args = *arguments;
 	// Cast Arg 0 as string
-	int modKey = (int)std::get<double>(args[0].get()->obj);
-	int glfwKey = (int)std::get<double>(args[1].get()->obj);
+	int glfwKey = (int)std::get<double>(args[0].get()->obj);
+	int modKey = (int)std::get<double>(args[1].get()->obj);
 	// Fetch the appObj, always has the same value name
 	bool result = std::get<std::shared_ptr<Application>>(
-		interpreter.get()->currentEnvironment.get()->values.at("@appObj").get()->obj).get()->isValidKeybind_symbolOrChar(modKey, glfwKey);
+		interpreter.get()->currentEnvironment.get()->values.at("@appObj").get()->obj).get()->isValidKeybind_symbolOrChar(Keybind(glfwKey, modKey));
 	return std::make_shared<CObject>(result);
 }
 std::string CStd_cfIsValidKeybind_SymbolOrChar::toString() { return funcDeclaration.get()->name.get()->lexeme; }
@@ -464,8 +465,8 @@ CStd_cfIsValidKeybind_ModOnly::CStd_cfIsValidKeybind_ModOnly(std::shared_ptr<CEn
 	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
 	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
 	std::vector<std::string> paramsNames;
-	paramsNames.push_back("modKeyBit");
 	paramsNames.push_back("glfwKey");
+	paramsNames.push_back("modKey");
 	this->funcDeclaration = std::make_shared<CStmt_Function>(
 		std::make_shared<CToken>(CTokenType::BOOL, -1), // returnType
 		std::make_shared<CToken>(CTokenType::IDENTIFIER, "isValidKeybind_modOnly", -1), // name
@@ -481,11 +482,11 @@ std::shared_ptr<CObject> CStd_cfIsValidKeybind_ModOnly::call(std::shared_ptr<CIn
 	// Get Args
 	std::vector<std::shared_ptr<CObject>> args = *arguments;
 	// Cast Arg 0 as string
-	int modKey = (int)std::get<double>(args[0].get()->obj);
-	int glfwKey = (int)std::get<double>(args[1].get()->obj);
+	int glfwKey = (int)std::get<double>(args[0].get()->obj);
+	int modKey = (int)std::get<double>(args[1].get()->obj);
 	// Fetch the appObj, always has the same value name
 	bool result = std::get<std::shared_ptr<Application>>(
-		interpreter.get()->currentEnvironment.get()->values.at("@appObj").get()->obj).get()->isValidKeybind_modOnly(modKey, glfwKey);
+		interpreter.get()->currentEnvironment.get()->values.at("@appObj").get()->obj).get()->isValidKeybind_modOnly(Keybind(glfwKey, modKey));
 	return std::make_shared<CObject>(result);
 }
 std::string CStd_cfIsValidKeybind_ModOnly::toString() { return funcDeclaration.get()->name.get()->lexeme; }
@@ -574,3 +575,33 @@ std::shared_ptr<CObject> CStd_cfResizeAppWindow::call(std::shared_ptr<CInterpret
 	return std::make_shared<CObject>(nullptr);
 }
 std::string CStd_cfResizeAppWindow::toString() { return funcDeclaration.get()->name.get()->lexeme; }
+
+//
+//
+// CStd_cfZoomExtents
+CStd_cfZoomExtents::CStd_cfZoomExtents(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfZoomExtents;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	std::vector<std::string> paramsNames;
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::_VOID, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "zoomExtents", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfZoomExtents::call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Fetch the appObj, always has the same value name
+	std::shared_ptr<Application> app = std::get<std::shared_ptr<Application>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@appObj").get()->obj);
+	app.get()->getCamera().get()->zoomExtents(app.get()->getCanvasDimensions());
+	return std::make_shared<CObject>(nullptr);
+}
+std::string CStd_cfZoomExtents::toString() { return funcDeclaration.get()->name.get()->lexeme; }

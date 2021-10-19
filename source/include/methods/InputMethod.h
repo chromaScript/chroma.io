@@ -1,9 +1,11 @@
 #ifndef INPUTMETHOD_H
 #define INPUTMETHOD_H
 
-#include "../structs.h"
-#include "../ToolSettings.h"
-#include "../toolSettings/ToolSettings_Forward.h"
+#include "../tool/ToolSettings.h"
+#include "../tool/toolSettings/ToolSettings_Forward.h"
+#include "../entities/visuals/VertexData.h"
+#include "MethodType.h"
+#include "../input/keys.h"
 
 class Application;
 class Tool;
@@ -15,7 +17,7 @@ class InputMethod
 {
 private:
 protected:
-	int ID;
+	MethodType id;
 	std::string name = "";
 	std::shared_ptr<Tool> owner;
 	// InputData is an internal management structure for storing incoming mouse events
@@ -31,7 +33,7 @@ protected:
 	float currentLength = 0.0f;
 	glm::vec3 lastCursor = glm::vec3(0);
 public:
-	MethodType type = MethodType::noInput;
+	MethodType type = MethodType::in_noInput;
 	// SplineData is the public spline data management structure that is used internally
 	// by input methods to perform more complex operations.
 	VertexData splineData;
@@ -51,24 +53,24 @@ public:
 	TSet_TwoPointControl twoPoint;
 	TSet_ThreePointControl threePoint;
 	// Methods
-	InputMethod(int id, TSetType controlScheme, std::shared_ptr<Tool> owner) : ID(id), owner(owner), controlScheme(controlScheme) {};
-	int getID() { return ID; }
+	InputMethod(MethodType id, TSetType controlScheme, std::shared_ptr<Tool> owner) : id(id), owner(owner), controlScheme(controlScheme) {};
+	MethodType getID() { return id; }
 	InputData getData() { return data; }
 	VertexData getFragData() { return fragData; }
-	virtual int move(Application* sender, MouseEvent dat) = 0;
-	virtual int click(Application* sender, MouseEvent dat) = 0;
-	bool continuousMove(Application* sender, MouseEvent dat,
+	virtual InputHandlerFlag move(Application* sender, Input dat) = 0;
+	virtual InputHandlerFlag click(Application* sender, Input dat) = 0;
+	bool continuousMove(Application* sender, Input dat,
 		TSet_ContinuousControl* lineControl, 
 		TSet_Smoothing* smoothing,
-		bool useSplineData, float vertexSpacing,
+		VertexData* target, float vertexSpacing,
 		glm::vec3& outPos, glm::vec3& outDir);
-	bool dragMove(Application* sender, MouseEvent dat, 
+	bool dragMove(Application* sender, Input dat,
 		TSet_DragControl* dragControl,
 		glm::vec3& cursorPos);
-	bool onePointMove(Application* sender, MouseEvent dat, 
+	bool onePointMove(Application* sender, Input dat,
 		TSet_OnePointControl* onePointControl, 
 		glm::vec3 &cursorPos);
-	void resetInput(Application* sender, MouseEvent dat, glm::vec3 &point, glm::vec3 &dir);
+	void resetInput(Application* sender, Input dat, glm::vec3 &point, glm::vec3 &dir);
 	std::string getName() { return name; }
 };
 

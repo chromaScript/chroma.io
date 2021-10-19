@@ -1,7 +1,6 @@
 #ifndef FONTS_H
 #define FONTS_H
 
-#include "../structs.h"
 #include "../Shader.h"
 
 #include <glm.hpp>

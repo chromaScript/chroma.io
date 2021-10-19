@@ -1,9 +1,11 @@
 #ifndef OUTPUTMETHOD_H
 #define OUTPUTMETHOD_H
 
-#include "../structs.h"
-#include "../ToolSettings.h"
-#include "../toolSettings/ToolSettings_Forward.h"
+#include "../tool/ToolSettings.h"
+#include "../tool/toolSettings/ToolSettings_Forward.h"
+#include "../entities/visuals/VertexData.h"
+#include "../methods/MethodType.h"
+
 class Tool;
 class Application;
 
@@ -14,20 +16,21 @@ class OutputMethod
 {
 private:
 protected:
-	int ID;
+	MethodType id = MethodType::out_noOutput;
 	std::string name = "";
 	std::shared_ptr<Tool> owner;
 	//InputData data;
 public:
-	MethodType type = MethodType::noOutput;
+	int entityCount = 0;
+	MethodType type = MethodType::out_noOutput;
 	std::vector<TSetType> interestMask;
-	OutputMethod(int id, std::shared_ptr<Tool> owner) : ID(id), owner(owner) {};
-	int getID() { return ID; }
-	//InputData getData() { return data; }
+	OutputMethod(MethodType id, std::shared_ptr<Tool> owner);
+	MethodType getID() { return id; }
 	virtual void preview(Application* sender, VertexData* fragDat) = 0;
 	virtual void finalize(Application* sender, VertexData* fragDat) = 0;
 	virtual void postprocess(Application* sender, VertexData* fragDat) = 0;
 	std::string getName() { return name; }
+	int increaseEntityCount();
 };
 
 #endif

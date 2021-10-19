@@ -2,9 +2,9 @@
 #define TFSETTINGSWRITER_H
 
 #include "ChromaToolFile.h"
-#include "../Toolbox.h"
-#include "../Tool.h"
-#include "../ToolSettings.h"
+#include "../tool/Toolbox.h"
+#include "../tool/Tool.h"
+#include "../tool/ToolSettings.h"
 
 #include <string>
 #include <memory>

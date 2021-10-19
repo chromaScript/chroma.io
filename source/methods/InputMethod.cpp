@@ -1,7 +1,8 @@
 #include "../include/methods/InputMethod.h"
-#include "../include/ToolSettings.h"
-#include "../include/toolSettings/ToolSettings_Forward.h"
-#include "../include/Tool.h"
+#include "../include/tool/ToolSettings.h"
+#include "../include/tool/toolSettings/ToolSettings_Forward.h"
+#include "../include/tool/Tool.h"
+#include "../include/math/math.h"
 
 #ifndef APPLICATION_H
 #include "../include/Application.h"
@@ -17,12 +18,10 @@
 #include <algorithm>
 #include <iostream>
 
-bool InputMethod::continuousMove(Application* sender, MouseEvent dat, 
+bool InputMethod::continuousMove(Application* sender, Input dat, 
 	TSet_ContinuousControl* continuousControl, TSet_Smoothing* smoothing,
-	bool useSplineData, float vertexSpacing, glm::vec3& outPos, glm::vec3 &outDir)
+	VertexData* target, float vertexSpacing, glm::vec3& outPos, glm::vec3 &outDir)
 {
-	VertexData* target = (useSplineData) ? &splineData : &fragData;
-	
 	// Kick bad-calls
 	if (target->anchors.size() == 0) { return false; }
 	
@@ -42,7 +41,7 @@ bool InputMethod::continuousMove(Application* sender, MouseEvent dat,
 		i--;
 	}
 	length = glm::length(outPos - target->anchors.back().pos);
-	angle = glm::degrees(atan2(outDir.x, outDir.y));
+	angle = glm::degrees(std::atan2f(outDir.y, outDir.x));
 
 	// Determine if to set a constraint angle
 
@@ -52,8 +51,8 @@ bool InputMethod::continuousMove(Application* sender, MouseEvent dat,
 	{
 		std::vector<float> constraintAngles;
 		std::vector<float> constraintDifferences;
-		std::vector<int> constraintKeys;
-		bool doConstraintA = continuousControl->enableConstrainA && dat.modKey == continuousControl->constrainA_modKey;
+		std::vector<Keybind> constraintKeys;
+		bool doConstraintA = continuousControl->enableConstrainA && compareModKey(continuousControl->constrainA_modKey, dat.modKey, false);
 		if (doConstraintA)
 		{
 			constraintAngles.push_back(clampAngle_360(continuousControl->constrainA_angle + 360));
@@ -63,7 +62,7 @@ bool InputMethod::continuousMove(Application* sender, MouseEvent dat,
 			constraintKeys.push_back(continuousControl->constrainA_modKey);
 			constraintKeys.push_back(continuousControl->constrainA_modKey);
 		}
-		bool doConstraintB = continuousControl->enableConstrainB && dat.modKey == continuousControl->constrainB_modKey;
+		bool doConstraintB = continuousControl->enableConstrainB && compareModKey(continuousControl->constrainB_modKey, dat.modKey, false);
 		if (doConstraintB)
 		{
 			constraintAngles.push_back(clampAngle_360(continuousControl->constrainB_angle + 360));
@@ -73,7 +72,7 @@ bool InputMethod::continuousMove(Application* sender, MouseEvent dat,
 			constraintKeys.push_back(continuousControl->constrainB_modKey);
 			constraintKeys.push_back(continuousControl->constrainB_modKey);
 		}
-		bool doConstraintC = continuousControl->enableConstrainC && dat.modKey == continuousControl->constrainC_modKey;
+		bool doConstraintC = continuousControl->enableConstrainC && compareModKey(continuousControl->constrainC_modKey, dat.modKey, false);
 		if (doConstraintC)
 		{
 			constraintAngles.push_back(clampAngle_360(continuousControl->constrainC_angle + 360));
@@ -83,7 +82,7 @@ bool InputMethod::continuousMove(Application* sender, MouseEvent dat,
 			constraintKeys.push_back(continuousControl->constrainC_modKey);
 			constraintKeys.push_back(continuousControl->constrainC_modKey);
 		}
-		bool doConstraintD = continuousControl->enableConstrainD && dat.modKey == continuousControl->constrainD_modKey;
+		bool doConstraintD = continuousControl->enableConstrainD && compareModKey(continuousControl->constrainD_modKey, dat.modKey, false);
 		if (doConstraintD)
 		{
 			constraintAngles.push_back(clampAngle_360(continuousControl->constrainD_angle + 360));
@@ -107,13 +106,13 @@ bool InputMethod::continuousMove(Application* sender, MouseEvent dat,
 			continuousControl->activeAngle = clampAngle_180(selectAngle);
 			continuousControl->origin = outPos;
 			continuousControl->dir = 
-				glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(continuousControl->activeAngle + 90))) * 
-				glm::vec3(1.0f, 0.0f, 0.0f);
-			continuousControl->perpendicular = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(90.0f)))* continuousControl->dir;
+				//glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(continuousControl->activeAngle + 90))) * DEFAULT_DIR;
+				glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(continuousControl->activeAngle + 0.0f))) * DEFAULT_DIR;
+			continuousControl->perpendicular = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(90.0f))) * continuousControl->dir;
 			glm::vec3 constrainP2 = continuousControl->origin + (continuousControl->dir * 100.0f);
 			continuousControl->line = glm::vec4(continuousControl->origin.x, continuousControl->origin.y, constrainP2.x, constrainP2.y);
 			continuousControl->activated = true;
-			std::cout << continuousControl->activeAngle << std::endl;
+			//std::cout << continuousControl->activeAngle << std::endl;
 		}
 	}
 
@@ -125,7 +124,11 @@ bool InputMethod::continuousMove(Application* sender, MouseEvent dat,
 		glm::vec3 perpLineP2 = outPos + (continuousControl->perpendicular * 100.0f);
 		glm::vec4 perpLine = glm::vec4(outPos.x, outPos.y, perpLineP2.x, perpLineP2.y);
 		outPos = glm::vec3(lineIntersect2D(continuousControl->line, perpLine), 0.0f);
-		if (dat.modKey != continuousControl->activeKey)
+		outDir = glm::vec3(
+			cos(continuousControl->activeAngle * (MATH_PI / 180.0f)), 
+			sin(continuousControl->activeAngle * (MATH_PI / 180.0f)), 
+			0.0f);
+		if (!compareModKey(continuousControl->activeKey, dat.modKey, false))
 		{
 			continuousControl->clearConstraint();
 		}
@@ -155,31 +158,30 @@ bool InputMethod::continuousMove(Application* sender, MouseEvent dat,
 		}
 	}
 	// Clear the NEW TAG
-	//target->anchors.front().flag = FLAG_NULL;
+	//target->anchors.front()flagPrimary = InputFlag::null;
 	return true;
 }
 
-bool InputMethod::dragMove(Application* sender, MouseEvent dat, 
+bool InputMethod::dragMove(Application* sender, Input dat, 
 	TSet_DragControl* dragControl, glm::vec3& cursorPos)
 {
 	// Pause the input if there hasn't been input movement
 	glm::dvec2 lastInput = glm::dvec2(data.inputEvents.back().x, data.inputEvents.back().y);
-	float moveTest = glm::length(glm::dvec2(dat.x, dat.y) - lastInput);
+	float moveTest = (float)glm::length(glm::dvec2(dat.x, dat.y) - lastInput);
 	if (moveTest < ROOT2) { return false; }
 	// Add the input data
 	if (data.inputEvents.size() < maxBufferLength) { data.inputEvents.push_back(dat); }
 	else { data.inputEvents.erase(data.inputEvents.begin()); data.inputEvents.push_back(dat); }
 	
-	// Clear FLAG_NEW_INPUT
-	if (fragData.anchors.size() != 0) { fragData.anchors.front().flag = FLAG_NULL; }
+	// Clear InputFlag::newInput
+	if (fragData.anchors.size() != 0) { fragData.anchors.front().input.flagPrimary = InputFlag::null; }
 	
 	// Determine the input mode and settings
 	fragData.centerAboutOrigin =
-		(sender->getKeyState(dragControl->sizeAboutOriginKey)) ? true : false;
-	bool extrudeMode = (sender->getKeyState(dragControl->extrudeModeKey) && dragControl->enableExtrusion) ? true : false;
-	bool moveMode = (sender->getKeyState(dragControl->moveOriginModeKey)) ? true : false;
-	bool snapMode = (sender->getKeyState(dragControl->snapModeKey)) ? true : false;
-	
+		(sender->getKeyState(dragControl->sizeAboutOriginKey.modKey)) ? true : false;
+	bool extrudeMode = (sender->getKeyState(dragControl->extrudeModeKey.modKey) && dragControl->enableExtrusion) ? true : false;
+	bool moveMode = (sender->getKeyState(dragControl->moveOriginModeKey.glfwKey)) ? true : false;
+	bool snapMode = (sender->getKeyState(dragControl->snapModeKey.modKey)) ? true : false;
 	// Set up the data
 	glm::vec3 lastPos = sender->pickScreenCoord(lastInput.x, lastInput.y);
 	glm::vec3 dir = glm::normalize(glm::vec3(
@@ -243,26 +245,26 @@ bool InputMethod::dragMove(Application* sender, MouseEvent dat,
 	return true;
 }
 
-bool InputMethod::onePointMove(Application* sender, MouseEvent dat, 
+bool InputMethod::onePointMove(Application* sender, Input dat, 
 	TSet_OnePointControl* onePointControl, glm::vec3 &cursorPos)
 {
 	// Pause the input if there hasn't been input movement
 	glm::dvec2 lastInput = glm::dvec2(data.inputEvents.back().x, data.inputEvents.back().y);
-	float moveTest = glm::length(glm::dvec2(dat.x, dat.y) - lastInput);
+	float moveTest = (float)glm::length(glm::dvec2(dat.x, dat.y) - lastInput);
 	if (moveTest < ROOT2) { return false; }
 	// Add the input data
 	if (data.inputEvents.size() < maxBufferLength) { data.inputEvents.push_back(dat); }
 	else { data.inputEvents.erase(data.inputEvents.begin()); data.inputEvents.push_back(dat); }
 
-	// Clear FLAG_NEW_INPUT
-	if (fragData.anchors.size() != 0) { fragData.anchors.front().flag = FLAG_NULL; }
+	// Clear InputFlag::newInput
+	if (fragData.anchors.size() != 0) { fragData.anchors.front().input.flagPrimary = InputFlag::null; }
 
 	// Determine the input mode and settings
 	fragData.centerAboutOrigin =
-		(sender->getKeyState(onePointControl->sizeAboutOriginKey)) ? true : false;
-	bool rotateMode = (sender->getKeyState(onePointControl->rotateModeKey)) ? true : false;
-	bool moveMode = (sender->getKeyState(onePointControl->moveOriginModeKey)) ? true : false;
-	bool constrainRatio = (sender->getKeyState(onePointControl->constrainRatioKey)) ? true : false;
+		(sender->getKeyState(onePointControl->sizeAboutOriginKey.modKey)) ? true : false;
+	bool rotateMode = (sender->getKeyState(onePointControl->rotateModeKey.modKey)) ? true : false;
+	bool moveMode = (sender->getKeyState(onePointControl->moveOriginModeKey.glfwKey)) ? true : false;
+	bool constrainRatio = (sender->getKeyState(onePointControl->constrainRatioKey.modKey)) ? true : false;
 	// Set up the data
 	glm::vec3 lastPos = sender->pickScreenCoord(lastInput.x, lastInput.y);
 
@@ -331,7 +333,7 @@ bool InputMethod::onePointMove(Application* sender, MouseEvent dat,
 	return true;
 }
 
-void InputMethod::resetInput(Application* sender, MouseEvent dat, glm::vec3& point, glm::vec3& dir)
+void InputMethod::resetInput(Application* sender, Input dat, glm::vec3& point, glm::vec3& dir)
 {
 	// Reset measurements
 	startAngle = -360.0f;
@@ -347,14 +349,14 @@ void InputMethod::resetInput(Application* sender, MouseEvent dat, glm::vec3& poi
 	case TSetType::drag:
 		drag = *owner.get()->getDragControl();
 		fragData.centerAboutOrigin =
-			(dat.modKey != INPUT_MOD_NONE && dat.modKey == drag.sizeAboutOriginKey) ? true : false;
+			(dat.modKey != InputModKey::none && compareModKey(drag.sizeAboutOriginKey, dat.modKey, false)) ? true : false;
 		fragData.transform.roll = 0.0f;
 		startExtrude = drag.initialExtrusion;
 		break;
 	case TSetType::onepoint:
 		continuous = *owner.get()->getContinuousControl();
 		fragData.centerAboutOrigin =
-			(dat.modKey != INPUT_MOD_NONE && dat.modKey == onePoint.sizeAboutOriginKey) ? true : false;
+			(dat.modKey != InputModKey::none && compareModKey(drag.sizeAboutOriginKey, dat.modKey, false)) ? true : false;
 		fragData.transform.roll = onePoint.initialRotation;
 		startExtrude = 0.0f;
 		break;

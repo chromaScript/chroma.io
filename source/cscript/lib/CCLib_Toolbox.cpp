@@ -13,14 +13,13 @@
 #include "../../include/clayout/LEnums.h"
 #include "../../include/cscript/CObject.h"
 #include "../../include/cscript/CToken.h"
-#include "../../include/entities/WidgetStyle.h"
+#include "../../include/entities/widgets/WidgetStyle.h"
 
 #include "../../include/Application.h"
 #include "../../include/entities/UserInterface.h"
-#include "../../include/Toolbox.h"
-#include "../../include/entities/Widget.h"
-#include "../../include/structs.h"
-#include "../../include/keys.h"
+#include "../../include/tool/Toolbox.h"
+#include "../../include/entities/widgets/Widget.h"
+#include "../../include/input/keys.h"
 #include <glm.hpp>
 
 #include <GLFW/glfw3.h>
@@ -233,11 +232,12 @@ std::shared_ptr<CObject> CStd_cfCreateNewTool::call(
 	std::string outputMethod = std::get<std::string>(args[6].get()->obj);
 	int keybind_modBit = (int)std::get<double>(args[7].get()->obj);
 	int keybind_glfwKey = (int)std::get<double>(args[8].get()->obj);
+	Keybind keybind = Keybind(keybind_glfwKey, keybind_modBit);
 	// Set the values
 	bool result = std::get<std::shared_ptr<Toolbox>>(
 		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->createCustomTool(
 			cursorHover, cursorPress, toolID, toolName, inputMethod,
-			controlScheme, outputMethod, keybind_modBit, keybind_glfwKey);
+			controlScheme, outputMethod, keybind);
 	if (!result)
 	{
 		interpreter.get()->console.get()->error("");
@@ -275,9 +275,13 @@ std::shared_ptr<CObject> CStd_cfCheckActiveToolSettingsMask::call(
 	std::vector<std::shared_ptr<CObject>> args = *arguments;
 	std::string settingsMaskName = std::get<std::string>(args[0].get()->obj);
 	// Set the values
-	bool result = std::get<std::shared_ptr<Toolbox>>(
-		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->getActiveTool().get()->checkInterestMask(
+	std::shared_ptr<Toolbox> toolbox = std::get<std::shared_ptr<Toolbox>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj);
+	bool result = false;
+	if (toolbox.get()->checkActiveTool()) {
+		result = toolbox.get()->getActiveTool().get()->checkInterestMask(
 			interpreter, settingsMaskName);
+	}
 	return std::make_shared<CObject>(result);
 }
 std::string CStd_cfCheckActiveToolSettingsMask::toString() { return funcDeclaration.get()->name.get()->lexeme; }
@@ -319,9 +323,13 @@ std::shared_ptr<CObject> CStd_cfSetActiveToolProp::call(
 	int subSig = (int)std::get<double>(args[1].get()->obj);
 	bool asPercentage = std::get<bool>(args[3].get()->obj);
 	// Set the values
-	std::get<std::shared_ptr<Toolbox>>(
-		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->getActiveTool().get()->putProperty(
-			interpreter, sig, subSig, args[2], false, asPercentage, false);
+	std::shared_ptr<Tool> activeTool = std::get<std::shared_ptr<Toolbox>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->getActiveTool();
+	if (activeTool != nullptr)
+	{
+		activeTool.get()->putProperty(
+				interpreter, sig, subSig, args[2], false, asPercentage, false);
+	}
 	return std::make_shared<CObject>(nullptr);
 }
 std::string CStd_cfSetActiveToolProp::toString() { return funcDeclaration.get()->name.get()->lexeme; }
@@ -364,10 +372,15 @@ std::shared_ptr<CObject> CStd_cfGetActiveToolProp::call(
 	bool getAsPercentage = std::get<bool>(args[2].get()->obj);
 	bool asString = std::get<bool>(args[3].get()->obj);
 	// Set the values
-	std::shared_ptr<CObject> returnObj = std::get<std::shared_ptr<Toolbox>>(
-		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->getActiveTool().get()->putProperty(
-			interpreter, sig, subSig, nullptr, true, getAsPercentage, asString);
-	return returnObj;
+	std::shared_ptr<Tool> activeTool = std::get<std::shared_ptr<Toolbox>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->getActiveTool();
+	if (activeTool != nullptr)
+	{
+		std::shared_ptr<CObject> returnObj = activeTool.get()->putProperty(
+				interpreter, sig, subSig, nullptr, true, getAsPercentage, asString);
+		return returnObj;
+	}
+	return std::make_shared<CObject>(nullptr);
 }
 std::string CStd_cfGetActiveToolProp::toString() { return funcDeclaration.get()->name.get()->lexeme; }
 
@@ -403,9 +416,14 @@ std::shared_ptr<CObject> CStd_cfSetActiveToolInterest::call(
 	std::string interestName = std::get<std::string>(args[0].get()->obj);
 	TSetType interest = stringToTSetType(interestName);
 	// Set the values
-	std::get<std::shared_ptr<Toolbox>>(
-		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->getActiveTool().get()->putInterest(
-			interpreter, interest, args[1], false);
+	std::shared_ptr<Tool> activeTool = std::get<std::shared_ptr<Toolbox>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->getActiveTool();
+	if (activeTool != nullptr)
+	{
+		activeTool.get()->putInterest(
+				interpreter, interest, args[1], false);
+	}
+	
 	return std::make_shared<CObject>(nullptr);
 }
 std::string CStd_cfSetActiveToolInterest::toString() { return funcDeclaration.get()->name.get()->lexeme; }
@@ -440,10 +458,15 @@ std::shared_ptr<CObject> CStd_cfGetActiveToolInterest::call(
 	std::string interestName = std::get<std::string>(args[0].get()->obj);
 	TSetType interest = stringToTSetType(interestName);
 	// Set the values
-	std::shared_ptr<CObject> returnObj = std::get<std::shared_ptr<Toolbox>>(
-		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->getActiveTool().get()->putInterest(
-			interpreter, interest, nullptr, true);
-	return returnObj;
+	std::shared_ptr<Tool> activeTool = std::get<std::shared_ptr<Toolbox>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@toolboxObj").get()->obj).get()->getActiveTool();
+	if (activeTool != nullptr)
+	{
+		std::shared_ptr<CObject> returnObj = activeTool.get()->putInterest(
+				interpreter, interest, nullptr, true);
+		return returnObj;
+	}
+	return std::make_shared<CObject>(nullptr);
 }
 std::string CStd_cfGetActiveToolInterest::toString() { return funcDeclaration.get()->name.get()->lexeme; }
 

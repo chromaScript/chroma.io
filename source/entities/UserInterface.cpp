@@ -1,19 +1,21 @@
 #include "../include/entities/UserInterface.h"
 
-#include "../include/entities/Canvas.h"
-#include "../include/entities/HorizontalBox.h"
-#include "../include/entities/VerticalBox.h"
-#include "../include/entities/Image.h"
-#include "../include/entities/Text.h"
-#include "../include/entities/Line.h"
-#include "../include/entities/GradientBox.h"
+#include "../include/entities/layers/Canvas.h"
+#include "../include/entities/widgets/HorizontalBox.h"
+#include "../include/entities/widgets/VerticalBox.h"
+#include "../include/entities/widgets/ImageWidget.h"
+#include "../include/entities/widgets/Text.h"
+#include "../include/entities/widgets/Line.h"
+#include "../include/entities/widgets/GradientBox.h"
+#include "../include/entities/widgets/Graph_ToolControl.h"
+#include "../include/entities/widgets/Noise_ToolControl.h"
 #include "../include/cscript/ChromaScript.h"
 #include "../include/cscript/CEnvironment.h"
 #include "../include/cscript/CInterpreter.h"
 #include "../include/cscript/CEnums.h"
 #include "../include/clayout/LEnums.h"
 #include "../include/cscript/CObject.h"
-#include "../include/Toolbox.h"
+#include "../include/tool/Toolbox.h"
 
 #include <filesystem>
 #include <string>
@@ -51,7 +53,8 @@ bool UI::newDocument(std::string docName, int width, int height, bool setAsActiv
 	if (setAsActive) 
 	{ 
 		setCanvas(documents.back()); 
-		owner.get()->getCamera()->centerToCanvas(glm::ivec2(width, height));
+		owner.get()->getCamera()->setMaxZoom(float(width), float(height));
+		owner.get()->getCamera()->zoomExtents(glm::ivec2(width, height));
 	}
 	return true;
 }
@@ -169,11 +172,10 @@ void UI::stepThroughWidgetTree(std::shared_ptr<Widget> treeRoot, bool doTopDown,
 		stepThroughWidgetTree(child, doTopDown, doBottomUp, doPlacement);
 
 		// Do stuff after stepping into tree
-		if (doBottomUp == true) { sizeWidgetByChildren(child.get()); }
+		if (doBottomUp == true) { child.get()->resetSize(); sizeWidgetByChildren(child.get()); }
 	}
 
-	if (doBottomUp == true) { sizeWidgetByChildren(treeRoot.get()); }
-	treeRoot.reset(); // Added**
+	if (doBottomUp == true) { treeRoot.get()->resetSize(); sizeWidgetByChildren(treeRoot.get()); }
 	return;
 }
 
@@ -264,14 +266,15 @@ void UI::rebuildWidgetHierarchy(std::weak_ptr<Widget> target)
 		stepThroughWidgetTree(target.lock(), false, true, false); // 1. BottomUp
 		stepThroughWidgetTree(target.lock(), true, false, false); // 2. TopDown
 		stepThroughWidgetTree(target.lock(), false, false, true); // 3. Placement
-		target.lock().get()->checkOutofBoundsWidgets(target.lock(), target.lock().get()->getColliderBox());
-		target.reset(); // Added**
+		if (!target.lock()->getRoot().expired())
+		{
+			target.lock().get()->checkOutofBoundsWidgets(target.lock()->getRoot(), target.lock()->getRoot().lock()->getColliderBox());
+		}
 	}
 }
 
 void UI::clearRebuildRequests()
 {
-	
 	if (rebuildWidgets.size() == 0) { return; }
 	for (std::weak_ptr<Widget> target : rebuildWidgets)
 	{
@@ -295,25 +298,54 @@ std::shared_ptr<Widget> UI::createWidget(
 	std::shared_ptr<Shader> shader)
 {
 	// 4. Switch on elmentName, using element specific constructor
-	switch (widgetType)
+	
+	if (widgetType == LTokenType::PANEL)
 	{
-	case LTokenType::PANEL:
-		return nullptr;
-	case LTokenType::H_BOX:
-		return std::make_shared<HorizontalBox>(basicAttribs, parent, style, shader);
-	case LTokenType::V_BOX:
-		return std::make_shared<VerticalBox>(basicAttribs, parent, style, shader);
-	case LTokenType::IMAGE:
-		return std::make_shared<Image>(basicAttribs, parent, style, shader);
-	case LTokenType::TEXT:
-		return std::make_shared<Text>(basicAttribs, parent, style, shader, fontHandler);
-	case LTokenType::LINE:
-		return std::make_shared<Line>(basicAttribs, parent, style, shader, fontHandler);
-	case LTokenType::GRADIENT_BOX:
-		return std::make_shared<GradientBox>(basicAttribs, parent, style, shader);
-	default:
 		return nullptr;
 	}
+	else if (widgetType == LTokenType::H_BOX)
+	{
+		return std::make_shared<HorizontalBox>(basicAttribs, parent, style, shader);
+	}
+	else if (widgetType == LTokenType::V_BOX)
+	{
+		return std::make_shared<VerticalBox>(basicAttribs, parent, style, shader);
+	}
+	else if (widgetType == LTokenType::TEXT)
+	{
+		return std::make_shared<Text>(basicAttribs, parent, style, shader, fontHandler);
+	}
+	else if (widgetType == LTokenType::IMAGE)
+	{
+		return std::make_shared<ImageWidget>(basicAttribs, parent, style, shader);
+	}
+	else if (widgetType == LTokenType::LINE)
+	{
+		return std::make_shared<Line>(basicAttribs, parent, style, shader, fontHandler);
+	}
+	else if (widgetType == LTokenType::GRADIENT_BOX)
+	{
+		return std::make_shared<GradientBox>(basicAttribs, parent, style, shader);
+	}
+	else if (widgetType == LTokenType::T_GRAPH)
+	{
+		std::shared_ptr<Widget> returnObj = std::make_shared<Graph_ToolControl>(basicAttribs, parent, style, shader);
+		return returnObj;
+	}
+	else if (widgetType == LTokenType::T_NOISE)
+	{
+		return std::make_shared<Noise_ToolControl>(basicAttribs, parent, style, shader);
+	}
+	else
+	{
+		return nullptr;
+	}
+	//case LTokenType::C_GRAPH:
+	//	return std::make_shared<GradientBox>(basicAttribs, parent, style, shader);
+	//case LTokenType::R_GRAPH:
+	//	return std::make_shared<GradientBox>(basicAttribs, parent, style, shader);
+	//case LTokenType::EDIT_GRADIENT:
+	//	return std::make_shared<GradientBox>(basicAttribs, parent, style, shader);
 }
 
 std::shared_ptr<Widget> UI::createWidget_fromPrototype(
@@ -347,7 +379,6 @@ std::shared_ptr<Widget> UI::createWidget_fromPrototype(
 ////////////////////////////////////////////////////////////////////////////////////////////////
 inline double fibo(double f)
 {
-	std::cout << f << std::endl;
 	if (f <= 2)
 	{
 		return f;
@@ -547,7 +578,7 @@ void UI::parsePluginString(std::string fileString, std::string* plugName, std::s
 	layouts.erase(remove_if(layouts.begin(), layouts.end(), isspace), layouts.end());
 	while (layouts.find(",") != std::string::npos)
 	{
-		std::filesystem::path layoutPath = splitRegularString(layouts, ",");
+		std::filesystem::path layoutPath = splitRegularString(layouts, ",", true);
 		if (!layoutPath.empty() && layoutPath.extension() == ".layout")
 		{
 			layoutPaths->emplace_back(layoutPath);
@@ -563,7 +594,7 @@ void UI::parsePluginString(std::string fileString, std::string* plugName, std::s
 	styles.erase(remove_if(styles.begin(), styles.end(), isspace), styles.end());
 	while (styles.find(",") != std::string::npos)
 	{
-		std::filesystem::path stylePath = splitRegularString(styles, ",");
+		std::filesystem::path stylePath = splitRegularString(styles, ",", true);
 		if (!stylePath.empty() && stylePath.extension() == ".style")
 		{
 			stylePaths->emplace_back(stylePath);
@@ -579,7 +610,7 @@ void UI::parsePluginString(std::string fileString, std::string* plugName, std::s
 	scripts.erase(remove_if(scripts.begin(), scripts.end(), isspace), scripts.end());
 	while (scripts.find(",") != std::string::npos)
 	{
-		std::filesystem::path scriptPath = splitRegularString(scripts, ",");
+		std::filesystem::path scriptPath = splitRegularString(scripts, ",", true);
 		if (!scriptPath.empty() && scriptPath.extension() == ".cscript")
 		{
 			scriptPaths->emplace_back(scriptPath);
@@ -720,7 +751,7 @@ void UI::swapFGBGColor()
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool UI::widgetSweepTest(MouseEvent input)
+bool UI::widgetSweepTest(Input input)
 {
 	hitWidget.reset();
 	std::vector<std::weak_ptr<Widget>> hitWidgets;
@@ -737,7 +768,7 @@ bool UI::widgetSweepTest(MouseEvent input)
 	else
 	{
 		// If mouse-over, do not store as hit
-		if (input.button == UI_MOUSE_OVER)
+		if (input.button == InputMouseButton::hover)
 		{
 			hitWidgets.clear();
 			return true;
@@ -751,7 +782,7 @@ bool UI::widgetSweepTest(MouseEvent input)
 	}
 }
 
-bool UI::widgetHitTest(MouseEvent input, bool dragOnly, bool shouldFocus)
+bool UI::widgetHitTest(Input input, bool dragOnly, bool shouldFocus)
 {
 	bool hitResult = false;
 	// Check if there's a stored widget
@@ -868,7 +899,7 @@ bool UI::widgetHitTest(MouseEvent input, bool dragOnly, bool shouldFocus)
 	return hitResult;
 }
 
-bool UI::widgetHoverTest(MouseEvent* input)
+bool UI::widgetHoverTest(Input* input)
 {
 	// Otherwise, continue
 	std::vector<std::weak_ptr<Widget>> hoveredWidgets;
@@ -910,7 +941,7 @@ bool UI::widgetHoverTest(MouseEvent* input)
 	return false;
 }
 
-bool UI::widgetLeaveTest(MouseEvent* input, unsigned int maxZIndex)
+bool UI::widgetLeaveTest(Input* input, unsigned int maxZIndex)
 {
 	bool result = false;
 	std::vector<int> eraseKeys;
@@ -930,6 +961,41 @@ bool UI::widgetLeaveTest(MouseEvent* input, unsigned int maxZIndex)
 	for (int key : eraseKeys)
 	{
 		enteredWidgets.erase(key);
+		// Also remove widget from overWidgets
+		if (overWidgets.count(key) == 1) { overWidgets.erase(key); }
+	}
+	return result;
+}
+
+bool UI::widgetOverTest(Input* input, unsigned int maxZIndex)
+{
+	bool result = false;
+	std::vector<int> eraseKeys;
+	for (auto& entry : overWidgets)
+	{
+		if (!entry.second.expired())
+		{
+			if (entry.second.lock().get()->selfLeave(input, maxZIndex))
+			{
+				entry.second.reset();
+				eraseKeys.push_back(entry.first);
+			}
+			else
+			{
+				activeWidget = entry.second;
+				owner.get()->scriptConsole.get()->run(entry.second.lock()->callbackMap.at("onmouseover"), "global");
+				activeWidget.reset();
+				result = true;
+			}
+		}
+		else
+		{
+			eraseKeys.push_back(entry.first);
+		}
+	}
+	for (int key : eraseKeys)
+	{
+		overWidgets.erase(key);
 	}
 	return result;
 }
@@ -1416,7 +1482,7 @@ std::vector<std::weak_ptr<Widget>> UI::getWidgetsByType(std::string typeName, st
 {
 	// Warning: Unfinished function body
 	std::shared_ptr<std::vector<std::weak_ptr<Widget>>> out = std::make_shared<std::vector<std::weak_ptr<Widget>>>();
-	if (layoutTypeMap.count(typeName) == 1)
+	if (layoutStringTypeMap.count(typeName) == 1)
 	{
 		/*
 		for (std::string rootID : widgetClassTable.at(className))
@@ -1450,6 +1516,28 @@ std::weak_ptr<Widget> UI::getRootWidgetByID(std::string rootID)
 // Delete Functions
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
+void UI::requestWidgetDeletion(std::shared_ptr<CInterpreter> interpreter, std::string lookup)
+{
+	std::weak_ptr<Widget> target = getWidgetByID(lookup);
+	if (!target.expired())
+	{
+		deleteWidgets.push_back(target);
+	}
+}
+void UI::clearDeletionRequests()
+{
+	if (deleteWidgets.size() == 0) { return; }
+	for (std::weak_ptr<Widget> target : deleteWidgets)
+	{
+		if (!target.expired())
+		{
+			deleteWidget_byID(nullptr, target.lock()->idAttrib);
+		}
+		target.reset(); // Added**
+	}
+	deleteWidgets.clear();
+	deleteWidgets.shrink_to_fit();
+}
 
 bool UI::deleteWidget_byID(std::shared_ptr<CInterpreter> interpreter, std::string lookup)
 {
@@ -1515,7 +1603,10 @@ bool UI::sortChildren_effectsOrdering(std::shared_ptr<CInterpreter> interpreter,
 {
 	std::weak_ptr<Widget> target = getWidgetByID(lookup);
 	if (target.expired()) { return false; }
-	if (!owner.get()->toolbox.get()->getActiveTool().get()->checkInterestMask(TSetType::effects)) { return false; }
+	if (owner.get()->toolbox.get()->checkActiveTool() && 
+		!owner.get()->toolbox.get()->getActiveTool().get()->checkInterestMask(TSetType::effects)) { 
+		return false; 
+	}
 	std::vector<std::string> listCurrent;
 	for (std::shared_ptr<Widget> child : target.lock()->childWidgets)
 	{
@@ -1525,7 +1616,7 @@ bool UI::sortChildren_effectsOrdering(std::shared_ptr<CInterpreter> interpreter,
 		else { listCurrent.push_back("null"); }
 		if (listCurrent.back() == "null" || listCurrent.back() == "") { return false; }
 	}
-	int childCount = listCurrent.size();
+	int childCount = (int)listCurrent.size();
 	TSet_Effects* effects = owner.get()->toolbox.get()->getActiveTool().get()->getEffects();
 	effects->updateEffectsOrdering(false);
 	std::vector<int> effectsCurrent = effects->getOrdering_vec();

@@ -1,0 +1,404 @@
+num aConSetID = -1;
+num aNodeSetID_1 = -1;
+num aNodeSetID_2 = -1;
+num aNodeSetID_3 = -1;
+num aNoiseSetID = -1;
+
+num currentSliderSize = 0;
+bool isMinDrag = false;
+
+num sl_singleWidth = 6;
+num sl_doubleWidth = 6;
+num set_lineSize = 18;
+
+void hoverCloseButton(num select)
+{
+	if (select == 0)
+	{
+		setProperty("fill-color", redButtonBG);
+	}
+	else if (select == 1)
+	{
+		setProperty("fill-color", midGrey);
+	}
+}
+void closePopup(string widgetID)
+{
+	app.ui.getWidget_byID(widgetID).setProperty("visibility", "hide");
+	if (widgetID == "tcgp_wrapper") { 
+		aConSetID = -1; 
+		aNodeSetID_1 = -1; 
+		aNodeSetID_2 = -1; 
+		aNodeSetID_3 = -1;
+	}
+	else if (widgetID == "tcnp_wrapper") {
+		aNoiseSetID = -1;
+	}
+}
+
+void hoverCNButton(num select)
+{
+	if (select == 0)
+	{
+		setProperty("fill-color", lightGrey);
+	}
+	else if (select == 1)
+	{
+		setProperty("fill-color", midGrey);
+	}
+}
+
+void clickCNButton(bool isNoise, string widgetID, num settingIDBinding, num nodeSlot1, num nodeSlot2, num nodeSlot3)
+{
+	print aNoiseSetID;
+	print aConSetID;
+	print settingIDBinding;
+	
+	string vis = app.ui.getWidget_byID(widgetID).getProperty("visibility");
+	if (vis == "show") {
+		bool isSwap = false;
+		if (isNoise && aNoiseSetID != -1 && aNoiseSetID != settingIDBinding) { isSwap = true; }
+		if (!isNoise && aConSetID != -1 && aConSetID != settingIDBinding) { isSwap = true; }
+		if (!isSwap) { closePopup(widgetID); return; }
+	}
+	if (!isNoise)
+	{
+		app.ui.getWidget_byID(widgetID).setProperty("visibility", "visible");
+		aConSetID = settingIDBinding;
+		aNodeSetID_1 = nodeSlot1;
+		aNodeSetID_2 = nodeSlot2;
+		aNodeSetID_3 = nodeSlot3;
+		triggerStoredEvent("tcgp_updateOpen", false);
+		app.ui.moveRootToFront(widgetID);
+	}
+	else
+	{
+		app.ui.getWidget_byID(widgetID).setProperty("visibility", "visible");
+		aNoiseSetID = settingIDBinding;
+		triggerStoredEvent("tcnp_updateOpen", false);
+		app.ui.moveRootToFront(widgetID);
+	}
+}
+
+void tSetToggle(bool isClick, num selector, num settingID, num subSigID)
+{
+	// Handle Click Input
+	if (isClick) {
+		bool settingValue = app.toolbox.getActiveToolProp(settingID, subSigID, false, false);
+		if (settingValue) {
+			setProperty("fill-color", slateGrey);
+			app.toolbox.setActiveToolProp(settingID, subSigID, false, false);
+		}
+		else {
+			setProperty("fill-color", midGrey);
+			app.toolbox.setActiveToolProp(settingID, subSigID, true, false);
+		}
+		return;
+	}
+	// Handle Hover Input
+	if (selector == 0) {
+		setProperty("fill-color", lightGrey);
+	}
+	else if (selector == 1) {
+		bool result = app.toolbox.getActiveToolProp(settingID, subSigID, false, false);
+		if (result) {
+			setProperty("fill-color", midGrey);
+		}
+		else {
+			setProperty("fill-color", slateGrey);
+		}
+	}
+}
+
+void update_tSetToggle(string widgetID, num settingID, num subID)
+{
+	bool result = app.toolbox.getActiveToolProp(settingID, subID, false, false);
+	if (result)
+	{
+		app.ui.getWidget_byID(widgetID).setProperty("fill-color", global::midGrey);
+	}
+	else
+	{
+		app.ui.getWidget_byID(widgetID).setProperty("fill-color", global::slateGrey);
+	}
+}
+
+void update_tSetSliderSingle(string slideBoxID, string slideID, string textID, num setID, num subID)
+{
+	currentSliderSize = app.ui.getWidget_byID(slideBoxID).getProperty("size-X");
+	
+	app.ui.getWidget_byID(slideID).setProperty("left", 
+		app.toolbox.getActiveToolProp(setID, subID, true, false) * (currentSliderSize - sl_doubleWidth));
+	app.ui.getWidget_byID(textID).setProperty("value", 
+		toString(app.toolbox.getActiveToolProp(setID, subID, false, false)));
+}
+
+void update_tSetSliderSingleVert(string slideBoxID, string slideID, string textID, num setID, num subID)
+{
+	currentSliderSize = app.ui.getWidget_byID(slideBoxID).getProperty("size-Y");
+	
+	app.ui.getWidget_byID(slideID).setProperty("top", 
+		app.toolbox.getActiveToolProp(setID, subID, true, false) * (currentSliderSize - sl_doubleWidth));
+	app.ui.getWidget_byID(textID).setProperty("value", 
+		toString(app.toolbox.getActiveToolProp(setID, subID, false, false)));
+}
+
+void update_tSetSliderDouble(string slideBoxID, string minSlideID, string minTextID, string maxSlideID, string maxTextID, 
+	num minSetID, num minSubID, num maxSetID, num maxSubID)
+{
+	currentSliderSize = app.ui.getWidget_byID(slideBoxID).getProperty("size-X");
+	
+	app.ui.getWidget_byID(minSlideID).setProperty("left", 
+		app.toolbox.getActiveToolProp(minSetID, minSubID, true, false) * (currentSliderSize - sl_doubleWidth));
+	app.ui.getWidget_byID(minTextID).setProperty("value", 
+		toString(app.toolbox.getActiveToolProp(minSetID, minSubID, false, false)));
+	app.ui.getWidget_byID(maxSlideID).setProperty("left", 
+		app.toolbox.getActiveToolProp(maxSetID, maxSubID, true, false) * (currentSliderSize - sl_doubleWidth));
+	app.ui.getWidget_byID(maxTextID).setProperty("value", 
+		toString(app.toolbox.getActiveToolProp(maxSetID, maxSubID, false, false)));
+}
+
+void tSli_single(num type, num settingID, num subID, bool updateText, string textID)
+{
+	num xpos = getMousePos_relative()[0];
+	if (type == -1) {
+		setChildProperty_byClass("set_sl_single", "background-color", global::lightGrey);
+		return;
+	}
+	else if (type == -2) {
+		setChildProperty_byClass("set_sl_single", "background-color", global::midGrey);
+		return;
+	}
+	
+	if (type == 0)
+	{
+		currentSliderSize = getProperty("size-X");
+		setChildProperty_byClass("set_sl_single", "background-color", global::lightGrey);
+	}
+	else if (type == 1)
+	{
+		// Fix xpos value and establish left position with snapping
+		xpos = clamp(xpos, 0, currentSliderSize - sl_singleWidth);
+		num pos = (currentSliderSize - sl_singleWidth) / 2;
+		if (xpos <= pos - 2 || xpos >= pos + 2) { pos = xpos; }
+		
+		setChildProperty_byClass("set_sl_single", "left", pos);
+		app.toolbox.setActiveToolProp(settingID, subID, pos / (currentSliderSize - sl_singleWidth), true);
+		
+		if (updateText)
+		{
+			app.ui.getWidget_byID(textID).setProperty("value", app.toolbox.getActiveToolProp(settingID, subID, false, false));
+		}
+	}
+	else if (type == 2)
+	{
+		setChildProperty_byClass("set_sl_single", "background-color", global::midGrey);
+	}
+}
+
+void tSli_singleVert(num type, num settingID, num subID, bool updateText, string textID)
+{
+	num ypos = getMousePos_relative()[1];
+	if (type == -1) {
+		setChildProperty_byClass("set_sl_vertSingle", "background-color", global::lightGrey);
+		return;
+	}
+	else if (type == -2) {
+		setChildProperty_byClass("set_sl_vertSingle", "background-color", global::midGrey);
+		return;
+	}
+	
+	if (type == 0)
+	{
+		currentSliderSize = getProperty("size-Y");
+		setChildProperty_byClass("set_sl_vertSingle", "background-color", global::lightGrey);
+	}
+	else if (type == 1)
+	{
+		// Fix ypos value and establish left position with snapping
+		ypos = clamp(ypos, 0, currentSliderSize - sl_singleWidth);
+		num pos = (currentSliderSize - sl_singleWidth) / 2;
+		if (ypos <= pos - 2 || ypos >= pos + 2) { pos = ypos; }
+		
+		setChildProperty_byClass("set_sl_vertSingle", "top", pos);
+		app.toolbox.setActiveToolProp(settingID, subID, pos / (currentSliderSize - sl_singleWidth), true);
+		
+		if (updateText)
+		{
+			app.ui.getWidget_byID(textID).setProperty("value", app.toolbox.getActiveToolProp(settingID, subID, false, false));
+		}
+	}
+	else if (type == 2)
+	{
+		setChildProperty_byClass("set_sl_vertSingle", "background-color", global::midGrey);
+	}
+}
+
+void tSli_double(num type, num minSettingID, num minSubID, num maxSettingID, num maxSubID, bool updateText, string minTextID, string maxTextID)
+{
+	num xpos = getMousePos_relative()[0];
+	num ypos = getMousePos_relative()[1];
+	if (type == -1) {
+		if (ypos > (set_lineSize / 2)) {
+			setChildProperty_byClass("set_sl_max", "fill-color", global::midGrey);
+			setChildProperty_byClass("set_sl_min", "fill-color", global::lightGrey);
+		}
+		else {
+			setChildProperty_byClass("set_sl_min", "fill-color", global::midGrey);
+			setChildProperty_byClass("set_sl_max", "fill-color", global::lightGrey);
+		}
+	}
+	else if (type == -2) {
+		setChildProperty_byClass("set_sl_min", "fill-color", global::midGrey);
+		setChildProperty_byClass("set_sl_max", "fill-color", global::midGrey);
+		return;
+	}
+	
+	if (type == 0)
+	{
+		currentSliderSize = getProperty("size-X");
+		isMinDrag = ypos > (set_lineSize / 2);
+		if (isMinDrag) {
+			setChildProperty_byClass("set_sl_min", "fill-color", global::lightGrey);
+		}
+		else {
+			setChildProperty_byClass("set_sl_max", "fill-color", global::lightGrey);
+		}
+	}
+	else if (type == 1)
+	{
+		// Fix xpos value and establish left position with snapping
+		xpos = clamp(xpos, 0, currentSliderSize - sl_doubleWidth);
+		num pos = (currentSliderSize - sl_doubleWidth) / 2;
+		if (xpos <= pos - 2 || xpos >= pos + 2) { pos = xpos; }
+		
+		if (isMinDrag)
+		{
+			setChildProperty_byClass("set_sl_min", "left", pos);
+			setChildProperty_byClass("set_sl_min", "fill-color", global::lightGrey);
+			app.toolbox.setActiveToolProp(minSettingID, minSubID, pos / (currentSliderSize - sl_doubleWidth), true);
+		}
+		else
+		{
+			setChildProperty_byClass("set_sl_max", "left", pos);
+			setChildProperty_byClass("set_sl_max", "fill-color", global::lightGrey);
+			app.toolbox.setActiveToolProp(maxSettingID, maxSubID, pos / (currentSliderSize - sl_doubleWidth), true);
+		}
+		
+		if (updateText)
+		{
+			if (isMinDrag) { app.ui.getWidget_byID(minTextID).setProperty("value", app.toolbox.getActiveToolProp(minSettingID, minSubID, false, false)); }
+			else { app.ui.getWidget_byID(maxTextID).setProperty("value", app.toolbox.getActiveToolProp(maxSettingID, maxSubID, false, false)); }
+		}
+	}
+	else if (type == 2)
+	{
+		if (isMinDrag) {
+			setChildProperty_byClass("set_sl_min", "fill-color", global::midGrey);
+		}
+		else {
+			setChildProperty_byClass("set_sl_max", "fill-color", global::midGrey);
+		}
+	}
+}
+
+void tLine_entry(num settingsID, num subID, bool isEntry, num sliderType, string sliderID, string sliderBoxID)
+{
+	if (!isEntry) {
+		setProperty("value", app.toolbox.getActiveToolProp(settingsID, subID, false, false));
+	}
+	else {
+		app.toolbox.setActiveToolProp(settingsID, subID, toNum(getProperty("value")), false);
+		setProperty("value", app.toolbox.getActiveToolProp(settingsID, subID, false, false));
+	}
+	
+	if (sliderType >= 0) {
+		currentSliderSize = app.ui.getWidget_byID(sliderBoxID).getProperty("size-X");
+		if (sliderType == 0) {
+			app.ui.getWidget_byID(sliderID).setProperty("left", 
+				app.toolbox.getActiveToolProp(settingsID, subID, true, false) * (currentSliderSize - sl_singleWidth));
+		}
+		else if (sliderType == 1) {
+			app.ui.getWidget_byID(sliderID).setProperty("left", 
+				app.toolbox.getActiveToolProp(settingsID, subID, true, false) * (currentSliderSize - sl_doubleWidth));
+		}
+	}
+	
+}
+
+void tLine_entryVert(num settingsID, num subID, bool isEntry, num sliderType, string sliderID, string sliderBoxID)
+{
+	if (!isEntry) {
+		setProperty("value", app.toolbox.getActiveToolProp(settingsID, subID, false, false));
+	}
+	else {
+		app.toolbox.setActiveToolProp(settingsID, subID, toNum(getProperty("value")), false);
+		setProperty("value", app.toolbox.getActiveToolProp(settingsID, subID, false, false));
+	}
+	
+	if (sliderType >= 0) {
+		currentSliderSize = app.ui.getWidget_byID(sliderBoxID).getProperty("size-X");
+		if (sliderType == 0) {
+			app.ui.getWidget_byID(sliderID).setProperty("top", 
+				app.toolbox.getActiveToolProp(settingsID, subID, true, false) * (currentSliderSize - sl_singleWidth));
+		}
+		else if (sliderType == 1) {
+			app.ui.getWidget_byID(sliderID).setProperty("top", 
+				app.toolbox.getActiveToolProp(settingsID, subID, true, false) * (currentSliderSize - sl_doubleWidth));
+		}
+	}
+	
+}
+
+void tLine_entryStr(num settingsID, num subID, bool isEntry)
+{
+	if (!isEntry) {
+		setProperty("value", app.toolbox.getActiveToolProp(settingsID, subID, false, false));
+	}
+	else {
+		app.toolbox.setActiveToolProp(settingsID, subID, getProperty("value"), false);
+		setProperty("value", app.toolbox.getActiveToolProp(settingsID, subID, false, false));
+	}
+}
+
+void tDropList(num selector, string dropListID)
+{
+	if (selector >= 1) {
+		if (selector == 1) {
+			setProperty("background-color", global::darkGrey);
+		}
+		else if (selector == 2) {
+			setProperty("background-color", global::darkGreyLight);
+		}
+		return;
+	}
+	string vis = app.ui.getWidget_byID(dropListID).getProperty("visibility");
+	if (vis == "hide") {
+		app.ui.getWidget_byID(dropListID).setProperty("visibility", "visible");
+	}
+	else
+	{
+		app.ui.getWidget_byID(dropListID).setProperty("visibility", "hide");
+	}
+}
+
+void tDrop_hover(num switch, string parentID)
+{
+	if (switch == 0)
+	{
+		setChildProperty_byType("TEXT", "fill-color", global::lightGrey);
+		setProperty("background-color", global::midGrey);
+	}
+	else if (switch == 1)
+	{
+		setChildProperty_byType("TEXT", "fill-color", global::midGrey);
+		setProperty("background-color", global::darkGrey);
+	}
+}
+
+void tDropList_entry(string dropListID, string textID, num settingID, num subID, string propertyName)
+{
+	app.ui.getWidget_byID(textID).setProperty("value", propertyName);
+	app.toolbox.setActiveToolProp(settingID, subID, propertyName, false);
+	app.ui.getWidget_byID(dropListID).setProperty("visibility", "hide");
+}

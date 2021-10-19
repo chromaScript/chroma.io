@@ -1,5 +1,7 @@
+#include "include/gladHelper.h"
+
 #include "include/WinStylusHandler.h"
-#include "include/structs.h"
+#include "include/input/input.h"
 
 #include <RTSCOM.h>
 #include <RTSCOM_i.c>
@@ -31,31 +33,38 @@ HRESULT WinStylusHandler::Packets(IRealTimeStylus* pStylus, const StylusInfo* pS
 		stylusVars_isDirty = setStylusVariables(pStylus, pStylusInfo);
 		return TPC_E_INVALID_CONFIGURATION;
 	}
-	// Create an empty MouseEvent, and then build it.
-	MouseEvent mouse;
-	int op = owner.get()->getModKeys();
-	mouse.action = GLFW_PRESS;
+	// Create an empty Input, and then build it.
+	Input mouse;
+	InputModKey op = owner.get()->getModKeys();
+	mouse.action = InputAction::press;
 	mouse.modKey = op;
 	// The application will not use Wacom SDK, so it sacrifices some precision and uses GLFW's getCursorPos
-	MousePosition pos = owner.get()->getMousePosition(false);
+	Input pos = owner.get()->getMousePosition(false);
 	LONG stylusX = (LONG)pPackets[0];
 	LONG stylusY = (LONG)pPackets[1];
 	updateDownscaleFactor(stylusX, stylusY, pos.x, pos.y);
 	mouse.x = (double)stylusX / downscaleFactor;
 	mouse.y = (double)stylusY / downscaleFactor;
+	if (glm::distance(
+		glm::vec2(mouse.x, mouse.y),
+		glm::vec2(owner.get()->getMouseBuffer_back()->x, owner.get()->getMouseBuffer_back()->y)) < (ROOT2 / 2.0f)) {
+		return S_OK;
+	}
 	mouse.time = pos.time;
 	// Get the index packet.
 	LONG* lastPacket = pPackets + (nPacketBuf - propertiesNumber);
-	mouse.flag = FLAG_NULL;
+	mouse.flagPrimary = InputFlag::null;
+	mouse.flagSecondary = InputFlag::null;
 	mouse.pressure = (float)lastPacket[propIndex_pressure] / (float)stylusPressure_max;
-	mouse.tiltx = (float)lastPacket[propIndex_xTilt] / (float)stylusTiltX_max;
-	mouse.tilty = (float)lastPacket[propIndex_yTilt] / (float)stylusTiltY_max;
+	mouse.tiltX = (float)lastPacket[propIndex_xTilt] / (float)stylusTiltX_max;
+	mouse.tiltY = (float)lastPacket[propIndex_yTilt] / (float)stylusTiltY_max;
 	float a, b, t;
 	a = (float)stylusRotation_max / 2.0f;
 	b = (float)stylusRotation_max / -2.0f;
 	t = (float)lastPacket[propIndex_rotation] / (float)stylusRotation_max;
 	mouse.rotation = (a + (t * (b - a))) / 100.0f;
 	owner.get()->updateMouseBuffer(mouse);
+	mouse.velocity = owner.get()->getMouseVelocity(0.7f);
 	owner.get()->mousePosEventHandler(mouse);
 	return S_OK;
 }
@@ -67,26 +76,28 @@ HRESULT WinStylusHandler::InAirPackets(IRealTimeStylus* pStylus, const StylusInf
 		stylusVars_isDirty = setStylusVariables(pStylus, pStylusInfo);
 		return TPC_E_INVALID_CONFIGURATION;
 	}
-	// Create an empty MouseEvent, and then build it.
-	MouseEvent mouse;
-	int op = owner.get()->getModKeys();
-	mouse.action = GLFW_PRESS;
+	// Create an empty Input, and then build it.
+	Input mouse;
+	InputModKey op = owner.get()->getModKeys();
+	mouse.action = InputAction::release;
 	mouse.modKey = op;
 	// The application will not use Wacom SDK, so it sacrifices some precision and uses GLFW's getCursorPos
 	// Warning: Need to clarify the pen data here later. Not sure if tilt & rotation should be zero
-	MousePosition pos = owner.get()->getMousePosition(false);
+	Input pos = owner.get()->getMousePosition(false);
 	LONG stylusX = (LONG)pPackets[0];
 	LONG stylusY = (LONG)pPackets[1];
 	updateDownscaleFactor(stylusX, stylusY, pos.x, pos.y);
 	mouse.x = (double)stylusX / downscaleFactor;
 	mouse.y = (double)stylusY / downscaleFactor;
 	mouse.time = pos.time;
-	mouse.flag = FLAG_NULL;
+	mouse.flagPrimary = InputFlag::null;
+	mouse.flagSecondary = InputFlag::null;
 	mouse.pressure = 0.0f;
-	mouse.tiltx = 0.0f;
-	mouse.tilty = 0.0f;
+	mouse.tiltX = 0.0f;
+	mouse.tiltY = 0.0f;
 	mouse.rotation = 0.0f;
 	owner.get()->updateMouseBuffer(mouse);
+	mouse.velocity = owner.get()->getMouseVelocity(0.7f);
 	owner.get()->mousePosEventHandler(mouse);
 	return S_OK;
 }
@@ -98,13 +109,13 @@ HRESULT WinStylusHandler::StylusDown(IRealTimeStylus* pStylus, const StylusInfo*
 		stylusVars_isDirty = setStylusVariables(pStylus, pStylusInfo);
 		return TPC_E_INVALID_CONFIGURATION;
 	}
-	// Create an empty MouseEvent, and then build it.
-	MouseEvent mouse;
-	int op = owner.get()->getModKeys();
-	mouse.action = GLFW_PRESS;
+	// Create an empty Input, and then build it.
+	Input mouse;
+	InputModKey op = owner.get()->getModKeys();
+	mouse.action = InputAction::press;
 	mouse.modKey = op;
 	// The application will not use Wacom SDK, so it sacrifices some precision and uses GLFW's getCursorPos
-	MousePosition pos = owner.get()->getMousePosition(false);
+	Input pos = owner.get()->getMousePosition(false);
 	LONG stylusX = (LONG)_pPackets[0];
 	LONG stylusY = (LONG)_pPackets[1];
 	mouse.x = (double)stylusX / downscaleFactor;
@@ -112,17 +123,19 @@ HRESULT WinStylusHandler::StylusDown(IRealTimeStylus* pStylus, const StylusInfo*
 	mouse.time = pos.time;
 	// Get the index packet, StylusDown appears to only return one properties packet.
 	LONG* lastPacket = &_pPackets[0];
-	mouse.flag = FLAG_NULL;
+	mouse.flagPrimary = InputFlag::null;
+	mouse.flagSecondary = InputFlag::null;
 	mouse.pressure = (float)lastPacket[propIndex_pressure] / (float)stylusPressure_max;
-	mouse.tiltx = (float)lastPacket[propIndex_xTilt] / (float)stylusTiltX_max;
-	mouse.tilty = (float)lastPacket[propIndex_yTilt] / (float)stylusTiltY_max;
+	mouse.tiltX = (float)lastPacket[propIndex_xTilt] / (float)stylusTiltX_max;
+	mouse.tiltY = (float)lastPacket[propIndex_yTilt] / (float)stylusTiltY_max;
 	float a, b, t;
 	a = (float)stylusRotation_max / 2.0f;
 	b = (float)stylusRotation_max / -2.0f;
 	t = (float)lastPacket[propIndex_rotation] / (float)stylusRotation_max;
 	mouse.rotation = (a + (t * (b - a))) / 100.0f;
 	owner.get()->updateMouseBuffer(mouse);
-	owner.get()->clickEventHandler(GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS, mouse, false);
+	mouse.velocity = owner.get()->getMouseVelocity(0.7f);
+	owner.get()->clickEventHandler(InputMouseButton::left, InputAction::press, mouse, false);
 	return S_OK;
 }
 // Notifies the implementing plug-in that the user has raised the tablet pen from the tablet digitizer surface.
@@ -133,13 +146,13 @@ HRESULT WinStylusHandler::StylusUp(IRealTimeStylus* pStylus, const StylusInfo* p
 		stylusVars_isDirty = setStylusVariables(pStylus, pStylusInfo);
 		return TPC_E_INVALID_CONFIGURATION;
 	}
-	// Create an empty MouseEvent, and then build it.
-	MouseEvent mouse;
-	int op = owner.get()->getModKeys();
-	mouse.action = GLFW_RELEASE;
+	// Create an empty Input, and then build it.
+	Input mouse;
+	InputModKey op = owner.get()->getModKeys();
+	mouse.action = InputAction::release;
 	mouse.modKey = op;
 	// The application will not use Wacom SDK, so it sacrifices some precision and uses GLFW's getCursorPos
-	MousePosition pos = owner.get()->getMousePosition(false);
+	Input pos = owner.get()->getMousePosition(false);
 	LONG stylusX = (LONG)_pPackets[0];
 	LONG stylusY = (LONG)_pPackets[1];
 	mouse.x = (double)stylusX / downscaleFactor;
@@ -147,17 +160,19 @@ HRESULT WinStylusHandler::StylusUp(IRealTimeStylus* pStylus, const StylusInfo* p
 	mouse.time = pos.time;
 	// Get the index packet, StylusUp appears to only return one properties packet.
 	LONG* lastPacket = &_pPackets[0];
-	mouse.flag = FLAG_NULL;
+	mouse.flagPrimary = InputFlag::null;
+	mouse.flagSecondary = InputFlag::null;
 	mouse.pressure = (float)lastPacket[propIndex_pressure] / (float)stylusPressure_max;
-	mouse.tiltx = (float)lastPacket[propIndex_xTilt] / (float)stylusTiltX_max;
-	mouse.tilty = (float)lastPacket[propIndex_yTilt] / (float)stylusTiltY_max;
+	mouse.tiltX = (float)lastPacket[propIndex_xTilt] / (float)stylusTiltX_max;
+	mouse.tiltY = (float)lastPacket[propIndex_yTilt] / (float)stylusTiltY_max;
 	float a, b, t;
 	a = (float)stylusRotation_max / 2.0f;
 	b = (float)stylusRotation_max / -2.0f;
 	t = (float)lastPacket[propIndex_rotation] / (float)stylusRotation_max;
 	mouse.rotation = (a + (t * (b - a))) / 100.0f;
 	owner.get()->updateMouseBuffer(mouse);
-	owner.get()->clickEventHandler(GLFW_MOUSE_BUTTON_LEFT, GLFW_RELEASE, mouse, false);
+	mouse.velocity = owner.get()->getMouseVelocity(0.7f);
+	owner.get()->clickEventHandler(InputMouseButton::left, InputAction::release, mouse, false);
 	return S_OK; 
 }
 // Notifies the implementing plug-in that the stylus is entering the detection range of the digitizer.
@@ -356,6 +371,7 @@ bool WinStylusHandler::updateDownscaleFactor(LONG &xpos, LONG &ypos, double &mou
 		}
 		return true;
 	}
+	return false;
 }
 
 void WinStylusHandler::resetCalibration()

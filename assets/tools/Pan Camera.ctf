@@ -2,9 +2,9 @@
 
 metadata 
 {
-ID=0::SID=-1::id = 1 ;
-ID=1::SID=-1::inID = 11 ;
-ID=2::SID=-1::outID = 100 ;
+ID=0::SID=-1::id = 2 ;
+ID=1::SID=-1::inID = in_pan ;
+ID=2::SID=-1::outID = out_pan ;
 ID=3::SID=-1::name = "Pan Camera" ;
 ID=8::SID=-1::useTipAsIcon = "true" ;
 ID=15::SID=-1::tags = "" ;
@@ -13,7 +13,7 @@ ID=17::SID=-1::toolType = "" ;
 ID=18::SID=-1::date = "" ;
 ID=19::SID=-1::author = "" ;
 ID=20::SID=-1::bindType = 0 ;
-ID=21::SID=-1::keySig = 720 ;
+ID=21::SID=-1::keybind = "H" ;
 ID=24::SID=-1::cursorUp = "Hand" ;
 ID=25::SID=-1::cursorDown = "Grab" ;
 ID=30::SID=-1::input = "Pan Camera" ;
@@ -32,20 +32,20 @@ ID=102::SID=-1::constrainBorderAmount = 100.000000 ;
 ID=110::SID=-1::doFlickPanning = "false" ;
 ID=111::SID=-1::friction = 0.010000 ;
 ID=112::SID=-1::force = 1000.000000 ;
-ID=113::SID=-1::speedAmount = 0.000000 ;
-ID=116::SID=-1::speedAmount = 4 ;
+ID=113::SID=-1::speedAmount = 7.358902 ;
+ID=116::SID=-1::slowModKey = "ALT" ;
 ID=117::SID=-1::slowFactor = 0.850000 ;
-ID=120::SID=-1::clickTargetPanning = "true" ;
-ID=122::SID=-1::clickTarModKey = -1 ;
+ID=120::SID=-1::clickTargetPanning = "false" ;
+ID=122::SID=-1::clickTarModKey = "NONE" ;
 ID=130::SID=-1::lockToX = "false" ;
-ID=131::SID=-1::lockXModKey = -1 ;
+ID=131::SID=-1::lockXModKey = "NONE" ;
 ID=132::SID=-1::lockToY = "false" ;
-ID=133::SID=-1::lockYModKey = -1 ;
+ID=133::SID=-1::lockYModKey = "NONE" ;
 ID=134::SID=-1::lockCustomAngle = "false" ;
 ID=135::SID=-1::customAngle = 22.500000 ;
-ID=136::SID=-1::lockCustomModKey = -1 ;
+ID=136::SID=-1::lockCustomModKey = "NONE" ;
 ID=150::SID=-1::cameraPosRecording = "false" ;
-ID=151::SID=-1::cameraPosRecordKey = -1 ;
+ID=151::SID=-1::cameraPosRecordKey = "NONE" ;
 }
 
 [end]

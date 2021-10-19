@@ -1,0 +1,53 @@
+#tcnp_wrapper {
+	width: 400;
+	min-height: 140;
+	overflow-Y: auto;
+	background-color: $global::darkGrey$;
+	box-shadow-color: black;
+	box-shadow-size: 3, 3;
+	visibility: hidden;
+}
+
+#tcnp_body {
+	width: inherit;
+	min-height: 40;
+	overflow-Y: auto;
+	float: left;
+	background-color: $global::lowMidGrey$;
+}
+
+#tcnp_noiseWrapper {
+	width: 170;
+	min-height: 170;
+	overflow-Y: auto;
+	border-left: 4;
+	float: left;
+}
+
+#tcnp_noiseBoxCont {
+	width: inherit;
+	min-height: 70;
+	overflow-Y: auto;
+	border-bottom: 8;
+}
+
+#tcnp_noiseButtons {
+	width: fill;
+	height: inherit;
+	border-left: 4;
+	margin-right: 4;
+}
+
+.tcnp_nButton {
+	margin-top: 8;
+	border-bottom: 8;
+	margin-left: 4;
+}
+
+#tcnp_noiseBox {
+	width: 140;
+	height: 140;
+	float: left;
+	background-color: black;
+	background-color-alpha: 1.0;
+}

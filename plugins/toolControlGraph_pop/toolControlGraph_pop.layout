@@ -1,0 +1,321 @@
+<ROOT id="toolControlGraph_pop" defaultPosition="20,40">
+<H_BOX id="tcgp_wrapper" ondragstart="movePanel_tar(0, &quot;tcgp_wrapper&quot;)" ondrag="movePanel_tar(1, &quot;tcgp_wrapper&quot;)">
+	////////////////////////////////
+	// Nodes
+	////////////////////////////////
+	<V_BOX id="tcgp_nodeWrapper">
+		<V_BOX class="set_blockWrapper">
+			// Node 1
+			<V_BOX id="tcgp_node1" class="set_block">
+				<H_BOX class="set_line" style="height:14;">
+					<TEXT id="tcgp_node1_name" class="set_text, barlow12" value="NODE NAME"></TEXT>
+				</H_BOX>
+				// Range Min/Max Sliders & Input Boxes
+				<H_BOX class="set_line">
+					<H_BOX id="tcgp_node1_rangeBox" class="set_slBox_minMax"
+						onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+						onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+						ondragstart="tSli_double(0, global::aNodeSetID_1, 3, global::aNodeSetID_1, 4, true, &quot;tcgp_node1_rMin&quot;, &quot;tcgp_node1_rMax&quot;)" 
+						ondrag="tSli_double(1, global::aNodeSetID_1, 3, global::aNodeSetID_1, 4, true, &quot;tcgp_node1_rMin&quot;, &quot;tcgp_node1_rMax&quot;)"
+						ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+						<H_BOX class="set_slRail"></H_BOX>
+						<IMAGE id="tcgp_node1_slider_rMin" class="set_sl_min"></IMAGE>
+						<IMAGE id="tcgp_node1_slider_rMax" class="set_sl_max"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcgp_node1_rMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+							onentry="tLine_entry(global::aNodeSetID_1, 3, true, 1, &quot;tcgp_node1_slider_rMin&quot;, &quot;tcgp_node1_rangeBox&quot;)"
+							oncancel="tLine_entry(global::aNodeSetID_1, 3, false, 1, &quot;tcgp_node1_slider_rMin&quot;, &quot;tcgp_node1_rangeBox&quot;)"></LINE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcgp_node1_rMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+							onentry="tLine_entry(global::aNodeSetID_1, 4, true, 1, &quot;tcgp_node1_slider_rMax&quot;, &quot;tcgp_node1_rangeBox&quot;)"
+							oncancel="tLine_entry(global::aNodeSetID_1, 4, false, 1, &quot;tcgp_node1_slider_rMax&quot;, &quot;tcgp_node1_rangeBox&quot;)"></LINE>
+					</H_BOX>
+				</H_BOX>
+				// Toggle Boxes
+				<H_BOX class="set_line">
+					<IMAGE id="tcgp_node1_pressure" class="set_contNode_icon, set_iconPressure_s" style="margin-left: 10;"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_1, 10)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_1, 10)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_1, 10)"></IMAGE>
+					<IMAGE id="tcgp_node1_dir" class="set_contNode_icon, set_iconDir_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_1, 11)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_1, 11)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_1, 11)"></IMAGE>
+					<IMAGE id="tcgp_node1_tilt" class="set_contNode_icon, set_iconTilt_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_1, 12)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_1, 12)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_1, 12)"></IMAGE>
+					<IMAGE id="tcgp_node1_velocity" class="set_contNode_icon, set_iconVelocity_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_1, 13)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_1, 13)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_1, 13)"></IMAGE>
+					<IMAGE id="tcgp_node1_rot" class="set_contNode_icon, set_iconRot_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_1, 14)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_1, 14)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_1, 14)"></IMAGE>
+					<IMAGE id="tcgp_node1_func" class="set_contNode_icon, set_iconFunc_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_1, 15)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_1, 15)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_1, 15)"></IMAGE>
+				</H_BOX>
+			</V_BOX>
+			// Node 2
+			<V_BOX id="tcgp_node2" class="set_block">
+				<H_BOX class="set_divider"></H_BOX>
+				<H_BOX class="set_line" style="height:14;">
+					<TEXT id="tcgp_node2_name" class="set_text, barlow12" value="NODE NAME"></TEXT>
+				</H_BOX>
+				// Range Min/Max Sliders & Input Boxes
+				<H_BOX class="set_line">
+					<H_BOX id="tcgp_node2_rangeBox" class="set_slBox_minMax"
+						onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+						onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+						ondragstart="tSli_double(0, global::aNodeSetID_2, 3, global::aNodeSetID_2, 4, true, &quot;tcgp_node2_rMin&quot;, &quot;tcgp_node2_rMax&quot;)" 
+						ondrag="tSli_double(1, global::aNodeSetID_2, 3, global::aNodeSetID_2, 4, true, &quot;tcgp_node2_rMin&quot;, &quot;tcgp_node2_rMax&quot;)"
+						ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+						<H_BOX class="set_slRail"></H_BOX>
+						<IMAGE id="tcgp_node2_slider_rMin" class="set_sl_min"></IMAGE>
+						<IMAGE id="tcgp_node2_slider_rMax" class="set_sl_max"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcgp_node2_rMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+							onentry="tLine_entry(global::aNodeSetID_2, 3, true, 1, &quot;tcgp_node2_slider_rMin&quot;, &quot;tcgp_node2_rangeBox&quot;)"
+							oncancel="tLine_entry(global::aNodeSetID_2, 3, false, 1, &quot;tcgp_node2_slider_rMin&quot;, &quot;tcgp_node2_rangeBox&quot;)"></LINE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcgp_node2_rMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+							onentry="tLine_entry(global::aNodeSetID_2, 4, true, 1, &quot;tcgp_node2_slider_rMax&quot;, &quot;tcgp_node2_rangeBox&quot;)"
+							oncancel="tLine_entry(global::aNodeSetID_2, 4, false, 1, &quot;tcgp_node2_slider_rMax&quot;, &quot;tcgp_node2_rangeBox&quot;)"></LINE>
+					</H_BOX>
+				</H_BOX>
+				// Toggle Boxes
+				<H_BOX class="set_line">
+					<IMAGE id="tcgp_node2_pressure" class="set_contNode_icon, set_iconPressure_s" style="margin-left: 10;"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_2, 10)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_2, 10)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_2, 10)"></IMAGE>
+					<IMAGE id="tcgp_node2_dir" class="set_contNode_icon, set_iconDir_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_2, 11)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_2, 11)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_2, 11)"></IMAGE>
+					<IMAGE id="tcgp_node2_tilt" class="set_contNode_icon, set_iconTilt_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_2, 12)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_2, 12)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_2, 12)"></IMAGE>
+					<IMAGE id="tcgp_node2_velocity" class="set_contNode_icon, set_iconVelocity_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_2, 13)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_2, 13)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_2, 13)"></IMAGE>
+					<IMAGE id="tcgp_node2_rot" class="set_contNode_icon, set_iconRot_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_2, 14)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_2, 14)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_2, 14)"></IMAGE>
+					<IMAGE id="tcgp_node2_func" class="set_contNode_icon, set_iconFunc_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_2, 15)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_2, 15)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_2, 15)"></IMAGE>
+				</H_BOX>
+			</V_BOX>
+			// Node 3
+			<V_BOX id="tcgp_node3" class="set_block">
+				<H_BOX class="set_divider"></H_BOX>
+				<H_BOX class="set_line" style="height:14;">
+					<TEXT id="tcgp_node3_name" class="set_text, barlow12" value="NODE NAME"></TEXT>
+				</H_BOX>
+				// Range Min/Max Sliders & Input Boxes
+				<H_BOX class="set_line">
+					<H_BOX id="tcgp_node3_rangeBox" class="set_slBox_minMax"
+						onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+						onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+						ondragstart="tSli_double(0, global::aNodeSetID_3, 3, global::aNodeSetID_3, 4, true, &quot;tcgp_node3_rMin&quot;, &quot;tcgp_node3_rMax&quot;)" 
+						ondrag="tSli_double(1, global::aNodeSetID_3, 3, global::aNodeSetID_3, 4, true, &quot;tcgp_node3_rMin&quot;, &quot;tcgp_node3_rMax&quot;)"
+						ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+						<H_BOX class="set_slRail"></H_BOX>
+						<IMAGE id="tcgp_node3_slider_rMin" class="set_sl_min"></IMAGE>
+						<IMAGE id="tcgp_node3_slider_rMax" class="set_sl_max"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcgp_node3_rMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+							onentry="tLine_entry(global::aNodeSetID_3, 3, true, 1, &quot;tcgp_node3_slider_rMin&quot;, &quot;tcgp_node3_rangeBox&quot;)"
+							oncancel="tLine_entry(global::aNodeSetID_3, 3, false, 1, &quot;tcgp_node3_slider_rMin&quot;, &quot;tcgp_node3_rangeBox&quot;)"></LINE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcgp_node3_rMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+							onentry="tLine_entry(global::aNodeSetID_3, 4, true, 1, &quot;tcgp_node3_slider_rMax&quot;, &quot;tcgp_node3_rangeBox&quot;)"
+							oncancel="tLine_entry(global::aNodeSetID_3, 4, false, 1, &quot;tcgp_node3_slider_rMax&quot;, &quot;tcgp_node3_rangeBox&quot;)"></LINE>
+					</H_BOX>
+				</H_BOX>
+				// Toggle Boxes
+				<H_BOX class="set_line">
+					<IMAGE id="tcgp_node3_pressure" class="set_contNode_icon, set_iconPressure_s" style="margin-left: 10;"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_3, 10)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_3, 10)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_3, 10)"></IMAGE>
+					<IMAGE id="tcgp_node3_dir" class="set_contNode_icon, set_iconDir_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_3, 11)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_3, 11)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_3, 11)"></IMAGE>
+					<IMAGE id="tcgp_node3_tilt" class="set_contNode_icon, set_iconTilt_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_3, 12)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_3, 12)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_3, 12)"></IMAGE>
+					<IMAGE id="tcgp_node3_velocity" class="set_contNode_icon, set_iconVelocity_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_3, 13)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_3, 13)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_3, 13)"></IMAGE>
+					<IMAGE id="tcgp_node3_rot" class="set_contNode_icon, set_iconRot_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_3, 14)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_3, 14)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_3, 14)"></IMAGE>
+					<IMAGE id="tcgp_node3_func" class="set_contNode_icon, set_iconFunc_s"
+						onmouseenter="tSetToggle(false, 0, global::aNodeSetID_3, 15)" onmouseleave="tSetToggle(false, 1, global::aNodeSetID_3, 15)"
+						onclick="tSetToggle(true, 0, global::aNodeSetID_3, 15)"></IMAGE>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+		
+	</V_BOX>
+	
+	////////////////////////////////
+	// Graphs
+	////////////////////////////////
+	<V_BOX id="tcgp_graphWrapper">
+		<H_BOX id="tcgp_tabBar">
+			<H_BOX id="tcgp_tab_pressure" class="tcgp_tab"
+				onmouseenter="tcgp_swapTab(0, -2)" onmouseleave="tcgp_swapTab(0, -3)" onclick="tcgp_swapTab(0, 0)" >
+				<IMAGE class="set_contNode_icon, tcgp_tabIcon, set_iconPressure_s"></IMAGE>
+			</H_BOX>
+			<H_BOX id="tcgp_tab_dir" class="tcgp_tab"
+				onmouseenter="tcgp_swapTab(1, -2)" onmouseleave="tcgp_swapTab(1, -3)" onclick="tcgp_swapTab(1, 1)" >
+				<IMAGE class="set_contNode_icon, tcgp_tabIcon, set_iconDir_s"></IMAGE>
+			</H_BOX>
+			<H_BOX id="tcgp_tab_tilt" class="tcgp_tab"
+				onmouseenter="tcgp_swapTab(2, -2)" onmouseleave="tcgp_swapTab(2, -3)" onclick="tcgp_swapTab(2, 2)" >
+				<IMAGE class="set_contNode_icon, tcgp_tabIcon, set_iconTilt_s"></IMAGE>
+			</H_BOX>
+			<H_BOX id="tcgp_tab_velocity" class="tcgp_tab"
+				onmouseenter="tcgp_swapTab(3, -2)" onmouseleave="tcgp_swapTab(3, -3)" onclick="tcgp_swapTab(3, 3)" >
+				<IMAGE class="set_contNode_icon, tcgp_tabIcon, set_iconVelocity_s"></IMAGE>
+			</H_BOX>
+			<H_BOX id="tcgp_tab_rot" class="tcgp_tab"
+				onmouseenter="tcgp_swapTab(4, -2)" onmouseleave="tcgp_swapTab(4, -3)" onclick="tcgp_swapTab(4, 4)" >
+				<IMAGE class="set_contNode_icon, tcgp_tabIcon, set_iconRot_s"></IMAGE>
+			</H_BOX>
+			<H_BOX id="tcgp_tab_func" class="tcgp_tab"
+				onmouseenter="tcgp_swapTab(5, -2)" onmouseleave="tcgp_swapTab(5, -3)" onclick="tcgp_swapTab(5, 5)" >
+				<IMAGE class="set_contNode_icon, tcgp_tabIcon, set_iconFunc_s"></IMAGE>
+			</H_BOX>
+			<IMAGE class="set_closeButton_s" style="margin-right:4;margin-top:4;float:right;"
+				onmouseenter="hoverCloseButton(0)" onmouseleave="hoverCloseButton(1)" 
+				onclick="closePopup(&quot;tcgp_wrapper&quot;)"></IMAGE>
+		</H_BOX>
+		// Preset Selector Drop Down
+		<V_BOX class="set_line" style="border-top:5;">
+			<H_BOX class="set_dropWrapper">
+				<V_BOX class="set_dropTop">
+					<TEXT class="set_dropText, barlow12" value="CUSTOM"></TEXT>
+					<V_BOX class="set_dropList">
+					/*
+						<H_BOX class="set_dropItem">
+							<TEXT class="barlow12, tsf_dropText, tsf_sub" value="STANDARD"></TEXT></H_BOX>
+						<H_BOX class="set_dropItem">
+							<TEXT class="barlow12, tsf_dropText, tsf_sub" value="ALPHABET"></TEXT></H_BOX>
+						<H_BOX class="set_dropItem">
+							<TEXT class="barlow12, tsf_dropText, tsf_sub" value="SWITCH"></TEXT></H_BOX>
+					*/
+					</V_BOX>
+				</V_BOX>
+				<IMAGE class="set_dropButton"></IMAGE>
+			</H_BOX>
+		</V_BOX>
+		// Graph
+		<H_BOX id="tcgp_graphContainer">
+			<T_GRAPH id="tcgp_graph">
+	
+			</T_GRAPH>
+			<V_BOX class="set_vertLine" style="border-left:6;">
+				<V_BOX id="tcgp_sliderBox_dampening" class="set_slBox_vertSingle"
+					onmouseenter="tSli_singleVert(-1, -1, -1, false, &quot;NULL&quot;)"
+					onmouseleave="tSli_singleVert(-2, -1, -1, false, &quot;NULL&quot;)"
+					ondragstart="tSli_singleVert(0, global::aConSetID, ((tcgp_activeTab + 1) * 100) + 4, true, &quot;tcgp_dampening&quot;)" 
+					ondrag="tSli_singleVert(1, global::aConSetID, ((tcgp_activeTab + 1) * 100) + 4, true, &quot;tcgp_dampening&quot;)"
+					ondragend="tSli_singleVert(2, -1, -1, false, &quot;NULL&quot;)">
+					<H_BOX class="set_slVertRail"></H_BOX>
+					<IMAGE id="tcgp_slider_dampening" class="set_sl_vertSingle"></IMAGE>
+				</V_BOX>
+				<H_BOX class="set_inBox" style="width:24;height:18;margin-left:-3;">
+					<LINE id="tcgp_dampening" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+						onentry="tLine_entryVert(global::aConSetID, ((tcgp_activeTab + 1) * 100) + 4, true, 0, &quot;tcgp_slider_dampening&quot;, &quot;tcgp_sliderBox_dampening&quot;)"
+						oncancel="tLine_entryVert(global::aConSetID, ((tcgp_activeTab + 1) * 100) + 4, false, 0, &quot;tcgp_slider_dampening&quot;, &quot;tcgp_sliderBox_dampening&quot;)"></LINE>
+				</H_BOX>
+			</V_BOX>
+			<V_BOX id="tcgp_graphButtonBar">
+				<IMAGE class="set_graphButton, tcgp_graphButton, set_iconReset_s"
+					onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+					onclick="tcgp_graphSpecial(&quot;tcgp_graph&quot;, &quot;reset&quot;, 0)"></IMAGE>
+				<IMAGE class="set_graphButton, tcgp_graphButton, set_iconMirror_s"
+					onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+					onclick="tcgp_graphSpecial(&quot;tcgp_graph&quot;, &quot;mirror&quot;, 0)"></IMAGE>
+				<IMAGE class="set_graphButton, tcgp_graphButton, set_iconMove_s"
+					onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+					ondragstart="tcgp_graphSpecial(&quot;tcgp_graph&quot;, &quot;move&quot;, 0)"
+					ondrag="tcgp_graphSpecial(&quot;tcgp_graph&quot;, &quot;move&quot;, 1)"></IMAGE>
+				<IMAGE class="set_graphButton, tcgp_graphButton, set_iconScale_s"
+					onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+					ondragstart="tcgp_graphSpecial(&quot;tcgp_graph&quot;, &quot;scale&quot;, 0)"
+					ondrag="tcgp_graphSpecial(&quot;tcgp_graph&quot;, &quot;scale&quot;, 1)"></IMAGE>
+			</V_BOX>
+		</H_BOX>
+		// Offset Rail
+		<H_BOX id="tcgp_offsetRail" class="set_line" style="margin-left:8;border-top:18;">
+			<TEXT id="tcgp_offsetRail_text" class="set_text, barlow12" value="OFFSET:"></TEXT>
+			<H_BOX id="tcgp_sliderBox_offset" class="set_slBox_single"
+				onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+				onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+				ondragstart="tSli_single(0, global::aConSetID, tcgp_activeTabSub, true, &quot;tcgp_offset&quot;)" 
+				ondrag="tSli_single(1, global::aConSetID, tcgp_activeTabSub, true, &quot;tcgp_offset&quot;)"
+				ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+				<H_BOX class="set_slRail"></H_BOX>
+				<IMAGE id="tcgp_slider_offset" class="set_sl_single"></IMAGE>
+			</H_BOX>
+			<H_BOX class="set_inBox" style="width:36;margin-right:8;">
+				<LINE id="tcgp_offset" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+					onentry="tLine_entry(global::aConSetID, tcgp_activeTabSub, true, 0, &quot;tcgp_slider_offset&quot;, &quot;tcgp_sliderBox_offset&quot;)"
+					oncancel="tLine_entry(global::aConSetID, tcgp_activeTabSub, false, 0, &quot;tcgp_slider_offset&quot;, &quot;tcgp_sliderBox_offset&quot;)"></LINE>
+			</H_BOX>
+			<TEXT id="tcgp_useDirIniText" class="set_text, barlow12" value="INI:" style="border-left:2;"></TEXT>
+			<IMAGE id="tcgp_useDirIni" class="set_togBox"
+				onmouseenter="tSetToggle(false, 0, global::aConSetID, 3)" onmouseleave="tSetToggle(false, 1, global::aConSetID, 3)"
+				onclick="tSetToggle(true, 0, global::aConSetID, 3)"></IMAGE>
+		</H_BOX>
+		// Function Line
+		<H_BOX id="tcgp_functionBox" class="set_line">
+			<TEXT class="set_text, barlow12" style="border-left:14;" value="FUNC:"></TEXT>
+			<H_BOX class="set_inBox" style="width:142;">
+				<LINE id="tcgp_functionName" class="set_inText, barlow12, textInputColor" value="FUNC NAME"
+					onentry="tLine_entryStr(global::aConSetID, 600, true)"
+					oncancel="tLine_entryStr(global::aConSetID, 600, false)"></LINE>
+			</H_BOX>
+		</H_BOX>
+	</V_BOX>
+	
+	
+	/*
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()" 
+		ondragstart="resizeWidget(0, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		class="resizeBarLeft"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()" 
+		ondragstart="resizeWidget(0, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		class="resizeBarRight"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 1, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 1, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 1, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"		
+		class="resizeBarBottom"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"		
+		class="resizeBarBottomLeft, debugMagenta"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		class="resizeBarBottomRight, debugMagenta"></H_BOX>
+		*/
+</H_BOX>
+</ROOT>

@@ -1,0 +1,7 @@
+<NAME=Tool Settings Control Graph Pop Up>
+<VERSION=1.0>
+<ABOUT=chroma.IO Tool Settings Control Graph Pop Up>
+<NAMESPACE=tcgp>
+<LAYOUT_PATH=toolControlGraph_pop.layout>
+<STYLE_PATH=toolControlGraph_pop.style>
+<SCRIPT_PATH=toolControlGraph_pop.cscript>

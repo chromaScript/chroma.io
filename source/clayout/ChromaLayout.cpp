@@ -1,3 +1,5 @@
+#include "../include/Application.h"
+
 #include "../include/clayout/LLexer.h"
 #include "../include/clayout/LParser.h"
 #include "../include/clayout/LInterpreter.h"
@@ -8,13 +10,11 @@
 
 #include "../include/cscript/CEnvironment.h"
 #include "../include/cscript/ChromaScript.h"
+#include "../include/entities/UserInterface.h"
 
-#include "../include/Application.h"
+#include <glm.hpp>
 
-#include "../include/structs.h"
-
-#include "glm.hpp"
-
+#include "../include/math/string.h"
 #include <iostream>
 #include <memory>
 #include <string>
@@ -31,10 +31,6 @@ ChromaLayout::ChromaLayout(std::shared_ptr<Application> owner, std::shared_ptr<C
 {
 	this->owner = owner;
 	this->scriptConsole = scriptConsole;
-	for (size_t i = 0; i < LTokenTypeNames.size(); i++)
-	{
-		layoutTypeMap.insert(std::pair<std::string, LTokenType>(LTokenTypeNames[i], (LTokenType)i));
-	}
 	lexer = std::make_shared<LLexer>();
 	parser = std::make_shared<LParser>();
 	resolver = std::make_shared<LResolver>();

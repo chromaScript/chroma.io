@@ -13,14 +13,13 @@
 #include "../../include/clayout/LEnums.h"
 #include "../../include/cscript/CObject.h"
 #include "../../include/cscript/CToken.h"
-#include "../../include/entities/WidgetStyle.h"
+#include "../../include/entities/widgets/WidgetStyle.h"
 
 #include "../../include/Application.h"
 #include "../../include/entities/UserInterface.h"
-#include "../../include/Toolbox.h"
-#include "../../include/entities/Widget.h"
-#include "../../include/structs.h"
-#include "../../include/keys.h"
+#include "../../include/tool/Toolbox.h"
+#include "../../include/entities/widgets/Widget.h"
+#include "../../include/input/keys.h"
 #include <glm.hpp>
 
 #include <GLFW/glfw3.h>

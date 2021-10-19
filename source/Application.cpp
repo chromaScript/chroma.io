@@ -1,3 +1,5 @@
+#include "include/gladHelper.h"
+
 #include <iostream>
 #include <Ole2.h>
 #include <RTSCOM.h>
@@ -10,18 +12,22 @@
 #include "include/Application.h"
 #endif
 
-#include "include/IOClasses.h"
+#include "include/methods/IOClasses.h"
 
 #include "include/Camera.h"
-#include "include/Toolbox.h"
+#include "include/tool/Toolbox.h"
 #include "include/entities/UserInterface.h"
 #include "include/methods/InputMethod.h"
 #include "include/WinStylusHandler.h"
-#include "include/keys.h"
-#include "include/entities/Canvas.h"
+#include "include/input/keys.h"
+#include "include/entities/layers/Canvas.h"
 
-#include "include/entities/WidgetStyle.h"
-#include "include/entities/Line.h"
+#include "include/entities/widgets/WidgetStyle.h"
+#include "include/entities/widgets/Line.h"
+#include "include/entities/layers/Layer.h"
+#include "include/entities/visuals/Stroke.h"
+
+#include "include/CustomCursor.h"
 
 extern int WINDOW_WIDTH;
 extern int WINDOW_HEIGHT;
@@ -31,10 +37,11 @@ extern bool doDebugMouseInput;
 // Constructors
 Application::Application()
 {
-
+	mousePosBufferMax = 12;
 }
 Application::Application(int width, int height)
 {
+	mousePosBufferMax = 12;
 	// Read the config.txt file into a string
 	std::filesystem::path root = std::filesystem::current_path() /= std::filesystem::path("config");
 	if (std::filesystem::exists(root) && std::filesystem::is_directory(root))
@@ -111,6 +118,14 @@ void Application::initializeShaders()
 	gradientBoxShader = std::make_shared<Shader>(
 		"shaders/gradientBoxShader.vert", "shaders/gradientBoxShader.frag", "GRADIENT_BOX_SHADER");
 	std::cout << "APPLICATION::GRADIENT_BOX_SHADER::BOUND" << std::endl;
+	//
+	graphWidgetShader = std::make_shared<Shader>(
+		"shaders/graphWidgetShader.vert", "shaders/graphWidgetShader.frag", "GRAPH_WIDGET_SHADER");
+	std::cout << "APPLICATION::GRAPH_WIDGET_SHADER::BOUND" << std::endl;
+	//
+	noiseWidgetShader = std::make_shared<Shader>(
+		"shaders/noiseWidgetShader.vert", "shaders/noiseWidgetShader.frag", "NOISE_WIDGET_SHADER");
+	std::cout << "APPLICATION::NOISE_WIDGET_SHADER::BOUND" << std::endl;
 	//
 }
 
@@ -365,14 +380,37 @@ void Application::saveDownscaleFactor(double factor)
 		configString.replace(tabDownFactorPos, tabDownFactorTerminal - tabDownFactorPos, newFactorStr);
 
 		std::string outPath = configPath.string();
-		FILE* outFile;
+		FILE* outFile = NULL;
 		errno_t err;
 		err = fopen_s(&outFile, outPath.c_str(), "wb");
-		if (err != 0) { return; }
+		if (err != 0 && outFile == NULL) { fclose(outFile); return; }
 
 		fprintf(outFile, configString.c_str());
 
 		fclose(outFile);
+	}
+}
+
+void Application::clearUndoRequests()
+{
+	if (undoRequestCount == 0) { return; }
+	for (std::pair<std::weak_ptr<Layer>, std::weak_ptr<Stroke>> undoItem : undoStrokes)
+	{
+		if (!undoItem.first.expired())
+		{
+			undoItem.first.lock()->removeStroke(undoItem.second);
+			undoRequestCount--;
+		}
+	}
+	undoStrokes.clear();
+}
+
+void Application::requestRemove_targetStroke(std::weak_ptr<Layer> layer, std::weak_ptr<Stroke> target)
+{
+	if (!target.expired())
+	{
+		undoRequestCount++;
+		undoStrokes.push_back(std::pair<std::weak_ptr<Layer>, std::weak_ptr<Stroke>>(layer, target));
 	}
 }
 
@@ -409,6 +447,7 @@ std::shared_ptr<UI> Application::getUI() { return ui; }
 // Canvas Functions
 glm::ivec2 Application::getCanvasDimensions() 
 { 
+	if (ui.get()->activeCanvas == nullptr) { return glm::ivec2(0, 0); }
 	return ui.get()->getCanvas().get()->getDimensions(); 
 }
 void Application::renderCanvas_toFile(std::shared_ptr<Canvas> target)
@@ -478,6 +517,7 @@ void Application::renderCanvas_toFile(std::shared_ptr<Canvas> target)
 	}
 
 	err = fopen_s(&outFile, outPath.c_str(), "wb");
+	if (err != 0 && outFile == NULL) { fclose(outFile); return; }
 
 	fprintf(outFile, "BM");
 
@@ -547,7 +587,7 @@ void Application::clearScreen()
 }
 
 // Cursor Functions
-void Application::setCursor(int selector)
+void Application::setCursor(CursorType selector)
 {
 	ui.get()->updateCursorImage(toolbox.get()->getCursor(selector));
 }
@@ -681,31 +721,41 @@ void Application::cancelTimerCallback(std::string id)
 	}
 }
 
-bool Application::triggerStoredEventCallback(std::string callbackID)
+bool Application::triggerStoredEventCallback(std::string callbackID, bool eraseEvent)
 {
 	if (storedEventListenerCallbacks.count(callbackID) == 0) { return false; }
 	else
 	{
 		std::vector<std::shared_ptr<CObject>> args;
 		storedEventListenerCallbacks.at(callbackID).get()->call(scriptConsole.get()->getInterpreter(), &args);
-		storedEventListenerCallbacks.erase(callbackID);
+		if (eraseEvent) { storedEventListenerCallbacks.erase(callbackID); }
 		return true;
 	}
 }
 
+bool Application::getKeyState(InputKey namedKey) 
+{
+	return glfwGetKey(appWindow, static_cast<int>(namedKey) / 10); 
+}
+bool Application::getKeyState(InputModKey modKey)
+{
+	if (getModKeys() == InputModKey::none) { return false; }
+	return (modKey == getModKeys());
+}
+
 // Keyboard Callback & Set Callbacks
-void Application::keyEventHandler(int sig, int action)
+void Application::keyEventHandler(Keybind keybind, InputAction action)
 {
 	// Debug Setting: PRINT
 	bool debugPrint = false;
-
 	// First filter the input through keyListenerAll callbacks
 	if (keyListenerAllCallbacks.size() != 0 || keyListenerAllBlockingCallbacks.size() != 0)
 	{
 		// Build The Arguments
 		std::vector<std::shared_ptr<CObject>> args;
-		args.push_back(std::make_shared<CObject>(double(sig % 10)));
-		args.push_back(std::make_shared<CObject>(double((sig - (sig % 10)) / 10)));
+		
+		args.push_back(std::make_shared<CObject>(double(static_cast<int>(keybind.glfwKey))));
+		args.push_back(std::make_shared<CObject>(double(static_cast<int>(keybind.modKey))));
 		if (keyListenerAllCallbacks.size() != 0)
 		{
 			// Call the functions
@@ -728,12 +778,12 @@ void Application::keyEventHandler(int sig, int action)
 		}
 	}
 	// Next filter the input through keyListener callbacks
-	if (!isKeySig_modKey(sig) && (keyListenerCallbacks.size() != 0 || keyListenerBlockingCallbacks.size() != 0))
+	if (!isKeybind_modKey(keybind) && (keyListenerCallbacks.size() != 0 || keyListenerBlockingCallbacks.size() != 0))
 	{
 		// Build The Arguments
 		std::vector<std::shared_ptr<CObject>> args;
-		args.push_back(std::make_shared<CObject>(double(sig % 10)));
-		args.push_back(std::make_shared<CObject>(double((sig - (sig % 10)) / 10)));
+		args.push_back(std::make_shared<CObject>(double(static_cast<int>(keybind.glfwKey))));
+		args.push_back(std::make_shared<CObject>(double(static_cast<int>(keybind.modKey))));
 		if (keyListenerCallbacks.size() != 0)
 		{
 			// Call the functions
@@ -760,23 +810,23 @@ void Application::keyEventHandler(int sig, int action)
 	{
 		if (ui.get()->activeInputType == LTokenType::LINE)
 		{
-			textInputHandler(sig, action);
+			textInputHandler(keybind, action);
 			return;
 		}
 	}
 
-	// Key Watcher
-	if (keyWatchSig > 0)
+	// Key Watcher - Prevents Repeat Calls to a currently held key input
+	if (keyWatch != InputKey::unknown)
 	{
-		if (action == GLFW_PRESS || action == GLFW_REPEAT)
+		if (action == InputAction::press || action == InputAction::repeat)
 		{
 			if (debugPrint) { std::cout << "KEYEVENTHANDLER::ABORT" << std::endl; }
 			return;
 		}
-		else if (action == GLFW_RELEASE && (sig / 10) == keyWatchSig)
+		else if (action == InputAction::release && keybind.glfwKey == keyWatch)
 		{
-			if (debugPrint) { std::cout << "KEYEVENTHANDLER::KEYWATCHSIG::RELEASED::=" << keyWatchSig << std::endl; }
-			keyWatchSig = 0;
+			if (debugPrint) { std::cout << "KEYEVENTHANDLER::KEYWATCHSIG::RELEASED::=" << static_cast<int>(keyWatch) << std::endl; }
+			keyWatch = InputKey::unknown;
 			return;
 		}
 	}
@@ -787,60 +837,67 @@ void Application::keyEventHandler(int sig, int action)
 	// Because each context level has similar or identical function calls (Tools merely setActive, Buttons would clickButton, etc.) we can be fairly confident
 	// that any potential output function can be easily selected and handled.
 
+	// Pass an update notification to actively hovered widgets with onmouseover events. They only update on mouse-movement, but should also update on key
+	// changes in case they have conditionals depending on key state.
+	if (ui.get()->overWidgets.size() != 0 && action != InputAction::repeat)
+	{
+		ui.get()->widgetOverTest(&mousePosBuffer.back(), 0);
+	}
+
 	// Do immediate filtering by Esc/Backspace or any other static keybinds
 	// Do basic filtering by range/exact >= , <= or == (Cull Ctrl/Shift/Alt/CapsLock/Tab/PgUp/PgUp/PgDn/End/Prtsc/Enter/Backspace/F10/F11/F12/Fn/Del)
-	if (isKeySig_escape(sig)) // ESCAPE
+	if (isKeybind_escape(keybind)) // ESCAPE
 	{
 		// Should only ever trigger ESCAPE on key press
-		if (action == GLFW_RELEASE || action == GLFW_REPEAT) { return; }
+		if (action == InputAction::press || action == InputAction::repeat) { return; }
 		if (ui.get()->sendPopupEscape()) { return; }
 		// If active context or brush stroke, cancel action without closing application
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "ESCAPE" << std::endl; }
 		//shouldClose = true;
 		return;
 	}
-	if (isKeySig_delete(sig)) // DELETE
+	if (isKeybind_delete(keybind)) // DELETE
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "DELETE" << std::endl; }
 		return;
 	}
-	if (isKeySig_arrows(sig)) // RIGHT / LEFT / DOWN / UP ARROWS
+	if (isKeybind_arrows(keybind)) // RIGHT / LEFT / DOWN / UP ARROWS
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "RIGHT / LEFT / DOWN / UP ARROWS" << std::endl; }
 		return;
 	}
-	if (isKeySig_f10f11f12(sig)) // F10 / F11 / F12
+	if (isKeybind_f10f11f12(keybind)) // F10 / F11 / F12
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "F10 / F11 / F12" << std::endl; }
 		return;
 	}
-	if (isKeySig_enterTabBackInsert(sig)) // ENTER / TAB / BACKSPACE / INSERT
+	if (isKeybind_enterTabBackInsert(keybind)) // ENTER / TAB / BACKSPACE / INSERT
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "ENTER / TAB / BACKSPACE / INSERT" << std::endl; }
 		return;
 	}
-	if (isKeySig_pagination(sig)) // PAGE_UP / PAGE_DOWN / HOME / END / CAPS_LOCK / SCROLL_LOCK / NUM_LOCK / PRINT_SCREEN / PAUSE
+	if (isKeybind_pagination(keybind)) // PAGE_UP / PAGE_DOWN / HOME / END / CAPS_LOCK / SCROLL_LOCK / NUM_LOCK / PRINT_SCREEN / PAUSE
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "PAGE_UP / PAGE_DOWN / HOME / END / CAPS_LOCK / SCROLL_LOCK / NUM_LOCK / PRINT_SCREEN / PAUSE" << std::endl; }
 		return;
 	}
-	if (isKeySig_modKey(sig)) // RIGHT & LEFT SHIFT / CTRL / ALT / SUPER / MENU
+	if (isKeybind_modKey(keybind)) // RIGHT & LEFT SHIFT / CTRL / ALT / SUPER / MENU
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "RIGHT & LEFT SHIFT / CTRL / ALT / SUPER / MENU" << std::endl; }
 		return;
 	}
-	if (isKeySig_outOfBounds(sig)) // OUT OF BOUNDS SIGNATURE
+	if (isKeybind_outOfBounds(keybind)) // OUT OF BOUNDS SIGNATURE
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "OUT OF BOUNDS SIGNATURE" << std::endl; }
 		return;
 	}
 	// Want to do actions on press, rather than release
-	if (action == GLFW_PRESS)
+	if (action == InputAction::press)
 	{
 		// Only interested in watching non-modifier keys, so divide by 10 to remove modifier bit
 		// The modifier bit is always set regardless of application state, so tools will still know the modifier state
-		keyWatchSig = sig / 10;
-		if (debugPrint == true) { std::cout << "KEYEVENTHANDLER::KEYWATCHSIG::SET::=" << keyWatchSig << std::endl; }
+		keyWatch = keybind.glfwKey;
+		if (debugPrint == true) { std::cout << "KEYEVENTHANDLER::KEYWATCHSIG::SET::=" << static_cast<int>(keyWatch) << std::endl; }
 	}
 
 	
@@ -848,51 +905,60 @@ void Application::keyEventHandler(int sig, int action)
 	// Check if the active popup should block the input from falling through here
 	if (ui.get()->checkPopupBlocking()) { return; }
 	// 2. Block Release and Repeat actions
-	if (action != GLFW_PRESS) { return; }
-	// 3. Query Tools (While more numerous in binds than Menus/Actions/Macros, they are more often used)
-	int tIndex = toolbox->checkToolHotkeys(sig);
+	if (action != InputAction::press) { return; }
+	// 3. Query Active Tool (While more numerous in binds than Menus/Actions/Macros, they are more often used)
+	bool toolResult = false;
+	if (toolbox.get()->checkActiveTool()) {
+		toolResult = toolbox.get()->getActiveTool()->sendInput(keybind, getModKeys());
+	}
+	if (toolResult) { return; }
+	// 4. Query Active Current Context for Settings Binds -> Users May create any number of keybind Environments with
+	// full sets of keybinds.
+	// 4A - Query for Tool binds
+	int tIndex = toolbox->checkToolHotkeys(keybind);
 	if (tIndex != -1 && !isDoingInput)
 	{
 		toolbox->setActiveTool_byIndex(tIndex);
 		ui->updateCursorImage(toolbox->getActiveTool()->getCursorUp());
 	}
-	// 4. Query UI Non-Tool Buttons (This may just be included in actions/macros for simplicity, as they have similar outputs)
-	// 5. Query Actions/Macros (Could be more or less binds than Menus, but they are more important)
-	// 6. Query Menus (Least important keybinds, and potentially the fewest in number for users with a lot of tools/macros/actions)
-	if (sig == INPUT_KEY_S_CTRL)
+	// 4B - Query active context for menu items and other binds
+	// 5. Fall Back to the global context
+	// 5A - Query for Tool binds
+	// 5B - Query for global menu hotkeys (Which are below, hardcoded for now)
+	if (compareKeybind(keybind, InputKey::s, InputModKey::ctrl, false))
 	{
 		renderCanvas_toFile(ui.get()->getCanvas());
 	}
-	if (sig == INPUT_KEY_D) // D
+	if (compareKeybind(keybind, InputKey::d, InputModKey::none, false))
 	{
 		ui.get()->resetFGBGColor(black, white);
 	}
-	if (sig == INPUT_KEY_X) // X
+	if (compareKeybind(keybind, InputKey::x, InputModKey::none, false))
 	{
 		ui.get()->swapFGBGColor();
 	}
 }
 
-void Application::textInputHandler(int sig, int action)
+void Application::textInputHandler(Keybind keybind, InputAction action)
 {
-	if (action == GLFW_RELEASE) { return; }
+	if (action == InputAction::release) { return; }
 	Widget* active = &*ui.get()->activeInputWidget.lock();
 	if (!active->checkVisibility()) 
 	{
 		ui.get()->putActiveInputWidget(ui.get()->activeInputWidget, true, true, UI_WEVENT_CANCEL);
 		return; 
 	}
-	if (action == GLFW_PRESS || action == GLFW_REPEAT)
+	if (action == InputAction::press || action == InputAction::release)
 	{
 		Line* lineWidget = dynamic_cast<Line*>(active);
-		std::string addChar = keySig_toChar(sig);
+		std::string addChar = keybindToCharacter(keybind);
 		if (addChar != "")
 		{
 			lineWidget->acceptCharInput(addChar);
 		}
 		else
 		{
-			int result = lineWidget->acceptInputCmd(keySig_toInputCmd(sig), textClipboard);
+			int result = lineWidget->acceptInputCmd(keybind_toInputCmd(keybind), textClipboard);
 			// Result returned an escape
 			if (result == 1)
 			{
@@ -907,55 +973,47 @@ void Application::textInputHandler(int sig, int action)
 	}
 }
 
-bool Application::isValidKeybind_tool(int modKey, int glfwKey)
+bool Application::isValidKeybind_tool(Keybind keybind)
 {
-	int keySig = (glfwKey * 10) + modKey;
-	if (isKeySig_arrows(keySig) ||
-		isKeySig_escape(keySig) ||
-		isKeySig_delete(keySig) ||
-		isKeySig_pagination(keySig) ||
-		isKeySig_enterTabBackInsert(keySig) ||
-		isKeySig_outOfBounds(keySig))
+	if (keybind.modKey == InputModKey::none && keybind.glfwKey == InputKey::unknown) { return true; }
+	if (isKeybind_arrows(keybind) ||
+		isKeybind_escape(keybind) ||
+		isKeybind_delete(keybind) ||
+		isKeybind_pagination(keybind) ||
+		isKeybind_enterTabBackInsert(keybind) ||
+		isKeybind_outOfBounds(keybind))
 	{
 		return false;
 	}
 	return true;
 }
-bool Application::isValidKeybind_alphaOnly(int modKey, int glfwKey)
+bool Application::isValidKeybind_alphaOnly(Keybind keybind)
 {
-	if (modKey > 0) { return false; }
-	int keySig = (glfwKey * 10) + modKey;
-	if (isKeySig_alphaOnly(keySig))
+	if (keybind.modKey != InputModKey::none) { return false; }
+	if (isKeybind_alphaOnly(keybind))
 	{
 		return true;
 	}
 	return false;
 }
-bool Application::isValidKeybind_symbolOrChar(int modKey, int glfwKey)
+bool Application::isValidKeybind_symbolOrChar(Keybind keybind)
 {
-	if (modKey > 0) { return false; }
-	int keySig = (glfwKey * 10) + modKey;
-	if (isKeySig_alphaOnly(keySig) ||
-		isKeySig_numericOnly(keySig) ||
-		isKeySig_punctuation(keySig))
+	if (keybind.modKey != InputModKey::none) { return false; }
+	if (isKeybind_alphaOnly(keybind) ||
+		isKeybind_numericOnly(keybind) ||
+		isKeybind_punctuation(keybind))
 	{
 		return true;
 	}
 	return false;
 }
-bool Application::isValidKeybind_modOnly(int modKey, int glfwKey)
+bool Application::isValidKeybind_modOnly(Keybind keybind)
 {
-	if (modKey == 0) { return false; }
-	int keySig = (glfwKey * 10) + modKey;
-	if (isKeySig_modKey(keySig))
-	{
-		return true;
-	}
-	return false;
+	return isKeybindModOnly(keybind, false);
 }
 
 // Update the Mouse Buffer
-MousePosition Application::getMousePosition(bool isUIFetch)
+Input Application::getMousePosition(bool isUIFetch)
 {
 	double xpos = 0, ypos = 0;
 	float t = (float)glfwGetTime();
@@ -968,41 +1026,68 @@ MousePosition Application::getMousePosition(bool isUIFetch)
 	{
 		glfwGetCursorPos(appWindow, &xpos, &ypos);
 	}
-	MousePosition outPos = MousePosition(xpos, ypos, t);
+	Input outPos = Input();
+	outPos.x = xpos;
+	outPos.y = ypos;
+	outPos.time = t;
 	return outPos;
 }
-void Application::updateMouseBuffer(MouseEvent mouseEvent)
+float Application::getMouseVelocity(float averagingStrength)
+{
+	if (averagingStrength <= 0.001f) { return mouseVelocity; }
+	else {
+		float bufferSize = (float)mousePosBuffer.size();
+		float sumVelocity = 0.0f;
+		float i = 0;
+		for (auto const& e : mousePosBuffer)
+		{
+			sumVelocity += e.velocity * pow(((bufferSize - i) / bufferSize), 1.75f);
+			i++;
+		}
+		return mix(mouseVelocity, sumVelocity / (float)mousePosBuffer.size(), averagingStrength);
+	}
+}
+void Application::updateMouseBuffer(Input inputEvent)
 {
 	if (mousePosBuffer.size() < mousePosBufferMax)
 	{
-		mousePosBuffer.push_back(mouseEvent);
+		mousePosBuffer.push_back(inputEvent);
 	}
 	else
 	{
 		mousePosBuffer.erase(mousePosBuffer.begin());
-		mousePosBuffer.push_back(mouseEvent);
+		mousePosBuffer.push_back(inputEvent);
 	}
 	float timeSum = 0.0f;
-	for (auto const& e : mousePosBuffer) { timeSum += (float)abs(mousePosBuffer.front().time - e.time); }
-	mouseVelocity = glm::length(
-		glm::vec2((float)mouseEvent.x, (float)mouseEvent.y) -
-		glm::vec2((float)mousePosBuffer.front().x, (float)mousePosBuffer.front().y)) / timeSum;
-	mouseVelocity /= maxMouseVelocity;
+	float lenSum = 0.0f;
+	int i = 0;
+	for (auto const& e : mousePosBuffer) {
+		timeSum += (float)abs(mousePosBuffer.front().time - e.time);
+		if (i > 0 && i < mousePosBufferMax)
+		{
+			lenSum += glm::length(
+				glm::vec2((float)e.x, (float)e.y) -
+				glm::vec2((float)mousePosBuffer[i - 1].x, (float)mousePosBuffer[i - 1].y));
+		}
+		i++;
+	}
+	//std::cout << lenSum << std::endl;
+	mouseVelocity = (lenSum * (1.0f + (1.0f / mousePosBufferMax))) / timeSum;
 }
-void Application::updateBufferMetaData(MouseEvent mouseEvent)
+void Application::updateBufferMetaData(Input inputEvent)
 {
-	MouseEvent* backEvent = &mousePosBuffer.back();
-	backEvent->pressure = mouseEvent.pressure;
-	backEvent->tiltx = mouseEvent.tiltx;
-	backEvent->tilty = mouseEvent.tilty;
-	backEvent->rotation = mouseEvent.rotation;
+	Input* backEvent = &mousePosBuffer.back();
+	backEvent->pressure = inputEvent.pressure;
+	backEvent->tiltX = inputEvent.tiltX;
+	backEvent->tiltY = inputEvent.tiltY;
+	backEvent->rotation = inputEvent.rotation;
 }
-std::vector<MouseEvent> Application::getMouseBuffer() { return mousePosBuffer; }
-MouseEvent* Application::getMouseBuffer_back()
+std::vector<Input> Application::getMouseBuffer() { return mousePosBuffer; }
+Input* Application::getMouseBuffer_back()
 {
 	return &mousePosBuffer.back();
 }
-MouseEvent* Application::getMouseBuffer_doubleBack()
+Input* Application::getMouseBuffer_doubleBack()
 {
 	return &mousePosBuffer[mousePosBuffer.size() - 2];
 }
@@ -1011,100 +1096,102 @@ MouseEvent* Application::getMouseBuffer_doubleBack()
 void Application::clearMouseHold(double time)
 {
 	// Clear existing hold
-	MouseEvent savedEvent = heldMouseEvent;
+	Input savedEvent = heldInput;
 	// Update drag state if waiting to start
-	if (!isMouseDrag && dragReleaseGate && dragMouseButtton != -1 && time - lastClickTime > dblThreshold)
+	if (!isMouseDrag && dragReleaseGate && dragMouseButtton != InputMouseButton::null && time - lastClickTime > dblThreshold)
 	{
 		if (doDebugMouseInput) { std::cout << "APP::MOUSEDRAG::PENDING" << std::endl; }
-		clickEventHandler(heldMouseEvent.button, heldMouseEvent.action, heldMouseEvent, true);
+		clickEventHandler(heldInput.button, heldInput.action, heldInput, true);
 		if (isDragStarted) { isMouseDrag = true; dragMouseButtton = savedEvent.button; }
 		else { dragReleaseGate = false; }
 	}
 	else if (hasMouseHold && time - lastClickTime > dblThreshold)
 	{
-		clickEventHandler(heldMouseEvent.button, heldMouseEvent.action, heldMouseEvent, true);
+		clickEventHandler(heldInput.button, heldInput.action, heldInput, true);
 	}
 	// Clear clickedWidget once the hold is cleared
 	if (!hasMouseHold && ui.get()->clickReleaseGate && !ui.get()->clickedWidget.expired() && 
-		glfwGetMouseButton(appWindow, savedEvent.button) == 0)
+		glfwGetMouseButton(appWindow, static_cast<int>(savedEvent.button)) == 0)
 	{
-		savedEvent.action = 0;
-		clickEventHandler(savedEvent.button, 0, savedEvent, false);
+		savedEvent.action = InputAction::release;
+		clickEventHandler(savedEvent.button, InputAction::release, savedEvent, false);
 		ui.get()->clickReleaseGate = false;
 	}
 	
 }
-void Application::clickEventHandler(int button, int action, MouseEvent mouseEvent, bool clearHold)
+void Application::clickEventHandler(InputMouseButton button, InputAction action, Input inputEvent, bool clearHold)
 {
-	//std::cout << "APP::CLICK_CALLBACK::TIME=" << mouseEvent.time << " X= " << mouseEvent.x << " Y= " << mouseEvent.y << std::endl;
+	//std::cout << "APP::CLICK_CALLBACK::TIME=" << inputEvent.time << " X= " << inputEvent.x << " Y= " << inputEvent.y << std::endl;
 
 	ui.get()->didFocusThisClick = false;
 	// ClearHold entry point for mainLoop to clear click events
 	if (clearHold)
 	{
 		if (doDebugMouseInput) { std::cout << "APP::CLEARHOLD" << std::endl; }
-		lastClickTime = lastMouseButton = -1;
+		lastClickTime = -1;
+		lastMouseButton = InputMouseButton::null;
 		hasMouseHold = false;
-		bool result = ui.get()->widgetHitTest(mouseEvent, false, true);
+		bool result = ui.get()->widgetHitTest(inputEvent, false, true);
 		return;
 	}
 
 	// Check if can be valid UI click
 	bool uiGate = !isDoingInput; // Replace later with more complex function??
 
-	if (uiGate && ui.get()->widgetSweepTest(mouseEvent))
+	if (uiGate && ui.get()->widgetSweepTest(inputEvent))
 	{
 		// Set mouse drag
-		if (!hasMouseHold && mouseEvent.action != 0)
+		if (!hasMouseHold && inputEvent.action != InputAction::release)
 		{
-			dragMouseButtton = mouseEvent.button;
+			dragMouseButtton = inputEvent.button;
 		}
 		// Wait/Check for double click handling
 		// Check if a sweepTest (does not execute event) returns true
 		
-		if (!hasMouseHold && mouseEvent.action != 0 && ui.get()->widgetSweepTest(mouseEvent))
+		if (!hasMouseHold && inputEvent.action != InputAction::release && ui.get()->widgetSweepTest(inputEvent))
 		{
 			// Do immediate trigger of drag events rather than wait for the hold to release
-			if (!isDragStarted) { ui.get()->widgetHitTest(mouseEvent, true, false); }
+			if (!isDragStarted) { ui.get()->widgetHitTest(inputEvent, true, false); }
 			if (doDebugMouseInput) { std::cout << "APP::SETMOUSEHOLD" << std::endl; }
-			lastClickTime = mouseEvent.time;
-			lastMouseButton = mouseEvent.button;
+			lastClickTime = inputEvent.time;
+			lastMouseButton = inputEvent.button;
 			hasMouseHold = true;
-			heldMouseEvent = mouseEvent;
+			heldInput = inputEvent;
 			return;
 		}
 		// MouseHold exists, if the clicks match, modify the incoming event, and send it
-		else if (hasMouseHold && mouseEvent.action != 0 && mouseEvent.button == lastMouseButton)
+		else if (hasMouseHold && inputEvent.action != InputAction::release && inputEvent.button == lastMouseButton)
 		{
 			if (true) { std::cout << "APP::DOUBLECLICK" << std::endl; }
-			mouseEvent.button += 10;
+			inputEvent.button = static_cast<InputMouseButton>(static_cast<int>(inputEvent.button) + 10);
 			// Run hitTest, which will fire a callback if valid hit and widget has a callback
-			bool result = ui.get()->widgetHitTest(mouseEvent, false, true);
-			lastClickTime = lastMouseButton = -1;
+			bool result = ui.get()->widgetHitTest(inputEvent, false, true);
+			lastClickTime = -1;
+			lastMouseButton = InputMouseButton::null;
 			hasMouseHold = false;
 			if (isDragStarted) 
 			{ 
 				isMouseDrag = true; 
-				heldDragPosition = mouseEvent;
-				dragMouseButtton = mouseEvent.button - 10; 
+				heldDragPosition = inputEvent;
+				dragMouseButtton = static_cast<InputMouseButton>(static_cast<int>(inputEvent.button) - 10);
 			}
 			//isMouseDrag = false;
 			if (result) { return; }
 		}
 		// Clear hold if rapid press of two different buttons
-		else if (hasMouseHold && mouseEvent.action != 0 && mouseEvent.button != lastMouseButton)
+		else if (hasMouseHold && inputEvent.action != InputAction::release && inputEvent.button != lastMouseButton)
 		{
-			clickEventHandler(heldMouseEvent.button, heldMouseEvent.action, heldMouseEvent, true);
+			clickEventHandler(heldInput.button, heldInput.action, heldInput, true);
 		}
 		// Clear drag with additional check for adding hold time for double click
-		else if (mouseEvent.action == 0)
+		else if (inputEvent.action == InputAction::release)
 		{
 			// Send release commands
 			if (!ui.get()->clickedWidget.expired())
 			{
 				// Widget will only fire the release callback if the pointer is still
 				// over the widget at time of release
-				MouseEvent recheck = mouseEvent;
+				Input recheck = inputEvent;
 				recheck.x = getMousePosition(false).x;
 				recheck.y = getMousePosition(false).y;
 				unsigned int maxZ = 0;
@@ -1112,29 +1199,41 @@ void Application::clickEventHandler(int button, int action, MouseEvent mouseEven
 				ui.get()->clickedWidget.reset();
 			}
 			// Send dragRelease commands if was mouse drag
-			if (isMouseDrag && dragMouseButtton == mouseEvent.button)
+			if (isMouseDrag && dragMouseButtton == inputEvent.button)
 			{
-				
 				if (!ui.get()->dragWidget.expired())
 				{
 					if (doDebugMouseInput) { std::cout << "APP::MOUSEDRAG::TRIGGERED::RELEASE" << std::endl; }
-					ui.get()->dragWidget.lock().get()->selfDragend(&mouseEvent);
+					ui.get()->dragWidget.lock().get()->selfDragend(&inputEvent);
+				}
+				// Also check for leaving any entered widgets at this time. While a widget is being dragged,
+				// onmouseleave events will not be triggered for that widget
+				if (ui.get()->enteredWidgets.size() != 0)
+				{
+					if (ui.get()->widgetLeaveTest(&inputEvent, 0) && ui.get()->savedCursor != nullptr && !ui.get()->widgetSweepTest(inputEvent))
+					{
+						if (!ui.get()->checkPopupBlocking())
+						{
+							ui.get()->updateCursorImage(ui.get()->savedCursor);
+							ui.get()->savedCursor = nullptr;
+						}
+					}
 				}
 				ui.get()->dragWidget.reset();
 				isMouseDrag = false;
 				isDragStarted = false;
 				dragReleaseGate = true;
-				dragMouseButtton = -1;
+				dragMouseButtton = InputMouseButton::null;
 			}
 			// Release drag without trigger (if drag never started)
-			if (dragMouseButtton == mouseEvent.button)
+			if (dragMouseButtton == inputEvent.button)
 			{
 				// Reset drag variables
 				ui.get()->dragWidget.reset();
 				isMouseDrag = false;
 				isDragStarted = false;
 				dragReleaseGate = true;
-				dragMouseButtton = -1;
+				dragMouseButtton = InputMouseButton::null;
 			}
 			// Avoid firing subsequent events if hasHold & the button is a release.
 			// Give additional timing window for the double click when the button releases
@@ -1148,21 +1247,21 @@ void Application::clickEventHandler(int button, int action, MouseEvent mouseEven
 		return;
 	}
 	// Capture any mouse releases when the mouse is no longer hovering a UI widget
-	if (mouseEvent.action == 0)
+	if (inputEvent.action == InputAction::release)
 	{
 		if (!ui.get()->dragWidget.expired())
 		{
 			if (doDebugMouseInput) { std::cout << "APP::MOUSEDRAG::TRIGGERED::RELEASE" << std::endl; }
-			ui.get()->dragWidget.lock().get()->selfDragend(&mouseEvent);
+			ui.get()->dragWidget.lock().get()->selfDragend(&inputEvent);
 		}
 		ui.get()->dragWidget.reset();
 		isMouseDrag = false;
 		isDragStarted = false;
 		dragReleaseGate = true;
-		dragMouseButtton = -1;
+		dragMouseButtton = InputMouseButton::null;
 	}
 	// If the click fell through to this point, clear the UI focus widget
-	if (mouseEvent.action != 0) 
+	if (inputEvent.action != InputAction::release)
 	{ 
 		ui.get()->clearFocusWidget(); 
 	}
@@ -1174,53 +1273,52 @@ void Application::clickEventHandler(int button, int action, MouseEvent mouseEven
 	// If Canvas -> Send to tools
 	// 1a. Allow the input functions to reject bad data when starting a new input
 	// 1b. Also allow accounting for tools that should not update the cursor through their I/O functions
-	//int i = toolbox->getActiveTool()->getInput()->click(mouseEvent);
+	//int i = toolbox->getActiveTool()->getInput()->click(inputEvent);
 	if (ui.get()->activeCanvas == nullptr) { return; }
-	int i = toolbox->sendClick(this, mouseEvent);
+	InputHandlerFlag i = toolbox->sendClick(this, inputEvent);
 	switch (i)
 	{
-	case INPUT_REJECT:
+	case InputHandlerFlag::reject:
 		isDoingInput = false;
 		break;
-	case INPUT_CONTINUE:
+	case InputHandlerFlag::continueInput:
 		ui->updateCursorImage(toolbox->getActiveTool()->getCursorDown());
 		toolbox->sendPreview(this);
 		isDoingInput = true;
 		return;
-	case INPUT_ALLOW_PRESS:
+	case InputHandlerFlag::allowPress:
 		toolbox->sendPreview(this);
-		toolbox->startCallback(scriptConsole.get()->getInterpreter(), mouseEvent.x, mouseEvent.y);
+		toolbox->startCallback(scriptConsole.get()->getInterpreter(), inputEvent.x, inputEvent.y);
 		isDoingInput = true;
 		return;
-	case INPUT_ALLOW_PRESS_UPDATECURSOR:
+	case InputHandlerFlag::allowPress_updateCursor:
 		ui->updateCursorImage(toolbox->getActiveTool()->getCursorDown());
 		toolbox->sendPreview(this);
-		toolbox->startCallback(scriptConsole.get()->getInterpreter(), mouseEvent.x, mouseEvent.y);
+		toolbox->startCallback(scriptConsole.get()->getInterpreter(), inputEvent.x, inputEvent.y);
 		isDoingInput = true;
 		return;
-	case INPUT_ALLOW_RELEASE:
-		inputDataDump(toolbox->getActiveTool().get()->getInput()->getData(), toolbox->getActiveTool().get()->name); // Debug: Datadump to log file
+	case InputHandlerFlag::release:
 		ui->updateCursorImage(toolbox->getActiveTool().get()->getCursorUp());
 		// Do finalize, then postprocess. Tools without either step simply have blank functions.
 		toolbox->sendFinialize(this);
-		toolbox->endCallback(scriptConsole.get()->getInterpreter(), mouseEvent.x, mouseEvent.y);
+		toolbox->endCallback(scriptConsole.get()->getInterpreter(), inputEvent.x, inputEvent.y);
 		isDoingInput = false;
 		return;
-	case INPUT_NOSIGNAL:
+	case InputHandlerFlag::noSignal:
 		break;
 	}
 	// Catch fall-through events
 	if (!isDoingInput)
 	{
-		if (mouseEvent.button == UI_MOUSE_RIGHT)
+		if (inputEvent.button == InputMouseButton::right)
 		{
-			glm::vec3 clickPos = pickScreenCoord(mouseEvent.x, mouseEvent.y);
+			glm::vec3 clickPos = pickScreenCoord(inputEvent.x, inputEvent.y);
 			if (ui.get()->canvasHitTest(clickPos))
 			{
-				if (mouseEvent.action == INPUT_PRESS && canvasRightClickPressCallbacks.size() != 0)
+				if (inputEvent.action == InputAction::press && canvasRightClickPressCallbacks.size() != 0)
 				{
-					std::shared_ptr<CObject> xArg = std::make_shared<CObject>(mouseEvent.x);
-					std::shared_ptr<CObject> yArg = std::make_shared<CObject>(mouseEvent.y);
+					std::shared_ptr<CObject> xArg = std::make_shared<CObject>(inputEvent.x);
+					std::shared_ptr<CObject> yArg = std::make_shared<CObject>(inputEvent.y);
 					std::vector<std::shared_ptr<CObject>> args = { xArg, yArg };
 					for (auto const& item : canvasRightClickPressCallbacks)
 					{
@@ -1232,14 +1330,14 @@ void Application::clickEventHandler(int button, int action, MouseEvent mouseEven
 		}
 	}
 }
-void Application::mousePosEventHandler(MouseEvent mouseEvent)
+void Application::mousePosEventHandler(Input inputEvent)
 {
 	// Update the mouseBuffer & velocity (Always do this, needed for establishing brush direction)
 
 	// Check if leaving a stored enteredWidget, only need to do this when the mouse moves
 	if (ui.get()->enteredWidgets.size() != 0)
 	{
-		if (ui.get()->widgetLeaveTest(&mouseEvent, 0) && ui.get()->savedCursor != nullptr && !ui.get()->widgetSweepTest(mouseEvent))
+		if (ui.get()->widgetLeaveTest(&inputEvent, 0) && ui.get()->savedCursor != nullptr && !ui.get()->widgetSweepTest(inputEvent))
 		{
 			if (!ui.get()->checkPopupBlocking())
 			{
@@ -1253,33 +1351,33 @@ void Application::mousePosEventHandler(MouseEvent mouseEvent)
 	// Warning: Never lock this function out completely, will always need to be checking hovers & positions
 	if (isDoingInput && !isDragStarted)
 	{
-		// 1. Update the InputData by forwarding the mouseEvent
-		int result = toolbox->sendMove(this, mouseEvent);
+		// 1. Update the InputData by forwarding the inputEvent
+		InputHandlerFlag result = toolbox->sendMove(this, inputEvent);
 		// 2. Do preview visualization & fragment data building via Tool.outputMethod.preview
-		if (result != INPUT_WAIT)
+		if (result != InputHandlerFlag::wait)
 		{
 			toolbox->sendPreview(this);
-			toolbox->moveCallback(scriptConsole.get()->getInterpreter(), mouseEvent.x, mouseEvent.y);
+			toolbox->moveCallback(scriptConsole.get()->getInterpreter(), inputEvent.x, inputEvent.y);
 		}
 	}
 	else
 	{
 		// Check if can be valid UI movement
 		bool clickGate = hasMouseHold; // Replace later with more complex function??
-		glm::vec2 newUIMousePos = glm::vec2((float)mouseEvent.x, (float)mouseEvent.y);
+		glm::vec2 newUIMousePos = glm::vec2((float)inputEvent.x, (float)inputEvent.y);
 		float length = glm::length(newUIMousePos - lastUIMousePos);
-		if (!clickGate && length > (ROOT2 / 2))
+		if (!clickGate && length > (ROOT2 / 2.0f))
 		{
 			lastUIMousePos = newUIMousePos;
-			if (!isMouseDrag && ui.get()->widgetSweepTest(mouseEvent))
+			if (!isMouseDrag && ui.get()->widgetSweepTest(inputEvent))
 			{
 				if (ui.get()->savedCursor == nullptr)
 				{
 					ui.get()->savedCursor = ui.get()->currentCursor;
-					ui.get()->updateCursorImage(toolbox.get()->getCursor(CURSOR_POINTER));
+					ui.get()->updateCursorImage(toolbox.get()->getCursor(CursorType::pointer));
 				}
 				// Handle mouse-over and mouse-enter/leave events here
-				bool result = ui.get()->widgetHoverTest(&mouseEvent);
+				bool result = ui.get()->widgetHoverTest(&inputEvent);
 				if (result)
 				{
 					//std::cout << "APP::MOUSEOVER,MOUSEENTER,MOUSELEAVE" << std::endl;
@@ -1290,14 +1388,14 @@ void Application::mousePosEventHandler(MouseEvent mouseEvent)
 				// Dispatch ondrag events if callback is bound
 				// Make sure that callbacks only trigger when the mouse has actually updated. This
 				// prevents the stylus from spamming inputs to the UI when held down.
-				if (mouseEvent.x == heldDragPosition.x && mouseEvent.y == heldDragPosition.y) { return; }
-				else { heldDragPosition = mouseEvent; }
+				if (inputEvent.x == heldDragPosition.x && inputEvent.y == heldDragPosition.y) { return; }
+				else { heldDragPosition = inputEvent; }
 				if (!ui.get()->dragWidget.expired())
 				{
-					ui.get()->dragWidget.lock().get()->selfDrag(&mouseEvent);
+					ui.get()->dragWidget.lock().get()->selfDrag(&inputEvent);
 				}
 				// Dispatch ondragover/enter/leave events if bound
-				bool result = ui.get()->widgetSweepTest(mouseEvent);
+				bool result = ui.get()->widgetSweepTest(inputEvent);
 				if (result)
 				{
 					// Documentation: When a drag event has started, onmouseenter/over/leave
@@ -1317,7 +1415,7 @@ void Application::mousePosEventHandler(MouseEvent mouseEvent)
 	}
 }
 
-void Application::mouseScrollEventHandler(MouseEvent mouseEvent)
+void Application::mouseScrollEventHandler(Input inputEvent)
 {
 	// Widget Collision & Intercept
 
@@ -1362,27 +1460,35 @@ glm::vec3 Application::pickScreenCoord(double x, double y)
 	outPos.z = 0.0f;
 	return outPos;
 }
+
+double Application::getTime()
+{
+	return glfwGetTime();
+}
 // Data dump function for input data. Will loop through the entire struct and print important info to log file
 void Application::inputDataDump(InputData dat, std::string name)
 {
+	/*
 	std::cerr << "// --------- BEGIN INPUT DATA DUMP --------- //\n" << "TOOLBOX::ACTIVETOOL::NAME=" << name << "\n";
 	std::cerr << "EVENT.INDEX=" << "START"
 		<< "::ACTION=" << dat.start.action
 		<< "::COORDINATES=(" << dat.start.x
 		<< ", " << dat.start.y << ")"
 		<< "::TIME=" << dat.start.time
-		<< "::FLAG=" << dat.start.flag
-		<< "::OP=" << dat.start.modKey 
+		<< "::FLAG_PRIMARY=" << (int)dat.start.flagPrimary
+		<< "::FLAG_SECONDARY=" << (int)dat.start.flagSecondary
+		<< "::OP=" << dat.start.modKey
 		<< "\n";
 	int i = 0;
-	for (const MouseEvent& e : dat.inputEvents)
+	for (const Input& e : dat.inputEvents)
 	{
 		std::cerr << "EVENT.INDEX=" << i
 			<< "::ACTION=" << e.action
 			<< "::COORDINATES=(" << e.x
 			<< ", " << e.y << ")"
 			<< "::TIME=" << e.time
-			<< "::FLAG=" << e.flag
+			<< "::FLAG_PRIMARY=" << (int)e.flagPrimary
+			<< "::FLAG_SECONDARY=" << (int)e.flagSecondary
 			<< "::OP=" << e.modKey
 			<< "\n";
 		i++;
@@ -1392,25 +1498,31 @@ void Application::inputDataDump(InputData dat, std::string name)
 		<< "::COORDINATES=(" << dat.end.x
 		<< ", " << dat.end.y << ")"
 		<< "::TIME=" << dat.end.time
-		<< "::FLAG=" << dat.end.flag
+		<< "::FLAG_PRIMARY=" << (int)dat.end.flagPrimary
+		<< "::FLAG_SECONDARY=" << (int)dat.end.flagSecondary
 		<< "::OP=" << dat.end.modKey
 		<< "\n";
 	std::cerr << "// --------- END INPUT DATA DUMP --------- //\n";
+	*/
 }
 // Data dump for Fragment Data. Will loop through the entire struct and print important info to log file
 void Application::fragmentDataDump(std::shared_ptr<VertexData> dat, std::string name, int UEID)
 {
+	/*
 	std::cerr << "// --------- BEGIN FRAGMENT DATA DUMP --------- //\n" << "FRAGMENT::TYPE::NAME=" << name << "\n";
 	std::cerr << "STARTTIME::=" << dat.get()->startTime << "::ENDTIME=" << dat.get()->endTime << "::UEID=" << UEID
 		<< "::TRANSFORM::POSITION=(" << dat.get()->transform.pos.x << ", " << dat.get()->transform.pos.y << ", " << dat.get()->transform.pos.z << ")"
 		<< "::TRANSFORM::DIMENSIONS=(" << dat.get()->transform.boundBox.x2 << " x " << dat.get()->transform.boundBox.y2 << ")"
 		<< "\n";
+		*/
 	int i = 0;
 	for (const FragmentAnchor& a : dat.get()->anchors)
 	{
+		/*
 		std::cerr << "ANCHOR.INDEX=" << i
 			<< "::ID=" << a.ID
-			<< "::FLAG=" << a.flag
+			<< "::FLAG_PRIMARY=" << (int)a.flagPrimary
+			<< "::FLAG_SECONDARY=" << (int)a.flagSecondary
 			<< "::POS=(" << a.pos.x << ", " << a.pos.y << ", " << a.pos.z << ")"
 			<< "::DIR=(" << a.dir.x << ", " << a.dir.y << ", " << a.dir.z << ")"
 			<< "::HEAD.TYPE=" << a.headType
@@ -1421,15 +1533,16 @@ void Application::fragmentDataDump(std::shared_ptr<VertexData> dat, std::string 
 			<< "::TAIL.HANDLE.POS=(" << a.headHandle.x << ", " << a.headHandle.y << ", " << a.headHandle.z << ")"
 			<< "::HANDLERELATIONSHIP=" << a.handleRelationship
 			<< "::PRESSURE=" << a.pressure
-			<< "::TILT.X=" << a.tiltx
-			<< "::TILT.Y=" << a.tilty
+			<< "::TILT.X=" << a.tiltX
+			<< "::TILT.Y=" << a.tiltY
 			<< "::PEN.ROTATION=" << a.rotation
 			<< "::VELOCITY=" << a.velocity
 			<< "::INTENSITY=" << a.intensity
 			<< "\n";
+			*/
 		i++;
 	}
-	std::cerr << "// --------- END FRAGMENT DATA DUMP --------- //\n";
+	//std::cerr << "// --------- END FRAGMENT DATA DUMP --------- //\n";
 }
 // Data dump Plugin Information
 void Application::pluginDataDump(std::vector<std::shared_ptr<WPlugin>> pluginArray)

@@ -1,0 +1,23 @@
+num brush(num input, num xpos, num ypos, num pressure, num rotation, num tiltX, num tiltY, num velocity)
+{
+	if (xpos / ypos >= 1.2) { return input * 0.6; }
+	if (ypos >= 500) { return input * pressure * pressure; }
+	else if (xpos >= 500) { return input * pressure * pressure / 2.0; }
+	if (pressure >= 0.1) 
+	{
+		return pressure * pressure * pressure * pressure; 
+	}
+	return clamp(input - 0.32 * pressure * pressure, 0.0, 1.0);
+}
+
+num pressure(num input, num xpos, num ypos, num pressure, num dir, num tilt, num velocity, num rotation)
+{
+	if (xpos / ypos >= 1.2) { return input * 0.6; }
+	if (ypos >= 500) { return input * pressure * pressure; }
+	else if (xpos >= 500) { return input * pressure * pressure / 2.0; }
+	if (pressure >= 0.1) 
+	{
+		return pressure * pressure * pressure * pressure; 
+	}
+	return clamp(input - 0.32 * pressure * pressure, 0.0, 1.0);
+}

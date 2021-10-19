@@ -62,6 +62,7 @@ public:
 	void run(std::vector<std::shared_ptr<CStmt>> statements, std::string _namespace);
 	//
 	void initializeConsole();
+	void cleanEngine();
 	std::shared_ptr<CInterpreter> getInterpreter() { return interpreter; }
 	//
 	void ping(double time, std::string message);

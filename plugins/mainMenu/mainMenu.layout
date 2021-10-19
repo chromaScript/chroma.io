@@ -265,7 +265,7 @@
 				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="view_zoomOut">
 					<TEXT class="mm_smallText" value="ZOOM OUT"></TEXT>
 				</H_BOX>
-				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" id="view_zoomExtents">
+				<H_BOX class="mm_dropMenuSmall" onmouseenter="dropHover(0)" onclick="app.zoomExtents();" id="view_zoomExtents">
 					<TEXT class="mm_smallText" value="ZOOM EXTENTS"></TEXT>
 				</H_BOX>
 				/* LINE */<H_BOX class="mm_dropListLine"></H_BOX>

@@ -6,11 +6,11 @@
 #include "../include/clayout/ChromaLayout.h"
 #include "../include/clayout/LToken.h"
 #include "../include/clayout/LProc.h"
-#include "../include/entities/WidgetStyle.h"
+#include "../include/entities/widgets/WidgetStyle.h"
 #include "../include/cscript/CEnums.h"
-#include "../include/entities/Widget.h"
+#include "../include/entities/widgets/Widget.h"
 
-#include "../include/structs.h"
+#include "../include/math/string.h"
 
 #include <string>
 #include <vector>
@@ -94,7 +94,7 @@ void LResolver::visit(std::shared_ptr<LStmt_Root> stmt)
 			idName = attribToken.get()->lexeme;
 			if (idName.find(",") != std::string::npos)
 			{
-				idName = splitRegularString(idName, ",");
+				idName = splitRegularString(idName, ",", true);
 			}
 			stmt.get()->id = idName;
 		}
@@ -113,7 +113,7 @@ void LResolver::visit(std::shared_ptr<LStmt_Root> stmt)
 				int count = 0;
 				while (defaultPosString.find(",") != std::string::npos)
 				{
-					std::string eval = splitRegularString(defaultPosString, ",");
+					std::string eval = splitRegularString(defaultPosString, ",", true);
 					if (eval != "" && eval != ",")
 					{
 						if (count == 0) { stmt.get()->defaultX = std::stof(eval); count++; }
@@ -187,7 +187,7 @@ void LResolver::visit(std::shared_ptr<LStmt_Proto> stmt)
 			idName = attribToken.get()->lexeme;
 			if (idName.find(",") != std::string::npos)
 			{
-				idName = splitRegularString(idName, ",");
+				idName = splitRegularString(idName, ",", true);
 			}
 			stmt.get()->id = idName;
 		}
@@ -254,7 +254,7 @@ std::shared_ptr<LToken> LResolver::visit(std::shared_ptr<LExpr_Element> expr)
 			idName = attribToken.get()->lexeme;
 			if (idName.find(",") != std::string::npos)
 			{
-				idName = splitRegularString(idName, ",");
+				idName = splitRegularString(idName, ",", true);
 			}
 			expr.get()->id = idName;
 			if (idName == "")
@@ -301,7 +301,7 @@ std::shared_ptr<LToken> LResolver::visit(std::shared_ptr<LExpr_Element> expr)
 		{
 			while (classString.find(",") != std::string::npos)
 			{
-				std::string eval = splitRegularString(classString, ",");
+				std::string eval = splitRegularString(classString, ",", true);
 				if (eval != "" && eval != ",")
 				{
 					classNames.push_back(eval);
@@ -325,7 +325,7 @@ std::shared_ptr<LToken> LResolver::visit(std::shared_ptr<LExpr_Element> expr)
 		{
 			while (groupsString.find(",") != std::string::npos)
 			{
-				std::string eval = splitRegularString(groupsString, ",");
+				std::string eval = splitRegularString(groupsString, ",", true);
 				if (eval != "" && eval != ",")
 				{
 					groupNames.push_back(eval);

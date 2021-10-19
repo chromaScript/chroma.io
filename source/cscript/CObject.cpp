@@ -8,11 +8,11 @@
 #include "../include/cscript/CExpr.h"
 #include "../include/cscript/CToken.h"
 #include "../include/cscript/CLiteral.h"
-#include "../include/entities/WidgetStyle.h"
+#include "../include/entities/widgets/WidgetStyle.h"
 
 #include "../include/Application.h"
 #include "../include/entities/UserInterface.h"
-#include "../include/Toolbox.h"
+#include "../include/tool/Toolbox.h"
 class Widget;
 
 #include <glm.hpp>
@@ -262,6 +262,16 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env,
 		this->objName = "@textClick";
 		this->obj = std::make_shared<CInt_TextClick>(env, app.get()->getUI());
 		break;
+	case CCallableTypes::_CInt_TGraph_Drag:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "@TGraph_Drag");
+		this->objName = "@TGraph_Drag";
+		this->obj = std::make_shared<CInt_TGraph_Drag>(env, app.get()->getUI());
+		break;
+	case CCallableTypes::_CInt_TGraph_Hover:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "@TGraph_Hover");
+		this->objName = "@TGraph_Hover";
+		this->obj = std::make_shared<CInt_TGraph_Hover>(env, app.get()->getUI());
+		break;
 	case CCallableTypes::_CStd_fBindTimerEvent:
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "bindTimerEvent");
 		this->objName = "bindTimerEvent";
@@ -429,6 +439,11 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env)
 		this->objName = "keyToString";
 		this->obj = std::make_shared<CStd_fKeyToString>(env);
 		break;
+	case CCallableTypes::_CStd_fKeybindToString:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "keybindToString");
+		this->objName = "keybindToString";
+		this->obj = std::make_shared<CStd_fKeybindToString>(env);
+		break;
 	case CCallableTypes::_CStd_fMakeKeySig:
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "makeKeySig");
 		this->objName = "makeKeySig";
@@ -550,6 +565,11 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env)
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "resizeAppWindow");
 		this->objName = "resizeAppWindow";
 		this->obj = std::make_shared<CStd_cfResizeAppWindow>(env);
+		break;
+	case CCallableTypes::_CStd_cfZoomExtents:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "zoomExtents");
+		this->objName = "zoomExtents";
+		this->obj = std::make_shared<CStd_cfZoomExtents>(env);
 		break;
 	// Ui Functions
 	case CCallableTypes::_CStd_cfCheckWidgetIDTable:
@@ -733,6 +753,16 @@ CObject::CObject(CCallableTypes libClassName, std::shared_ptr<CEnvironment> env)
 		this->objType = CLiteral(CLiteralTypes::_CFunction, "removeChildWidgets_byClass");
 		this->objName = "removeChildWidgets_byClass";
 		this->obj = std::make_shared<CStd_cfRemoveChildWidgets_byClass>(env);
+		break;
+	case CCallableTypes::_CStd_cfBindActiveToolSetting:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "bindActiveToolSetting");
+		this->objName = "bindActiveToolSetting";
+		this->obj = std::make_shared<CStd_cfBindActiveToolSetting>(env);
+		break;
+	case CCallableTypes::_CStd_cfCallSpecialFunction:
+		this->objType = CLiteral(CLiteralTypes::_CFunction, "callSpecialFunction");
+		this->objName = "callSpecialFunction";
+		this->obj = std::make_shared<CStd_cfCallSpecialFunction>(env);
 		break;
 		// Style Functions
 	case CCallableTypes::_CStd_cfSetProperty_byName:

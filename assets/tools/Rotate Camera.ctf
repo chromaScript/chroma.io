@@ -2,9 +2,9 @@
 
 metadata 
 {
-ID=0::SID=-1::id = 2 ;
-ID=1::SID=-1::inID = 2 ;
-ID=2::SID=-1::outID = 101 ;
+ID=0::SID=-1::id = 3 ;
+ID=1::SID=-1::inID = in_rotate ;
+ID=2::SID=-1::outID = out_rotate ;
 ID=3::SID=-1::name = "Rotate Camera" ;
 ID=8::SID=-1::useTipAsIcon = "true" ;
 ID=15::SID=-1::tags = "" ;
@@ -13,7 +13,7 @@ ID=17::SID=-1::toolType = "Default" ;
 ID=18::SID=-1::date = "08.15.21" ;
 ID=19::SID=-1::author = "chromaTinker" ;
 ID=20::SID=-1::bindType = 0 ;
-ID=21::SID=-1::keySig = 820 ;
+ID=21::SID=-1::keybind = "R" ;
 ID=24::SID=-1::cursorUp = "Rotate" ;
 ID=25::SID=-1::cursorDown = "Rotate" ;
 ID=30::SID=-1::input = "Rotate Camera" ;
@@ -28,11 +28,11 @@ rotate
 {
 ID=300::SID=-1::rotateAboutCursor = "false" ;
 ID=301::SID=-1::rotationSpeed = 1.000000 ;
-ID=310::SID=-1::snapAngleA_modKey = 2 ;
+ID=310::SID=-1::snapAngleA_modKey = "CTRL" ;
 ID=311::SID=-1::snapAngleA_angle = 45.000000 ;
-ID=312::SID=-1::snapAngleB_modKey = 1 ;
+ID=312::SID=-1::snapAngleB_modKey = "SHIFT" ;
 ID=313::SID=-1::snapAngleB_angle = 15.000000 ;
-ID=314::SID=-1::snapAngleC_modKey = 4 ;
+ID=314::SID=-1::snapAngleC_modKey = "ALT" ;
 ID=315::SID=-1::snapAngleC_angle = 5.000000 ;
 ID=320::SID=-1::snapTolerance_factorA = 1.050000 ;
 }

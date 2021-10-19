@@ -107,6 +107,9 @@ std::shared_ptr<TFExpr> TFParser::name()
 	consume(TFTokenType::DOUBLE_COLON, "[parser:0404] Expected '::' seperator after settings ID number.");
 	consume(TFTokenType::SID, "[parser:0405] Expected 'SID=' tag after settings ID number.");
 	std::shared_ptr<TFToken> sidToken = consume(TFTokenType::NUM, "[parser:0406] Expected number after sub settings 'SID=' tag.");
+	if (idToken.get()->lexeme == "2802" && sidToken.get()->lexeme == "15") {
+		int k = 5;
+	}
 	consume(TFTokenType::DOUBLE_COLON, "[parser:0407] Expected '::' seperator after settings sub SID number.");
 	std::shared_ptr<TFToken> nameToken = consume(TFTokenType::STRING, "[parser:0408] Expected settings name after sub settings.");
 	return std::make_shared<TFExpr_Name>(std::stoi(idToken.get()->lexeme), std::stoi(sidToken.get()->lexeme), nameToken.get()->lexeme, line);
@@ -137,10 +140,52 @@ std::shared_ptr<TFExpr> TFParser::value()
 				valueOut = std::make_shared<CObject>(false);
 				//return std::make_shared<TFExpr_Value>(std::make_shared<CObject>(false), line);
 			}
+			else if (lex.find("vec2") != std::string::npos)
+			{
+				lex.erase(lex.find("vec2"), 4);
+				stringRemoveSpace(lex);
+				lex.erase(lex.find("{"), 1);
+				lex.erase(lex.find("}"), 1);
+				std::vector<double> numbers;
+				do
+				{
+					numbers.push_back(std::stod(splitRegularString(lex, ",", true)));
+
+				} while (lex.find(',') != std::string::npos);
+
+				if (lex.size() != 0) {
+					numbers.push_back(std::stod(lex));
+				}
+				glm::dvec2 vec = glm::dvec2(0.0f);
+				if (numbers.size() == 1) { vec.x = numbers[0]; }
+				if (numbers.size() == 2) { vec.x = numbers[0]; vec.y = numbers[1]; }
+				valueOut = std::make_shared<CObject>(vec);
+			}
+			else if (lex.find("array num") != std::string::npos)
+			{
+				lex.erase(lex.find("array num"), 9);
+				stringRemoveSpace(lex);
+				lex.erase(lex.find("{"), 1);
+				lex.erase(lex.find("}"), 1);
+				std::vector<double> numbers;
+				do
+				{
+					numbers.push_back(std::stod(splitRegularString(lex, ",", true)));
+
+				} while (lex.find(',') != std::string::npos);
+
+				if (lex.size() != 0) {
+					numbers.push_back(std::stod(lex));
+				}
+				std::shared_ptr<std::vector<std::shared_ptr<CObject>>> bucket = std::make_shared<std::vector<std::shared_ptr<CObject>>>();
+				for (double num : numbers) {
+					bucket.get()->push_back(std::make_shared<CObject>(num));
+				}
+				valueOut = std::make_shared<CObject>(CLiteralTypes::_CNumber_Array, bucket);
+			}
 			else
 			{
 				valueOut = std::make_shared<CObject>(lex);
-				//return std::make_shared<TFExpr_Value>(std::make_shared<CObject>(lex), line);
 			}
 			if (valueOut.get()->obj.index() == 0)
  			{

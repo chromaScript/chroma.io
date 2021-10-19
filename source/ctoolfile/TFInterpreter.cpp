@@ -7,10 +7,10 @@
 #include "../include/ctoolfile/TFToken.h"
 #include "../include/cscript/CObject.h"
 #include "../include/ctoolfile/TFVisitors.h"
-#include "../include/Toolbox.h"
-#include "../include/ToolSettings.h"
-#include "../include/Tool.h"
-#include "../include/keys.h"
+#include "../include/tool/Toolbox.h"
+#include "../include/tool/ToolSettings.h"
+#include "../include/tool/Tool.h"
+#include "../include/input/keys.h"
 #include <glm.hpp>
 
 #include <string>
@@ -83,11 +83,18 @@ void TFInterpreter::visit(std::shared_ptr<TFStmt_Tool> stmt)
 			std::string cursorUp = std::get<std::string>(currentSettingsMap.at(std::pair<int, int>(24, -1)).get()->obj);
 			std::string cursorDown = std::get<std::string>(currentSettingsMap.at(std::pair<int, int>(25, -1)).get()->obj);
 
-			int keySig = (int)std::get<double>(currentSettingsMap.at(std::pair<int, int>(21, -1)).get()->obj);
-			int modBit = keySig % 10;
-			int glfwKey = int((keySig - modBit) / 10);
-			
-			bool result = currentToolbox.get()->createCustomTool(cursorUp, cursorDown, toolID, toolName, inID, controlScheme, outID, modBit, glfwKey);
+			int keySig = 0; int modBit = 0; int glfwKey = 0;
+			Keybind keybind = Keybind();
+			if (currentSettingsMap.at(std::pair<int, int>(21, -1)).get()->objType.type == CLiteralTypes::_CNumber) {
+				keySig = (int)std::get<double>(currentSettingsMap.at(std::pair<int, int>(21, -1)).get()->obj);
+				modBit = keySig % 10;
+				glfwKey = int((keySig - modBit) / 10);
+				keybind = Keybind(glfwKey, modBit);
+			}
+			else if (currentSettingsMap.at(std::pair<int, int>(21, -1)).get()->objType.type == CLiteralTypes::_CString) {
+				keybind = stringToKeybind(std::get<std::string>(currentSettingsMap.at(std::pair<int, int>(21, -1)).get()->obj));
+			}
+			bool result = currentToolbox.get()->createCustomTool(cursorUp, cursorDown, toolID, toolName, inID, controlScheme, outID, keybind);
 			if (!result)
 			{
 				console.get()->error(

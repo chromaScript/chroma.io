@@ -13,14 +13,13 @@
 #include "../../include/clayout/LEnums.h"
 #include "../../include/cscript/CObject.h"
 #include "../../include/cscript/CToken.h"
-#include "../../include/entities/WidgetStyle.h"
+#include "../../include/entities/widgets/WidgetStyle.h"
 
 #include "../../include/Application.h"
 #include "../../include/entities/UserInterface.h"
-#include "../../include/Toolbox.h"
-#include "../../include/entities/Widget.h"
-#include "../../include/structs.h"
-#include "../../include/keys.h"
+#include "../../include/tool/Toolbox.h"
+#include "../../include/entities/widgets/Widget.h"
+#include "../../include/input/keys.h"
 #include <glm.hpp>
 
 #include <GLFW/glfw3.h>
@@ -194,8 +193,8 @@ CStd_fKeyToString::CStd_fKeyToString(std::shared_ptr<CEnvironment> funcEnv)
 	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
 	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
 	std::vector<std::string> paramsNames;
-	paramsNames.push_back("modKeyBit");
 	paramsNames.push_back("glfwKey");
+	paramsNames.push_back("modKeyBit");
 	this->funcDeclaration = std::make_shared<CStmt_Function>(
 		std::make_shared<CToken>(CTokenType::STRING, -1), // returnType
 		std::make_shared<CToken>(CTokenType::IDENTIFIER, "keyToString", -1), // name
@@ -210,12 +209,44 @@ std::shared_ptr<CObject> CStd_fKeyToString::call(std::shared_ptr<CInterpreter> i
 {
 	std::vector<std::shared_ptr<CObject>> args = *arguments;
 	// Get the arguments
-	int modKeyBit = (int)std::get<double>(args[0].get()->obj);
-	int glfwKey = (int)std::get<double>(args[1].get()->obj);
+	int glfwKey = (int)std::get<double>(args[0].get()->obj);
+	int modKeyBit = (int)std::get<double>(args[1].get()->obj);
 	// Build the string using the global function
-	return std::make_shared<CObject>(keySigToString((glfwKey * 10) + modKeyBit));
+	return std::make_shared<CObject>(keybindToString(Keybind(glfwKey, modKeyBit)));
 }
 std::string CStd_fKeyToString::toString() { return "<std keyToString>"; }
+
+//
+//
+// CStd_fKeybindToString
+CStd_fKeybindToString::CStd_fKeybindToString(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_fKeybindToString;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
+	std::vector<std::string> paramsNames;
+	paramsNames.push_back("keySig");
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::STRING, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "keybindToString", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_fKeybindToString::call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	// Get the arguments
+	int keySig = (int)std::get<double>(args[0].get()->obj);
+	// Build the string using the global function
+	return std::make_shared<CObject>(keybindToString(Keybind(keySig)));
+}
+std::string CStd_fKeybindToString::toString() { return "<std keybindToString>"; }
 
 //
 //
@@ -245,10 +276,10 @@ std::shared_ptr<CObject> CStd_fMakeKeySig::call(std::shared_ptr<CInterpreter> in
 {
 	std::vector<std::shared_ptr<CObject>> args = *arguments;
 	// Get the arguments
-	int modKeyBit = (int)std::get<double>(args[0].get()->obj);
-	int glfwKey = (int)std::get<double>(args[1].get()->obj);
+	int glfwKey = (int)std::get<double>(args[0].get()->obj);
+	int modKeyBit = (int)std::get<double>(args[1].get()->obj);
 	// Build the key Sig using the global function
-	return std::make_shared<CObject>((double)createKeySig(modKeyBit, glfwKey));
+	return std::make_shared<CObject>(double(glfwKey + modKeyBit));
 }
 std::string CStd_fMakeKeySig::toString() { return "<std makeKeySig>"; }
 
@@ -387,7 +418,7 @@ std::shared_ptr<CObject> CStd_fGetMousePos::call(std::shared_ptr<CInterpreter> i
 {
 	// Copy the arguments
 	std::vector<std::shared_ptr<CObject>> args = *arguments;
-	MousePosition mousePos = app.get()->getMousePosition(true);
+	Input mousePos = app.get()->getMousePosition(true);
 	std::vector<std::shared_ptr<CObject>> returnValue;
 	std::shared_ptr<CObject> xpos = std::make_shared<CObject>(mousePos.x);
 	std::shared_ptr<CObject> ypos = std::make_shared<CObject>(mousePos.y);
@@ -422,7 +453,7 @@ std::shared_ptr<CObject> CStd_fGetMousePos_relative::call(std::shared_ptr<CInter
 {
 	// Copy the arguments
 	std::vector<std::shared_ptr<CObject>> args = *arguments;
-	MousePosition mousePos = app.get()->getMousePosition(true);
+	Input mousePos = app.get()->getMousePosition(true);
 	glm::ivec2 widgetLoc = glm::ivec2(0);
 	if (!app.get()->ui.get()->activeWidget.expired())
 	{
@@ -476,7 +507,7 @@ std::shared_ptr<CObject> CStd_fHitTestWidget_byID::call(std::shared_ptr<CInterpr
 			std::weak_ptr<Widget> fetch = root.lock().get()->getChild_byID(id);
 			if (!fetch.expired())
 			{
-				MousePosition pos = chromaIO.get()->getMousePosition(true);
+				Input pos = chromaIO.get()->getMousePosition(true);
 				if (fetch.lock().get()->checkPointCollision_self(glm::ivec2(pos.x, pos.y)))
 				{
 					return std::make_shared<CObject>(true);
@@ -520,7 +551,7 @@ std::shared_ptr<CObject> CStd_fSweepTestRoot_byID::call(std::shared_ptr<CInterpr
 	std::weak_ptr<Widget> root = ui.get()->getRootWidgetByID(ui.get()->widgetIDTable.at(rootName));
 	if (!root.expired())
 	{
-		MousePosition pos = chromaIO.get()->getMousePosition(true);
+		Input pos = chromaIO.get()->getMousePosition(true);
 		return std::make_shared<CObject>(root.lock().get()->mouseSweep(pos.x, pos.y));
 	}
 	return std::make_shared<CObject>(false);
@@ -1034,8 +1065,10 @@ CStd_fTriggerStoredEvent::CStd_fTriggerStoredEvent(std::shared_ptr<CEnvironment>
 	std::vector<std::shared_ptr<CToken>> scopeStack;
 	std::vector<std::shared_ptr<CToken>> paramsTypes;
 	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::BOOL, -1));
 	std::vector<std::string> paramsNames;
 	paramsNames.push_back("callbackName");
+	paramsNames.push_back("eraseEvent");
 	this->funcDeclaration = std::make_shared<CStmt_Function>(
 		std::make_shared<CToken>(CTokenType::BOOL, -1), // returnType
 		std::make_shared<CToken>(CTokenType::IDENTIFIER, "triggerStoredEvent", -1), // name
@@ -1051,8 +1084,9 @@ std::shared_ptr<CObject> CStd_fTriggerStoredEvent::call(std::shared_ptr<CInterpr
 	// Copy the arguments
 	std::vector<std::shared_ptr<CObject>> args = *arguments;
 	std::string callName = std::get<std::string>(args[0].get()->obj);
+	bool eraseEvent = std::get<bool>(args[1].get()->obj);
 
-	bool result = app.get()->triggerStoredEventCallback(callName);
+	bool result = app.get()->triggerStoredEventCallback(callName, eraseEvent);
 
 	return std::make_shared<CObject>(result);
 }

@@ -1,7 +1,7 @@
 #include "../include/clayout/LProc.h"
 #include "../include/clayout/LToken.h"
 #include "../include/clayout/LVisitors.h"
-#include "../include/entities/Widget.h"
+#include "../include/entities/widgets/Widget.h"
 
 #include <memory>
 

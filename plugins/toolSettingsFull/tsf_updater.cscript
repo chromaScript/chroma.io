@@ -1,6 +1,5 @@
 void updateToolData()
 {
-	
 	app.ui.getWidget_byID("tsf_interestWrapper").setChildProperty_byClass("tsf_interest", "visibility", "hidden");
 	num savedPage = app.toolbox.getActiveToolProp(41, -1, false, false);
 		
@@ -91,34 +90,26 @@ void update_zoom()
 			app.ui.getWidget_byID("tsf_bodyControl_zoom").setProperty("visibility", "visible");
 			if (true) // If the page is dirty, update it
 			{
-				currentMaxLeft = app.ui.getWidget_byID("tsf_zoom_sliderBox_distance").getProperty("size-X");
 				// Zoom Factor Sliders
-				app.ui.getWidget_byID("tsf_zoom_slider_zoomMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(201, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_zoom_zoomMin").setProperty("value", 
-					app.toolbox.getActiveToolProp(201, -1, false, false));
-				app.ui.getWidget_byID("tsf_zoom_slider_zoomMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(202, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_zoom_zoomMax").setProperty("value", 
-					app.toolbox.getActiveToolProp(202, -1, false, false));
+				global::update_tSetSliderSingle("tsf_zoom_sliderBox_accIn", 
+					"tsf_zoom_slider_accIn", "tsf_zoom_accIn", 201, -1);
+				global::update_tSetSliderSingle("tsf_zoom_sliderBox_accOut", 
+					"tsf_zoom_slider_accOut", "tsf_zoom_accOut", 202, -1);
 				
-				currentMaxLeft = app.ui.getWidget_byID("tsf_zoom_sliderBox_speed").getProperty("size-X");
 				// Zoom Speed
-				app.ui.getWidget_byID("tsf_zoom_slider_speed").setProperty("left", 
-					app.toolbox.getActiveToolProp(220, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_zoom_speed").setProperty("value", 
-					app.toolbox.getActiveToolProp(220, -1, false, false));
-					
-				currentMaxLeft = app.ui.getWidget_byID("tsf_zoom_sliderBox_stepAmount").getProperty("size-X");
+				global::update_tSetSliderSingle("tsf_zoom_sliderBox_speed", 
+					"tsf_zoom_slider_speed", "tsf_zoom_speed", 203, -1);
+				
 				// Zoom Step Amount
-				app.ui.getWidget_byID("tsf_zoom_slider_stepAmount").setProperty("left", 
-					app.toolbox.getActiveToolProp(210, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_zoom_stepAmount").setProperty("value", 
-					app.toolbox.getActiveToolProp(210, -1, false, false));
-					
-				// Toggle Boxes
-				//tsf_updateCheckbox("tsf_alpha_toggle_opacity", 2800, -1);
-				//tsf_updateCheckbox("tsf_alpha_toggle_flow", 2810, -1);
+				app.ui.getWidget_byID("tsf_zoom_numVarField").setProperty("value", app.toolbox.getActiveToolProp(210, -1, false, false));	
+				
+				// Click Targeting
+				global::update_tSetToggle("tsf_zoom_tog_clickTar", 204, -1);
+				
+				// Animated Zoom
+				global::update_tSetToggle("tsf_zoom_tog_animZoom", 205, -1);
+				global::update_tSetSliderSingle("tsf_zoom_sliderBox_animSpeed", 
+					"tsf_zoom_slider_animSpeed", "tsf_zoom_animSpeed", 206, -1);
 			}
 		}
 		else if (tsf_currentSettingsPage != 6 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10)
@@ -146,11 +137,9 @@ void update_rotate()
 			if (true) // If the page is dirty, update it
 			{
 				// Rotate Speed Sliders
-				currentMaxLeft = app.ui.getWidget_byID("tsf_rotate_sliderBox_speed").getProperty("size-X");
-				app.ui.getWidget_byID("tsf_rotate_slider_speed").setProperty("left", 
-					app.toolbox.getActiveToolProp(301, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_rotate_speed").setProperty("value", 
-					app.toolbox.getActiveToolProp(301, -1, false, false));
+				global::update_tSetToggle("tsf_rotate_tog_aboutCursor", 300, -1);
+				global::update_tSetSliderSingle("tsf_rotate_sliderBox_speed", 
+					"tsf_rotate_slider_speed", "tsf_rotate_speed", 301, -1);
 				
 				// Snap Key Angles
 				app.ui.getWidget_byID("tsf_rotate_angleA").setProperty("value", 
@@ -160,20 +149,15 @@ void update_rotate()
 				app.ui.getWidget_byID("tsf_rotate_angleC").setProperty("value", 
 					app.toolbox.getActiveToolProp(315, -1, false, false));
 				app.ui.getWidget_byID("tsf_rotate_snapKeyA").setProperty("value", 
-					keyToString(app.toolbox.getActiveToolProp(310, -1, false, false), 0));
+					keybindToString(app.toolbox.getActiveToolProp(310, -1, false, false)));
 				app.ui.getWidget_byID("tsf_rotate_snapKeyB").setProperty("value", 
-					keyToString(app.toolbox.getActiveToolProp(312, -1, false, false), 0));
+					keybindToString(app.toolbox.getActiveToolProp(312, -1, false, false)));
 				app.ui.getWidget_byID("tsf_rotate_snapKeyC").setProperty("value", 
-					keyToString(app.toolbox.getActiveToolProp(314, -1, false, false), 0));	
+					keybindToString(app.toolbox.getActiveToolProp(314, -1, false, false)));	
 					
 				// Snap Tolerance
-				currentMaxLeft = app.ui.getWidget_byID("tsf_rotate_sliderBox_snapToleranceA").getProperty("size-X");
-				app.ui.getWidget_byID("tsf_rotate_slider_snapToleranceA").setProperty("left", 
-					app.toolbox.getActiveToolProp(320, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_rotate_snapToleranceA").setProperty("value", 
-					app.toolbox.getActiveToolProp(320, -1, false, false));
-				// Toggle Boxes
-				tsf_updateCheckbox("tsf_rotate_toggle_aboutCursor", 300, -1);
+				global::update_tSetSliderSingle("tsf_rotate_sliderBox_snapToleranceA", 
+					"tsf_rotate_slider_snapToleranceA", "tsf_rotate_snapToleranceA", 301, -1);
 			}
 		}
 		else if (tsf_currentSettingsPage != 8 && tsf_currentSettingsPage > 0 && tsf_currentSettingsPage <= 10)
@@ -201,65 +185,49 @@ void update_pan()
 			if (true) // If the page is dirty, update it
 			{
 				//
-				tsf_updateCheckbox("tsf_pan_toggle_constrainCanvas", 100, -1);
-				tsf_updateCheckbox("tsf_pan_toggle_constrainRelative", 101, -1);
-				
-				currentMaxLeft = app.ui.getWidget_byID("tsf_pan_sliderBox_constrainAmount").getProperty("size-X");
-				app.ui.getWidget_byID("tsf_pan_slider_constrain").setProperty("left", 
-					app.toolbox.getActiveToolProp(102, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_pan_constrain").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(102, -1, false, false)));
+				global::update_tSetToggle("tsf_pan_tog_constrainCanvas", 100, -1);
+				global::update_tSetToggle("tsf_pan_tog_constrainRelative", 101, -1);
+				global::update_tSetSliderSingle("tsf_pan_sliderBox_constrainAmount", 
+					"tsf_pan_slider_constrainAmount", "tsf_pan_constrainAmount", 102, -1);
 				//
 				
-				currentMaxLeft = app.ui.getWidget_byID("tsf_pan_sliderBox_friction").getProperty("size-X");
-				tsf_updateCheckbox("tsf_pan_toggle_flickPanning", 110, -1);
-				app.ui.getWidget_byID("tsf_pan_slider_friction").setProperty("left", 
-					app.toolbox.getActiveToolProp(111, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_pan_friction").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(111, -1, false, false)));
+				global::update_tSetToggle("tsf_pan_tog_flickPanning", 110, -1);
+				global::update_tSetSliderSingle("tsf_pan_sliderBox_friction", 
+					"tsf_pan_slider_friction", "tsf_pan_friction", 111, -1);
 					
-				currentMaxLeft = app.ui.getWidget_byID("tsf_pan_sliderBox_force").getProperty("size-X");
-				app.ui.getWidget_byID("tsf_pan_slider_force").setProperty("left", 
-					app.toolbox.getActiveToolProp(112, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_pan_force").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(112, -1, false, false)));
+				global::update_tSetSliderSingle("tsf_pan_sliderBox_force", 
+					"tsf_pan_slider_force", "tsf_pan_force", 112, -1);
 				
 				//
-				currentMaxLeft = app.ui.getWidget_byID("tsf_pan_sliderBox_speed").getProperty("size-X");
-				app.ui.getWidget_byID("tsf_pan_slider_speed").setProperty("left", 
-					app.toolbox.getActiveToolProp(113, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_pan_speed").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(113, -1, false, false)));
+				global::update_tSetSliderSingle("tsf_pan_sliderBox_speed", 
+					"tsf_pan_slider_speed", "tsf_pan_speed", 113, -1);
 				
 				app.ui.getWidget_byID("tsf_pan_slowKey").setProperty("value", 
-					keyToString(app.toolbox.getActiveToolProp(116, -1, false, false), 0));
-					
-				currentMaxLeft = app.ui.getWidget_byID("tsf_pan_sliderBox_slowFactor").getProperty("size-X");
-				app.ui.getWidget_byID("tsf_pan_slider_slowFactor").setProperty("left", 
-					app.toolbox.getActiveToolProp(117, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_pan_slowFactor").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(117, -1, false, false)));
+					keybindToString(app.toolbox.getActiveToolProp(116, -1, false, false)));
+	
+				global::update_tSetSliderSingle("tsf_pan_sliderBox_slowFactor", 
+					"tsf_pan_slider_slowFactor", "tsf_pan_slowFactor", 117, -1);
 					
 				//
-				tsf_updateCheckbox("tsf_pan_toggle_clickTarget", 120, -1);
+				global::update_tSetToggle("tsf_pan_tog_clickTarget", 120, -1);
+				
 				app.ui.getWidget_byID("tsf_pan_clickTarKey").setProperty("value", 
-					keyToString(app.toolbox.getActiveToolProp(122, -1, false, false), 0));
+					keybindToString(app.toolbox.getActiveToolProp(122, -1, false, false)));
 				//
-				tsf_updateCheckbox("tsf_pan_toggle_lockX", 130, -1);
+				global::update_tSetToggle("tsf_pan_tog_lockX", 130, -1);
 				app.ui.getWidget_byID("tsf_pan_lockXKey").setProperty("value", 
-					keyToString(app.toolbox.getActiveToolProp(131, -1, false, false), 0));
-				tsf_updateCheckbox("tsf_pan_toggle_lockY", 132, -1);
+					keybindToString(app.toolbox.getActiveToolProp(131, -1, false, false)));
+
+				global::update_tSetToggle("tsf_pan_tog_lockY", 132, -1);
 				app.ui.getWidget_byID("tsf_pan_lockYKey").setProperty("value", 
-					keyToString(app.toolbox.getActiveToolProp(133, -1, false, false), 0));
-				tsf_updateCheckbox("tsf_pan_toggle_lockAngle", 134, -1);
-				app.ui.getWidget_byID("tsf_pan_angleLockKey").setProperty("value", 
-					keyToString(app.toolbox.getActiveToolProp(136, -1, false, false), 0));
+					keybindToString(app.toolbox.getActiveToolProp(133, -1, false, false)));
 					
-				currentMaxLeft = app.ui.getWidget_byID("tsf_pan_sliderBox_angleLock").getProperty("size-X");
-				app.ui.getWidget_byID("tsf_pan_slider_angleLock").setProperty("left", 
-					app.toolbox.getActiveToolProp(135, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_pan_angleLock").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(135, -1, false, false)));
+				global::update_tSetToggle("tsf_pan_tog_lockAngle", 134, -1);
+				app.ui.getWidget_byID("tsf_pan_angleLockKey").setProperty("value", 
+					keybindToString(app.toolbox.getActiveToolProp(136, -1, false, false)));
+					
+				global::update_tSetSliderSingle("tsf_pan_sliderBox_angleLock", 
+					"tsf_pan_slider_angleLock", "tsf_pan_angleLock", 135, -1);
 				
 			}
 		}
@@ -380,13 +348,13 @@ void update_continuous()
 				app.ui.getWidget_byID("tsf_cont_constraintD").setProperty("value", 
 					app.toolbox.getActiveToolProp(446, -1, false, false));
 				app.ui.getWidget_byID("tsf_cont_constraintKeyA").setProperty("value", 
-					keyToString(app.toolbox.getActiveToolProp(433, -1, false, false), 0));
+					keybindToString(app.toolbox.getActiveToolProp(433, -1, false, false)));
 				app.ui.getWidget_byID("tsf_cont_constraintKeyB").setProperty("value", 
-					keyToString(app.toolbox.getActiveToolProp(437, -1, false, false), 0));
+					keybindToString(app.toolbox.getActiveToolProp(437, -1, false, false)));
 				app.ui.getWidget_byID("tsf_cont_constraintKeyC").setProperty("value", 
-					keyToString(app.toolbox.getActiveToolProp(442, -1, false, false), 0));
+					keybindToString(app.toolbox.getActiveToolProp(442, -1, false, false)));
 				app.ui.getWidget_byID("tsf_cont_constraintKeyD").setProperty("value", 
-					keyToString(app.toolbox.getActiveToolProp(447, -1, false, false), 0));
+					keybindToString(app.toolbox.getActiveToolProp(447, -1, false, false)));
 				tsf_updateCheckbox("tsf_cont_toggle_constraintA", 431, -1);
 				tsf_updateCheckbox("tsf_cont_toggle_constraintB", 435, -1);
 				tsf_updateCheckbox("tsf_cont_toggle_constraintC", 440, -1);
@@ -647,30 +615,97 @@ void update_character()
 			app.ui.getWidget_byID("tsf_bodyCharacter").setProperty("visibility", "visible");
 			if (true) // If the page is dirty, update it
 			{
-				currentMaxLeft = app.ui.getWidget_byID("tsf_character_sliderBox_scale").getProperty("size-X");
-				// Opacity Sliders
-				app.ui.getWidget_byID("tsf_character_slider_scaleMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2331, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_character_scaleMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2331, -1, false, false)));
-				app.ui.getWidget_byID("tsf_character_slider_scaleMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2332, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_character_scaleMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2332, -1, false, false)));
+			
+				// Scale
+				update_tSetToggle("tsf_character_tog_scaleControl", 2300, 1);
+				update_tSetToggle("tsf_character_tog_scaleNoise", 2302, 1);
 				
-				currentMaxLeft = app.ui.getWidget_byID("tsf_character_sliderBox_scaleNoise").getProperty("size-X");
-				// Flow Sliders
-				app.ui.getWidget_byID("tsf_character_slider_scaleNoiseMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2333, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_character_scaleNoiseMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2333, -1, false, false)));
-				app.ui.getWidget_byID("tsf_character_slider_scaleNoiseMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2334, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_character_scaleNoiseMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2334, -1, false, false)));
+				update_tSetSliderDouble("tsf_character_sliderBox_scale", 
+					"tsf_character_slider_scaleMin", "tsf_character_scaleMin", "tsf_character_slider_scaleMax", "tsf_character_scaleMax",
+					2300, 3, 2300, 4);
+				
+				// Size X / Y
+				update_tSetToggle("tsf_character_tog_sizeXControl", 2303, 1);
+				update_tSetToggle("tsf_character_tog_sizeXNoise", 2305, 1);
+				
+				update_tSetSliderDouble("tsf_character_sliderBox_sizeX", 
+					"tsf_character_slider_sizeXMin", "tsf_character_sizeXMin", "tsf_character_slider_sizeXMax", "tsf_character_sizeXMax",
+					2303, 3, 2303, 4);
 					
-				// Toggle Boxes
-				tsf_updateCheckbox("tsf_character_toggle_scale", 2330, -1);
+				update_tSetToggle("tsf_character_tog_sizeYControl", 2306, 1);
+				update_tSetToggle("tsf_character_tog_sizeYNoise", 2308, 1);
+				
+				update_tSetSliderDouble("tsf_character_sliderBox_sizeY", 
+					"tsf_character_slider_sizeYMin", "tsf_character_sizeYMin", "tsf_character_slider_sizeYMax", "tsf_character_sizeYMax",
+					2306, 3, 2306, 4);
+				
+				// Rotation
+				update_tSetToggle("tsf_character_tog_rotationLast", 2323, 1);
+				
+				update_tSetToggle("tsf_character_tog_rotationControl", 2320, 1);
+				update_tSetToggle("tsf_character_tog_rotationNoise", 2322, 1);
+				
+				update_tSetSliderDouble("tsf_character_sliderBox_rotation", 
+					"tsf_character_slider_rotationMin", "tsf_character_rotationMin", "tsf_character_slider_rotationMax", "tsf_character_rotationMax",
+					2320, 3, 2320, 4);
+				
+				// Skew X / Y
+				update_tSetToggle("tsf_character_tog_skewXControl", 2330, 1);
+				update_tSetToggle("tsf_character_tog_skewXNoise", 2332, 1);
+				
+				update_tSetSliderDouble("tsf_character_sliderBox_skewX", 
+					"tsf_character_slider_skewXMin", "tsf_character_skewXMin", "tsf_character_slider_skewXMax", "tsf_character_skewXMax",
+					2330, 3, 2330, 4);
+					
+				update_tSetToggle("tsf_character_tog_skewYControl", 2333, 1);
+				update_tSetToggle("tsf_character_tog_skewYNoise", 2335, 1);
+				
+				update_tSetSliderDouble("tsf_character_sliderBox_skewY", 
+					"tsf_character_slider_skewYMin", "tsf_character_skewYMin", "tsf_character_slider_skewYMax", "tsf_character_skewYMax",
+					2333, 3, 2333, 4);
+					
+				// Shuffle A / B
+				update_tSetToggle("tsf_character_tog_shuffleAv1", 2343, 1);
+				update_tSetToggle("tsf_character_tog_shuffleAv2", 2344, 1);
+				update_tSetToggle("tsf_character_tog_shuffleAv3", 2345, 1);
+				update_tSetToggle("tsf_character_tog_shuffleAv4", 2345, 1);
+				
+				update_tSetToggle("tsf_character_tog_shuffleAControl", 2340, 1);
+				update_tSetToggle("tsf_character_tog_shuffleANoise", 2342, 1);
+				
+				update_tSetSliderDouble("tsf_character_sliderBox_shuffleA", 
+					"tsf_character_slider_shuffleAMin", "tsf_character_shuffleAMin", "tsf_character_slider_shuffleAMax", "tsf_character_shuffleAMax",
+					2340, 3, 2340, 4);
+				
+				
+				update_tSetToggle("tsf_character_tog_shuffleBv1", 2353, 1);
+				update_tSetToggle("tsf_character_tog_shuffleBv2", 2354, 1);
+				update_tSetToggle("tsf_character_tog_shuffleBv3", 2355, 1);
+				update_tSetToggle("tsf_character_tog_shuffleBv4", 2356, 1);
+				
+				update_tSetToggle("tsf_character_tog_shuffleBControl", 2350, 1);
+				update_tSetToggle("tsf_character_tog_shuffleBNoise", 2352, 1);
+				
+				update_tSetSliderDouble("tsf_character_sliderBox_shuffleB", 
+					"tsf_character_slider_shuffleBMin", "tsf_character_shuffleBMin", "tsf_character_slider_shuffleBMax", "tsf_character_shuffleBMax",
+					2350, 3, 2350, 4);
+					
+				// Spread
+				app.ui.getWidget_byID("tsf_character_spreadCornerText").setProperty("value", app.toolbox.getActiveToolProp(2363, -1, false, false));
+				global::update_tSetSliderSingle("tsf_character_sliderBox_spreadSym", 
+					"tsf_character_slider_spreadSym", "tsf_character_spreadSym", 2364, -1);
+					
+				update_tSetToggle("tsf_character_tog_spreadControl", 2360, 1);
+				update_tSetToggle("tsf_character_tog_spreadNoise", 2362, 1);
+				
+				update_tSetSliderDouble("tsf_character_sliderBox_spread", 
+					"tsf_character_slider_spreadMin", "tsf_character_spreadMin", "tsf_character_slider_spreadMax", "tsf_character_spreadMax",
+					2360, 3, 2360, 4);
+				
+				// Flip X / Y
+				update_tSetToggle("tsf_character_tog_flipX", 2380, 1);
+				update_tSetToggle("tsf_character_tog_flipY", 2381, 1);
+			
 			}
 		}
 	}
@@ -695,35 +730,17 @@ void update_alpha()
 			app.ui.getWidget_byID("tsf_bodyAlpha").setProperty("visibility", "visible");
 			if (true) // If the page is dirty, update it
 			{
-				currentMaxLeft = app.ui.getWidget_byID("tsf_alpha_sliderBox_opacity").getProperty("size-X");
-				// Opacity Sliders
-				app.ui.getWidget_byID("tsf_alpha_slider_opacityMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2801, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_alpha_opacityMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2801, -1, false, false)));
-				app.ui.getWidget_byID("tsf_alpha_slider_opacityMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2802, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_alpha_opacityMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2802, -1, false, false)));
-				app.ui.getWidget_byID("tsf_alpha_opacityBias").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2803, -1, false, false)));
+				update_tSetToggle("tsf_alpha_tog_opacityControl", 2800, 1);
+				update_tSetToggle("tsf_alpha_tog_opacityNoise", 2802, 1);
+				update_tSetToggle("tsf_alpha_tog_flowControl", 2803, 1);
+				update_tSetToggle("tsf_alpha_tog_flowNoise", 2805, 1);
 				
-				currentMaxLeft = app.ui.getWidget_byID("tsf_alpha_sliderBox_flow").getProperty("size-X");
-				// Flow Sliders
-				app.ui.getWidget_byID("tsf_alpha_slider_flowMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2811, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_alpha_flowMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2811, -1, false, false)));
-				app.ui.getWidget_byID("tsf_alpha_slider_flowMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2812, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_alpha_flowMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2812, -1, false, false)));
-				app.ui.getWidget_byID("tsf_alpha_flowBias").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2813, -1, false, false)));
-					
-				// Toggle Boxes
-				tsf_updateCheckbox("tsf_alpha_toggle_opacity", 2800, -1);
-				tsf_updateCheckbox("tsf_alpha_toggle_flow", 2810, -1);
+				update_tSetSliderDouble("tsf_alpha_sliderBox_opacity", 
+					"tsf_alpha_slider_opacityMin", "tsf_alpha_opacityMin", "tsf_alpha_slider_opacityMax", "tsf_alpha_opacityMax", 
+					2800, 3, 2800, 4);
+				update_tSetSliderDouble("tsf_alpha_sliderBox_flow", 
+					"tsf_alpha_slider_flowMin", "tsf_alpha_flowMin", "tsf_alpha_slider_flowMax", "tsf_alpha_flowMax", 
+					2803, 3, 2803, 4);
 			}
 		}
 	}
@@ -748,86 +765,42 @@ void update_color()
 			app.ui.getWidget_byID("tsf_bodyColor").setProperty("visibility", "visible");
 			if (true) // If the page is dirty, update it
 			{
-				currentMaxLeft = app.ui.getWidget_byID("tsf_color_sliderBox_bgHue").getProperty("size-X");
+				app.ui.getWidget_byID("tsf_color_finalTypeText").setProperty("value", app.toolbox.getActiveToolProp(2777, -1, false, false));
+				update_tSetToggle("tsf_color_tog_finalDynamics", 2778, -1);
+				update_tSetToggle("tsf_color_tog_finalControlRed", 2770, 1);
+				update_tSetToggle("tsf_color_tog_finalNoiseRed", 2774, 1);
+				update_tSetToggle("tsf_color_tog_finalControlGreen", 2771, 1);
+				update_tSetToggle("tsf_color_tog_finalNoiseGreen", 2775, 1);
+				update_tSetToggle("tsf_color_tog_finalControlBlue", 2772, 1);
+				update_tSetToggle("tsf_color_tog_finalNoiseBlue", 2776, 1);
 				
-				// BG Hue
-				app.ui.getWidget_byID("tsf_color_slider_bgHueMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2713, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_color_bgHueMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2713, -1, false, false)));
-				app.ui.getWidget_byID("tsf_color_slider_bgHueMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2714, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_color_bgHueMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2714, -1, false, false)));
-				app.ui.getWidget_byID("tsf_color_bgHueBias").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2715, -1, false, false)));
+			
+				update_tSetToggle("tsf_color_tog_enableMixColor", 2709, -1);
+				update_tSetToggle("tsf_color_tog_mixColorControl", 2700, 1);
+				update_tSetToggle("tsf_color_tog_mixColorNoise", 2702, 1);
+				app.ui.getWidget_byID("tsf_color_mixColorTypeText").setProperty("value", app.toolbox.getActiveToolProp(2710, -1, false, false));
 				
-				// BG Saturation
-				app.ui.getWidget_byID("tsf_color_slider_bgSatMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2716, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_color_bgSatMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2716, -1, false, false)));
-				app.ui.getWidget_byID("tsf_color_slider_bgSatMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2717, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_color_bgSatMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2717, -1, false, false)));
-				app.ui.getWidget_byID("tsf_color_bgSatBias").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2718, -1, false, false)));
 				
-				// BG Luminance
-				app.ui.getWidget_byID("tsf_color_slider_bgLumMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2719, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_color_bgLumMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2719, -1, false, false)));
-				app.ui.getWidget_byID("tsf_color_slider_bgLumMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2720, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_color_bgLumMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2720, -1, false, false)));
-				app.ui.getWidget_byID("tsf_color_bgLumBias").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2721, -1, false, false)));
+				update_tSetSliderDouble("tsf_color_sliderBox_mixColor", 
+					"tsf_color_slider_mixColorMin", "tsf_color_mixColorMin", "tsf_color_slider_mixColorMax", "tsf_color_mixColorMax", 
+					2700, 3, 2700, 4);
+				
+				app.ui.getWidget_byID("tsf_color_colorModeText").setProperty("value", app.toolbox.getActiveToolProp(2703, -1, false, false));
+				global::update_tSetSliderSingle("tsf_color_sliderBox_colorHueOffset", 
+					"tsf_color_slider_colorHueOffset", "tsf_color_colorHueOffset", 2706, -1);
+				global::update_tSetSliderSingle("tsf_color_sliderBox_colorSatOffset", 
+					"tsf_color_slider_colorSatOffset", "tsf_color_colorSatOffset", 2707, -1);
+				global::update_tSetSliderSingle("tsf_color_sliderBox_colorValueOffset", 
+					"tsf_color_slider_colorValueOffset", "tsf_color_colorValueOffset", 2708, -1);
 					
-				currentMaxLeft = app.ui.getWidget_byID("tsf_color_sliderBox_finalHue").getProperty("size-X");
-				
-				// Final Hue
-				app.ui.getWidget_byID("tsf_color_slider_finalHueMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2733, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_color_finalHueMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2733, -1, false, false)));
-				app.ui.getWidget_byID("tsf_color_slider_finalHueMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2734, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_color_finalHueMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2734, -1, false, false)));
-				app.ui.getWidget_byID("tsf_color_finalHueBias").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2735, -1, false, false)));
-				
-				// Final Saturation
-				app.ui.getWidget_byID("tsf_color_slider_finalSatMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2736, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_color_finalSatMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2736, -1, false, false)));
-				app.ui.getWidget_byID("tsf_color_slider_finalSatMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2737, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_color_finalSatMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2737, -1, false, false)));
-				app.ui.getWidget_byID("tsf_color_finalSatBias").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2738, -1, false, false)));
-				
-				// Final Luminance
-				app.ui.getWidget_byID("tsf_color_slider_finalLumMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2739, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_color_finalLumMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2739, -1, false, false)));
-				app.ui.getWidget_byID("tsf_color_slider_finalLumMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2740, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_color_finalLumMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2740, -1, false, false)));
-				app.ui.getWidget_byID("tsf_color_finalLumBias").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2741, -1, false, false)));
-					
-				// Toggle Boxes
-				tsf_updateCheckbox("tsf_color_toggle_mixBG", 2700, -1);
-				tsf_updateCheckbox("tsf_color_toggle_enableBG", 2710, -1);
-				tsf_updateCheckbox("tsf_color_toggle_enableFG", 2730, -1);
+				app.ui.getWidget_byID("tsf_color_colorTypeText").setProperty("value", app.toolbox.getActiveToolProp(2727, -1, false, false));
+				update_tSetToggle("tsf_color_tog_mixColorDynamics", 2728, -1);
+				update_tSetToggle("tsf_color_tog_colorControlRed", 2720, 1);
+				update_tSetToggle("tsf_color_tog_colorNoiseRed", 2724, 1);
+				update_tSetToggle("tsf_color_tog_colorControlGreen", 2721, 1);
+				update_tSetToggle("tsf_color_tog_colorNoiseGreen", 2725, 1);
+				update_tSetToggle("tsf_color_tog_colorControlBlue", 2722, 1);
+				update_tSetToggle("tsf_color_tog_colorNoiseBlue", 2726, 1);
 			}
 		}
 	}
@@ -852,62 +825,37 @@ void update_scatter()
 			app.ui.getWidget_byID("tsf_bodyScatter").setProperty("visibility", "visible");
 			if (true) // If the page is dirty, update it
 			{
-				currentMaxLeft = app.ui.getWidget_byID("tsf_scatter_sliderBox_angle").getProperty("size-X");
+				update_tSetToggle("tsf_scatter_tog_angleEnable", 2660, 1);
+				update_tSetToggle("tsf_scatter_tog_useDir", 2661, 1);
 				
-				// Scatter Angle Sliders
-				app.ui.getWidget_byID("tsf_scatter_slider_angleMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2612, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_scatter_angleMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2612, -1, false, false)));
-				app.ui.getWidget_byID("tsf_scatter_slider_angleMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2613, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_scatter_angleMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2613, -1, false, false)));
-				app.ui.getWidget_byID("tsf_scatter_angleBias").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2614, -1, false, false)));
+				global::update_tSetSliderSingle("tsf_scatter_sliderBox_angleOffset", 
+					"tsf_scatter_slider_angleOffset", "tsf_scatter_angleOffset", 2663, -1);
+				update_tSetToggle("tsf_scatter_tog_dirRelative", 2662, 1);
 				
-				currentMaxLeft = app.ui.getWidget_byID("tsf_scatter_sliderBox_distX").getProperty("size-X");
-				// Distance X Sliders
-				app.ui.getWidget_byID("tsf_scatter_slider_distXMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2622, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_scatter_distXMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2622, -1, false, false)));
-				app.ui.getWidget_byID("tsf_scatter_slider_distXMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2623, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_scatter_distXMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2623, -1, false, false)));
-				app.ui.getWidget_byID("tsf_scatter_distXBias").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2624, -1, false, false)));
+				update_tSetToggle("tsf_scatter_tog_angleControl", 2600, 1);
+				update_tSetToggle("tsf_scatter_tog_angleNoise", 2602, 1);
+				update_tSetSliderDouble("tsf_scatter_sliderBox_angle", 
+					"tsf_scatter_slider_angleMin", "tsf_scatter_angleMin", "tsf_scatter_slider_angleMax", "tsf_scatter_angleMax", 
+					2600, 3, 2600, 4);
 					
-				// Distance Y Sliders
-				app.ui.getWidget_byID("tsf_scatter_slider_distYMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2625, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_scatter_distYMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2625, -1, false, false)));
-				app.ui.getWidget_byID("tsf_scatter_slider_distYMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2626, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_scatter_distYMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2626, -1, false, false)));
-				app.ui.getWidget_byID("tsf_scatter_distYBias").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2627, -1, false, false)));
+				update_tSetToggle("tsf_scatter_tog_distXControl", 2610, 1);
+				update_tSetToggle("tsf_scatter_tog_distXNoise", 2612, 1);
+				update_tSetSliderDouble("tsf_scatter_sliderBox_distX", 
+					"tsf_scatter_slider_distXMin", "tsf_scatter_distXMin", "tsf_scatter_slider_distXMax", "tsf_scatter_distXMax", 
+					2610, 3, 2610, 4);
+					
+				update_tSetToggle("tsf_scatter_tog_distYControl", 2620, 1);
+				update_tSetToggle("tsf_scatter_tog_distYNoise", 2622, 1);
+				update_tSetSliderDouble("tsf_scatter_sliderBox_distY", 
+					"tsf_scatter_slider_distYMin", "tsf_scatter_distYMin", "tsf_scatter_slider_distYMax", "tsf_scatter_distYMax", 
+					2620, 3, 2620, 4);
+					
+				update_tSetToggle("tsf_scatter_tog_countControl", 2630, 1);
+				update_tSetToggle("tsf_scatter_tog_countNoise", 2632, 1);
+				update_tSetSliderDouble("tsf_scatter_sliderBox_count", 
+					"tsf_scatter_slider_countMin", "tsf_scatter_countMin", "tsf_scatter_slider_countMax", "tsf_scatter_countMax", 
+					2630, 3, 2630, 4);
 				
-				currentMaxLeft = app.ui.getWidget_byID("tsf_scatter_sliderBox_count").getProperty("size-X");
-				// Count Sliders
-				app.ui.getWidget_byID("tsf_scatter_slider_countMin").setProperty("left", 
-					app.toolbox.getActiveToolProp(2632, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_scatter_countMin").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2632, -1, false, false)));
-				app.ui.getWidget_byID("tsf_scatter_slider_countMax").setProperty("left", 
-					app.toolbox.getActiveToolProp(2633, -1, true, false) * (currentMaxLeft - tsf_inputSlider_minMax_width));
-				app.ui.getWidget_byID("tsf_scatter_countMax").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2633, -1, false, false)));
-				app.ui.getWidget_byID("tsf_scatter_countBias").setProperty("value", 
-					toString(app.toolbox.getActiveToolProp(2634, -1, false, false)));
-				
-				// Toggle Boxes
-				tsf_updateCheckbox("tsf_scatter_toggle_angle", 2600, -1);
-				tsf_updateCheckbox("tsf_scatter_toggle_direction", 2616, -1);
-				tsf_updateCheckbox("tsf_scatter_toggle_relative", 2617, -1);
 			}
 		}
 	}

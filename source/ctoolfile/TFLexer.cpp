@@ -627,6 +627,7 @@ std::vector<std::shared_ptr<TFToken>> TFLexer::scanTokens(std::string source)
 						std::tolower(source[startSearch + 8]) == 'g' &&
 						(isspace(source[startSearch + 9]) || !isalnum(source[startSearch + 9])))
 					{
+						if (source[startSearch - 1] == ':') { goto identifier; }
 						addToken(TFTokenType::SMOOTHING, line);
 						currentIndex += 9;
 						break;

@@ -1,9 +1,9 @@
 #include "../include/entities/VisualEntity.h"
-#include "../include/Color.h"
-
-#include <glad/glad.h>
+#include "../include/math/Color.h"
 
 #include "../include/loadImageData.h"
+
+#include "../include/gladHelper.h"
 
 // Constructor / Destructor
 VisualEntity::~VisualEntity()
@@ -98,12 +98,12 @@ void VisualEntity::clearData(int area)
 }
 
 // Update the vertex data when changing the entity dimensions
-void VisualEntity::setVertData()
+void VisualEntity::setVertData(bool flipY)
 {
 	float ox = float(transform.boundBox.x1);
 	float oy = float(transform.boundBox.y1);
 	float vx = float(transform.boundBox.x2);
-	float vy = float(-transform.boundBox.y2);
+	float vy = float(((flipY) ? -1.0f : 1.0f) * transform.boundBox.y2);
 	float tx;
 	float ty;
 	if (getRatio() >= 1.0f)
@@ -133,8 +133,8 @@ void VisualEntity::setVertData()
 }
 
 // Blend Functions
-void VisualEntity::setBlendMode(BlendModes mode) { blendMode = mode; }
-BlendModes VisualEntity::getBlendMode() { return blendMode; }
+void VisualEntity::setBlendMode(BlendMode mode) { blendMode = mode; }
+BlendMode VisualEntity::getBlendMode() { return blendMode; }
 
 // Render Functions
 void VisualEntity::setShader(std::shared_ptr<Shader> program) { shader = program; }

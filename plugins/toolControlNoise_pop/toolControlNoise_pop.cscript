@@ -1,0 +1,218 @@
+num tcnp_activeTab = -1;
+num tcnp_1dIntervalSig = 70;
+bool tcnp_initialized = false;
+
+void tcnp_swapTab(num thisTab, num select)
+{
+	if (select < -1) {
+		if (select == -2) {
+			setChildProperty_byType("TEXT", "fill-color", global::lightGrey);
+			if (tcnp_activeTab != thisTab) {
+				setProperty("background-color-alpha", 0.6);
+			}
+		}
+		else if (select == -3) {
+			if (tcnp_activeTab != thisTab) {
+				setChildProperty_byType("TEXT", "fill-color", global::slateGrey);
+				setProperty("background-color-alpha", 0.2);
+			}
+			else {
+				setChildProperty_byType("TEXT", "fill-color", global::midGrey);
+				setProperty("background-color-alpha", 1);
+			}
+		}
+	}
+	else if (tcnp_activeTab != thisTab) {
+		tcnp_activeTab = thisTab;
+		setClassProperty("tcnp_tab", "background-color-alpha", 0.2);
+		setClassProperty("tcnp_tabText", "fill-color", global::slateGrey);
+		setProperty("background-color-alpha", 1);
+		setChildProperty_byType("TEXT", "fill-color", global::midGrey);
+		tcnp_update();
+	}
+}
+
+void tcnp_update()
+{
+	if (aNoiseSetID == -1) { return; }
+	if (!tcnp_initialized) {
+		tcnp_swapTab(0, 0);
+		app.ui.getWidget_byID("tcnp_tab_1d").setProperty("background-color-alpha", 1);
+		app.ui.getWidget_byID("tcnp_tab_1d").setChildProperty_byClass("set_tabText", "fill-color", global::midGrey);
+		tcnp_initialized = true;
+	}
+	tcnp_updateGen();
+	if (tcnp_activeTab == 0) {
+		tcnp_update1d();
+	}
+	else if (tcnp_activeTab == 1) {
+		tcnp_update2d();
+	}
+}
+
+void tcnp_updateGen()
+{
+	app.ui.getWidget_byID("tcnp_header").setProperty("value", app.toolbox.getActiveToolProp(global::aNoiseSetID, 60, false, false));
+	
+	app.ui.getWidget_byID("tcnp_gen_funcName").setProperty("value", app.toolbox.getActiveToolProp(global::aNoiseSetID, 50, false, false));
+	global::update_tSetToggle("tcnp_gen_useFunc", global::aNoiseSetID, 52);
+	global::update_tSetToggle("tcnp_gen_funcFirst", global::aNoiseSetID, 53);
+	global::update_tSetToggle("tcnp_gen_randSeed", global::aNoiseSetID, 6);
+	
+	app.ui.getWidget_byID("tcnp_gen_seed").setProperty("value", app.toolbox.getActiveToolProp(global::aNoiseSetID, 4, false, false));
+	
+	app.ui.getWidget_byID("tcnp_gen_blendModeText").setProperty("value", app.toolbox.getActiveToolProp(global::aNoiseSetID, 7, false, false));
+	global::update_tSetToggle("tcnp_gen_overflow", global::aNoiseSetID, 3);
+	
+	app.ui.getWidget_byID("tcnp_gen_noiseBlendText").setProperty("value", app.toolbox.getActiveToolProp(global::aNoiseSetID, 17, false, false));
+	global::update_tSetToggle("tcnp_gen_applyFirst", global::aNoiseSetID, 18);
+	global::update_tSetToggle("tcnp_gen_centerFinal", global::aNoiseSetID, 74);
+	
+	global::update_tSetSliderDouble("tcnp_gen_rangeBox", 
+		"tcnp_gen_slider_rMin", "tcnp_gen_rMin", "tcnp_gen_slider_rMax", "tcnp_gen_rMax", 
+		global::aNoiseSetID, 8, global::aNoiseSetID, 9);
+}
+
+void tcnp_update1d()
+{
+	app.ui.getWidget_byID("tcnp_body2d").setProperty("visibility", "hidden");
+	app.ui.getWidget_byID("tcnp_body1d").setProperty("visibility", "visible");
+	
+	global::update_tSetToggle("tcnp_1d_useNoise", global::aNoiseSetID, 10);
+	
+	string intervalMode = app.toolbox.getActiveToolProp(global::aNoiseSetID, 11, false, false);
+	print intervalMode;
+	if (intervalMode == "PER SHARD") { tcnp_1dIntervalSig = 70; }
+	else if (intervalMode == "PER ANCHOR") { tcnp_1dIntervalSig = 71; }
+	else if (intervalMode == "PER SPLINE") { tcnp_1dIntervalSig = 72; }
+	else if (intervalMode == "PER ENTITY") { tcnp_1dIntervalSig = 73; }
+	else { tcnp_1dIntervalSig = 70; print "ERR: 1D NOISE INTERVAL MODE: INVALID MODE"; }
+	app.ui.getWidget_byID("tcnp_1d_intervalText").setProperty("value", intervalMode);
+	global::update_tSetToggle("tcnp_1d_intervalSmooth", global::aNoiseSetID, 12);
+	global::update_tSetSliderSingle("tcnp_1d_sliderBox_intervalCount", 
+		"tcnp_1d_slider_intervalCount", "tcnp_1d_intervalCount", global::aNoiseSetID, global::tcnp::tcnp_1dIntervalSig);
+	
+	global::update_tSetSliderSingle("tcnp_1d_sliderBox_mixAmount", 
+		"tcnp_1d_slider_mixAmount", "tcnp_1d_mixAmount", global::aNoiseSetID, 16);
+	global::update_tSetSliderSingle("tcnp_1d_sliderBox_weight", 
+		"tcnp_1d_slider_weight", "tcnp_1d_weight", global::aNoiseSetID, 13);
+	global::update_tSetSliderSingle("tcnp_1d_sliderBox_intensity", 
+		"tcnp_1d_slider_intensity", "tcnp_1d_intensity", global::aNoiseSetID, 14);
+	global::update_tSetSliderSingle("tcnp_1d_sliderBox_smoothing", 
+		"tcnp_1d_slider_smoothing", "tcnp_1d_smoothing", global::aNoiseSetID, 15);
+}
+
+void tcnp_update2d()
+{
+	app.ui.getWidget_byID("tcnp_body1d").setProperty("visibility", "hidden");
+	app.ui.getWidget_byID("tcnp_body2d").setProperty("visibility", "visible");
+	
+	global::update_tSetToggle("tcnp_2d_useNoise", global::aNoiseSetID, 20);
+	app.ui.getWidget_byID("tcnp_2d_noiseFuncText").setProperty("value", app.toolbox.getActiveToolProp(global::aNoiseSetID, 21, false, false));
+	global::update_tSetToggle("tcnp_2d_useOriginOffset", global::aNoiseSetID, 22);
+	global::update_tSetToggle("tcnp_2d_scaleCanvasSize", global::aNoiseSetID, 23);
+	global::update_tSetToggle("tcnp_2d_scaleToolSize", global::aNoiseSetID, 24);
+	
+	global::update_tSetToggle("tcnp_2d_rotateNoise", global::aNoiseSetID, 28);
+	global::update_tSetToggle("tcnp_2d_invert", global::aNoiseSetID, 37);
+	global::update_tSetToggle("tcnp_2d_flipX", global::aNoiseSetID, 38);
+	global::update_tSetToggle("tcnp_2d_flipY", global::aNoiseSetID, 39);
+
+	global::update_tSetSliderDouble("tcnp_2d_sliderBox_scale", 
+		"tcnp_2d_slider_scaleX", "tcnp_2d_scaleX", "tcnp_2d_slider_scaleY", "tcnp_2d_scaleY", 
+		global::aNoiseSetID, 41, global::aNoiseSetID, 42);
+	global::update_tSetSliderSingle("tcnp_2d_sliderBox_skew", 
+		"tcnp_2d_slider_skew", "tcnp_2d_skew", global::aNoiseSetID, 43);
+
+	global::update_tSetSliderDouble("tcnp_2d_sliderBox_white", 
+		"tcnp_2d_slider_whiteMin", "tcnp_2d_whiteMin", "tcnp_2d_slider_whiteMax", "tcnp_2d_whiteMax", 
+		global::aNoiseSetID, 30, global::aNoiseSetID, 31);
+	global::update_tSetSliderDouble("tcnp_2d_sliderBox_contrast", 
+		"tcnp_2d_slider_contrastMin", "tcnp_2d_contrastMin", "tcnp_2d_slider_contrastMax", "tcnp_2d_contrastMax", 
+		global::aNoiseSetID, 32, global::aNoiseSetID, 33);
+	global::update_tSetSliderDouble("tcnp_2d_sliderBox_range", 
+		"tcnp_2d_slider_rangeMin", "tcnp_2d_rangeMin", "tcnp_2d_slider_rangeMax", "tcnp_2d_rangeMax", 
+		global::aNoiseSetID, 34, global::aNoiseSetID, 35);
+	
+		
+	global::update_tSetSliderSingle("tcnp_2d_sliderBox_mixAmount", 
+		"tcnp_2d_slider_mixAmount", "tcnp_2d_mixAmount", global::aNoiseSetID, 40);
+
+	global::update_tSetSliderSingle("tcnp_2d_sliderBox_factorA", 
+		"tcnp_2d_slider_factorA", "tcnp_2d_factorA", global::aNoiseSetID, 25);
+	global::update_tSetSliderSingle("tcnp_2d_sliderBox_factorB", 
+		"tcnp_2d_slider_factorB", "tcnp_2d_factorB", global::aNoiseSetID, 26);
+	global::update_tSetSliderSingle("tcnp_2d_sliderBox_factorC", 
+		"tcnp_2d_slider_factorC", "tcnp_2d_factorC", global::aNoiseSetID, 27);
+	global::update_tSetSliderSingle("tcnp_2d_sliderBox_rotation", 
+		"tcnp_2d_slider_rotation", "tcnp_2d_rotation", global::aNoiseSetID, 29);
+	global::update_tSetSliderSingle("tcnp_2d_sliderBox_valueSmooth", 
+		"tcnp_2d_slider_valueSmooth", "tcnp_2d_valueSmooth", global::aNoiseSetID, 36);
+		
+	app.ui.getWidget_byID("tcnp_noiseBox").bindActiveToolSetting(global::aNoiseSetID, -1);
+}
+
+void tcnp_update1dInterval(num sig)
+{
+	tcnp_1dIntervalSig = sig;
+	global::update_tSetSliderSingle("tcnp_1d_sliderBox_intervalCount", 
+		"tcnp_1d_slider_intervalCount", "tcnp_1d_intervalCount", global::aNoiseSetID, global::tcnp::tcnp_1dIntervalSig);
+}
+
+void tcnp_resetNoise2D()
+{
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 22, false, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 23, false, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 24, false, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 25, 1.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 26, 1.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 27, 1.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 28, false, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 29, 0.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 30, 0.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 31, 1.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 32, 0.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 33, 0.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 34, 0.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 35, 1.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 36, 1.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 37, false, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 38, false, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 39, false, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 40, 1.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 41, 1.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 42, 1.0, false);
+	app.toolbox.setActiveToolProp(global::aNoiseSetID, 43, 0.0, false);
+	tcnp_update();
+}
+
+void tcnp_zoomNoise(num type, string noiseID)
+{
+	num zoom = app.ui.getWidget_byID(noiseID).getProperty("zoom");
+	num sign = 1.0;
+	if (type == 1) { sign = -1.0; }
+	
+	if (zoom <= 10.0) {
+		zoom += (1.5 * sign);
+	}
+	else if (zoom <= 25.0) {
+		zoom += (5.0 * sign);
+	}
+	else if (zoom <= 50.0) {
+		zoom += (10.0 * sign);
+	}
+	else if (zoom <= 100.0) {
+		zoom += (15.0 * sign);
+	}
+	else if (zoom <= 200.0) {
+		zoom += (25.0 * sign);
+	}
+	else if (zoom > 200.0) {
+		zoom += (100.0 * sign);
+	}
+	
+	app.ui.getWidget_byID(noiseID).setProperty("zoom", zoom);
+}
+
+//bindCallbackEvent("toolSwitch", "tcnp_toolSwitch", tcnp_update);
+bindCallbackEvent("storedEventListener", "tcnp_updateOpen", tcnp_update);

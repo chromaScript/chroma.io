@@ -56,6 +56,13 @@ public:
 	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
 	virtual std::string toString();
 };
+class CStd_fKeybindToString : public CFunction
+{
+public:
+	CStd_fKeybindToString(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
 class CStd_fMakeKeySig : public CFunction
 {
 public:

@@ -137,12 +137,15 @@ enum class CCallableTypes
 	_CFunction,
 	// Internal Built-In Widget Functions
 	_CInt_TextClick,
+	_CInt_TGraph_Drag,
+	_CInt_TGraph_Hover,
 	// Standard Lib Utility Functions
 	_CStd_fClock,
 	_CStd_fVecSize,
 	_CStd_fToString,
 	_CStd_fToNum,
 	_CStd_fKeyToString,
+	_CStd_fKeybindToString,
 	_CStd_fMakeKeySig,
 	_CStd_fBindTimerEvent,
 	_CStd_fCancelTimerEvent,
@@ -196,6 +199,7 @@ enum class CCallableTypes
 	_CStd_cfSetCursor,
 	_CStd_cfMoveAppWindow,
 	_CStd_cfResizeAppWindow,
+	_CStd_cfZoomExtents,
 	// Ui Class & functions
 	_CStd_cUi,
 	_CStd_cfCheckWidgetIDTable,
@@ -250,6 +254,8 @@ enum class CCallableTypes
 	_CStd_cfAddChildWidget_Prototype,
 	_CStd_cfRemoveChildWidget_byID,
 	_CStd_cfRemoveChildWidgets_byClass,
+	_CStd_cfBindActiveToolSetting,
+	_CStd_cfCallSpecialFunction,
 	// Cursor Class & Functions
 	_CStd_cCursor,
 	// Stylus Class & Functions

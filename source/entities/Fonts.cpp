@@ -1,7 +1,7 @@
 #include "../include/entities/Fonts.h"
-#include "../include/structs.h"
 
-#include <glad/glad.h>
+
+#include "../include/gladHelper.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -70,9 +70,17 @@ int Fonts::loadFontFromFile(std::filesystem::path path)
 	std::string name = path.stem().string();
 	if (name.find_last_of(".", 0) == 0) { return -3; }
 	// Create a new CachedFace and load it's face object
-	faces.emplace_back(std::make_shared<CachedFace>(name, ext, path));
-	int loadErr = loadFace(faces.back());
-	if (loadErr != 0) { return -4; }
+	bool isDuplicate = false;
+	for (std::shared_ptr<CachedFace> face : faces)
+	{
+		if (face.get()->name == name) { isDuplicate = true; }
+	}
+	if (!isDuplicate)
+	{
+		faces.emplace_back(std::make_shared<CachedFace>(name, ext, path));
+		int loadErr = loadFace(faces.back());
+		if (loadErr != 0) { return -4; }
+	}
 	return 0;
 }
 // Load Face
@@ -90,6 +98,7 @@ std::shared_ptr<CachedFace> Fonts::getFace(std::filesystem::path queryPath)
 	for (std::shared_ptr<CachedFace> getFace : faces)
 	{
 		if (getFace.get()->path == queryPath) { outFace = getFace; break; }
+		else if (getFace.get()->name == queryPath.stem()) { outFace = getFace; break; }
 	}
 	return outFace;
 }
@@ -114,6 +123,8 @@ std::shared_ptr<CachedCharBitmap> Fonts::loadNewBitmap(std::shared_ptr<CachedFac
 	face.get()->cachedBitmaps.emplace_back(std::make_shared<CachedCharBitmap>(fontSize));
 	std::shared_ptr<CachedCharBitmap> outBitmap = face.get()->cachedBitmaps.back();
 	// Set the size to load glyphs as
+	//FT_Size_Request sizeReq = FT_Size_Request();
+	//FT_Request_Size(face.get()->face, sizeReq);
 	FT_Set_Pixel_Sizes(face.get()->face, 0, fontSize);
 	// Disable the byte-alignment restriction
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -158,6 +169,10 @@ std::shared_ptr<CachedCharBitmap> Fonts::findBitmap(int fontSize, std::filesyste
 	 // Avoid rendering missing faces, should have loaded correctly during UI initialization
 	// Then check if that CachedFace has a matching CachedCharBitmap with the requested size
 	std::shared_ptr<CachedFace> renderFace = getFace(fontPath);
+	if (renderFace == nullptr)
+	{
+		int k = 5;
+	}
 	std::shared_ptr<CachedCharBitmap> renderBitmap = getBitmap(renderFace, fontSize);
 	return renderBitmap;
 }

@@ -75,14 +75,15 @@ public:
 	//
 	CInterpreter();
 	void initialize(std::shared_ptr<ChromaScript> console);
+	void resetInterpreter();
 	//
 	void interpret(std::vector<std::shared_ptr<CStmt>> statements, std::shared_ptr<CEnvironment> entryEnv);
 	std::shared_ptr<CObject> interpretLine(std::vector<std::shared_ptr<CStmt>> statements, std::shared_ptr<CEnvironment> entryEnv);
 
 	std::shared_ptr<ChromaScript> getConsole() { return console; }
 	void setEnvironment(std::shared_ptr<CEnvironment> environment) { this->currentEnvironment = environment; }
-	std::shared_ptr<CEnvironment> getEnvironment() { return currentEnvironment; }
-	std::shared_ptr<CEnvironment> getEnvironment(std::string name) { return currentEnvironment.get()->getEnvironment(name); }
+	std::shared_ptr<CEnvironment> getEnvironment();
+	std::shared_ptr<CEnvironment> getEnvironment(std::string name);
 	//
 	void addNamespace(std::string name) { currentNamespaces.push_back(name); }
 	void popNamespace() { currentNamespaces.pop_back(); }

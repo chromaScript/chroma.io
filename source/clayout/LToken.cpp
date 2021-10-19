@@ -14,7 +14,7 @@ LToken::LToken(const LToken& ctoken)
 LToken::LToken(LTokenType type, int line)
 {
 	this->type = type;
-	this->lexeme = LTokenTypeNames[(size_t)type];
+	this->lexeme = layoutTypeStringMap.at(type);
 	this->line = line;
 }
 LToken::LToken(LTokenType type, std::string lexeme)
@@ -32,7 +32,7 @@ LToken::LToken(LTokenType type, std::string lexeme, int line)
 // Return string from token
 std::string LToken::toString()
 {
-	return "[" + std::to_string(line) + "] : " + LTokenTypeNames[(size_t)type] + " " + lexeme;
+	return "[" + std::to_string(line) + "] : " + layoutTypeStringMap.at(type) + " " + lexeme;
 }
 // Return type string from token
 std::string LToken::typeString()
@@ -46,6 +46,6 @@ std::string LToken::typeString()
 	}
 	else
 	{
-		return LTokenTypeNames[(size_t)type];
+		return layoutTypeStringMap.at(type);
 	}
 }

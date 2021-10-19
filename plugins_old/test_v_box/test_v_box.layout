@@ -1,9 +1,0 @@
-<ROOT id="TestVBox" defaultPosition="750, 250">
-	<V_BOX class="vertBoxA">
-		<IMAGE class="imageD" name="ImageA" id="006"></IMAGE>
-		<IMAGE class="imageF" name="ImageA" id="007"></IMAGE>
-		<IMAGE class="imageC" name="ImageA" id="008"></IMAGE>
-		<IMAGE class="imageC" name="ImageA" id="009"></IMAGE>
-		<IMAGE class="imageE" name="ImageA" id="011"></IMAGE>
-	</V_BOX>
-</ROOT>

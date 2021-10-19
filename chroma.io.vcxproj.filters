@@ -61,35 +61,137 @@
     <Filter Include="Source Files\cscript\lib">
       <UniqueIdentifier>{d6622d9e-0189-4699-8243-30db1d2c6435}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\toolSettings">
-      <UniqueIdentifier>{07b3977d-8aa0-4bce-a419-a03e98564146}</UniqueIdentifier>
+    <Filter Include="Source Files\input">
+      <UniqueIdentifier>{7513141c-1670-4fb8-94af-c690ea2ca7fb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\toolSettings">
+    <Filter Include="Header Files\input">
+      <UniqueIdentifier>{08fbf7ec-1400-4303-a6ad-c75f2b522c60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\math">
+      <UniqueIdentifier>{aa787b54-eb08-4795-ab59-9108bb037ad8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\math">
+      <UniqueIdentifier>{b52bb5d7-b0cb-465e-bddb-04aed7aad582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\methods\inputMethods">
+      <UniqueIdentifier>{88e9597a-d96f-42dc-a6a9-29fde492afe0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\methods\outputMethods">
+      <UniqueIdentifier>{ab0d0e4a-ea84-4c18-ab28-a1520cd8bc84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\methods\inputMethods">
+      <UniqueIdentifier>{3558bf40-1cbc-46b6-8543-141b14ebfc8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\methods\outputMethods">
+      <UniqueIdentifier>{3479aaad-55a8-4051-afdb-5a9274705441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\entities\widgets">
+      <UniqueIdentifier>{6701989b-f21d-4beb-9a4f-243119245ba0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\entities\visuals">
+      <UniqueIdentifier>{81ab05bd-e6d4-4bec-9ea1-f4499f6bc146}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\entities\layers">
+      <UniqueIdentifier>{9850b98d-78e6-4a0a-bf8e-f75b1f65944b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\entities\layers">
+      <UniqueIdentifier>{cf461447-122d-4ebe-8940-7e452575a9b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\entities\visuals">
+      <UniqueIdentifier>{a8e1f709-0db2-4250-b3b8-91bf387c6c5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\entities\widgets">
+      <UniqueIdentifier>{d59604f0-23c6-4c77-97bd-f44f57ead7d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tool">
+      <UniqueIdentifier>{19733cd7-5213-4ec0-b24b-dc3257203302}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tool">
+      <UniqueIdentifier>{6cc4f8c5-df17-4cf6-ad2c-70f1fbcfe2f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tool\toolSettings">
       <UniqueIdentifier>{590c3f8f-9838-4c05-a641-2e30c8e38e9f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\toolSettings\controls">
+    <Filter Include="Source Files\tool\toolSettings">
+      <UniqueIdentifier>{07b3977d-8aa0-4bce-a419-a03e98564146}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tool\toolSettings\controls">
       <UniqueIdentifier>{1e89323a-2a1e-48f7-ab7a-098eb9e84c43}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\toolSettings\effects">
+    <Filter Include="Source Files\tool\toolSettings\effects">
       <UniqueIdentifier>{f67e6104-9482-4e8f-864d-8916e03bb649}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\toolSettings\gen">
+    <Filter Include="Source Files\tool\toolSettings\gen">
       <UniqueIdentifier>{c887c2e6-a04c-4b04-9306-c0b76ceb40e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\toolSettings\method">
+    <Filter Include="Source Files\tool\toolSettings\method">
       <UniqueIdentifier>{d62f7a11-133b-40ce-a249-73d8450552ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\toolSettings\controls">
+    <Filter Include="Header Files\tool\toolSettings\method">
+      <UniqueIdentifier>{c10349f5-aafc-4b43-9a70-39e18e03ab0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tool\toolSettings\controls">
       <UniqueIdentifier>{b3ef5195-f3a1-4a34-b9e0-b04693c57b9c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\toolSettings\effects">
+    <Filter Include="Header Files\tool\toolSettings\effects">
       <UniqueIdentifier>{da11bce1-9995-46b9-a13d-f45eff94d3ed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\toolSettings\gen">
+    <Filter Include="Header Files\tool\toolSettings\gen">
       <UniqueIdentifier>{af0a8af0-d24c-4f8a-bb7f-01b3f8d40521}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\toolSettings\method">
-      <UniqueIdentifier>{c10349f5-aafc-4b43-9a70-39e18e03ab0a}</UniqueIdentifier>
+    <Filter Include="Source Files\presets">
+      <UniqueIdentifier>{59665454-53a0-4b32-8d64-bc886e08a69e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\presets\gradient">
+      <UniqueIdentifier>{77ecff6d-c16f-44f6-95d9-9d4fb5ba823a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\presets\image">
+      <UniqueIdentifier>{9fefcf5d-ecd3-4f8e-8334-0c7a9667bc3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\presets\inputGraph">
+      <UniqueIdentifier>{a53bf367-0d25-490c-8d78-e5ebb626730e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\presets\mesh">
+      <UniqueIdentifier>{8cd730d8-fb75-4792-963c-9bb1998847f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\presets\noise">
+      <UniqueIdentifier>{4b07e3e8-ac3e-411f-8d17-6260078e9ff8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\presets\shape">
+      <UniqueIdentifier>{7d612b3d-f0ca-4d92-b4cf-1268ee475cc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\presets\swatch">
+      <UniqueIdentifier>{6bb108dc-5b42-4993-b72c-f79c49fc7afa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\presets\texture">
+      <UniqueIdentifier>{9f582400-aa23-4795-aa51-8e2f169dbae7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\presets">
+      <UniqueIdentifier>{fb541376-edf5-4cdd-a57e-e387317fe69e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\presets\gradient">
+      <UniqueIdentifier>{9948c54c-4afe-4c1a-93ef-b0ffea810e7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\presets\image">
+      <UniqueIdentifier>{56481b93-53a9-4b01-9495-2bc23a48164d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\presets\inputGraph">
+      <UniqueIdentifier>{773f1af6-85c0-4f4e-89c7-5040f35260d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\presets\mesh">
+      <UniqueIdentifier>{09e008d3-0587-4947-93f5-829702050d93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\presets\texture">
+      <UniqueIdentifier>{af40b477-6916-4f07-8dca-39f905bb0ad5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\presets\swatch">
+      <UniqueIdentifier>{ac6fb4bf-07d3-456d-8c00-8c58d00b3145}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\presets\shape">
+      <UniqueIdentifier>{563d4111-321e-43c5-8373-72648e978379}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\presets\noise">
+      <UniqueIdentifier>{6dd7142a-b75f-4675-9d13-aa521fb95c5b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -108,100 +210,16 @@
     <ClCompile Include="source\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Tool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Toolbox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\CustomCursor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\loadImageData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\methods\Out_NoOutput.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\Out_PanCamera.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\Out_RotateCamera.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\Out_ZoomCamera.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
     <ClCompile Include="source\WinStylusHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\entities\AdjustmentLayer.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Container.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\DataLayer.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Fragment.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Layer.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Shape.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Stroke.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\VisualEntity.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Filter.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\Out_Fill.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\Out_Gradient.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\Out_Selection.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\Out_Stroke.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Canvas.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\UserInterface.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Widget.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Panel.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Popup.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\HorizontalBox.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Image.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
     <ClCompile Include="source\entities\Fonts.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Text.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\VerticalBox.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
     <ClCompile Include="source\cscript\ChromaScript.cpp">
@@ -291,101 +309,8 @@
     <ClCompile Include="source\clayout\LInterpreter.cpp">
       <Filter>Source Files\clayout</Filter>
     </ClCompile>
-    <ClCompile Include="source\entities\WidgetStyle.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\Out_Sampler.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\ColorBox.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\GradientBox.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\HueRadius.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\HueStrip.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\List.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\ListItem.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\TextEntry.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\TileBox.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_Draw.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_Pan.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_Point.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_Rotate.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_Zoom.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\ToolSettings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_Sampler.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_Polygon.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
     <ClCompile Include="source\methods\InputMethod.cpp">
       <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_ShapeField.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_RadialField.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_ShapeDraw.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_ShapeLine.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_PolyLine.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_Vortex.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_Rake.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_Fan.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\methods\In_Lasso.cpp">
-      <Filter>Source Files\methods</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Block.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Line.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\Paragraph.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
-    <ClCompile Include="source\entities\WidgetInterface.cpp">
-      <Filter>Source Files\entities</Filter>
     </ClCompile>
     <ClCompile Include="source\ctoolfile\ChromaToolFile.cpp">
       <Filter>Source Files\ctoolfile</Filter>
@@ -414,9 +339,6 @@
     <ClCompile Include="source\ctoolfile\TFSettingsWriter.cpp">
       <Filter>Source Files\ctoolfile</Filter>
     </ClCompile>
-    <ClCompile Include="source\math.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\cscript\lib\CCLib_App.cpp">
       <Filter>Source Files\cscript\lib</Filter>
     </ClCompile>
@@ -438,191 +360,458 @@
     <ClCompile Include="source\cscript\lib\CCLib_Widget.cpp">
       <Filter>Source Files\cscript\lib</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\controls\TSet_ContinuousControl.cpp">
-      <Filter>Source Files\toolSettings\controls</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\controls\TSet_DragControl.cpp">
-      <Filter>Source Files\toolSettings\controls</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\controls\TSet_OnePointControl.cpp">
-      <Filter>Source Files\toolSettings\controls</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\controls\TSet_Pan.cpp">
-      <Filter>Source Files\toolSettings\controls</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\controls\TSet_Rotate.cpp">
-      <Filter>Source Files\toolSettings\controls</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\controls\TSet_Sampler.cpp">
-      <Filter>Source Files\toolSettings\controls</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\controls\TSet_ThreePointControl.cpp">
-      <Filter>Source Files\toolSettings\controls</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\controls\TSet_TwoPointControl.cpp">
-      <Filter>Source Files\toolSettings\controls</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\controls\TSet_Zoom.cpp">
-      <Filter>Source Files\toolSettings\controls</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_Effects.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_BrightContrast.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_Fill.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_Gradient.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_HSV.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_Invert.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_Posterize.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_Threshold.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Alpha.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_AntiAliasing.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Basic.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Blend.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Character.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Color.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Distance.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Grain.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Image.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Mixing.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_MultiTip.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Pattern.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Repeat.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Scatter.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Smoothing.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Texture.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_WetEdges.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\method\TSet_Fan.cpp">
-      <Filter>Source Files\toolSettings\method</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\method\TSet_Field.cpp">
-      <Filter>Source Files\toolSettings\method</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\method\TSet_Fill.cpp">
-      <Filter>Source Files\toolSettings\method</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\method\TSet_Filter.cpp">
-      <Filter>Source Files\toolSettings\method</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\method\TSet_Gradient.cpp">
-      <Filter>Source Files\toolSettings\method</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\method\TSet_Mesh.cpp">
-      <Filter>Source Files\toolSettings\method</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\method\TSet_Polygon.cpp">
-      <Filter>Source Files\toolSettings\method</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\method\TSet_PolyLine.cpp">
-      <Filter>Source Files\toolSettings\method</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\method\TSet_Rake.cpp">
-      <Filter>Source Files\toolSettings\method</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\method\TSet_Shader.cpp">
-      <Filter>Source Files\toolSettings\method</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\method\TSet_Vector.cpp">
-      <Filter>Source Files\toolSettings\method</Filter>
-    </ClCompile>
-    <ClCompile Include="source\toolSettings\method\TSet_Vortex.cpp">
-      <Filter>Source Files\toolSettings\method</Filter>
-    </ClCompile>
     <ClCompile Include="source\cscript\lib\CCLib_Document.cpp">
       <Filter>Source Files\cscript\lib</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\gen\TSet_Reference.cpp">
-      <Filter>Source Files\toolSettings\gen</Filter>
+    <ClCompile Include="source\cscript\lib\CCLib_STDWidgetInterface.cpp">
+      <Filter>Source Files\cscript\lib</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_ClampHSV.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\input\input.cpp">
+      <Filter>Source Files\input</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_ClampRGB.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\math\blend.cpp">
+      <Filter>Source Files\math</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_Colorize.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\math\Color.cpp">
+      <Filter>Source Files\math</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_ColorRamp.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\math\math.cpp">
+      <Filter>Source Files\math</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_FillDirection.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\math\noise.cpp">
+      <Filter>Source Files\math</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_FillSimple.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\input\keys.cpp">
+      <Filter>Source Files\input</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_GaussianBlur.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\methods\OutputMethod.cpp">
+      <Filter>Source Files\methods</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_Modulo.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\methods\inputMethods\In_Draw.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_PerlinNoise.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\methods\inputMethods\In_Fan.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_Power.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\methods\inputMethods\In_Lasso.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_TextureComplex.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\methods\inputMethods\In_Line.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_TextureSimple.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\methods\inputMethods\In_MultiSpline.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_Toon.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\methods\inputMethods\In_Pan.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
     </ClCompile>
-    <ClCompile Include="source\toolSettings\effects\TSet_FX_Voronoise.cpp">
-      <Filter>Source Files\toolSettings\effects</Filter>
+    <ClCompile Include="source\methods\inputMethods\In_Point.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\inputMethods\In_Polygon.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\inputMethods\In_PolyLine.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\inputMethods\In_RadialField.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\inputMethods\In_Rake.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\inputMethods\In_Rotate.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\inputMethods\In_Sampler.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\inputMethods\In_ShapeDraw.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\inputMethods\In_ShapeField.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\inputMethods\In_ShapeLine.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\inputMethods\In_Spline.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\inputMethods\In_Vortex.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\inputMethods\In_Zoom.cpp">
+      <Filter>Source Files\methods\inputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\outputMethods\Out_Fill.cpp">
+      <Filter>Source Files\methods\outputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\outputMethods\Out_Gradient.cpp">
+      <Filter>Source Files\methods\outputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\outputMethods\Out_NoOutput.cpp">
+      <Filter>Source Files\methods\outputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\outputMethods\Out_PanCamera.cpp">
+      <Filter>Source Files\methods\outputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\outputMethods\Out_RotateCamera.cpp">
+      <Filter>Source Files\methods\outputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\outputMethods\Out_Sampler.cpp">
+      <Filter>Source Files\methods\outputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\outputMethods\Out_Selection.cpp">
+      <Filter>Source Files\methods\outputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\outputMethods\Out_Stroke.cpp">
+      <Filter>Source Files\methods\outputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\methods\outputMethods\Out_ZoomCamera.cpp">
+      <Filter>Source Files\methods\outputMethods</Filter>
+    </ClCompile>
+    <ClCompile Include="source\math\transform.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="source\math\string.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\UserInterface.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\VisualEntity.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\layers\AdjustmentLayer.cpp">
+      <Filter>Source Files\entities\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\layers\Canvas.cpp">
+      <Filter>Source Files\entities\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\layers\Container.cpp">
+      <Filter>Source Files\entities\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\layers\DataLayer.cpp">
+      <Filter>Source Files\entities\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\layers\Filter.cpp">
+      <Filter>Source Files\entities\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\layers\Layer.cpp">
+      <Filter>Source Files\entities\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\visuals\Shape.cpp">
+      <Filter>Source Files\entities\visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\visuals\Stroke.cpp">
+      <Filter>Source Files\entities\visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\Block.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\ColorBox.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\GradientBox.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\Graph_ToolControl.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\HorizontalBox.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\HueRadius.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\HueStrip.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\Line.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\List.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\ListItem.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\Noise_ToolControl.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\Panel.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\Paragraph.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\Popup.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\Text.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\TextEntry.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\TileBox.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\VerticalBox.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\Widget.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\WidgetInterface.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\WidgetStyle.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\layers\LayerProperties.cpp">
+      <Filter>Source Files\entities\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\visuals\Fragment.cpp">
+      <Filter>Source Files\entities\visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\visuals\VertexData.cpp">
+      <Filter>Source Files\entities\visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\visuals\FragmentAnchor.cpp">
+      <Filter>Source Files\entities\visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\visuals\StrokeShard.cpp">
+      <Filter>Source Files\entities\visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\Tool.cpp">
+      <Filter>Source Files\tool</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\Toolbox.cpp">
+      <Filter>Source Files\tool</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\ToolSettings.cpp">
+      <Filter>Source Files\tool</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\controls\TSet_ContinuousControl.cpp">
+      <Filter>Source Files\tool\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\controls\TSet_DragControl.cpp">
+      <Filter>Source Files\tool\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\controls\TSet_OnePointControl.cpp">
+      <Filter>Source Files\tool\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\controls\TSet_Pan.cpp">
+      <Filter>Source Files\tool\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\controls\TSet_Rotate.cpp">
+      <Filter>Source Files\tool\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\controls\TSet_Sampler.cpp">
+      <Filter>Source Files\tool\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\controls\TSet_ThreePointControl.cpp">
+      <Filter>Source Files\tool\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\controls\TSet_TwoPointControl.cpp">
+      <Filter>Source Files\tool\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\controls\TSet_Zoom.cpp">
+      <Filter>Source Files\tool\toolSettings\controls</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_Effects.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_BrightContrast.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_ClampHSV.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_ClampRGB.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_Colorize.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_ColorRamp.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_Fill.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_FillDirection.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_FillSimple.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_GaussianBlur.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_Gradient.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_HSV.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_Invert.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_Modulo.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_PerlinNoise.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_Posterize.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_Power.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_TextureComplex.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_TextureSimple.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_Threshold.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_Toon.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\effects\TSet_FX_Voronoise.cpp">
+      <Filter>Source Files\tool\toolSettings\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Alpha.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_AntiAliasing.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Basic.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Blend.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Character.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Color.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Distance.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Grain.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Image.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Mixing.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_MultiTip.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Pattern.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Reference.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Repeat.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Scatter.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Smoothing.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_Texture.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\gen\TSet_WetEdges.cpp">
+      <Filter>Source Files\tool\toolSettings\gen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_Fan.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_Field.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_Fill.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_Filter.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_Gradient.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_Mesh.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_MultiSpline.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_Polygon.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_PolyLine.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_Rake.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_Shader.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_Spline.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_Vector.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\tool\toolSettings\method\TSet_Vortex.cpp">
+      <Filter>Source Files\tool\toolSettings\method</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\widgets\ImageWidget.cpp">
+      <Filter>Source Files\entities\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\presets\image\Image.cpp">
+      <Filter>Source Files\presets\image</Filter>
+    </ClCompile>
+    <ClCompile Include="source\presets\image\ImageLayer.cpp">
+      <Filter>Source Files\presets\image</Filter>
+    </ClCompile>
+    <ClCompile Include="source\presets\image\ImageLayer_Data.cpp">
+      <Filter>Source Files\presets\image</Filter>
+    </ClCompile>
+    <ClCompile Include="source\presets\image\ImageLayer_Filter.cpp">
+      <Filter>Source Files\presets\image</Filter>
+    </ClCompile>
+    <ClCompile Include="source\presets\image\ImageLayer_Paint.cpp">
+      <Filter>Source Files\presets\image</Filter>
+    </ClCompile>
+    <ClCompile Include="source\presets\image\ImageLayer_Vector.cpp">
+      <Filter>Source Files\presets\image</Filter>
+    </ClCompile>
+    <ClCompile Include="source\presets\texture\Texture.cpp">
+      <Filter>Source Files\presets\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="source\presets\texture\TextureManager.cpp">
+      <Filter>Source Files\presets\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="source\presets\texture\TextureProperties.cpp">
+      <Filter>Source Files\presets\texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -635,43 +824,13 @@
     <ClInclude Include="source\include\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\structs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\Tool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\Toolbox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\IOClasses.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\include\loadImageData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\include\CustomCursor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\methods\In_NoInput.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_Rotate.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
     <ClInclude Include="source\include\methods\InputMethod.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\Out_NoOutput.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\Out_PanCamera.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\Out_RotateCamera.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\Out_ZoomCamera.h">
       <Filter>Header Files\methods</Filter>
     </ClInclude>
     <ClInclude Include="source\include\methods\OutputMethod.h">
@@ -680,86 +839,8 @@
     <ClInclude Include="source\include\WinStylusHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\entities\AdjustmentLayer.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Container.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\DataLayer.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Fragment.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Layer.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Shape.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Stroke.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\VisualEntity.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Filter.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_Draw.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_Lasso.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_Line.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\Out_Fill.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\Out_Gradient.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\Out_Selection.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\Out_Stroke.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
     <ClInclude Include="source\include\SharedHelper.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Canvas.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\UserInterface.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Widget.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Panel.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Popup.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\HorizontalBox.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Image.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Fonts.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Text.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\VerticalBox.h">
-      <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="source\include\cscript\ChromaScript.h">
       <Filter>Header Files\cscript</Filter>
@@ -872,101 +953,8 @@
     <ClInclude Include="source\include\cscript\CCallable_Lib.h">
       <Filter>Header Files\cscript</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\Color.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\include\clayout\LInterpreter.h">
       <Filter>Header Files\clayout</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\WidgetStyle.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\ToolSettings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\Out_Sampler.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\ColorBox.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\GradientBox.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\HueRadius.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\HueStrip.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\List.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\ListItem.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\TextEntry.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\TileBox.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\math.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_Pan.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_Point.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_Zoom.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_Sampler.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_Polygon.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_RadialField.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_ShapeDraw.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_ShapeLine.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_ShapeField.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_PolyLine.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_Vortex.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_Rake.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\methods\In_Fan.h">
-      <Filter>Header Files\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\keys.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Block.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Line.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\Paragraph.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\entities\WidgetInterface.h">
-      <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="source\include\ctoolfile\ChromaToolFile.h">
       <Filter>Header Files\ctoolfile</Filter>
@@ -1028,194 +1016,476 @@
     <ClInclude Include="source\include\cscript\lib\CCLib_Widget.h">
       <Filter>Header Files\cscript\lib</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\controls\TSet_ContinuousControl.h">
-      <Filter>Header Files\toolSettings\controls</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\controls\TSet_DragControl.h">
-      <Filter>Header Files\toolSettings\controls</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\controls\TSet_OnePointControl.h">
-      <Filter>Header Files\toolSettings\controls</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\controls\TSet_Pan.h">
-      <Filter>Header Files\toolSettings\controls</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\controls\TSet_Rotate.h">
-      <Filter>Header Files\toolSettings\controls</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\controls\TSet_Sampler.h">
-      <Filter>Header Files\toolSettings\controls</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\controls\TSet_ThreePointControl.h">
-      <Filter>Header Files\toolSettings\controls</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\controls\TSet_TwoPointControl.h">
-      <Filter>Header Files\toolSettings\controls</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\controls\TSet_Zoom.h">
-      <Filter>Header Files\toolSettings\controls</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_Effects.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_BrightContrast.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Fill.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Gradient.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_HSV.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Invert.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Posterize.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Threshold.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Alpha.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_AntiAliasing.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Basic.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Blend.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Character.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Color.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Distance.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Grain.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Image.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Mixing.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_MultiTip.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Pattern.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Repeat.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Scatter.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Smoothing.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Texture.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_WetEdges.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\method\TSet_Fan.h">
-      <Filter>Header Files\toolSettings\method</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\method\TSet_Field.h">
-      <Filter>Header Files\toolSettings\method</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\method\TSet_Fill.h">
-      <Filter>Header Files\toolSettings\method</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\method\TSet_Filter.h">
-      <Filter>Header Files\toolSettings\method</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\method\TSet_Gradient.h">
-      <Filter>Header Files\toolSettings\method</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\method\TSet_Mesh.h">
-      <Filter>Header Files\toolSettings\method</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\method\TSet_Polygon.h">
-      <Filter>Header Files\toolSettings\method</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\method\TSet_PolyLine.h">
-      <Filter>Header Files\toolSettings\method</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\method\TSet_Rake.h">
-      <Filter>Header Files\toolSettings\method</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\method\TSet_Shader.h">
-      <Filter>Header Files\toolSettings\method</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\method\TSet_Vector.h">
-      <Filter>Header Files\toolSettings\method</Filter>
-    </ClInclude>
-    <ClInclude Include="source\include\toolSettings\method\TSet_Vortex.h">
-      <Filter>Header Files\toolSettings\method</Filter>
-    </ClInclude>
     <ClInclude Include="source\include\cscript\lib\CCLib_Document.h">
       <Filter>Header Files\cscript\lib</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\ToolSettings_Forward.h">
-      <Filter>Header Files\toolSettings</Filter>
+    <ClInclude Include="source\include\cscript\lib\CCLib_STDWidgetInterface.h">
+      <Filter>Header Files\cscript\lib</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\gen\TSet_Reference.h">
-      <Filter>Header Files\toolSettings\gen</Filter>
+    <ClInclude Include="source\include\input\input.h">
+      <Filter>Header Files\input</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_ClampHSV.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\math\blend.h">
+      <Filter>Header Files\math</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_ClampRGB.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\math\Color.h">
+      <Filter>Header Files\math</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Colorize.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\math\math.h">
+      <Filter>Header Files\math</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_ColorRamp.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\math\noise.h">
+      <Filter>Header Files\math</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_FillDirection.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\input\keys.h">
+      <Filter>Header Files\input</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_FillSimple.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\methods\MethodType.h">
+      <Filter>Header Files\methods</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_GaussianBlur.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\methods\outputMethods\Out_Fill.h">
+      <Filter>Header Files\methods\outputMethods</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Modulo.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\methods\outputMethods\Out_Gradient.h">
+      <Filter>Header Files\methods\outputMethods</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_PerlinNoise.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\methods\outputMethods\Out_NoOutput.h">
+      <Filter>Header Files\methods\outputMethods</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Power.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\methods\outputMethods\Out_PanCamera.h">
+      <Filter>Header Files\methods\outputMethods</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_TextureComplex.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\methods\outputMethods\Out_RotateCamera.h">
+      <Filter>Header Files\methods\outputMethods</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_TextureSimple.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\methods\outputMethods\Out_Sampler.h">
+      <Filter>Header Files\methods\outputMethods</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Toon.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\methods\outputMethods\Out_Selection.h">
+      <Filter>Header Files\methods\outputMethods</Filter>
     </ClInclude>
-    <ClInclude Include="source\include\toolSettings\effects\TSet_FX_Voronoise.h">
-      <Filter>Header Files\toolSettings\effects</Filter>
+    <ClInclude Include="source\include\methods\outputMethods\Out_Stroke.h">
+      <Filter>Header Files\methods\outputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\outputMethods\Out_ZoomCamera.h">
+      <Filter>Header Files\methods\outputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\math\string.h">
+      <Filter>Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\math\transform.h">
+      <Filter>Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\layers\AdjustmentLayer.h">
+      <Filter>Header Files\entities\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\layers\Canvas.h">
+      <Filter>Header Files\entities\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\layers\Container.h">
+      <Filter>Header Files\entities\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\layers\DataLayer.h">
+      <Filter>Header Files\entities\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\layers\Filter.h">
+      <Filter>Header Files\entities\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\layers\Layer.h">
+      <Filter>Header Files\entities\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\visuals\Shape.h">
+      <Filter>Header Files\entities\visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\visuals\Stroke.h">
+      <Filter>Header Files\entities\visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\Block.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\ColorBox.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\GradientBox.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\Graph_ToolControl.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\HorizontalBox.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\HueRadius.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\HueStrip.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\Line.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\List.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\ListItem.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\Noise_ToolControl.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\Panel.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\Paragraph.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\Popup.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\Text.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\TextEntry.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\TileBox.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\VerticalBox.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\Widget.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\WidgetAttributes.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\WidgetInterface.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\WidgetStyle.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\Fonts.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\UserInterface.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\VisualEntity.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\IOClasses.h">
+      <Filter>Header Files\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\layers\LayerProperties.h">
+      <Filter>Header Files\entities\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\visuals\Fragment.h">
+      <Filter>Header Files\entities\visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\visuals\VertexData.h">
+      <Filter>Header Files\entities\visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\visuals\FragmentAnchor.h">
+      <Filter>Header Files\entities\visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\visuals\StrokeShard.h">
+      <Filter>Header Files\entities\visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\Tool.h">
+      <Filter>Header Files\tool</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\Toolbox.h">
+      <Filter>Header Files\tool</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\ToolSettings.h">
+      <Filter>Header Files\tool</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\ToolSettings_Forward.h">
+      <Filter>Header Files\tool\toolSettings</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\controls\TSet_ContinuousControl.h">
+      <Filter>Header Files\tool\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\controls\TSet_DragControl.h">
+      <Filter>Header Files\tool\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\controls\TSet_OnePointControl.h">
+      <Filter>Header Files\tool\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\controls\TSet_Pan.h">
+      <Filter>Header Files\tool\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\controls\TSet_Rotate.h">
+      <Filter>Header Files\tool\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\controls\TSet_Sampler.h">
+      <Filter>Header Files\tool\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\controls\TSet_ThreePointControl.h">
+      <Filter>Header Files\tool\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\controls\TSet_TwoPointControl.h">
+      <Filter>Header Files\tool\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\controls\TSet_Zoom.h">
+      <Filter>Header Files\tool\toolSettings\controls</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_Effects.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_BrightContrast.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_ClampHSV.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_ClampRGB.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_Colorize.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_ColorRamp.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_Fill.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_FillDirection.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_FillSimple.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_GaussianBlur.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_Gradient.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_HSV.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_Invert.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_Modulo.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_PerlinNoise.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_Posterize.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_Power.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_TextureComplex.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_TextureSimple.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_Threshold.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_Toon.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\effects\TSet_FX_Voronoise.h">
+      <Filter>Header Files\tool\toolSettings\effects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Alpha.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_AntiAliasing.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Basic.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Blend.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Character.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Color.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Distance.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Grain.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Image.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Mixing.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_MultiTip.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Pattern.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Reference.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Repeat.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Scatter.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Smoothing.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_Texture.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\gen\TSet_WetEdges.h">
+      <Filter>Header Files\tool\toolSettings\gen</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_Fan.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_Field.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_Fill.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_Filter.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_Gradient.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_Mesh.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_MultiSpline.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_Polygon.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_PolyLine.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_Rake.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_Shader.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_Spline.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_Vector.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\tool\toolSettings\method\TSet_Vortex.h">
+      <Filter>Header Files\tool\toolSettings\method</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Draw.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Fan.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Lasso.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Line.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_MultiSpline.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_NoInput.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Pan.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Point.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Polygon.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_PolyLine.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_RadialField.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Rake.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Rotate.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Sampler.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_ShapeDraw.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_ShapeField.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_ShapeLine.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Spline.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Vortex.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\methods\inputMethods\In_Zoom.h">
+      <Filter>Header Files\methods\inputMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\gladHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\widgets\ImageWidget.h">
+      <Filter>Header Files\entities\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\presets\texture\Texture.h">
+      <Filter>Header Files\presets\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\presets\texture\TextureManager.h">
+      <Filter>Header Files\presets\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\presets\texture\TextureProperties.h">
+      <Filter>Header Files\presets\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\presets\image\Image.h">
+      <Filter>Header Files\presets\image</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\presets\image\ImageLayer.h">
+      <Filter>Header Files\presets\image</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\presets\image\ImageLayer_Data.h">
+      <Filter>Header Files\presets\image</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\presets\image\ImageLayer_Filter.h">
+      <Filter>Header Files\presets\image</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\presets\image\ImageLayer_Paint.h">
+      <Filter>Header Files\presets\image</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\presets\image\ImageLayer_Vector.h">
+      <Filter>Header Files\presets\image</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1288,6 +1558,18 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="shaders\widgetShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\graphWidgetShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\graphWidgetShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\noiseWidgetShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\noiseWidgetShader.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

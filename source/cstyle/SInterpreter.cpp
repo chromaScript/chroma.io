@@ -7,7 +7,7 @@
 #include "../include/cstyle/SToken.h"
 #include "../include/cscript/CToken.h"
 #include "../include/cscript/CObject.h"
-#include "../include/entities/WidgetStyle.h"
+#include "../include/entities/widgets/WidgetStyle.h"
 #include "../include/Application.h"
 #include "../include/entities/UserInterface.h"
 

@@ -33,27 +33,26 @@ chroma.io:
 
 #include "include/WinStylusHandler.h"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
+#include "include/gladHelper.h"
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 
-#include "include/math.h"
-#include "include/structs.h"
-#include "include/Color.h"
+#include "include/math/math.h"
+#include "include/math/Color.h"
 #include "include/loadImageData.h"
 
 #include "include/Application.h"
 #include "include/cscript/ChromaScript.h"
-#include "include/Tool.h"
-#include "include/Toolbox.h"
-#include "include/entities/Layer.h"
+#include "include/tool/Tool.h"
+#include "include/tool/Toolbox.h"
+#include "include/entities/layers/Layer.h"
 #include "include/Canvas.h"
-#include "include/entities/Widget.h"
+#include "include/entities/widgets/Widget.h"
 #include "include/entities/UserInterface.h"
 #include "include/Camera.h"
-#include "include/IOClasses.h"
+#include "include/methods/IOClasses.h"
 #include "include/ctoolfile/ChromaToolFile.h"
 
 #include "include/CustomCursor.h"
@@ -77,7 +76,7 @@ bool doStrokeDebugFrames = false;
 bool doDebugMouseInput = true;
 
 // GLOBAL VARIABLES
-#define APP_NAME "chroma.io 0.0.6d"
+#define APP_NAME "chroma.io 0.0.6de"
 std::shared_ptr<Application> chromaIO;
 int WINDOW_WIDTH;
 int WINDOW_HEIGHT;
@@ -113,7 +112,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_ANY_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE); // ENABLE DEBUG CONTEXT
-	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	//glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -181,15 +180,15 @@ int main()
 	chromaIO.get()->initializeShaders();
 
 // INITIALIZE UI, CAMERA, CANVAS, AND TOOLS
-	// Initialize the Toolbox
-	chromaIO.get()->toolbox.get()->initializeTools(true, false);
-	
 	// Initialize UI
-	chromaIO.get()->getUI()->updateCursorImage(chromaIO.get()->toolbox.get()->getCursor(CURSOR_POINTER));
+	chromaIO.get()->getUI()->updateCursorImage(chromaIO.get()->toolbox.get()->getCursor(CursorType::pointer));
 	chromaIO.get()->getUI()->initializeInterface();
 
 	// Create Camera
 	chromaIO.get()->createOrthoCamera();
+
+	// Initialize the Toolbox
+	chromaIO.get()->toolbox.get()->initializeTools(true, false);
 
 	// Bind resize callback function
 	glfwSetFramebufferSizeCallback(chromaIO.get()->getWindow(), framebuffer_size_callback);
@@ -208,6 +207,7 @@ int main()
 // MISCELLANEOUS & TEST INITIALIZATION STEPS
 	// For undecorated window, adjust window position
 	chromaIO.get()->centerWindowToMonitor();
+	chromaIO.get()->toolbox.get()->setActiveTool_byID(0);
 
 // EXECUTION LOOP
 	while (chromaIO.get()->shouldClose == false)
@@ -227,9 +227,13 @@ int main()
 		
 
 	// Do Upkeep
+		// Undo Requests
+		chromaIO.get()->clearUndoRequests();
+		// UI Upkeep
 		chromaIO.get()->ui.get()->clearResizeEvents();
 		chromaIO.get()->ui.get()->checkFocusVisibility();
 		chromaIO.get()->ui.get()->clearRebuildRequests();
+		chromaIO.get()->ui.get()->clearDeletionRequests();
 
 	// Input Loop
 		
@@ -411,6 +415,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	}
 	// Update the DPI factor for the tablet input
 	chromaIO.get()->getWinStylusHandler()->updateTabletDPI();
+	chromaIO.get()->ui.get()->buildAllWidgetTrees();
 	std::cout << "WINDOW::RESIZED" << "::WIDTH=" << width << "::HEIGHT=" << height << std::endl;
 }
 
@@ -419,16 +424,22 @@ void custom_click_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	if (chromaIO.get()->getWinStylusHandler()->getStylusIsHover() == true)
 		return;
-	int modKey = mods;
-	MouseEvent* backEvent = chromaIO.get()->getMouseBuffer_back();
-	MouseEvent click(button, action, backEvent->x, backEvent->y, glfwGetTime(), modKey, FLAG_NULL,
-		1.0f, 0.0f, 0.0f, 0.0f);
-	switch (button)
+	Input* backEvent = chromaIO.get()->getMouseBuffer_back();
+	InputModKey modKey = static_cast<InputModKey>(mods);
+	InputMouseButton buttonEnum = static_cast<InputMouseButton>(button);
+	InputAction actionEnum = static_cast<InputAction>(action);
+	Input click(
+		modKey, buttonEnum, actionEnum,
+		InputFlag::null, InputFlag::null,
+		backEvent->x, backEvent->y, (float)glfwGetTime(), 1.0f, 0.0f, 0.0f, 0.0f, chromaIO.get()->getMouseVelocity(0.2f));
+	//Input click(button, action, backEvent->x, backEvent->y, glfwGetTime(), modKey, InputFlag::null,
+	//	1.0f, 0.0f, 0.0f, 0.0f);
+	switch (buttonEnum)
 	{
-	case GLFW_MOUSE_BUTTON_LEFT:
-	case GLFW_MOUSE_BUTTON_RIGHT:
-	case GLFW_MOUSE_BUTTON_MIDDLE:
-		chromaIO.get()->clickEventHandler(button, action, click, false);
+	case InputMouseButton::left:
+	case InputMouseButton::right:
+	case InputMouseButton::middle:
+		chromaIO.get()->clickEventHandler(buttonEnum, actionEnum, click, false);
 		break;
 	}
 }
@@ -436,17 +447,15 @@ static void custom_cursor_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (chromaIO.get()->getWinStylusHandler()->getStylusIsHover() == true)
 		return;
-	int modKey = chromaIO.get()->getModKeys();
-	MouseEvent move(-1, GLFW_PRESS, xpos, ypos, glfwGetTime(), modKey, FLAG_NULL,
-		1.0f, 0.0f, 0.0f, 0.0f);
+	Input move(chromaIO.get()->getModKeys(), InputMouseButton::hover, InputAction::press, InputFlag::null, InputFlag::null,
+		xpos, ypos, (float)glfwGetTime(), 1.0f, 0.0f, 0.0f, 0.0f, chromaIO.get()->getMouseVelocity(0.2f));
 	chromaIO.get()->updateMouseBuffer(move);
 	chromaIO.get()->mousePosEventHandler(move);
 }
 static void custom_scroll_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	int modKey = chromaIO.get()->getModKeys();
-	MouseEvent scroll(-1, UI_MOUSE_SCROLL, xpos, ypos, glfwGetTime(), modKey, FLAG_NULL,
-		1.0f, 0.0f, 0.0f, 0.0f);
+	Input scroll(chromaIO.get()->getModKeys(), InputMouseButton::scroll, InputAction::press, InputFlag::null, InputFlag::null,
+		xpos, ypos, (float)glfwGetTime(), 1.0f, 0.0f, 0.0f, 0.0f, chromaIO.get()->getMouseVelocity(0.2f));
 	chromaIO.get()->mouseScrollEventHandler(scroll);
 }
 
@@ -455,13 +464,14 @@ static void custom_key_callback(GLFWwindow* window, int key, int scancode, int a
 {
 	// Logic block for cosmetic cursor effects, because I/O has no frame-tick event to update cursor, manually
 	// set the cursor here depending on toolID and mod type
-	if (chromaIO.get()->getToolbox()->getActiveTool() != nullptr)
+	InputModKey modKey = static_cast<InputModKey>(mods);
+	if (chromaIO.get()->getToolbox()->checkActiveTool())
 	{
 		int activeID = chromaIO.get()->getToolbox()->getActiveTool().get()->id;
 		if (activeID == DT_ZOOM_SCRUB)
 		{
 			// Note: Later this must be expanded to handle all tools that have multi-cursors
-			if (mods == INPUT_MOD_ALT && chromaIO.get()->getIsDoingInput() == false)
+			if (modKey == InputModKey::alt && chromaIO.get()->getIsDoingInput() == false)
 			{
 				chromaIO.get()->getUI()->updateCursorImage(chromaIO.get()->getToolbox()->getActiveTool()->getCursorDown());
 			}
@@ -471,9 +481,10 @@ static void custom_key_callback(GLFWwindow* window, int key, int scancode, int a
 			}
 		}
 	}
-	int keySignature = (key * 10) + mods;
-	chromaIO.get()->setModKeys(mods);
-	chromaIO.get()->keyEventHandler(keySignature, action);
+	chromaIO.get()->setModKeys(modKey);
+	chromaIO.get()->keyEventHandler(
+		Keybind(key * 10, mods), 
+		static_cast<InputAction>(action));
 }
 
 // OpenGL bind/unbind Mouse/Cursor Callback

@@ -63,7 +63,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Block> stmt)
 		if (currentEnvironment == nullptr)
 		{
 			console.get()->error(
-				"[typeWizard:0101] Critical: Anonymous Block Statement: Failed to find the environment for block '" + stmt.get()->_namespace
+				"[typeWizard:0101:" + currentEnvironment.get()->_namespace + "] Critical: Anonymous Block Statement: Failed to find the environment for block '" + stmt.get()->_namespace
 				+ "'. Report this bug to the program author.");
 			return;
 		}
@@ -76,7 +76,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Block> stmt)
 			currentNamespaces.back() == "namespace" && 
 			dynamic_cast<CStmt_Return*>(statement.get()) != nullptr)
 		{
-			console.get()->error("[typeWizard:0102] Cannot place 'return' statement inside of 'namespace' statement.");
+			console.get()->error("[typeWizard:0102:" + currentEnvironment.get()->_namespace + "] Cannot place 'return' statement inside of 'namespace' statement.");
 		}
 		// Note: Move this into the optimizer later
 		if (dynamic_cast<CStmt_Return*>(statement.get()) != nullptr)
@@ -89,7 +89,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Block> stmt)
 			if (encounteredReturn == true)
 			{
 				console.get()->warning(
-					"[optimizer:0000] warning: Encountered statements beyond 'return' statement that will be discarded.");
+					"[optimizer:0000:" + currentEnvironment.get()->_namespace + "] warning: Encountered statements beyond 'return' statement that will be discarded.");
 			}
 			statement.get()->accept(*this);
 		}
@@ -116,7 +116,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Class> stmt)
 		superClass = currentEnvironment.get()->get(stmt.get()->superclass.get()->lexeme);
 		if (superClass == nullptr || superClass.get()->objType.type != CLiteralTypes::_CClass)
 		{
-			console.get()->error(stmt.get()->name, "[typeWizard:0201] Class '" + stmt.get()->name.get()->lexeme +
+			console.get()->error(stmt.get()->name, "[typeWizard:0201:" + currentEnvironment.get()->_namespace + "] Class '" + stmt.get()->name.get()->lexeme +
 			"' does not have a valid superclass.");
 		}
 		else
@@ -139,7 +139,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Class> stmt)
 					if (superFieldName == thisFieldName && superFieldName != "cast")
 					{
 						console.get()->error(stmt.get()->name,
-							"[typeWizard:0202] Cannot declare child class property '" + thisFieldName +
+							"[typeWizard:0202:" + currentEnvironment.get()->_namespace + "] Cannot declare child class property '" + thisFieldName +
 							"' with same name as parent class property.");
 					}
 				}
@@ -154,7 +154,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Class> stmt)
 	if (currentEnvironment == nullptr)
 	{
 		console.get()->error(stmt.get()->name,
-			"[typeWizard:0203] Critical: Failed to find the environment for function '" + stmt.get()->name.get()->lexeme
+			"[typeWizard:0203:" + currentEnvironment.get()->_namespace + "] Critical: Failed to find the environment for function '" + stmt.get()->name.get()->lexeme
 			+ "'. Report this bug to the program author.");
 		currentEnvironment = previous;
 		return;
@@ -205,7 +205,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_For> stmt)
 	if (currentEnvironment == nullptr)
 	{
 		console.get()->error(
-			stmt.get()->line, "[typeWizard:0301] Failed to find the environment for function '" + stmt.get()->_namespace
+			stmt.get()->line, "[typeWizard:0301:" + currentEnvironment.get()->_namespace + "] Failed to find the environment for function '" + stmt.get()->_namespace
 			+ "'. Report this bug to the program author.");
 		return;
 	}
@@ -220,7 +220,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_For> stmt)
 	if (currentEnvironment == nullptr)
 	{
 		console.get()->error(
-			stmt.get()->line, "[typeWizard:0302] Failed to find the environment for function '" + stmt.get()->_namespace
+			stmt.get()->line, "[typeWizard:0302:" + currentEnvironment.get()->_namespace + "] Failed to find the environment for function '" + stmt.get()->_namespace
 			+ "'. Report this bug to the program author.");
 		return;
 	}
@@ -243,7 +243,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Foreach> stmt)
 	if (currentEnvironment == nullptr)
 	{
 		console.get()->error(
-			stmt.get()->line, "[typeWizard:0401] Failed to find the environment for function '" + stmt.get()->_namespace
+			stmt.get()->line, "[typeWizard:0401:" + currentEnvironment.get()->_namespace + "] Failed to find the environment for function '" + stmt.get()->_namespace
 			+ "'. Report this bug to the program author.");
 		return;
 	}
@@ -252,7 +252,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Foreach> stmt)
 	std::shared_ptr<CToken> listType = stmt.get()->listExpression.get()->acceptTypeWizard(*this);
 	if (!matchContainer(eachType, listType))
 	{
-		console.get()->error(stmt.get()->line, "[typeWizard:0402] Iterator type of '" + eachType.get()->lexeme +
+		console.get()->error(stmt.get()->line, "[typeWizard:0402:" + currentEnvironment.get()->_namespace + "] Iterator type of '" + eachType.get()->lexeme +
 			"' does not match the container type of '" + listType.get()->lexeme + "' in 'foreach' statement.");
 	}
 	// Enter into the body environment
@@ -262,7 +262,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Foreach> stmt)
 	if (currentEnvironment == nullptr)
 	{
 		console.get()->error(
-			stmt.get()->line, "[typeWizard:0402] Failed to find the environment for function '" + stmt.get()->_namespace
+			stmt.get()->line, "[typeWizard:0402:" + currentEnvironment.get()->_namespace + "] Failed to find the environment for function '" + stmt.get()->_namespace
 			+ "'. Report this bug to the program author.");
 		return;
 	}
@@ -319,7 +319,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Function> stmt)
 		if (currentEnvironment == nullptr)
 		{
 			console.get()->error(stmt.get()->name,
-				"[typeWizard:0501] Critical: Failed to find the environment for function '" + stmt.get()->name.get()->lexeme
+				"[typeWizard:0501:" + currentEnvironment.get()->_namespace + "] Critical: Failed to find the environment for function '" + stmt.get()->name.get()->lexeme
 				+ "'. Report this bug to the program author.");
 			return;
 		}
@@ -328,7 +328,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Function> stmt)
 		// Check that all logic branches have a return statement if required
 		if (currentReturn.get()->checkReturns() == false)
 		{
-			console.get()->error(stmt.get()->name, "[typeWizard:0502] Failed to find a 'return' statement for all logic branches.");
+			console.get()->error(stmt.get()->name, "[typeWizard:0502:" + currentEnvironment.get()->_namespace + "] Failed to find a 'return' statement for all logic branches.");
 		}
 		// Exit the function
 		currentEnvironment = previous;
@@ -349,7 +349,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Namespace> stmt)
 	if (currentEnvironment == nullptr)
 	{
 		console.get()->error(stmt.get()->name,
-			"[typeWizard:0601] Critical: Failed to find the environment for function '" + stmt.get()->name.get()->lexeme
+			"[typeWizard:0601:" + currentEnvironment.get()->_namespace + "] Critical: Failed to find the environment for function '" + stmt.get()->name.get()->lexeme
 			+ "'. Report this bug to the program author.");
 		return;
 	}
@@ -371,7 +371,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_If> stmt)
 	if (currentEnvironment == nullptr)
 	{
 		console.get()->error(
-			stmt.get()->line, "[typeWizard:0701] Failed to find the environment for function '" + stmt.get()->_namespace
+			stmt.get()->line, "[typeWizard:0701:" + currentEnvironment.get()->_namespace + "] Failed to find the environment for function '" + stmt.get()->_namespace
 			+ "'. Report this bug to the program author.");
 		return;
 	}
@@ -387,7 +387,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_If> stmt)
 			// Note: May get rid of this warning because the interpreter 'isTrue()' function should probably just
 			// catch all literal types anyways, and usage of implicit type-cast in conditionals might be common
 			// enough that warnings become annoying to users.
-			console.get()->warning(stmt.get()->line, "[typeWizard:0702] Implicit type-cast from '" + conditionType.get()->lexeme +
+			console.get()->warning(stmt.get()->line, "[typeWizard:0702:" + currentEnvironment.get()->_namespace + "] Implicit type-cast from '" + conditionType.get()->lexeme +
 				"' to 'boolean', possible loss of data or undefined behavior will occur.");
 		}
 	}
@@ -423,7 +423,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_If> stmt)
 		if (currentEnvironment == nullptr)
 		{
 			console.get()->error(
-				stmt.get()->line, "[typeWizard:0703] Failed to find the environment for function '" + stmt.get()->_namespace
+				stmt.get()->line, "[typeWizard:0703:" + currentEnvironment.get()->_namespace + "] Failed to find the environment for function '" + stmt.get()->_namespace
 				+ "'. Report this bug to the program author.");
 			return;
 		}
@@ -443,7 +443,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_If> stmt)
 		if (currentEnvironment == nullptr)
 		{
 			console.get()->error(
-				stmt.get()->line, "[typeWizard:0704] Failed to find the environment for function '" + stmt.get()->_namespace
+				stmt.get()->line, "[typeWizard:0704:" + currentEnvironment.get()->_namespace + "] Failed to find the environment for function '" + stmt.get()->_namespace
 				+ "'. Report this bug to the program author.");
 			return;
 		}
@@ -466,7 +466,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Print> stmt)
 	// Check if the print expression class is an invalid type
 	if (dynamic_cast<CExpr_Assign*>(stmt.get()->expression.get()) != nullptr)
 	{
-		console.get()->error(stmt.get()->line, "[typeWizard:0801] Cannot print an 'assignment' expression.");
+		console.get()->error(stmt.get()->line, "[typeWizard:0801:" + currentEnvironment.get()->_namespace + "] Cannot print an 'assignment' expression.");
 	}
 	return;
 }
@@ -483,7 +483,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Return> stmt)
 			// Throw warning if multiple returns detected
 			if (currentReturn.get()->countedReturns[currentReturn.get()->stride] > 1)
 			{
-				console.get()->warning(stmt.get()->keyword, "[typeWizard:0901] Encountered multiple return statements.");
+				console.get()->warning(stmt.get()->keyword, "[typeWizard:0901:" + currentEnvironment.get()->_namespace + "] Encountered multiple return statements.");
 			}
 		}
 		std::shared_ptr<CToken> returnType = nullptr;
@@ -497,7 +497,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Return> stmt)
 		{
 			if (returnType == nullptr || !matchTokens(expectedReturnStack.back(), returnType))
 			{
-				console.get()->error(stmt.get()->keyword, "[typeWizard:0902] Expected return type of '" + 
+				console.get()->error(stmt.get()->keyword, "[typeWizard:0902:" + currentEnvironment.get()->_namespace + "] Expected return type of '" +
 					expectedReturnStack.back().get()->lexeme + 
 					"' but got value of type '" + 
 					returnType.get()->lexeme + "'.");
@@ -507,7 +507,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Return> stmt)
 		if (expectedReturnStack.back() == nullptr && returnType != nullptr)
 		{
 			console.get()->error(stmt.get()->keyword, 
-				"[typeWizard:0903] Function has void return type, value of this return statement will be discarded.");
+				"[typeWizard:0903:" + currentEnvironment.get()->_namespace + "] Function has void return type, value of this return statement will be discarded.");
 		}
 	}
 }
@@ -523,7 +523,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_TryCatch> stmt)
 	if (currentEnvironment == nullptr)
 	{
 		console.get()->error(
-			stmt.get()->line, "[typeWizard:1001] Failed to find the environment for function '" + stmt.get()->_namespace
+			stmt.get()->line, "[typeWizard:1001:" + currentEnvironment.get()->_namespace + "] Failed to find the environment for function '" + stmt.get()->_namespace
 			+ "'. Report this bug to the program author.");
 		return;
 	}
@@ -537,7 +537,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_TryCatch> stmt)
 	if (currentEnvironment == nullptr)
 	{
 		console.get()->error(
-			stmt.get()->line, "[typeWizard:1002] Failed to find the environment for function '" + stmt.get()->_namespace
+			stmt.get()->line, "[typeWizard:1002:" + currentEnvironment.get()->_namespace + "] Failed to find the environment for function '" + stmt.get()->_namespace
 			+ "'. Report this bug to the program author.");
 		return;
 	}
@@ -555,7 +555,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_TryCatch> stmt)
 	if (currentEnvironment == nullptr)
 	{
 		console.get()->error(
-			stmt.get()->line, "[typeWizard:1003] Failed to find the environment for function '" + stmt.get()->_namespace
+			stmt.get()->line, "[typeWizard:1003:" + currentEnvironment.get()->_namespace + "] Failed to find the environment for function '" + stmt.get()->_namespace
 			+ "'. Report this bug to the program author.");
 		return;
 	}
@@ -585,7 +585,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_Variable> stmt)
 		if (!matchTokens(varType, assignType))
 		{
 			console.get()->error(stmt.get()->name,
-				"[typeWizard:1101] Type violation: Cannot assign type '" + assignType.get()->lexeme +
+				"[typeWizard:1101:" + currentEnvironment.get()->_namespace + "] Type violation: Cannot assign type '" + assignType.get()->lexeme +
 				"' to variable of type '" + varType.get()->lexeme + "'.");
 		}
 	}
@@ -601,7 +601,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_While> stmt)
 	if (currentEnvironment == nullptr)
 	{
 		console.get()->error(
-			stmt.get()->line, "[typeWizard:1201] Failed to find the environment for function '" + stmt.get()->_namespace
+			stmt.get()->line, "[typeWizard:1201:" + currentEnvironment.get()->_namespace + "] Failed to find the environment for function '" + stmt.get()->_namespace
 			+ "'. Report this bug to the program author.");
 		return;
 	}
@@ -611,7 +611,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_While> stmt)
 	std::shared_ptr<CToken> conditionType = stmt.get()->condition.get()->acceptTypeWizard(*this);
 	if (conditionType == nullptr || conditionType.get()->type != CTokenType::BOOL)
 	{
-		console.get()->error(conditionType, "[typeWizard:1202] Condition expression for 'while' statement must evaluate to '" +
+		console.get()->error(conditionType, "[typeWizard:1202:" + currentEnvironment.get()->_namespace + "] Condition expression for 'while' statement must evaluate to '" +
 			CTokenTypeNames[(size_t)CTokenType::BOOL] + "' value.");
 	}
 	// Enter into the body environment
@@ -621,7 +621,7 @@ void CTypeWizard::visit(std::shared_ptr<CStmt_While> stmt)
 	if (currentEnvironment == nullptr)
 	{
 		console.get()->error(
-			stmt.get()->line, "[typeWizard:1203] Failed to find the environment for function '" + stmt.get()->_namespace
+			stmt.get()->line, "[typeWizard:1203:" + currentEnvironment.get()->_namespace + "] Failed to find the environment for function '" + stmt.get()->_namespace
 			+ "'. Report this bug to the program author.");
 		return;
 	}
@@ -648,17 +648,17 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Approximate> ex
 	std::shared_ptr<CToken> value = expr.get()->value.get()->acceptTypeWizard(*this);
 	if (!matchType(left, CTokenType::NUM))
 	{
-		console.get()->error(left, "[typeWizard:1301] Left operand in 'approximate' operation must be object of '" + 
+		console.get()->error(left, "[typeWizard:1301:" + currentEnvironment.get()->_namespace + "] Left operand in 'approximate' operation must be object of '" +
 			CTokenTypeNames[(size_t)CTokenType::NUM] + "' type.");
 	}
 	if (!matchType(right, CTokenType::NUM))
 	{
-		console.get()->error(left, "[typeWizard:1302] Right operand in 'approximate' operation must be object of '" + 
+		console.get()->error(left, "[typeWizard:1302:" + currentEnvironment.get()->_namespace + "] Right operand in 'approximate' operation must be object of '" +
 			CTokenTypeNames[(size_t)CTokenType::NUM] + "' type.");
 	}
 	if (!matchType(value, CTokenType::NUM))
 	{
-		console.get()->error(left, "[typeWizard:1303] Value comparator in 'approximate' operation must be object of '" + 
+		console.get()->error(left, "[typeWizard:1303:" + currentEnvironment.get()->_namespace + "] Value comparator in 'approximate' operation must be object of '" +
 			CTokenTypeNames[(size_t)CTokenType::NUM] + "' type.");
 	}
 	return std::make_shared<CToken>(CTokenType::BOOL, left.get()->line);
@@ -674,7 +674,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Array> expr)
 			std::shared_ptr<CToken> exprType = expr.get()->acceptTypeWizard(*this);
 			if (!matchTokens(arrayType, exprType))
 			{
-				console.get()->error(arrayType, "[typeWizard:1401] Type of '" + exprType.get()->typeString() + 
+				console.get()->error(arrayType, "[typeWizard:1401:" + currentEnvironment.get()->_namespace + "] Type of '" + exprType.get()->typeString() +
 					"' is not equal to the type of the array container type of '" + arrayType.get()->typeString() + "'.");
 			}
 		}
@@ -695,7 +695,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Assign> expr)
 		if (!matchTokens(left, right))
 		{
 			console.get()->error(left, 
-				"[typeWizard:1501] Cannot " + _operator.get()->typeString() + " value of type '" + right.get()->typeString() +
+				"[typeWizard:1501:" + currentEnvironment.get()->_namespace + "] Cannot " + _operator.get()->typeString() + " value of type '" + right.get()->typeString() +
 				"' to value of type '" + left.get()->typeString() + "'.");;
 		}
 		break;
@@ -706,7 +706,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Assign> expr)
 			if (right.get()->type != CTokenType::STRING)
 			{
 				console.get()->error(left,
-					"[typeWizard:1502] Cannot concatenate value of type '" + right.get()->typeString() +
+					"[typeWizard:1502:" + currentEnvironment.get()->_namespace + "] Cannot concatenate value of type '" + right.get()->typeString() +
 					"' to string '" + left.get()->typeString() + "'.");;
 			}
 			break;
@@ -714,7 +714,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Assign> expr)
 			if (right.get()->type != CTokenType::NUM)
 			{
 				console.get()->error(left,
-					"[typeWizard:1503] Cannot " + _operator.get()->typeString() + " value of type '" + right.get()->typeString() +
+					"[typeWizard:1503:" + currentEnvironment.get()->_namespace + "] Cannot " + _operator.get()->typeString() + " value of type '" + right.get()->typeString() +
 					"' to number '" + left.get()->typeString() + "'.");;
 			}
 			break;
@@ -724,13 +724,13 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Assign> expr)
 			if (!matchTypes(right, { CTokenType::NUM, CTokenType::VECTOR2, CTokenType::VECTOR3, CTokenType::VECTOR4 }))
 			{
 				console.get()->error(left,
-					"[typeWizard:1504] Cannot " + _operator.get()->typeString() + " value of type '" + right.get()->typeString() +
+					"[typeWizard:1504:" + currentEnvironment.get()->_namespace + "] Cannot " + _operator.get()->typeString() + " value of type '" + right.get()->typeString() +
 					"' to " + left.get()->typeString() + ".");;
 			}
 			break;
 		default:
 			console.get()->error(left, 
-				"[typeWizard:1505] Cannot " + _operator.get()->typeString() + " value of type '" +
+				"[typeWizard:1505:" + currentEnvironment.get()->_namespace + "] Cannot " + _operator.get()->typeString() + " value of type '" +
 				left.get()->typeString() + 
 				"'. Assignment target must be number, string, or vector.");
 			break;
@@ -746,7 +746,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Assign> expr)
 			if (right.get()->type != CTokenType::NUM)
 			{
 				console.get()->error(left,
-					"[typeWizard:1506] Cannot " + _operator.get()->typeString() + " value of type '" + right.get()->typeString() +
+					"[typeWizard:1506:" + currentEnvironment.get()->_namespace + "] Cannot " + _operator.get()->typeString() + " value of type '" + right.get()->typeString() +
 					"' to number '" + left.get()->typeString() + "'.");;
 			}
 			break;
@@ -756,13 +756,13 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Assign> expr)
 			if (!matchTypes(right, { CTokenType::NUM, CTokenType::VECTOR2, CTokenType::VECTOR3, CTokenType::VECTOR4 }))
 			{
 				console.get()->error(left,
-					"[typeWizard:1507] Cannot " + _operator.get()->typeString() + " value of type '" + right.get()->typeString() +
+					"[typeWizard:1507:" + currentEnvironment.get()->_namespace + "] Cannot " + _operator.get()->typeString() + " value of type '" + right.get()->typeString() +
 					"' to vector '" + left.get()->typeString() + "'.");;
 			}
 			break;
 		default:
 			console.get()->error(left,
-				"[typeWizard:1508] Cannot " + _operator.get()->typeString() + " to value of type '" +
+				"[typeWizard:1508:" + currentEnvironment.get()->_namespace + "] Cannot " + _operator.get()->typeString() + " to value of type '" +
 				left.get()->typeString() +
 				"'. Assignment target must be number, string, or vector.");
 			break;
@@ -789,7 +789,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Binary> expr)
 			if (!matchTokens(left, right))
 			{
 				console.get()->error(left,
-					"[typeWizard:1601] Cannot '" + expr.get()->_operator.get()->typeString() + 
+					"[typeWizard:1601:" + currentEnvironment.get()->_namespace + "] Cannot '" + expr.get()->_operator.get()->typeString() +
 					"' object of type '" + right.get()->typeString() +
 					"' to object of 'num' type.");
 			}
@@ -799,7 +799,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Binary> expr)
 			if (!matchTokens(left, right))
 			{
 				console.get()->error(left, 
-					"[typeWizard:1602] Cannot concatenate object of type '" + right.get()->typeString() +
+					"[typeWizard:1602:" + currentEnvironment.get()->_namespace + "] Cannot concatenate object of type '" + right.get()->typeString() +
 					"' to object of 'string' type.");
 			}
 		}
@@ -814,7 +814,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Binary> expr)
 		if (leftIsNum == false || rightIsNum == false)
 		{
 			console.get()->error(left,
-				"[typeWizard:1603] Cannot '" + expr.get()->_operator.get()->typeString() +
+				"[typeWizard:1603:" + currentEnvironment.get()->_namespace + "] Cannot '" + expr.get()->_operator.get()->typeString() +
 				"' object of type '" + right.get()->typeString() +
 				"' to object of '" + left.get()->typeString() + "' type."
 				" Both sides of operator must be of 'num' type.");
@@ -829,7 +829,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Binary> expr)
 		if (leftIsNum == false || rightIsNum == false)
 		{
 			console.get()->error(left,
-				"[typeWizard:1604] Cannot '" + expr.get()->_operator.get()->typeString() +
+				"[typeWizard:1604:" + currentEnvironment.get()->_namespace + "] Cannot '" + expr.get()->_operator.get()->typeString() +
 				"' object of type '" + right.get()->typeString() +
 				"' to object of '" + left.get()->typeString() + "' type."
 				" Both sides of operator must be of 'num' type.");
@@ -842,7 +842,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Binary> expr)
 		return std::make_shared<CToken>(CTokenType::BOOL, expr.get()->_operator.get()->line);
 		break;
 	default:
-		console.get()->error(left, "[typeWizard:1605] Encountered unexpected operator type.");
+		console.get()->error(left, "[typeWizard:1605:" + currentEnvironment.get()->_namespace + "] Encountered unexpected operator type.");
 		break;
 	}
 	
@@ -915,7 +915,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Call> expr)
 		// If the callee is valid
 		if (callee == nullptr)
 		{
-			console.get()->error(calleeType, "[typeWizard:1701] Cannot find object of name '" + calleeType.get()->typeString() + 
+			console.get()->error(calleeType, "[typeWizard:1701:" + currentEnvironment.get()->_namespace + "] Cannot find object of name '" + calleeType.get()->typeString() +
 				"' in current scope. Check spelling errors and verify that the object is declared.");
 			checkGetKey(expr, previous);
 			if (enteredSuperClass == true) { currentEnvironment = previous; }
@@ -937,7 +937,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Call> expr)
 				if (argumentTypes.size() != calleeConstructor.get()->paramsTypes.size())
 				{
 					console.get()->error(calleeType,
-						"[typeWizard:1702] Expected to receive '" + std::to_string(calleeConstructor.get()->paramsTypes.size()) +
+						"[typeWizard:1702:" + currentEnvironment.get()->_namespace + "] Expected to receive '" + std::to_string(calleeConstructor.get()->paramsTypes.size()) +
 						"' arguments for '" + calleeClass.get()->name + "' class constructor but received '" +
 						std::to_string(argumentTypes.size()) + "' arguments in call expression.");
 				}
@@ -949,7 +949,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Call> expr)
 						if (!matchTokens(calleeConstructor.get()->paramsTypes[i], argumentTypes[i]))
 						{
 							console.get()->error(argumentTypes[i], 
-								"[typeWizard:1703] Argument '" + std::to_string(i) + "' of type '" + argumentTypes[i].get()->typeString() +
+								"[typeWizard:1703:" + currentEnvironment.get()->_namespace + "] Argument '" + std::to_string(i) + "' of type '" + argumentTypes[i].get()->typeString() +
 								"' in '" + calleeType.get()->lexeme +
 								"' constructor call does not match parameter '" + std::to_string(i) + "' of type '" +
 								calleeConstructor.get()->paramsTypes[i].get()->typeString() + "'.");
@@ -964,7 +964,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Call> expr)
 				if (argumentTypes.size() != 0)
 				{
 					console.get()->error(calleeType, 
-						"[typeWizard:1704] Class of type '" + calleeClass.get()->name + 
+						"[typeWizard:1704:" + currentEnvironment.get()->_namespace + "] Class of type '" + calleeClass.get()->name +
 						"' has no defined constructor. Cannot call constructor for class '" + calleeClass.get()->name +
 						"' with call expression that has '" + std::to_string(argumentTypes.size()) + "' arguments. " + 
 						"Remove arguments from call, or define constructor with matching parameters list.");
@@ -986,7 +986,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Call> expr)
 			if (argumentTypes.size() != calleeFunction.get()->paramsTypes.size())
 			{
 				console.get()->error(calleeType,
-					"[typeWizard:1705] Expected to receive '" + std::to_string(calleeFunction.get()->paramsTypes.size()) +
+					"[typeWizard:1705:" + currentEnvironment.get()->_namespace + "] Expected to receive '" + std::to_string(calleeFunction.get()->paramsTypes.size()) +
 					"' arguments for '" + calleeFunction.get()->name.get()->lexeme + "' function but received '" +
 					std::to_string(argumentTypes.size()) + "' arguments in call expression.");
 			}
@@ -998,7 +998,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Call> expr)
 					if (!matchTokens(calleeFunction.get()->paramsTypes[i], argumentTypes[i]))
 					{
 						console.get()->error(argumentTypes[i],
-							"[typeWizard:1706] Argument '" + std::to_string(i) + "' of type '" + argumentTypes[i].get()->typeString() +
+							"[typeWizard:1706:" + currentEnvironment.get()->_namespace + "] Argument '" + std::to_string(i) + "' of type '" + argumentTypes[i].get()->typeString() +
 							"' in '" + calleeType.get()->lexeme +
 							"' constructor call does not match parameter '" + std::to_string(i) + "' of type '" +
 							calleeFunction.get()->paramsTypes[i].get()->typeString() + "'.");
@@ -1021,14 +1021,14 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Call> expr)
 				// Verify that the index checkTypes to a number
 				if (indexType.get()->type != CTokenType::NUM)
 				{
-					console.get()->error(calleeType, "[typeWizard:1707] Index operator after '" + calleeType.get()->lexeme +
+					console.get()->error(calleeType, "[typeWizard:1707:" + currentEnvironment.get()->_namespace + "] Index operator after '" + calleeType.get()->lexeme +
 						"' call must evaluate to type of '" + CTokenTypeNames[(size_t)CTokenType::NUM] + "'.");
 				}
 				std::shared_ptr<CToken> unitType = isArrayType(calleeFunction.get()->returnType);
 				if (unitType.get()->type == CTokenType::NIL)
 				{
 					console.get()->error(calleeType,
-						"[typeWizard:1708] Cannot retreive array index when function call does not return an array-type object.");
+						"[typeWizard:1708:" + currentEnvironment.get()->_namespace + "] Cannot retreive array index when function call does not return an array-type object.");
 				}
 				checkGetKey(expr, previous);
 				if (enteredSuperClass == true) { currentEnvironment = previous; }
@@ -1047,19 +1047,19 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Call> expr)
 					// Verify that the index checkTypes to a number
 					if (indexType.get()->type != CTokenType::NUM)
 					{
-						console.get()->error(calleeType, "[typeWizard:1709] Index operator after '" + calleeType.get()->lexeme +
+						console.get()->error(calleeType, "[typeWizard:1709:" + currentEnvironment.get()->_namespace + "] Index operator after '" + calleeType.get()->lexeme +
 							"' call must evaluate to type of '" + CTokenTypeNames[(size_t)CTokenType::NUM] + "'.");
 					}
 					std::shared_ptr<CToken> unitType = isArrayType(calleeFunction.get()->returnType);
 					if (unitType.get()->type == CTokenType::NIL)
 					{
 						console.get()->error(calleeType,
-							"[typeWizard:1710] Cannot retreive array index when function call does not return an array-type object.");
+							"[typeWizard:1710:" + currentEnvironment.get()->_namespace + "] Cannot retreive array index when function call does not return an array-type object.");
 					}
 					if (unitType.get()->type != CTokenType::NUM)
 					{
 						console.get()->error(calleeType,
-							"[typeWizard:1711] Cannot apply '" + _operator.get()->typeString() + 
+							"[typeWizard:1711:" + currentEnvironment.get()->_namespace + "] Cannot apply '" + _operator.get()->typeString() +
 							"' operator to a non 'num' type object.");
 					}
 					checkGetKey(expr, previous);
@@ -1069,21 +1069,21 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Call> expr)
 			}
 			else
 			{
-				console.get()->error(expr.get()->line, "[typeWizard:1712] teal - Reached unfinished portion of program.");
+				console.get()->error(expr.get()->line, "[typeWizard:1712:" + currentEnvironment.get()->_namespace + "] teal - Reached unfinished portion of program.");
 				checkGetKey(expr, previous);
 				if (enteredSuperClass == true) { currentEnvironment = previous; }
 				return calleeType;
 			}
 			// Should be unreachable
 			console.get()->error(expr.get()->line,
-				"[typeWizard:1713] Encountered unexpected expression type. Report this bug to the program author.");
+				"[typeWizard:1713:" + currentEnvironment.get()->_namespace + "] Encountered unexpected expression type. Report this bug to the program author.");
 			checkGetKey(expr, previous);
 			if (enteredSuperClass == true) { currentEnvironment = previous; }
 			return calleeType;
 		}
 		else
 		{
-			console.get()->error(expr.get()->line, "[typeWizard:1714] purple - Reached unfinished portion of program.");
+			console.get()->error(expr.get()->line, "[typeWizard:1714:" + currentEnvironment.get()->_namespace + "] purple - Reached unfinished portion of program.");
 			checkGetKey(expr, previous);
 			if (enteredSuperClass == true) { currentEnvironment = previous; }
 			return calleeType;
@@ -1092,7 +1092,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Call> expr)
 	else
 	{
 		console.get()->error(expr.get()->line, 
-			"[typeWizard:1715] Encountered call expression following a non 'identifier' type object.");
+			"[typeWizard:1715:" + currentEnvironment.get()->_namespace + "] Encountered call expression following a non 'identifier' type object.");
 		checkGetKey(expr, previous);
 		if (enteredSuperClass == true) { currentEnvironment = previous; }
 		return calleeType;
@@ -1105,7 +1105,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Get> expr)
 	std::shared_ptr<CToken> objType = expr.get()->object.get()->acceptTypeWizard(*this);
 	if (!matchType(objType, CTokenType::IDENTIFIER))
 	{
-		console.get()->error(objType, "[typeWizard:1801] Cannot use get expression on non-variable object.");
+		console.get()->error(objType, "[typeWizard:1801:" + currentEnvironment.get()->_namespace + "] Cannot use get expression on non-variable object.");
 		return objType;
 	}
 
@@ -1114,7 +1114,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Get> expr)
 	// If the object is valid
 	if (object == nullptr)
 	{
-		console.get()->error(objType, "[typeWizard:1802] Cannot find object of name '" + objType.get()->typeString() +
+		console.get()->error(objType, "[typeWizard:1802:" + currentEnvironment.get()->_namespace + "] Cannot find object of name '" + objType.get()->typeString() +
 			"' in current scope. Check spelling errors and verify that the object is declared.");
 		return std::make_shared<CToken>(CTokenType::NIL, objType.get()->line);
 	}
@@ -1242,7 +1242,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Get> expr)
 			} while (previousClass.get()->classDeclaration.get()->superclass != nullptr);
 
 			// If did not exit the do-while loop by return statement, then error occured due to not finding the property name
-			console.get()->error(expr.get()->fieldName, "[typeWizard:1803] Failed to locate property '" + expr.get()->fieldName.get()->typeString() +
+			console.get()->error(expr.get()->fieldName, "[typeWizard:1803:" + currentEnvironment.get()->_namespace + "] Failed to locate property '" + expr.get()->fieldName.get()->typeString() +
 				"' within child class or any parent classes. Check for spelling errors and that the property is defined.");
 			if (currentGetExprKey == "")
 			{
@@ -1265,7 +1265,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Get> expr)
 			// Check that the fieldType is valid
 			if (!matchType(fieldType, CTokenType::IDENTIFIER))
 			{
-				console.get()->error(fieldType, "[typeWizard:1804] Cannot use get expression on non-variable object."
+				console.get()->error(fieldType, "[typeWizard:1804:" + currentEnvironment.get()->_namespace + "] Cannot use get expression on non-variable object."
 					" Check spelling errors and that the member property is defined.");
 				if (currentGetExprKey == "")
 				{
@@ -1308,7 +1308,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Get> expr)
 			}
 		}
 	}
-	console.get()->error(expr.get()->fieldName, "[typeWizard:1805] magenta - Encountered unfinished portion of program.");
+	console.get()->error(expr.get()->fieldName, "[typeWizard:1805:" + currentEnvironment.get()->_namespace + "] magenta - Encountered unfinished portion of program.");
 	return std::make_shared<CToken>(CTokenType::NIL, expr.get()->line.get()->line);
 }
 // CExpr_Grouping
@@ -1331,7 +1331,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Literal> expr)
 		if (currentNamespaces.size() == 0)
 		{
 			console.get()->error(expr.get()->value,
-				"[typeWizard:1901] Cannot use get expression on 'this' object from outside a class member function.");
+				"[typeWizard:1901:" + currentEnvironment.get()->_namespace + "] Cannot use get expression on 'this' object from outside a class member function.");
 			return expr.get()->value;
 		}
 		std::string thisTypeName = "";
@@ -1346,7 +1346,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Literal> expr)
 		if (thisTypeName == "")
 		{
 			console.get()->error(expr.get()->value,
-				"[typeWizard:1902] Cannot use get expression on 'this' object from outside a class member function.");
+				"[typeWizard:1902:" + currentEnvironment.get()->_namespace + "] Cannot use get expression on 'this' object from outside a class member function.");
 			return expr.get()->value;
 		}
 		return std::make_shared<CToken>(CTokenType::IDENTIFIER, thisTypeName, expr.get()->value.get()->line);
@@ -1361,13 +1361,13 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Logical> expr)
 	if (!matchType(left, CTokenType::BOOL))
 	{
 		console.get()->error(left, 
-			"[typeWizard:2001] Left operand of '" + expr.get()->_operator.get()->typeString() + "' operator must be of '" + 
+			"[typeWizard:2001:" + currentEnvironment.get()->_namespace + "] Left operand of '" + expr.get()->_operator.get()->typeString() + "' operator must be of '" +
 			CTokenTypeNames[(size_t)CTokenType::BOOL] + "' type.");
 	}
 	if (!matchType(right, CTokenType::BOOL))
 	{
 		console.get()->error(left,
-			"[typeWizard:2002] Left operand of '" + expr.get()->_operator.get()->typeString() + "' operator must be of '" + 
+			"[typeWizard:2002:" + currentEnvironment.get()->_namespace + "] Left operand of '" + expr.get()->_operator.get()->typeString() + "' operator must be of '" +
 			CTokenTypeNames[(size_t)CTokenType::BOOL] + "' type.");
 	}
 	return std::make_shared<CToken>(CTokenType::BOOL, expr.get()->_operator.get()->line);
@@ -1385,7 +1385,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Scope> expr)
 	else
 	{
 		console.get()->error(expr.get()->scopeStack.get()->front(), 
-			"[typeWizard:2102] Scope resolution operators can only applied to a variable, get expression, or call expression.");
+			"[typeWizard:2102:" + currentEnvironment.get()->_namespace + "] Scope resolution operators can only applied to a variable, get expression, or call expression.");
 	}
 	// Capture currentEnvironment
 	std::shared_ptr<CEnvironment> previous = currentEnvironment;
@@ -1406,7 +1406,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Scope> expr)
 		// Reset the environment
 		currentEnvironment = previous;
 		console.get()->error(expr.get()->scopeStack.get()->front(),
-			"[typeWizard:2103] Lookup of object at tail of scope resolution operator failed, check spelling and variable declarations.");
+			"[typeWizard:2103:" + currentEnvironment.get()->_namespace + "] Lookup of object at tail of scope resolution operator failed, check spelling and variable declarations.");
 		// Return Nil
 		return std::make_shared<CToken>(CTokenType::NIL, expr.get()->scopeStack.get()->front().get()->line);
 	}
@@ -1418,7 +1418,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_TypeCast> expr)
 	std::shared_ptr<CToken> right = expr.get()->right.get()->acceptTypeWizard(*this);
 	if (!isValidCast(type, right))
 	{
-		console.get()->error(type, "[typeWizard:2201] Cannot cast value of type '" + right.get()->typeString() +
+		console.get()->error(type, "[typeWizard:2201:" + currentEnvironment.get()->_namespace + "] Cannot cast value of type '" + right.get()->typeString() +
 			"' to value of type '" + type.get()->typeString() + "'.");
 	}
 	return type;
@@ -1432,28 +1432,28 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Unary> expr)
 	case CTokenType::FALSIFY:
 		if (!matchType(rightType, CTokenType::BOOL))
 		{
-			console.get()->error(rightType, "[typeWizard:2301] Falsify operator '!' must be used on object of '" + 
+			console.get()->error(rightType, "[typeWizard:2301:" + currentEnvironment.get()->_namespace + "] Falsify operator '!' must be used on object of '" +
 				CTokenTypeNames[(size_t)CTokenType::BOOL] + "' type.");
 		}
 		break;
 	case CTokenType::NEGATE:
 		if (!matchType(rightType, CTokenType::NUM))
 		{
-			console.get()->error(rightType, "[typeWizard:2302] Negate operator '-' must be used on object of '" + 
+			console.get()->error(rightType, "[typeWizard:2302:" + currentEnvironment.get()->_namespace + "] Negate operator '-' must be used on object of '" +
 				CTokenTypeNames[(size_t)CTokenType::NUM] + "' type.");
 		}
 		break;
 	case CTokenType::INCREMENT:
 		if (!matchType(rightType, CTokenType::NUM))
 		{
-			console.get()->error(rightType, "[typeWizard:2303] Increment operator '++' must be used on object of '" + 
+			console.get()->error(rightType, "[typeWizard:2303:" + currentEnvironment.get()->_namespace + "] Increment operator '++' must be used on object of '" +
 				CTokenTypeNames[(size_t)CTokenType::NUM] + "' type.");
 		}
 		break;
 	case CTokenType::DECREMENT:
 		if (!matchType(rightType, CTokenType::NUM))
 		{
-			console.get()->error(rightType, "[typeWizard:2304] Decrement operator '--' must be used on object of '" + 
+			console.get()->error(rightType, "[typeWizard:2304:" + currentEnvironment.get()->_namespace + "] Decrement operator '--' must be used on object of '" +
 				CTokenTypeNames[(size_t)CTokenType::NUM] + "' type.");
 		}
 		break;
@@ -1486,7 +1486,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Variable> expr)
 		if (!matchType(indexType, CTokenType::NUM))
 		{
 			console.get()->error(indexType,
-				"[typeWizard:2401] Expression inside of index operator '[]' must return an object of type '" + 
+				"[typeWizard:2401:" + currentEnvironment.get()->_namespace + "] Expression inside of index operator '[]' must return an object of type '" +
 				CTokenTypeNames[(size_t)CTokenType::NUM] + "'.");
 		}
 		indexGuardKey = "";
@@ -1517,7 +1517,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Variable> expr)
 		if (variableGuardKey == "")
 		{
 			console.get()->error(expr.get()->name,
-				"[typeWizard:2402] Failed to locate variable named '" + expr.get()->name.get()->lexeme +
+				"[typeWizard:2402:" + currentEnvironment.get()->_namespace + "] Failed to locate variable named '" + expr.get()->name.get()->lexeme +
 				"' in the current environment. Check for spelling errors and that the variable is declared.");
 		}
 		return std::make_shared<CToken>(CTokenType::NIL, expr.get()->name.get()->line);
@@ -1550,11 +1550,11 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Vector> expr)
 
 		if (!matchType(x, CTokenType::NUM))
 		{
-			console.get()->error(expr.get()->kind, "[typeWizard:2501] Vector value 'x' must be a number value.");
+			console.get()->error(expr.get()->kind, "[typeWizard:2501:" + currentEnvironment.get()->_namespace + "] Vector value 'x' must be a number value.");
 		}
 		if (!matchType(y, CTokenType::NUM))
 		{
-			console.get()->error(expr.get()->kind, "[typeWizard:2502] Vector value 'y' must be a number value.");
+			console.get()->error(expr.get()->kind, "[typeWizard:2502:" + currentEnvironment.get()->_namespace + "] Vector value 'y' must be a number value.");
 		}
 	}
 	if (kind == CTokenType::VECTOR3 || kind == CTokenType::VECTOR4)
@@ -1562,7 +1562,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Vector> expr)
 		z = expr.get()->z.get()->acceptTypeWizard(*this);
 		if (!matchType(z, CTokenType::NUM))
 		{
-			console.get()->error(expr.get()->kind, "[typeWizard:2503] Vector value 'z' must be a number value.");
+			console.get()->error(expr.get()->kind, "[typeWizard:2503:" + currentEnvironment.get()->_namespace + "] Vector value 'z' must be a number value.");
 		}
 	}
 	if (kind == CTokenType::VECTOR4)
@@ -1570,7 +1570,7 @@ std::shared_ptr<CToken> CTypeWizard::visit(std::shared_ptr<CExpr_Vector> expr)
 		w = expr.get()->w.get()->acceptTypeWizard(*this);
 		if (!matchType(w, CTokenType::NUM))
 		{
-			console.get()->error(expr.get()->kind, "[typeWizard:2504] Vector value 'w' must be a number value.");
+			console.get()->error(expr.get()->kind, "[typeWizard:2504:" + currentEnvironment.get()->_namespace + "] Vector value 'w' must be a number value.");
 		}
 	}
 	return expr.get()->kind;
@@ -2127,7 +2127,7 @@ std::shared_ptr<CToken> CTypeWizard::convertToUnit(std::shared_ptr<CObject> obje
 		return std::make_shared<CToken>(CTokenType::VECTOR4, line);
 		break;
 	default:
-		console.get()->error((size_t)line, "[typeWizard] Cannot fetch index of non 'array' type object.");
+		console.get()->error((size_t)line, "[typeWizard:" + currentEnvironment.get()->_namespace + "] Cannot fetch index of non 'array' type object.");
 		return std::make_shared<CToken>(CTokenType::NIL, line);
 		break;
 	}

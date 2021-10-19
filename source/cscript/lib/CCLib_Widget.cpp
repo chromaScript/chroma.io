@@ -13,14 +13,16 @@
 #include "../../include/clayout/LEnums.h"
 #include "../../include/cscript/CObject.h"
 #include "../../include/cscript/CToken.h"
-#include "../../include/entities/WidgetStyle.h"
+#include "../../include/entities/widgets/WidgetStyle.h"
+
+#include "../../include/entities/widgets/Graph_ToolControl.h"
+#include "../../include/entities/widgets/Noise_ToolControl.h"
 
 #include "../../include/Application.h"
 #include "../../include/entities/UserInterface.h"
-#include "../../include/Toolbox.h"
-#include "../../include/entities/Widget.h"
-#include "../../include/structs.h"
-#include "../../include/keys.h"
+#include "../../include/tool/Toolbox.h"
+#include "../../include/entities/widgets/Widget.h"
+#include "../../include/input/keys.h"
 #include <glm.hpp>
 
 #include <GLFW/glfw3.h>
@@ -77,6 +79,12 @@ CStd_cWidget::CStd_cWidget(std::shared_ptr<CEnvironment> classEnv)
 	this->classEnv.get()->define(
 		"removeChildWidgets_byClass",
 		std::make_shared<CObject>(CCallableTypes::_CStd_cfRemoveChildWidgets_byClass, classEnv.get()->lookupEnvironment("removeChildWidgets_byClass", true)));
+	this->classEnv.get()->define(
+		"bindActiveToolSetting",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfBindActiveToolSetting, classEnv.get()->lookupEnvironment("bindActiveToolSetting", true)));
+	this->classEnv.get()->define(
+		"callSpecialFunction",
+		std::make_shared<CObject>(CCallableTypes::_CStd_cfCallSpecialFunction, classEnv.get()->lookupEnvironment("callSpecialFunction", true)));
 	for (auto const& item : this->classEnv.get()->values)
 	{
 		std::shared_ptr<CStmt> func = std::get<std::shared_ptr<CFunction>>(item.second.get()->obj).get()->funcDeclaration;
@@ -547,3 +555,113 @@ std::shared_ptr<CObject> CStd_cfSetPosition::call(std::shared_ptr<CInterpreter> 
 	return std::make_shared<CObject>(nullptr);
 }
 std::string CStd_cfSetPosition::toString() { return funcDeclaration.get()->name.get()->lexeme; }
+
+//
+//
+// CStd_cfBindActiveToolSetting
+CStd_cfBindActiveToolSetting::CStd_cfBindActiveToolSetting(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfBindActiveToolSetting;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::NUM, -1));
+	std::vector<std::string> paramsNames;
+	paramsNames.push_back("settingID");
+	paramsNames.push_back("subID");
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::_VOID, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "bindActiveToolSetting", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfBindActiveToolSetting::call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Get Args
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	// Cast Arg 0, 1 as int
+	int settingSig = (int)std::get<double>(args[0].get()->obj);
+	int subSig = (int)std::get<double>(args[1].get()->obj);
+	// Call setProperty on the widgetObj
+	std::weak_ptr<Widget> widget = std::get<std::weak_ptr<Widget>>(
+		interpreter.get()->currentEnvironment.get()->values.at("@widgetObj").get()->obj);
+	if (!widget.expired() && chromaIO.get()->toolbox.get()->checkActiveTool())
+	{
+		if (widget.lock()->type == LTokenType::T_GRAPH) 
+		{
+			std::dynamic_pointer_cast<Graph_ToolControl>(widget.lock())->bindToolSettings(
+				chromaIO.get()->toolbox.get()->getActiveTool().get()->weak_from_this(), settingSig, subSig);
+		}
+		else if (widget.lock()->type == LTokenType::T_NOISE)
+		{
+			std::dynamic_pointer_cast<Noise_ToolControl>(widget.lock())->bindToolSettings(
+				chromaIO.get()->toolbox.get()->getActiveTool().get()->weak_from_this(), settingSig, subSig);
+		}
+	}
+	return std::make_shared<CObject>(nullptr);
+}
+std::string CStd_cfBindActiveToolSetting::toString() { return funcDeclaration.get()->name.get()->lexeme; }
+
+//
+//
+// CStd_cfCallSpecialFunction
+CStd_cfCallSpecialFunction::CStd_cfCallSpecialFunction(std::shared_ptr<CEnvironment> funcEnv)
+{
+	this->funcEnv = funcEnv;
+	this->type = CCallableTypes::_CStd_cfCallSpecialFunction;
+	std::vector<std::shared_ptr<CToken>> scopeStack;
+	std::vector<std::shared_ptr<CToken>> paramsTypes;
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::STRING, -1));
+	paramsTypes.push_back(std::make_shared<CToken>(CTokenType::ANY, -1));
+	std::vector<std::string> paramsNames;
+	paramsNames.push_back("widgetTypeSelector");
+	paramsNames.push_back("functionName");
+	paramsNames.push_back("values");
+	this->funcDeclaration = std::make_shared<CStmt_Function>(
+		std::make_shared<CToken>(CTokenType::_VOID, -1), // returnType
+		std::make_shared<CToken>(CTokenType::IDENTIFIER, "callSpecialFunction", -1), // name
+		false, // isDeclarationOnly
+		scopeStack, // scope operator (empty)
+		paramsTypes, // paramTypes (empty)
+		paramsNames, // paramNames (empty)
+		nullptr // function body (native, see 'call()')
+		);
+}
+std::shared_ptr<CObject> CStd_cfCallSpecialFunction::call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
+{
+	// Get Args
+	std::vector<std::shared_ptr<CObject>> args = *arguments;
+	// Cast Arg 0 as string
+	std::string widgetTypeSelector = std::get<std::string>(args[0].get()->obj);
+	std::string funcName = std::get<std::string>(args[1].get()->obj);
+	LTokenType widgetType = LTokenType::NIL;
+	if (layoutStringTypeMap.count(widgetTypeSelector) == 1)
+	{
+		widgetType = layoutStringTypeMap.at(widgetTypeSelector);
+		std::vector<std::shared_ptr<CObject>> objArr = *std::get<std::shared_ptr<std::vector<std::shared_ptr<CObject>>>>(args[2].get()->obj);
+
+		std::weak_ptr<Widget> widget = std::get<std::weak_ptr<Widget>>(
+			interpreter.get()->currentEnvironment.get()->values.at("@widgetObj").get()->obj);
+		if (widget.expired()) { return std::make_shared<CObject>(nullptr); }
+		bool result = false;
+		switch (widgetType)
+		{
+			case LTokenType::T_GRAPH: 
+				result = std::dynamic_pointer_cast<Graph_ToolControl>(widget.lock()).get()->callSpecialFunction(funcName, objArr);
+				break;
+			default:
+				return std::make_shared<CObject>(nullptr);
+		}
+	}
+	// Call setProperty on the widgetObj
+	//std::get<std::weak_ptr<Widget>>(
+	//	interpreter.get()->currentEnvironment.get()->values.at("@widgetObj").get()->obj).lock().get()->setProperty(interpreter, name, args[1]);
+	return std::make_shared<CObject>(nullptr);
+}
+std::string CStd_cfCallSpecialFunction::toString() { return funcDeclaration.get()->name.get()->lexeme; }

@@ -8,6 +8,7 @@
 
 #include "lib/CCLib_STD.h"
 #include "lib/CCLib_STDWidget.h"
+#include "lib/CCLib_STDWidgetInterface.h"
 #include "lib/CCLib_App.h"
 #include "lib/CCLib_UI.h"
 #include "lib/CCLib_Document.h"

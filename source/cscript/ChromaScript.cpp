@@ -7,12 +7,12 @@
 #include "../include/cscript/CEnvironment.h"
 #include "../include/cscript/ChromaScript.h"
 #include "../include/cscript/CToken.h"
-#include "../include/entities/WidgetStyle.h"
+#include "../include/entities/widgets/WidgetStyle.h"
 
 #include "../include/Application.h"
 #include "../include/entities/UserInterface.h"
 
-#include "../include/structs.h"
+
 
 #include "glm.hpp"
 
@@ -60,6 +60,11 @@ void ChromaScript::initializeConsole()
 	interpreter.get()->setEnvironment(global);
 
 	loadLibraries(global);
+}
+
+void ChromaScript::cleanEngine()
+{
+	interpreter.get()->resetInterpreter();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -311,6 +316,23 @@ void ChromaScript::loadLibraries(std::shared_ptr<CEnvironment> env)
 			CCallableTypes::_CInt_TextClick,
 			global.get()->lookupEnvironment("@textClick", true),
 			owner));
+	env.get()->define("@TGraph_Drag",
+		std::make_shared<CObject>(
+			CCallableTypes::_CInt_TGraph_Drag,
+			global.get()->lookupEnvironment("@TGraph_Drag", true),
+			owner));
+	env.get()->define("@TGraph_Hover",
+		std::make_shared<CObject>(
+			CCallableTypes::_CInt_TGraph_Hover,
+			global.get()->lookupEnvironment("@TGraph_Hover", true),
+			owner));
+	env.get()->define("@TGraph_currentSliderWidth",
+		std::make_shared<CObject>(double(0.0)));
+	env.get()->define("@TGraph_currentMaxLeft",
+		std::make_shared<CObject>(double(0.0)));
+	env.get()->define("@TGraph_currentMaxTop",
+		std::make_shared<CObject>(double(0.0)));
+	// Standard Function Names
 	env.get()->define("clock", 
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fClock, 
@@ -331,6 +353,10 @@ void ChromaScript::loadLibraries(std::shared_ptr<CEnvironment> env)
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fKeyToString,
 			global.get()->lookupEnvironment("keyToString", true)));
+	env.get()->define("keybindToString",
+		std::make_shared<CObject>(
+			CCallableTypes::_CStd_fKeybindToString,
+			global.get()->lookupEnvironment("keybindToString", true)));
 	env.get()->define("makeKeySig",
 		std::make_shared<CObject>(
 			CCallableTypes::_CStd_fMakeKeySig,
@@ -815,7 +841,14 @@ double ChromaScript::toNum(std::shared_ptr<CObject> obj)
 		break;
 	case CLiteralTypes::_CString:
 		string = std::get<std::string>(obj.get()->obj);
-		if (string != "") { return std::stod(std::get<std::string>(obj.get()->obj)); }
+		if (string != "") {
+			if (string.find_first_of("abcdefghijklmnopqrstuvwxyz") == std::string::npos) {
+				return std::stod(std::get<std::string>(obj.get()->obj));
+			}
+			else {
+				return stringToNum(std::get<std::string>(obj.get()->obj));
+			}
+		}
 		return 0;
 		break;
 	case CLiteralTypes::_CBool_Array:

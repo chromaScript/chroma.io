@@ -8,10 +8,8 @@
 
 #include "../include/Application.h"
 #include "../include/entities/UserInterface.h"
-#include "../include/Toolbox.h"
-#include "../include/Tool.h"
-
-#include "../include/structs.h"
+#include "../include/tool/Toolbox.h"
+#include "../include/tool/Tool.h"
 
 #include "glm.hpp"
 

@@ -32,6 +32,16 @@
 	font-size: 16;
 }
 
+.barlow8 {
+	font-path: "fonts/BarlowSemiCondensed-Light.ttf";
+	fill-color: $lightGrey$;
+	font-size: 8;
+}
+.barlow10 {
+	font-path: "fonts/BarlowSemiCondensed-Light.ttf";
+	fill-color: $lightGrey$;
+	font-size: 10;
+}
 .barlow12 {
 	font-path: "fonts/BarlowSemiCondensed-Light.ttf";
 	fill-color: $lightGrey$;
@@ -52,6 +62,7 @@
 	fill-color: $lightGrey$;
 	font-size: 20;
 }
+
 .text16default {
 	min-width: 18;
 	min-height: 6;

@@ -2,17 +2,15 @@
 #define APPLICATION_H
 
 #include <RTSCOM.h>
-#include <GLFW/glfw3.h>
 #include <glm.hpp>
 
-
-#include "structs.h"
+typedef struct GLFWwindow GLFWwindow;
 
 class UI;
 class Camera;
 class Toolbox;
 class WidgetStyle;
-#include "IOClasses.h"
+#include "methods/IOClasses.h"
 #include "methods/InputMethod.h"
 #include "methods/OutputMethod.h"
 #include "../include/WinStylusHandler.h"
@@ -22,7 +20,10 @@ class WidgetStyle;
 #include "cstyle/ChromaStyle.h"
 #include "cscript/CCallable.h"
 #include "ctoolfile/ChromaToolFile.h"
-#include "entities/Canvas.h"
+#include "entities/layers/Canvas.h"
+#include "entities/layers/Layer.h"
+#include "entities/visuals/Stroke.h"
+#include "CustomCursor.h"
 
 #include <vector>
 #include <memory>
@@ -71,14 +72,14 @@ private:
 	double dblThreshold = 0.10;
 	double dblForgiveness = 0.15;
 	double lastClickTime = -1;
-	int lastMouseButton = -1;
+	InputMouseButton lastMouseButton = InputMouseButton::null;
 	bool isMouseDrag = false;
 	bool isDragStarted = false;
 	bool dragReleaseGate = true;
-	int dragMouseButtton = -1;
+	InputMouseButton dragMouseButtton = InputMouseButton::null;
 	bool hasMouseHold = false;
-	MouseEvent heldMouseEvent;
-	MouseEvent heldDragPosition;
+	Input heldInput;
+	Input heldDragPosition;
 	glm::vec2 lastUIMousePos = glm::vec2(0);
 
 	// Shader Variables
@@ -92,6 +93,8 @@ private:
 	std::shared_ptr<Shader> textShader = nullptr;
 	std::shared_ptr<Shader> debugLineShader = nullptr;
 	std::shared_ptr<Shader> gradientBoxShader = nullptr;
+	std::shared_ptr<Shader> graphWidgetShader = nullptr;
+	std::shared_ptr<Shader> noiseWidgetShader = nullptr;
 
 	// Stylus Variables
 	WinStylusHandler* stylusHandler_win = new WinStylusHandler();
@@ -116,18 +119,21 @@ private:
 
 	// I/O Variables
 		// Management variables
-	int keyWatchSig = 0;
+	InputKey keyWatch = InputKey::unknown;
 	bool isDoingInput = false;
-	int modKeys = 0;
+	InputModKey modKeys = InputModKey::none;
 	int mousePosBufferMax = 3;
 	float mouseVelocity = 0.0f;
 	float maxMouseVelocity = 2500.0f;
-	std::vector<MouseEvent> mousePosBuffer = { MouseEvent(), MouseEvent(), MouseEvent(), MouseEvent() };
+	std::vector<Input> mousePosBuffer = { Input(), Input(), Input(), Input() };
 
 protected:
 public:
 	// Clipboard
 	std::string textClipboard = "";
+
+	// History Tables
+	std::vector<std::pair<std::weak_ptr<Layer>, std::weak_ptr<Stroke>>> undoStrokes;
 
 	// UI variables
 	std::shared_ptr<UI> ui = nullptr;
@@ -152,6 +158,12 @@ public:
 	// Constructors
 	Application();
 	Application(int width, int height);
+
+	// Undo Functions
+	int undoRequestCount = 0;
+	void clearUndoRequests();
+	// Undo Lists
+	void requestRemove_targetStroke(std::weak_ptr<Layer> layer, std::weak_ptr<Stroke> target);
 
 	// Monitor Functions
 	void setMonitorDPI();
@@ -191,6 +203,8 @@ public:
 	std::shared_ptr<Shader> getTextShader() { return textShader; }
 	std::shared_ptr<Shader> getDebugLineShader() { return debugLineShader; }
 	std::shared_ptr<Shader> getGradientBoxShader() { return gradientBoxShader; }
+	std::shared_ptr<Shader> getGraphWidgetShader() { return graphWidgetShader; }
+	std::shared_ptr<Shader> getNoiseWidgetShader() { return noiseWidgetShader; }
 
 	// Stylus Functions
 	bool createWinStylus();
@@ -226,35 +240,36 @@ public:
 	void cancelTimerCallback(std::string id);
 
 	// Cursor Functions
-	void setCursor(int selector);
+	void setCursor(CursorType selector);
 
 	// I/O Management Functions
-	void updateMouseBuffer(MouseEvent mouseEvent);
-	void updateBufferMetaData(MouseEvent mouseEvent);
-	void setModKeys(int mods) { modKeys = mods; }
-	int getModKeys() { return modKeys; }
+	void updateMouseBuffer(Input inputEvent);
+	void updateBufferMetaData(Input inputEvent);
+	void setModKeys(InputModKey mods) { modKeys = mods; }
+	InputModKey getModKeys() { return modKeys; }
 	bool getIsDoingInput() { return isDoingInput; }
 	// I/O Keybind Functions
-	bool isValidKeybind_tool(int modKey, int glfwKey);
-	bool isValidKeybind_alphaOnly(int modKey, int glfwKey);
-	bool isValidKeybind_symbolOrChar(int modKey, int glfwKey);
-	bool isValidKeybind_modOnly(int modKey, int glfwKey);
+	bool isValidKeybind_tool(Keybind keybind);
+	bool isValidKeybind_alphaOnly(Keybind keybind);
+	bool isValidKeybind_symbolOrChar(Keybind keybind);
+	bool isValidKeybind_modOnly(Keybind keybind);
 	// I/O Key Functions
-	int getKeyState(int namedKey) { return glfwGetKey(appWindow, namedKey); }
-	void keyEventHandler(int sig, int action);
-	void textInputHandler(int sig, int action);
+	bool getKeyState(InputKey namedKey);
+	bool getKeyState(InputModKey modKey);
+	void keyEventHandler(Keybind keybind, InputAction action);
+	void textInputHandler(Keybind keybind, InputAction action);
 	// I/O Mouse Functions
 	void setDragStart() { isDragStarted = true; }
 	bool getDragStart() { return isDragStarted; }
 	void clearMouseHold(double time);
-	void clickEventHandler(int button, int action, MouseEvent mouseEvent, bool clearHold);
-	void mousePosEventHandler(MouseEvent mouseEvent);
-	void mouseScrollEventHandler(MouseEvent mouseEvent);
-	MousePosition getMousePosition(bool isUIFetch);
-	float getMouseVelocity() { return mouseVelocity; }
-	std::vector<MouseEvent> getMouseBuffer();
-	MouseEvent* getMouseBuffer_back();
-	MouseEvent* getMouseBuffer_doubleBack();
+	void clickEventHandler(InputMouseButton button, InputAction action, Input inputEvent, bool clearHold);
+	void mousePosEventHandler(Input inputEvent);
+	void mouseScrollEventHandler(Input inputEvent);
+	Input getMousePosition(bool isUIFetch);
+	float getMouseVelocity(float averagingStrength);
+	std::vector<Input> getMouseBuffer();
+	Input* getMouseBuffer_back();
+	Input* getMouseBuffer_doubleBack();
 
 	// Tool/Toolbox Functions
 	void initializeToolbox();
@@ -264,10 +279,10 @@ public:
 	void clearScreen();
 
 	// Callback Functions
-	bool triggerStoredEventCallback(std::string callbackID);
+	bool triggerStoredEventCallback(std::string callbackID, bool eraseEvent);
 
 	// Miscellaneous Functions
-	double getTime() { return glfwGetTime(); }
+	double getTime();
 	glm::vec4 convertScreenCoord(double x, double y);
 	glm::vec3 pickScreenCoord(double x, double y);
 	void inputDataDump(InputData dat, std::string name);

@@ -1,7 +1,0 @@
-<ROOT id="colorBoxBasic" defaultPosition="820,850">
-<H_BOX id="colorBoxWrapper">
-	<GRADIENT_BOX id="colorBox">
-		<GRADIENT_BOX id="blackBox"></GRADIENT_BOX>
-	</GRADIENT_BOX>
-</H_BOX>
-</ROOT>

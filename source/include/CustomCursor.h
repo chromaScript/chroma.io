@@ -1,53 +1,52 @@
-/*
-// Cursor Structs
-*/
-// Cursor justification options
-#define CURSOR_ULCORNER 0
-#define CURSOR_CENTER 1
-#define CURSOR_LLCORNER 2
-#define CURSOR_UCENTER 3
-
-// Cursor names
-#define CURSOR_POINTER 0
-#define CURSOR_HAND 1 
-#define CURSOR_ROTATE 2
-#define CURSOR_GRAB 3
-#define CURSOR_ZOOMSCRUB 10
-#define CURSOR_ZOOMIN 11
-#define CURSOR_ZOOMOUT 12
-#define CURSOR_DROPPER 13
-#define CURSOR_BRUSH 20
-#define CURSOR_CIRCLESMALL 26
-
 #ifndef CUSTOMCURSOR_H
 #define CUSTOMCURSOR_H
 
-#include <GLFW/glfw3.h>
+// Cursor justification options
+enum class CursorJustification : int {
+	upperLeftCorner = 0,
+	center = 1,
+	lowerLeftCorner = 2,
+	upperCenter = 3
+};
 
-#include "structs.h"
+// Cursor names
+enum class CursorType : int {
+	pointer = 0,
+	hand = 1,
+	rotate = 2,
+	grab = 3,
+	zoomscrub = 10,
+	zoomIn = 11,
+	zoomOut = 12,
+	dropper = 13,
+	brush = 20,
+	circleSmall = 26
+};
+
+#include <GLFW/glfw3.h>
 #include <string>
 
-inline int convertCursorName(std::string name)
+inline CursorType convertCursorName(std::string name)
 {
 	std::string testValue = name;
 	testValue.erase(std::remove_if(testValue.begin(), testValue.end(), isspace), testValue.end());
-	if (testValue == "pointer") { return CURSOR_POINTER; }
-	if (testValue == "hand") { return CURSOR_HAND; }
-	if (testValue == "rotate") { return CURSOR_ROTATE; }
-	if (testValue == "grab") { return CURSOR_GRAB; }
-	if (testValue == "zoomscrub" || testValue =="zoom") { return CURSOR_ZOOMSCRUB; }
-	if (testValue == "zoomin") { return CURSOR_ZOOMIN; }
-	if (testValue == "zoomout") { return CURSOR_ZOOMOUT; }
-	if (testValue == "brush") { return CURSOR_BRUSH; }
-	if (testValue == "dropper" || testValue == "eyedropper" || testValue == "colorpicker") { return CURSOR_DROPPER; }
-	if (testValue == "circleSmall" || testValue =="circlesmall") { return CURSOR_CIRCLESMALL; }
-	return 0;
+	if (testValue == "pointer") { return CursorType::pointer; }
+	if (testValue == "hand") { return CursorType::hand; }
+	if (testValue == "rotate") { return CursorType::rotate; }
+	if (testValue == "grab") { return CursorType::grab; }
+	if (testValue == "zoomscrub" || testValue =="zoom") { return CursorType::zoomscrub; }
+	if (testValue == "zoomin") { return CursorType::zoomIn; }
+	if (testValue == "zoomout") { return CursorType::zoomOut; }
+	if (testValue == "brush") { return CursorType::brush; }
+	if (testValue == "dropper" || testValue == "eyedropper" || testValue == "colorpicker") { return CursorType::dropper; }
+	if (testValue == "circleSmall" || testValue =="circlesmall") { return CursorType::circleSmall; }
+	return CursorType::pointer;
 }
 
 class CustomCursor
 {
 private:
-	int id = 0;
+	CursorType id = CursorType::pointer;
 	std::string name = "";
 	unsigned char* imgData;
 	int width;
@@ -61,7 +60,7 @@ public:
 	GLFWcursor* cursor;
 	// constructor / destructor
 	CustomCursor();
-	CustomCursor(const char* texPath, int id, int offType, std::string name); // Overload for initialization with offset override;
+	CustomCursor(const char* texPath, CursorType id, CursorJustification offType, std::string name); // Overload for initialization with offset override;
 	~CustomCursor();
 	std::string getName() { return name; }
 };

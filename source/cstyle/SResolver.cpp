@@ -6,7 +6,7 @@
 #include "../include/cstyle/ChromaStyle.h"
 #include "../include/cstyle/SToken.h"
 #include "../include/cstyle/SProc.h"
-#include "../include/entities/WidgetStyle.h"
+#include "../include/entities/widgets/WidgetStyle.h"
 #include "../include/cscript/CEnums.h"
 
 #include <string>

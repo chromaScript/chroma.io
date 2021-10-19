@@ -112,7 +112,6 @@
 	height: inherit;
 	position: absolute;
 	float: left;
-	
 }
 
 .tsf_settingsBlock

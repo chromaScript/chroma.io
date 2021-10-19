@@ -1,5 +1,5 @@
-#ifndef CCLIB_STDWIDGET
-#define CCLIB_STDWIDGET
+#ifndef CCLIB_STDWIDGET_H
+#define CCLIB_STDWIDGET_H
 
 #include "../CCallable_Lib.h"
 #include "../CEnums.h"
@@ -14,21 +14,6 @@ class Widget;
 #include <string>
 #include <vector>
 #include <memory>
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Internal Built-In Widget Functions
-//
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-class CInt_TextClick : public CFunction
-{
-public:
-	std::shared_ptr<UI> ui;
-	CInt_TextClick(std::shared_ptr<CEnvironment> funcEnv, std::shared_ptr<UI> ui);
-	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
-	virtual std::string toString();
-};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //

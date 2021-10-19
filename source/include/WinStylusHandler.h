@@ -85,7 +85,7 @@ public:
 	STDMETHOD(QueryInterface)(REFIID riid, LPVOID *ppvObj);
 
 	// Custom Methods
-	//MouseEvent buildMouseEvent(LONG* pPackets, int packetIndex, int action);
+	//Input buildInput(LONG* pPackets, int packetIndex, int action);
 	HRESULT setPropertiesCount(ULONG count);
 	bool setStylusVariables(IRealTimeStylus* pStylus, const StylusInfo* pStylusInfo);
 	void updateTabletDPI();

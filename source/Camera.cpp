@@ -15,13 +15,12 @@ Camera::Camera(float zSens, float pSens, float rSens, float winRatio, glm::ivec2
 	centerToCanvas(winDimensions);
 	setPosition(glm::vec3(0.0f, 0.0f, 1.0f));
 	setOrthoXY(winRatio);
-	setOrthoZoom(1000.0f);
+	setMaxZoom(1024.0f, 1024.0f);
+	setOrthoZoom(1024.0f);
 	setClippingRange(0.01f, 100.0f);
 	setDirections(glm::vec3(0.0f, 0.0f, -1.0f), roll);
 	setProjection();
 	setPosition(float(winDimensions.x * winDimensions.y));
-	setView();
-	setModel();
 }
 Camera::~Camera()
 {
@@ -52,6 +51,8 @@ void Camera::setPosition(float factor)
 {
 	pos.x = pos.x / factor;
 	pos.y = pos.y / factor;
+	setView();
+	setModel();
 }
 // Set camera position by adding to current position (Used for camera movement)
 void Camera::setPosition(float x, float y)
@@ -65,8 +66,8 @@ void Camera::setPosition(float x, float y)
 	{
 		pos.x = pos.x + (x * 1);
 		pos.y = pos.y + (y * 1);
-		setModel();
 		setView();
+		setModel();
 	}
 }
 void Camera::setPosition(glm::vec3 pos1, glm::vec3 pos2)
@@ -82,8 +83,8 @@ void Camera::setPosition(glm::vec3 pos1, glm::vec3 pos2)
 		glm::vec3 rotated = pos1 + (rotation * (pos2 - pos1));
 		pos.x += pos1.x - rotated.x;
 		pos.y += pos1.y - rotated.y;
-		setModel();
 		setView();
+		setModel();
 	}
 }
 
@@ -91,6 +92,8 @@ void Camera::setPosition(glm::vec3 pos1, glm::vec3 pos2)
 void Camera::setPosition(glm::vec3 vec) 
 { 
 	pos = vec; 
+	setView();
+	setModel();
 }
 // Set the center position of the camera (center overed canvas)
 void Camera::centerToCanvas(glm::ivec2 dimensions)
@@ -99,9 +102,9 @@ void Camera::centerToCanvas(glm::ivec2 dimensions)
 	float y = (float)dimensions.y / 2;
 	float z = pos.z;
 	std::cout << "CAMERA::CENTERTOCANVAS::X=" << x << "::Y=" << y << std::endl;
-	setCenterPosition(glm::vec3(x, -y, z));
-	setModel();
+	setCenterPosition(glm::vec3(x, y, z));
 	setView();
+	setModel();
 }
 void Camera::setCenterPosition(glm::vec3 vec) { centerPos = vec; }
 
@@ -118,9 +121,8 @@ void Camera::setDirections(glm::vec3 fwdvec, float rollAngle)
 void Camera::setRoll(float r)
 {
 	roll = r;
-	setModel();
 	setView();
-	//std::cout << "CAMERA::SETROLL=" << roll << std::endl;
+	setModel();
 }
 void Camera::addRoll(float r)
 {
@@ -139,7 +141,6 @@ void Camera::addRoll(float r)
 	}
 	setModel();
 	setView();
-	//std::cout << "CAMERA::ADDROLL=" << roll << std::endl;
 }
 float Camera::getRoll() { return roll; }
 ObjectTransform* Camera::getTransform() { return &camXform; }
@@ -166,8 +167,6 @@ void Camera::updateMomentum(bool shouldStop, float delta)
 		float x = (float)delta * (momentum * slideDir.x);
 		float y = (float)delta * (momentum * slideDir.y);
 		setPosition(x, y);
-		setModel();
-		setView();
 		float decay = decayHigh + ((momentum / momentumCap) * (decayLow - decayHigh));
 		momentum = momentum - (delta * momentum * (friction + decay));
 		//std::cout << "CAMERA::MOMENTUM=" << momentum << std::endl;
@@ -200,16 +199,34 @@ void Camera::setOrthoXY(float wRatio)
 		orthoX = orthoY * wRatio;
 	}
 }
+
+void Camera::zoomExtents(glm::ivec2 dimensions)
+{
+	centerToCanvas(dimensions);
+	setRoll(0.0f);
+	setOrthoZoom(float(glm::max(dimensions.x, dimensions.y)) / 1.75f);
+	setPosition(glm::vec3(0.0f, 0.0f, 1.0f));
+}
+
+void Camera::setMaxZoom(float width, float height)
+{
+	maxZoom = glm::max(width, height) * 10.0f;
+}
+float Camera::getMaxZoom()
+{
+	return maxZoom;
+}
+
 void Camera::setOrthoZoom(float z)
 {
 	// Warning: Need to update this later when camera movement is enabled, and properly assess the clamp ranges
-	if (z > 5000.0f)
+	if (z > maxZoom)
 	{
-		transform.zoom = 5000.0f;
+		transform.zoom = maxZoom;
 	}
-	else if (z < 50.0f)
+	else if (z < 10.0f)
 	{
-		transform.zoom = 50.0f;
+		transform.zoom = 10.0f;
 	}
 	else
 	{

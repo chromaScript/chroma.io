@@ -4,12 +4,12 @@ class CFunction;
 #include "../include/cscript/CInterpreter.h"
 #include "../include/cscript/CObject.h"
 
-#include "../include/Toolbox.h"
-#include "../include/Tool.h"
-#include "../include/ToolSettings.h"
-#include "../include/keys.h"
-#include "../include/structs.h"
-#include "../include/math.h"
+#include "../include/tool/Toolbox.h"
+#include "../include/tool/Tool.h"
+#include "../include/tool/ToolSettings.h"
+#include "../include/input/keys.h"
+
+#include "../include/math/math.h"
 
 
 
@@ -155,9 +155,11 @@ std::string TFSettingsWriter::writeSetting_zoom(std::shared_ptr<Tool> target, TS
 	output += std::get<std::string>(zoom->putProperty(nullptr, target, 200, -1, nullptr, true, false, true).get()->obj);
 	output += std::get<std::string>(zoom->putProperty(nullptr, target, 201, -1, nullptr, true, false, true).get()->obj);
 	output += std::get<std::string>(zoom->putProperty(nullptr, target, 202, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(zoom->putProperty(nullptr, target, 203, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(zoom->putProperty(nullptr, target, 204, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(zoom->putProperty(nullptr, target, 205, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(zoom->putProperty(nullptr, target, 206, -1, nullptr, true, false, true).get()->obj);
 	output += std::get<std::string>(zoom->putProperty(nullptr, target, 210, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(zoom->putProperty(nullptr, target, 220, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(zoom->putProperty(nullptr, target, 221, -1, nullptr, true, false, true).get()->obj);
 	output += "}\n\n";
 	return output;
 }
@@ -312,31 +314,6 @@ std::string TFSettingsWriter::writeSetting_image(std::shared_ptr<Tool> target, T
 	output += std::get<std::string>(image->putProperty(nullptr, target, 2202, -1, nullptr, true, false, true).get()->obj);
 	output += std::get<std::string>(image->putProperty(nullptr, target, 2203, -1, nullptr, true, false, true).get()->obj);
 	output += std::get<std::string>(image->putProperty(nullptr, target, 2205, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2209, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2210, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2211, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2212, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2213, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2214, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2215, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2216, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2217, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2218, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2219, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2220, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 22211, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2230, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2250, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2251, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2252, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2253, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2254, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2255, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2256, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2257, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2258, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2259, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(image->putProperty(nullptr, target, 2260, -1, nullptr, true, false, true).get()->obj);
 	output += "}\n\n";
 	return output;
 }
@@ -344,11 +321,55 @@ std::string TFSettingsWriter::writeSetting_character(std::shared_ptr<Tool> targe
 {
 	std::string output = "character \n{\n";
 	output += makeSettingString(character->isEnabled, -1, -1, "isEnabled");
-	output += std::get<std::string>(character->putProperty(nullptr, target, 2330, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(character->putProperty(nullptr, target, 2331, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(character->putProperty(nullptr, target, 2332, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(character->putProperty(nullptr, target, 2333, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(character->putProperty(nullptr, target, 2334, -1, nullptr, true, false, true).get()->obj);
+	output += makeSettingString(target, character->getControlNode(2300, -1), 2300, -1, character->getControlNode(2300, -1)->nodeName);
+	output += makeSettingString(target, character->getController(2301, -1), 2301, -1, "CONTROLLER");
+	output += makeSettingString(target, character->getNoise(2302, -1), 2302, -1, character->getNoise(2302, -1)->noiseName);
+	//
+	output += makeSettingString(target, character->getControlNode(2303, -1), 2303, -1, character->getControlNode(2303, -1)->nodeName);
+	output += makeSettingString(target, character->getController(2304, -1), 2304, -1, "CONTROLLER");
+	output += makeSettingString(target, character->getNoise(2305, -1), 2305, -1, character->getNoise(2305, -1)->noiseName);
+	//
+	output += makeSettingString(target, character->getControlNode(2306, -1), 2306, -1, character->getControlNode(2306, -1)->nodeName);
+	output += makeSettingString(target, character->getController(2307, -1), 2307, -1, "CONTROLLER");
+	output += makeSettingString(target, character->getNoise(2308, -1), 2308, -1, character->getNoise(2308, -1)->noiseName);
+	//
+	output += makeSettingString(target, character->getControlNode(2320, -1), 2320, -1, character->getControlNode(2320, -1)->nodeName);
+	output += makeSettingString(target, character->getController(2321, -1), 2321, -1, "CONTROLLER");
+	output += makeSettingString(target, character->getNoise(2322, -1), 2322, -1, character->getNoise(2322, -1)->noiseName);
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2323, -1, nullptr, true, false, true).get()->obj);
+	//
+	output += makeSettingString(target, character->getControlNode(2330, -1), 2330, -1, character->getControlNode(2330, -1)->nodeName);
+	output += makeSettingString(target, character->getController(2331, -1), 2331, -1, "CONTROLLER");
+	output += makeSettingString(target, character->getNoise(2332, -1), 2332, -1, character->getNoise(2332, -1)->noiseName);
+	//
+	output += makeSettingString(target, character->getControlNode(2333, -1), 2333, -1, character->getControlNode(2333, -1)->nodeName);
+	output += makeSettingString(target, character->getController(2334, -1), 2334, -1, "CONTROLLER");
+	output += makeSettingString(target, character->getNoise(2335, -1), 2335, -1, character->getNoise(2335, -1)->noiseName);
+	//
+	output += makeSettingString(target, character->getControlNode(2340, -1), 2340, -1, character->getControlNode(2340, -1)->nodeName);
+	output += makeSettingString(target, character->getController(2341, -1), 2341, -1, "CONTROLLER");
+	output += makeSettingString(target, character->getNoise(2342, -1), 2342, -1, character->getNoise(2342, -1)->noiseName);
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2343, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2344, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2345, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2346, -1, nullptr, true, false, true).get()->obj);
+	//
+	output += makeSettingString(target, character->getControlNode(2350, -1), 2350, -1, character->getControlNode(2350, -1)->nodeName);
+	output += makeSettingString(target, character->getController(2351, -1), 2351, -1, "CONTROLLER");
+	output += makeSettingString(target, character->getNoise(2352, -1), 2352, -1, character->getNoise(2352, -1)->noiseName);
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2353, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2354, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2355, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2356, -1, nullptr, true, false, true).get()->obj);
+	//
+	output += makeSettingString(target, character->getControlNode(2360, -1), 2360, -1, character->getControlNode(2360, -1)->nodeName);
+	output += makeSettingString(target, character->getController(2361, -1), 2361, -1, "CONTROLLER");
+	output += makeSettingString(target, character->getNoise(2362, -1), 2362, -1, character->getNoise(2362, -1)->noiseName);
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2363, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2364, -1, nullptr, true, false, true).get()->obj);
+	//
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2380, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(character->putProperty(nullptr, target, 2381, -1, nullptr, true, false, true).get()->obj);
 	output += "}\n\n";
 	return output;
 }
@@ -356,27 +377,26 @@ std::string TFSettingsWriter::writeSetting_scatter(std::shared_ptr<Tool> target,
 {
 	std::string output = "scatter \n{\n";
 	output += makeSettingString(scatter->isEnabled, -1, -1, "isEnabled");
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2600, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2610, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2611, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2612, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2613, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2614, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2616, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2617, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2620, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2621, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2622, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2623, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2624, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2625, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2626, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2627, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2630, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2631, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2632, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2633, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2634, -1, nullptr, true, false, true).get()->obj);
+	output += makeSettingString(target, scatter->getControlNode(2600, -1), 2600, -1, scatter->getControlNode(2600, -1)->nodeName);
+	output += makeSettingString(target, scatter->getController(2601, -1), 2601, -1, "CONTROLLER");
+	output += makeSettingString(target, scatter->getNoise(2602, -1), 2602, -1, scatter->getNoise(2602, -1)->noiseName);
+	//
+	output += makeSettingString(target, scatter->getControlNode(2610, -1), 2610, -1, scatter->getControlNode(2610, -1)->nodeName);
+	output += makeSettingString(target, scatter->getController(2611, -1), 2611, -1, "CONTROLLER");
+	output += makeSettingString(target, scatter->getNoise(2612, -1), 2612, -1, scatter->getNoise(2612, -1)->noiseName);
+	//
+	output += makeSettingString(target, scatter->getControlNode(2620, -1), 2620, -1, scatter->getControlNode(2620, -1)->nodeName);
+	output += makeSettingString(target, scatter->getController(2621, -1), 2621, -1, "CONTROLLER");
+	output += makeSettingString(target, scatter->getNoise(2622, -1), 2622, -1, scatter->getNoise(2622, -1)->noiseName);
+	//
+	output += makeSettingString(target, scatter->getControlNode(2630, -1), 2630, -1, scatter->getControlNode(2630, -1)->nodeName);
+	output += makeSettingString(target, scatter->getController(2631, -1), 2631, -1, "CONTROLLER");
+	output += makeSettingString(target, scatter->getNoise(2632, -1), 2632, -1, scatter->getNoise(2632, -1)->noiseName);
+	//
+	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2660, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2661, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2662, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(scatter->putProperty(nullptr, target, 2663, -1, nullptr, true, false, true).get()->obj);
 	output += "}\n\n";
 	return output;
 }
@@ -384,47 +404,35 @@ std::string TFSettingsWriter::writeSetting_color(std::shared_ptr<Tool> target, T
 {
 	std::string output = "color \n{\n";
 	output += makeSettingString(color->isEnabled, -1, -1, "isEnabled");
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2700, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2701, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2702, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2710, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2711, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2712, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2713, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2714, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2715, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2716, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2717, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2718, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2719, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2720, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2721, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2730, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2731, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2732, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2733, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2734, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2735, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2736, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2737, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2738, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2739, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2740, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2741, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2750, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2751, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2752, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2753, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2754, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2755, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2756, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2760, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2761, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2762, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2763, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2764, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2765, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(color->putProperty(nullptr, target, 2766, -1, nullptr, true, false, true).get()->obj);
+	output += makeSettingString(target, color->getControlNode(2700, -1), 2700, -1, color->getControlNode(2700, -1)->nodeName);
+	output += makeSettingString(target, color->getController(2701, -1), 2701, -1, "CONTROLLER");
+	output += makeSettingString(target, color->getNoise(2702, -1), 2702, -1, color->getNoise(2702, -1)->noiseName);
+	output += std::get<std::string>(color->putProperty(nullptr, target, 2703, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(color->putProperty(nullptr, target, 2706, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(color->putProperty(nullptr, target, 2707, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(color->putProperty(nullptr, target, 2708, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(color->putProperty(nullptr, target, 2709, -1, nullptr, true, false, true).get()->obj);
+	//
+	output += makeSettingString(target, color->getControlNode(2720, -1), 2720, -1, color->getControlNode(2720, -1)->nodeName);
+	output += makeSettingString(target, color->getControlNode(2721, -1), 2721, -1, color->getControlNode(2721, -1)->nodeName);
+	output += makeSettingString(target, color->getControlNode(2722, -1), 2722, -1, color->getControlNode(2722, -1)->nodeName);
+	output += makeSettingString(target, color->getController(2723, -1), 2723, -1, "CONTROLLER");
+	output += makeSettingString(target, color->getNoise(2724, -1), 2724, -1, color->getNoise(2724, -1)->noiseName);
+	output += makeSettingString(target, color->getNoise(2725, -1), 2725, -1, color->getNoise(2725, -1)->noiseName);
+	output += makeSettingString(target, color->getNoise(2726, -1), 2726, -1, color->getNoise(2726, -1)->noiseName);
+	output += std::get<std::string>(color->putProperty(nullptr, target, 2727, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(color->putProperty(nullptr, target, 2728, -1, nullptr, true, false, true).get()->obj);
+	//
+	output += makeSettingString(target, color->getControlNode(2770, -1), 2770, -1, color->getControlNode(2770, -1)->nodeName);
+	output += makeSettingString(target, color->getControlNode(2771, -1), 2771, -1, color->getControlNode(2771, -1)->nodeName);
+	output += makeSettingString(target, color->getControlNode(2772, -1), 2772, -1, color->getControlNode(2772, -1)->nodeName);
+	output += makeSettingString(target, color->getController(2773, -1), 2773, -1, "CONTROLLER");
+	output += makeSettingString(target, color->getNoise(2774, -1), 2774, -1, color->getNoise(2774, -1)->noiseName);
+	output += makeSettingString(target, color->getNoise(2775, -1), 2775, -1, color->getNoise(2775, -1)->noiseName);
+	output += makeSettingString(target, color->getNoise(2776, -1), 2776, -1, color->getNoise(2776, -1)->noiseName);
+	output += std::get<std::string>(color->putProperty(nullptr, target, 2777, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(color->putProperty(nullptr, target, 2778, -1, nullptr, true, false, true).get()->obj);
+	//
 	output += "}\n\n";
 	return output;
 }
@@ -432,14 +440,12 @@ std::string TFSettingsWriter::writeSetting_alpha(std::shared_ptr<Tool> target, T
 {
 	std::string output = "alpha \n{\n";
 	output += makeSettingString(alpha->isEnabled, -1, -1, "isEnabled");
-	output += std::get<std::string>(alpha->putProperty(nullptr, target, 2800, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(alpha->putProperty(nullptr, target, 2801, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(alpha->putProperty(nullptr, target, 2802, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(alpha->putProperty(nullptr, target, 2803, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(alpha->putProperty(nullptr, target, 2810, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(alpha->putProperty(nullptr, target, 2811, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(alpha->putProperty(nullptr, target, 2812, -1, nullptr, true, false, true).get()->obj);
-	output += std::get<std::string>(alpha->putProperty(nullptr, target, 2813, -1, nullptr, true, false, true).get()->obj);
+	output += makeSettingString(target, alpha->getControlNode(2800, -1), 2800, -1, alpha->getControlNode(2800, -1)->nodeName);
+	output += makeSettingString(target, alpha->getController(2801, -1), 2801, -1, "CONTROLLER");
+	output += makeSettingString(target, alpha->getNoise(2802, -1), 2802, -1, alpha->getNoise(2802, -1)->noiseName);
+	output += makeSettingString(target, alpha->getControlNode(2803, -1), 2803, -1, alpha->getControlNode(2803, -1)->nodeName);
+	output += makeSettingString(target, alpha->getController(2804, -1), 2804, -1, "CONTROLLER");
+	output += makeSettingString(target, alpha->getNoise(2805, -1), 2805, -1, alpha->getNoise(2805, -1)->noiseName);
 	output += "}\n\n";
 	return output;
 }

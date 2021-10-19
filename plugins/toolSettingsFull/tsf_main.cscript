@@ -62,7 +62,8 @@ void tsf_dragBodyScroll(num selector)
 		ypos = clamp(ypos, 0, currentMaxTop - tsf_bodyScroll_height);
 		
 		setChildProperty_byID("tsf_body_scrollBar", "top", ypos);
-		num topPos = (ypos / (currentMaxTop - tsf_bodyScroll_height)) * (clamp(currentSlideBoxHeight - 40, 0, 3000));
+		num amount = ypos / (currentMaxTop - tsf_bodyScroll_height);
+		num topPos = amount * (currentSlideBoxHeight + (48 * amount));
 		app.ui.getWidget_byID("tsf_settingsContainer").setProperty("margin-top", -topPos);
 	}
 	else if (selector == 2)
@@ -87,7 +88,7 @@ void tsf_clickInterest(num page, string activeWidgetID)
 {
 	print clock();
 	setClassProperty("tsf_interestName", "background-color", global::darkGreyLight);
-	setClassProperty("tsf_settingsBlockWrapper", "visibility", "hidden");
+	setClassProperty("set_dynBlockWrapper", "visibility", "hidden");
 	
 	// Metadata and Control Interest Handling
 	if (page >= 0 && page <= 10)
@@ -399,14 +400,14 @@ void tsf_meta_getKey()
 {
 	meta_storeKeyMod = global::keyCap_modBitStore;
 	meta_storeKey = global::keyCap_keyStore;
-	app.toolbox.setActiveToolProp(21, -1, makeKeySig(meta_storeKeyMod, meta_storeKey), false);
+	app.toolbox.setActiveToolProp(21, -1, makeKeySig(meta_storeKey, meta_storeKeyMod), false);
 }
 
 void tsf_modOnly_getKey()
 {
 	modOnly_storeKeyMod = global::keyCap_modBitStore;
 	modOnly_storeKey = global::keyCap_keyStore;
-	app.toolbox.setActiveToolProp(modOnly_key_targetKeyID, -1, modOnly_storeKeyMod, false);
+	app.toolbox.setActiveToolProp(modOnly_key_targetKeyID, -1, makeKeySig(0, modOnly_storeKeyMod), false);
 }
 
 void tsf_removeBinding(num settingID, num subID, string textID)

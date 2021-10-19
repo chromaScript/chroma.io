@@ -18,6 +18,7 @@
 	fill-color: $lightGrey$;
 	font-path: "fonts/BarlowSemiCondensed-Light.ttf";
 	font-size: 13;
+	z-index: 2;
 }
 .mm_titleBar {
 	min-width: 150;
@@ -42,6 +43,7 @@
 	border: 0, 8, 2, 0;
 	background-color: $titleBarGrey$;
 	background-color-alpha: 0.0;
+	z-index: 2;
 	//position: relative;
 }
 #mm_menuTextBarWrapper {
@@ -114,6 +116,7 @@
 	overflow-Y: auto;
 	overflow-X: auto;
 	visibility: hide;
+	z-index: 2;
 }
 .mm_dropDownWrapperB {
 	width: 150;
@@ -128,6 +131,7 @@
 	visibility: hide;
 	overflow-Y: auto;
 	overflow-X: auto;
+	z-index: 2;
 }
 .mm_carrotRight {
 	dimensions: 7, 8;
@@ -145,4 +149,5 @@
 	border-bottom: 2;
 	margin-left: 4;
 	margin-right: 4;
+	z-index: 2;
 }

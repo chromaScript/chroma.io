@@ -5,15 +5,16 @@
 #include "../include/clayout/ChromaLayout.h"
 #include "../include/clayout/LToken.h"
 #include "../include/clayout/LProc.h"
-#include "../include/entities/WidgetStyle.h"
+#include "../include/entities/widgets/WidgetStyle.h"
 #include "../include/cscript/CEnums.h"
-#include "../include/entities/Widget.h"
+#include "../include/entities/widgets/Widget.h"
 #include "../include/cscript/CStmt.h"
+#include "../include/entities/widgets/Graph_ToolControl.h"
+#include "../include/entities/widgets/Noise_ToolControl.h"
 
 #include "../include/Application.h"
 #include "../include/entities/UserInterface.h"
 
-#include "../include/structs.h"
 
 #include <string>
 #include <vector>
@@ -22,6 +23,7 @@
 #include <stack>
 #include <filesystem>
 #include <iostream>
+#include <memory>
 
 LInterpreter::LInterpreter()
 {
@@ -181,6 +183,10 @@ std::shared_ptr<Widget> LInterpreter::visit(std::shared_ptr<LExpr_Element> expr)
 		shader = console.get()->owner.get()->getWidgetShader(); break;
 	case LTokenType::IMAGE:
 		shader = console.get()->owner.get()->getWidgetShader(); break;
+	case LTokenType::T_GRAPH:
+		shader = console.get()->owner.get()->getGraphWidgetShader(); break;
+	case LTokenType::T_NOISE:
+		shader = console.get()->owner.get()->getNoiseWidgetShader(); break;
 	case LTokenType::TEXT:
 	case LTokenType::LINE:
 	case LTokenType::BLOCK:
@@ -220,6 +226,7 @@ std::shared_ptr<Widget> LInterpreter::visit(std::shared_ptr<LExpr_Element> expr)
 	basicOnly = false;
 
 	std::shared_ptr<Widget> element = ui.get()->createWidget(expr.get()->widgetType.get()->type, basicAttribs, currentElement, style, shader);
+	
 	// Set properties
 	element.get()->_namespace = currentEnvironment.get()->_namespace;
 	element.get()->classAttribs = expr.get()->classes;
@@ -242,6 +249,18 @@ std::shared_ptr<Widget> LInterpreter::visit(std::shared_ptr<LExpr_Element> expr)
 			element.get()->childWidgets.push_back(childWidget);
 		}
 	}
+
+	// Do special initialization functions
+	if (element.get()->type == LTokenType::T_GRAPH)
+	{
+		std::dynamic_pointer_cast<Graph_ToolControl>(element).get()->initializeWidget(console.get()->owner.get()->ui);
+	}
+	// Do special initialization functions
+	else if (element.get()->type == LTokenType::T_NOISE)
+	{
+		std::dynamic_pointer_cast<Noise_ToolControl>(element).get()->initializeWidget(console.get()->owner.get()->ui);
+	}
+
 	// Clean up and exit
 	unboundAttribs.clear();
 	basicAttribs.clear();

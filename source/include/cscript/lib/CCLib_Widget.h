@@ -98,5 +98,19 @@ public:
 	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
 	virtual std::string toString();
 };
+class CStd_cfBindActiveToolSetting : public CFunction
+{
+public:
+	CStd_cfBindActiveToolSetting(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
+class CStd_cfCallSpecialFunction : public CFunction
+{
+public:
+	CStd_cfCallSpecialFunction(std::shared_ptr<CEnvironment> funcEnv);
+	virtual std::shared_ptr<CObject> call(std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments);
+	virtual std::string toString();
+};
 
 #endif

@@ -15,8 +15,8 @@
 #include "TFVisitors.h"
 #include "TFToken.h"
 
-#include "../ToolSettings.h"
-#include "../Toolbox.h"
+#include "../tool/ToolSettings.h"
+#include "../tool/Toolbox.h"
 
 class TFInterpreter : public TFExprVisitor_Abstract<std::shared_ptr<CObject>>, public TFStmtVisitor_Abstract<void>,
 	public std::enable_shared_from_this<TFInterpreter>

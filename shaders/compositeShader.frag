@@ -317,28 +317,30 @@ void colorize()
 void voronoise()
 {
 	float blurValue = 4;
-	vec2 uv = 0.5 - 0.5 * cos(blurValue * vec2(1.0,0.5));
-	uv = uv*uv*(3.0-2.0*uv);
-	uv = uv*uv*(3.0-2.0*uv);
-	uv = uv*uv*(3.0-2.0*uv);
+	vec2 uv = 0.5 - 0.5 * cos(blurValue * vec2(1.0, 0.5));
+	uv = uv * uv * (3.0 - 2.0 * uv);
+	uv = uv * uv * (3.0 - 2.0 * uv);
+	uv = uv * uv * (3.0 - 2.0 * uv);
 
-	float k = 1.0+63.0*pow(1.0 - uv.y, 6.0);
+	float k = 1.0 + 63.0 * pow(1.0 - uv.y, 6.0);
 
 	float size = 64;
     vec2 i = floor(texelCoord / size);
     vec2 f = fract(texelCoord / size);
     
 	vec2 a = vec2(0.0, 0.0);
-    for( int y=-2; y<=2; y++ )
-    for( int x=-2; x<=2; x++ )
-    {
-        vec2  g = vec2( x, y );
-		vec3  o = hash3(i + g) * vec3(uv.x, uv.x, 1.0);
-		vec2  d = g - f + o.xy;
-		float w = pow( 1.0-smoothstep(0.0,1.414,length(d)), k );
-		a += vec2(o.z*w,w);
-    }
-	
+    for(int y = -2; y <= 2; y++)
+	{
+		for(int x =- 2; x <= 2; x++)
+		{
+			vec2 g = vec2(x, y);
+			vec3 o = hash3(i + g) * vec3(uv.x, uv.x, 1.0);
+			vec2 d = g - f + o.xy;
+			float w = pow(1.0 - smoothstep(0.0, 1.414, length(d)), k);
+			a += vec2(o.z * w, w);
+		}
+	}
+
 	float gamma = a.x/a.y;
 	fxColor.rgb = mix(fxColor.rgb, vec3(gamma, gamma, gamma), 1.0);
 

@@ -350,6 +350,7 @@ std::shared_ptr<CObject> CEnvironment::get(std::vector<std::shared_ptr<SToken>> 
 
 std::shared_ptr<CEnvironment> CEnvironment::getEnvironment(std::string name)
 {
+	if (name == "global") { return console.get()->global; }
 	for (std::shared_ptr<CEnvironment> scope : scopes)
 	{
 		if (scope.get()->_namespace == name)

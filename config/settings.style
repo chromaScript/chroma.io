@@ -1,0 +1,376 @@
+.set_blockWrapper
+{
+	width: inherit;
+	min-height: 14;
+	margin-left: 4;
+	margin-top: 3;
+	margin-bottom: 4;
+	overflow-Y: auto;
+	float: left;
+}
+.set_dynBlockWrapper
+{
+	width: inherit;
+	height: inherit;
+	position: absolute;
+	float: left;
+}
+
+.set_block
+{
+	width: inherit;
+	min-height: $global::set_lineSize$;
+	overflow: auto;
+	float: left;
+	border-bottom: 3;
+	margin-top: 1;
+}
+
+.set_line
+{
+	width: inherit;
+	height: $global::set_lineSize$;
+	border-bottom: 3;
+	margin-left: 4;
+	margin-right: 4;
+	float: left;
+}
+
+.set_expandLine
+{
+	width: inherit;
+	min-height: $global::set_lineSize$;
+	overflow-Y: auto;
+	float: left;
+	border-bottom: 3;
+	margin-right: 4;
+}
+
+.set_vertLine
+{
+	width: $global::set_lineSize$;
+	height: inherit;
+	border-right: 3;
+	margin-top: 4;
+	margin-bottom: 4;
+	float: left;
+}
+
+.set_divider
+{
+	width: inherit;
+	height: 1;
+	border-bottom: 3;
+	margin-right: 4;
+	margin-left: 4;
+	background-color: $global::midGrey$;
+}
+.set_headerLine
+{
+	width: 130;
+	height: 1;
+	float: left;
+	margin-top: 8;
+	margin-right: 4;
+	margin-left: 4;
+	background-color: $global::midGrey$;
+}
+
+
+// Tabs
+.set_tabBar {
+	width: inherit;
+	height: 20;
+	margin-left: 2;
+	float: left;
+	background-color: $global::darkGrey$;
+}
+
+.set_tab {
+	min-width: 42;
+	height: 18;
+	overflow-X: auto;
+	float: left;
+	border-right: 3;
+	margin-top: 2;
+	background-color: $global::lowMidGrey$;
+}
+
+.set_tabText {
+	min-width: 12;
+	float: left;
+	margin-top: 2;
+	margin-left: 8;
+	margin-right: 8;
+	border-right: 4;
+	border-left: 4;
+	fill-color: $midGrey$;
+}
+
+// Buttons
+.set_closeButton_s {
+	width: 12;
+	height: 12;
+	background-texture: "textures/T_button_cross_smallA.png";
+	background-color-alpha: 1;
+	fill-color: $global::midGrey$;
+}
+
+.set_togBox {
+	width: 14;
+	height: 14;
+	margin-top: 2;
+	border-right: 8;
+	background-texture: "textures/T_button_checkBox_smallA.png";
+	fill-color: $global::midGrey$;
+}
+
+.set_controlTog {
+	width: 18;
+	height: 18;
+	border-right: 8;
+	background-texture: "textures/T_control_iconControl18_D.png";
+	fill-color: $global::midGrey$;
+}
+.set_noiseTog {
+	width: 18;
+	height: 18;
+	border-right: 8;
+	background-texture: "textures/T_control_iconNoise18_D.png";
+	fill-color: $global::midGrey$;
+}
+.set_colorTog {
+	width: 18;
+	height: 18;
+	border-left: 6;
+	border-right: 8;
+	background-color: black;
+}
+
+.set_graphButton {
+	width: 18;
+	height: 18;
+	background-color-alpha: 1;
+	fill-color: $global::midGrey$;
+}
+
+.set_noiseButton {
+	width: 18;
+	height: 18;
+	background-color-alpha: 1;
+	fill-color: $global::midGrey$;
+}
+
+.set_buttonDisabled {
+	fill-color: $global::darkGrey$;
+}
+
+.set_contNode_icon {
+	width: 18;
+	height: 18;
+	float: left;
+	border-right: 16;
+	background-color-alpha: 1;
+	fill-color: $global::midGrey$;
+}
+.set_iconPressure_s {
+	background-texture: "textures/T_control_iconPressure18_D.png";
+}
+.set_iconDir_s {
+	background-texture: "textures/T_control_iconDir18_D.png";
+}
+.set_iconTilt_s {
+	background-texture: "textures/T_control_iconTilt18_D.png";
+}
+.set_iconVelocity_s {
+	background-texture: "textures/T_control_iconVelocity18_D.png";
+}
+.set_iconRot_s {
+	background-texture: "textures/T_control_iconRot18_D.png";
+}
+.set_iconFunc_s {
+	background-texture: "textures/T_control_iconFunc18_D.png";
+}
+.set_iconScale_s {
+	background-texture: "textures/T_control_iconScale18_D.png";
+}
+.set_iconMove_s {
+	background-texture: "textures/T_control_iconMove18_D.png";
+}
+.set_iconMirror_s {
+	background-texture: "textures/T_control_iconMirror18_D.png";
+}
+.set_iconSave_s {
+	background-texture: "textures/T_control_iconSave18_D.png";
+}
+.set_iconZoomIn_s {
+	background-texture: "textures/T_control_iconZoomIn18_D.png";
+}
+.set_iconZoomOut_s {
+	background-texture: "textures/T_control_iconZoomOut18_D.png";
+}
+.set_iconReset_s {
+	background-texture: "textures/T_control_iconReset18_D.png";
+}
+
+// Text
+
+.set_text {
+	margin-top: 1;
+	min-width: 8;
+	border-right: 4;
+	border-left: 4;
+}
+.set_inBox {
+	width: inherit;
+	height: inherit;
+	border-right: 2;
+	margin-right: 4;
+	background-color: $global::darkGreyLight$;
+}
+.set_inText {
+	width: inherit;
+	margin-top: 1;
+	margin-left: 3;
+}
+
+// Sliders
+
+.set_slRail {
+	width: fill;
+	height: 2;
+	margin-top: 8;
+	margin-left: 2;
+	border-right: 2;
+	background-color: $global::midGrey$;
+}
+.set_slVertRail {
+	width: 2;
+	height: fill;
+	margin-left: 8;
+	margin-top: 2;
+	border-bottom: 2;
+	background-color: $global::midGrey$;
+}
+
+.set_slBox_minMax {
+	width: fill;
+	height: inherit;
+	border-right: 4;
+	float: left;
+}
+.set_slBox_single {
+	width: fill;
+	height: inherit;
+	border-right: 4;
+	float: left;
+}
+.set_slBox_vertSingle {
+	width: inherit;
+	height: fill;
+	border-bottom: 4;
+	float: left;
+}
+
+.set_sl_single {
+	width: $global::sl_singleWidth$;
+	height: 12;
+	position: absolute;
+	margin-top: 3;
+	background-color: $global::midGrey$;
+	box-shadow-color: black;
+	box-shadow-size: 1, 1;
+}
+.set_sl_vertSingle {
+	width: 12;
+	height: 6;
+	position: absolute;
+	margin-left: 3;
+	background-color: $global::midGrey$;
+	box-shadow-color: black;
+	box-shadow-size: 1, 1;
+}
+
+.set_sl_min {
+	width: $global::sl_doubleWidth$;
+	height: 8;
+	position: absolute;
+	background-texture: "textures/T_slider_carrot6x8_min_D.png";
+	background-color-alpha: 1;
+	fill-color: $global::midGrey$;
+	box-shadow-color: black;
+	box-shadow-size: 1, 1;
+	float: left;
+	margin-top: 11;
+}
+.set_sl_max {
+	width: $global::sl_doubleWidth$;
+	height: 8;
+	position: absolute;
+	background-texture: "textures/T_slider_carrot6x8_max_D.png";
+	background-color-alpha: 1;
+	fill-color: $global::midGrey$;
+	box-shadow-color: black;
+	box-shadow-size: 1, 1;
+	float: left;
+	margin-top: 1;
+}
+
+// Drop Menus
+
+// Drop Menu
+
+.set_dropWrapper {
+	min-width: 24;
+	height: inherit;
+	
+	overflow-X: auto;
+	background-color: $global::darkGreyLight$;
+}
+.set_dropText {
+	margin-left: 3;
+	margin-top: 1;
+	fill-color: $global::midGrey$;
+}
+
+.set_sub {
+	margin-left: 3;
+	margin-top: -1;
+	z-index: 2;
+}
+
+.set_dropTop {
+	width: inherit;
+	height: inherit;
+}
+
+.set_dropItem {
+	width: inherit;
+	height: 14;
+	margin-top: 2;
+	margin-bottom: 4;
+	border-bottom: 2;
+	z-index: 2;
+}
+
+.set_dropList {
+	position: absolute;
+	width: inherit;
+	min-height: 6;
+	top: 18;
+	overflow-Y: auto;
+	background-color: $global::darkGrey$;
+	z-index: 2;
+	visibility: hide;
+}
+
+.set_dropButton {
+	width: 12;
+	height: 12;
+	border-left: 3;
+	margin-top: 3;
+	margin-right: 3;
+	float: right;
+	background-texture: "textures/T_arrowDown36_D.png";
+	background-color-alpha: 1;
+}

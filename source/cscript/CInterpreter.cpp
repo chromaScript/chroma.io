@@ -9,7 +9,7 @@
 #include "../include/cscript/CObject.h"
 #include "../include/cscript/CCallable.h"
 #include "../include/cscript/CCallable_Lib.h"
-#include "../include/entities/WidgetStyle.h"
+#include "../include/entities/widgets/WidgetStyle.h"
 
 #include <string>
 #include <vector>
@@ -24,6 +24,13 @@ CInterpreter::CInterpreter()
 void CInterpreter::initialize(std::shared_ptr<ChromaScript> console)
 {
 	this->console = console;
+}
+
+void CInterpreter::resetInterpreter()
+{
+	foundBreak = false;
+	foundContinue = false;
+	foundReturn = false;
 }
 
 //
@@ -1245,5 +1252,26 @@ CLiteralTypes CInterpreter::tokenType_ToLiteralType(CTokenType type)
 	default:
 		console.get()->error("[interpreter:0901] blue - Encountered unfinished area of program.");
 		return CLiteralTypes::_CNil; break;
+	}
+}
+
+// 
+std::shared_ptr<CEnvironment> CInterpreter::getEnvironment()
+{
+	if (currentEnvironment == nullptr) { 
+		return console.get()->global; } 
+	else { 
+		return currentEnvironment; 
+	}
+}
+
+std::shared_ptr<CEnvironment> CInterpreter::getEnvironment(std::string name)
+{ 
+	if (currentEnvironment == nullptr) {
+		setEnvironment(console.get()->global);
+		return currentEnvironment.get()->getEnvironment(name);
+	}
+	else {
+		return currentEnvironment.get()->getEnvironment(name);
 	}
 }

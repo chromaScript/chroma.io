@@ -1,0 +1,199 @@
+num tcgp_activeTab = -1;
+num tcgp_activeTabSub = -1;
+bool tcgp_initialized = false;
+
+num activeGraphWidth = 0;
+num activeGraph_xpos = 0;
+num activeGraph_ypos = 0;
+
+void tcgp_graphSpecial(string widgetID, string funcName, num dragType)
+{
+	if (funcName == "reset" || funcName == "mirror")
+	{
+		array num args = {0};
+		app.ui.getWidget_byID(widgetID).callSpecialFunction("T_GRAPH", funcName, args);
+	}
+	else if (funcName == "move" || funcName == "scale")
+	{
+	
+		if (dragType == 0) {
+			activeGraphWidth = app.ui.getWidget_byID(widgetID).getProperty("size-X");
+			activeGraph_xpos = getMousePos()[0];
+			activeGraph_ypos = getMousePos()[1];
+		}
+		else if (dragType == 1) {
+			if (funcName == "scale") {
+				num xpos = getMousePos()[0];
+				array num args = { xpos - activeGraph_xpos };
+				activeGraph_xpos = xpos;
+				app.ui.getWidget_byID(widgetID).callSpecialFunction("T_GRAPH", funcName, args);
+			}
+			else if (funcName == "move") {
+				num xpos = getMousePos()[0];
+				num ypos = getMousePos()[1];
+				array num args = { (xpos - activeGraph_xpos) / 100.0, -((ypos - activeGraph_ypos) / 100.0) };
+				print args;
+				activeGraph_xpos = xpos;
+				activeGraph_ypos = ypos;
+				app.ui.getWidget_byID(widgetID).callSpecialFunction("T_GRAPH", funcName, args);
+			}
+		}
+	}
+}
+
+void tcgp_swapTab(num thisTab, num select)
+{
+	if (select < -1) {
+		if (select == -2) {
+			setChildProperty_byType("IMAGE", "fill-color", global::lightGrey);
+			if (tcgp_activeTab != thisTab) {
+				setProperty("background-color-alpha", 0.6);
+			}
+		}
+		else if (select == -3) {
+			if (tcgp_activeTab != thisTab) {
+				setChildProperty_byType("IMAGE", "fill-color", global::slateGrey);
+				setProperty("background-color-alpha", 0.2);
+			}
+			else {
+				setChildProperty_byType("IMAGE", "fill-color", global::midGrey);
+				setProperty("background-color-alpha", 1);
+			}
+		}
+	}
+	else if (tcgp_activeTab != thisTab) {
+		tcgp_activeTab = thisTab;
+		setClassProperty("tcgp_tab", "background-color-alpha", 0.2);
+		setClassProperty("tcgp_tabIcon", "fill-color", global::slateGrey);
+		setProperty("background-color-alpha", 1);
+		setChildProperty_byType("IMAGE", "fill-color", global::midGrey);
+		if (tcgp_activeTab == 5) {
+			app.ui.getWidget_byID("tcgp_offsetRail").setProperty("visibility", "hide");
+			app.ui.getWidget_byID("tcgp_graphContainer").setProperty("visibility", "hide");
+			app.ui.getWidget_byID("tcgp_functionBox").setProperty("visibility", "visible");
+			app.ui.getWidget_byID("tcgp_functionName").setProperty("value", app.toolbox.getActiveToolProp(global::aConSetID, 600, false, false));
+		}
+		else if (tcgp_activeTab >= 0)
+		{
+			if (tcgp_activeTab == 1) {
+				app.ui.getWidget_byID("tcgp_useDirIniText").setProperty("visibility", "visible");
+				app.ui.getWidget_byID("tcgp_useDirIni").setProperty("visibility", "visible");
+				print global::aConSetID;
+				global::update_tSetToggle("tcgp_useDirIni", global::aConSetID, 3);
+			}
+			else {
+				app.ui.getWidget_byID("tcgp_useDirIniText").setProperty("visibility", "hide");
+				app.ui.getWidget_byID("tcgp_useDirIni").setProperty("visibility", "hide");
+			}
+			app.ui.getWidget_byID("tcgp_graphContainer").setProperty("visibility", "visible");
+			app.ui.getWidget_byID("tcgp_functionBox").setProperty("visibility", "hide");
+			if (tcgp_activeTab == 1 || tcgp_activeTab == 4) {
+				if (tcgp_activeTab == 1) { tcgp_activeTabSub = 2; }
+				else { tcgp_activeTabSub = 5; }
+				app.ui.getWidget_byID("tcgp_offsetRail").setProperty("visibility", "visible");
+				app.ui.getWidget_byID("tcgp_offsetRail_text").setProperty("value", "OFFSET:");
+			}
+			else if (tcgp_activeTab == 3) {
+				tcgp_activeTabSub = 4;
+				app.ui.getWidget_byID("tcgp_offsetRail").setProperty("visibility", "visible");
+				app.ui.getWidget_byID("tcgp_offsetRail_text").setProperty("value", "CAP:");
+			}
+			else {
+				tcgp_activeTabSub = -1;
+				app.ui.getWidget_byID("tcgp_offsetRail").setProperty("visibility", "hide");
+			}
+			tcgp_updateGraphTab();
+		}
+	}
+}
+
+void tcgp_update()
+{
+	if (!tcgp_initialized) { 
+		tcgp_swapTab(0, 0);
+		app.ui.getWidget_byID("tcgp_tab_pressure").setProperty("background-color-alpha", 1);
+		app.ui.getWidget_byID("tcgp_tab_pressure").setChildProperty_byClass("tcgp_tabIcon", "fill-color", global::midGrey);
+		tcgp_initialized = true;
+	}
+	else {
+		tcgp_updateGraphTab(); // This already gets triggered under swapTab when initializing
+	}
+	tcgp_updateNodeTab();
+}
+
+void tcgp_updateNodeTab()
+{
+
+	if (aNodeSetID_1 != -1) {
+		app.ui.getWidget_byID("tcgp_node1").setProperty("visibility", "visible");
+		
+		app.ui.getWidget_byID("tcgp_node1_name").setProperty("value", app.toolbox.getActiveToolProp(global::aNodeSetID_1, 0, false, false));
+		
+		global::update_tSetToggle("tcgp_node1_pressure", global::aNodeSetID_1, 10);
+		global::update_tSetToggle("tcgp_node1_dir", global::aNodeSetID_1, 11);
+		global::update_tSetToggle("tcgp_node1_tilt", global::aNodeSetID_1, 12);
+		global::update_tSetToggle("tcgp_node1_velocity", global::aNodeSetID_1, 13);
+		global::update_tSetToggle("tcgp_node1_rot", global::aNodeSetID_1, 14);
+		global::update_tSetToggle("tcgp_node1_func", global::aNodeSetID_1, 15);
+
+		global::update_tSetSliderDouble("tcgp_node1_rangeBox", 
+			"tcgp_node1_slider_rMin", "tcgp_node1_rMin", "tcgp_node1_slider_rMax", "tcgp_node1_rMax", 
+			global::aNodeSetID_1, 3, global::aNodeSetID_1, 4);
+	}
+	else {
+		app.ui.getWidget_byID("tcgp_node1").setProperty("visibility", "hidden");
+	}
+	if (aNodeSetID_2 != -1) {
+		app.ui.getWidget_byID("tcgp_node2").setProperty("visibility", "visible");
+		
+		app.ui.getWidget_byID("tcgp_node2_name").setProperty("value", app.toolbox.getActiveToolProp(global::aNodeSetID_2, 0, false, false));
+		
+		global::update_tSetToggle("tcgp_node2_pressure", global::aNodeSetID_2, 10);
+		global::update_tSetToggle("tcgp_node2_dir", global::aNodeSetID_2, 11);
+		global::update_tSetToggle("tcgp_node2_tilt", global::aNodeSetID_2, 12);
+		global::update_tSetToggle("tcgp_node2_velocity", global::aNodeSetID_2, 13);
+		global::update_tSetToggle("tcgp_node2_rot", global::aNodeSetID_2, 14);
+		global::update_tSetToggle("tcgp_node2_func", global::aNodeSetID_2, 15);
+
+		global::update_tSetSliderDouble("tcgp_node2_rangeBox", 
+			"tcgp_node2_slider_rMin", "tcgp_node2_rMin", "tcgp_node2_slider_rMax", "tcgp_node2_rMax", 
+			global::aNodeSetID_2, 3, global::aNodeSetID_2, 4);
+	}
+	else {
+		app.ui.getWidget_byID("tcgp_node2").setProperty("visibility", "hidden");
+	}
+	if (aNodeSetID_3 != -1) {
+		app.ui.getWidget_byID("tcgp_node3").setProperty("visibility", "visible");
+		
+		app.ui.getWidget_byID("tcgp_node3_name").setProperty("value", app.toolbox.getActiveToolProp(global::aNodeSetID_3, 0, false, false));
+		
+		global::update_tSetToggle("tcgp_node3_pressure", global::aNodeSetID_3, 10);
+		global::update_tSetToggle("tcgp_node3_dir", global::aNodeSetID_3, 11);
+		global::update_tSetToggle("tcgp_node3_tilt", global::aNodeSetID_3, 12);
+		global::update_tSetToggle("tcgp_node3_velocity", global::aNodeSetID_3, 13);
+		global::update_tSetToggle("tcgp_node3_rot", global::aNodeSetID_3, 14);
+		global::update_tSetToggle("tcgp_node3_func", global::aNodeSetID_3, 15);
+
+		global::update_tSetSliderDouble("tcgp_node3_rangeBox", 
+			"tcgp_node3_slider_rMin", "tcgp_node3_rMin", "tcgp_node3_slider_rMax", "tcgp_node3_rMax", 
+			global::aNodeSetID_3, 3, global::aNodeSetID_3, 4);
+	}
+	else {
+		app.ui.getWidget_byID("tcgp_node3").setProperty("visibility", "hidden");
+	}
+}
+
+void tcgp_updateGraphTab()
+{
+	if (tcgp_activeTab != 5) {
+		app.ui.getWidget_byID("tcgp_graph").bindActiveToolSetting(global::aConSetID, -1 * (tcgp_activeTab + 1));
+		global::update_tSetSliderSingleVert("tcgp_sliderBox_dampening", 
+			"tcgp_slider_dampening", "tcgp_dampening", global::aConSetID, ((global::tcgp::tcgp_activeTab + 1) * 100) + 4);
+	}
+	if (tcgp_activeTabSub != -1) {
+		global::update_tSetSliderSingle("tcgp_sliderBox_offset", 
+			"tcgp_slider_offset", "tcgp_offset", global::aConSetID, tcgp::tcgp_activeTabSub);
+	}
+}
+
+bindCallbackEvent("storedEventListener", "tcgp_updateOpen", tcgp_update);

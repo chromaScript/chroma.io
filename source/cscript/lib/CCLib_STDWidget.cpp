@@ -13,14 +13,13 @@
 #include "../../include/clayout/LEnums.h"
 #include "../../include/cscript/CObject.h"
 #include "../../include/cscript/CToken.h"
-#include "../../include/entities/WidgetStyle.h"
+#include "../../include/entities/widgets/WidgetStyle.h"
 
 #include "../../include/Application.h"
 #include "../../include/entities/UserInterface.h"
-#include "../../include/Toolbox.h"
-#include "../../include/entities/Widget.h"
-#include "../../include/structs.h"
-#include "../../include/keys.h"
+#include "../../include/tool/Toolbox.h"
+#include "../../include/entities/widgets/Widget.h"
+#include "../../include/input/keys.h"
 #include <glm.hpp>
 
 #include <GLFW/glfw3.h>
@@ -31,52 +30,6 @@
 #include <map>
 
 extern std::shared_ptr<Application> chromaIO;
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// Internal Built-In Widget Functions
-//
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-//
-//
-// CInt_TextClick
-CInt_TextClick::CInt_TextClick(std::shared_ptr<CEnvironment> funcEnv, std::shared_ptr<UI> ui)
-{
-	this->ui = ui;
-	this->funcEnv = funcEnv;
-	this->type = CCallableTypes::_CInt_TextClick;
-	std::vector<std::shared_ptr<CToken>> scopeStack;
-	std::vector<std::shared_ptr<CToken>> paramsTypes;
-	std::vector<std::string> paramsNames;
-	this->funcDeclaration = std::make_shared<CStmt_Function>(
-		std::make_shared<CToken>(CTokenType::_VOID, -1), // returnType
-		std::make_shared<CToken>(CTokenType::IDENTIFIER, "@textClick", -1), // name
-		false, // isDeclarationOnly
-		scopeStack, // scope operator (empty)
-		paramsTypes, // paramTypes (empty)
-		paramsNames, // paramNames (empty)
-		nullptr // function body (native, see 'call()')
-		);
-}
-std::shared_ptr<CObject> CInt_TextClick::call(
-	std::shared_ptr<CInterpreter> interpreter, std::vector<std::shared_ptr<CObject>>* arguments)
-{
-	if (!ui.get()->activeWidget.expired())
-	{
-		// Text Input widgets automatically receive focus, even in the absense of a
-		// valid callback. If a focus callback exists, then it will have been triggered
-		// before reaching this point.
-		ui.get()->updateFocusWidget(ui.get()->activeWidget);
-		// Update the active input widget, which will signal to the program to swap
-		// the input stream over to text.
-		ui.get()->putActiveInputWidget(ui.get()->activeWidget, false, false, UI_WEVENT_NULL);
-	}
-	return std::make_shared<CObject>(nullptr);
-}
-std::string CInt_TextClick::toString() { return "<int @textClick>"; }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -326,7 +279,7 @@ std::shared_ptr<CObject> CStd_fSetChildProperty_byType::call(
 	// Cast Arg 0 as string
 	std::string typeName = std::get<std::string>(args[0].get()->obj);
 	LTokenType type = LTokenType::NIL;
-	if (layoutTypeMap.count(typeName) == 1) { type = layoutTypeMap.at(typeName); }
+	if (layoutStringTypeMap.count(typeName) == 1) { type = layoutStringTypeMap.at(typeName); }
 	std::string name = std::get<std::string>(args[1].get()->obj);
 	if (!ui.get()->activeWidget.expired())
 	{
@@ -378,7 +331,7 @@ std::shared_ptr<CObject> CStd_fGetChildProperty_byType::call(
 	// Cast Arg 0 as string
 	std::string typeName = std::get<std::string>(args[0].get()->obj);
 	LTokenType type = LTokenType::NIL;
-	if (layoutTypeMap.count(typeName) == 1) { type = layoutTypeMap.at(typeName); }
+	if (layoutStringTypeMap.count(typeName) == 1) { type = layoutStringTypeMap.at(typeName); }
 	std::string name = std::get<std::string>(args[1].get()->obj);
 	if (!ui.get()->activeWidget.expired())
 	{

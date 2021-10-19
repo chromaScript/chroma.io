@@ -1,0 +1,7 @@
+<NAME=Tool Settings Control Noise Pop Up>
+<VERSION=1.0>
+<ABOUT=chroma.IO Tool Settings Control Noise Pop Up>
+<NAMESPACE=tcnp>
+<LAYOUT_PATH=toolControlNoise_pop.layout>
+<STYLE_PATH=toolControlNoise_pop.style>
+<SCRIPT_PATH=toolControlNoise_pop.cscript>

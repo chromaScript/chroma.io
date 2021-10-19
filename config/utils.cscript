@@ -9,6 +9,21 @@ string keyCap_eventID = "";
 string testVar = "";
 bool testBool = false;
 
+array num panelMoveOffset = {0, 0};
+
+void movePanel_tar(num select, string target)
+{
+	if (select == 0)
+	{
+		panelMoveOffset = getMousePos_relative();
+	}
+	else if (select == 1)
+	{
+		array num pos = getMousePos();
+		app.ui.getWidget_byID(target).setPosition(pos[0] - panelMoveOffset[0], pos[1] - panelMoveOffset[1]);
+	}
+}
+
 void beginKeyCapture(string textWidgetID, string bgWidgetID, string updateText, num checkAgainst, function storedEvent)
 {
 	print "beginKeyCapture";
@@ -30,26 +45,24 @@ void beginKeyCapture(string textWidgetID, string bgWidgetID, string updateText, 
 	bindCallbackEvent("storedEventListener", keyCap_eventID, storedEvent);
 }
 
-bool finishKeyCapture(num modBit, num keyID)
+bool finishKeyCapture(num keyID, num modBit)
 {
-	print modBit;
-	print keyID;
 	bool result = false;
 	if (keyCap_check == 1)
 	{
-		result = app.isValidKeybind_tool(modBit, keyID);
+		result = app.isValidKeybind_tool(keyID, modBit);
 	}
 	else if (keyCap_check == 2)
 	{
-		result = app.isValidKeybind_alphaOnly(modBit, keyID);
+		result = app.isValidKeybind_alphaOnly(keyID, modBit);
 	}
 	else if (keyCap_check == 3)
 	{
-		result = app.isValidKeybind_symbolOrChar(modBit, keyID);
+		result = app.isValidKeybind_symbolOrChar(keyID, modBit);
 	}
 	else if (keyCap_check == 4)
 	{
-		result = app.isValidKeybind_modOnly(modBit, keyID);
+		result = app.isValidKeybind_modOnly(keyID, modBit);
 	}
 	
 	if (!result)
@@ -61,11 +74,11 @@ bool finishKeyCapture(num modBit, num keyID)
 	else
 	{
 		keyCap_modBitStore = modBit; keyCap_keyStore = keyID;
-		string keyString = keyToString(modBit, keyID);
+		string keyString = keyToString(keyID, modBit);
 		app.ui.getWidget_byID(keyCap_storeTextID).setProperty("value", keyString);
 	}
 	
-	triggerStoredEvent(keyCap_eventID);
+	triggerStoredEvent(keyCap_eventID, true);
 	
 	keyCap_storeTextID = ""; keyCap_storeBackID = ""; keyCap_check = 0;
 	return true;

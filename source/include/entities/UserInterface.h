@@ -1,9 +1,12 @@
 #ifndef USERINTERFACE_H
 #define USERINTERFACE_H
 
+#include "../math/transform.h"
+#include "../input/input.h"
+
 #include "Fonts.h"
-#include "Canvas.h"
-#include "Widget.h"
+#include "layers/Canvas.h"
+#include "widgets/Widget.h"
 #include "../CustomCursor.h"
 #include "../Application.h"
 #include "../cscript/CObject.h"
@@ -18,6 +21,50 @@ class CInterpreter;
 #include <filesystem>
 #include <functional>
 #include <memory>
+
+// WProperty is a struct for holding attribute information prior to parsing
+struct WProperty
+{
+	std::string fieldName;
+	std::string fieldValue;
+	WProperty() {}
+	WProperty(std::string name, std::string value)
+	{
+		this->fieldName = name;
+		this->fieldValue = value;
+	}
+};
+
+// WPlugin is a struct for holding data read from .plugin files
+class WPlugin
+{
+public:
+	std::string name;
+	std::string version;
+	std::string about;
+	std::string script_namespace;
+	std::filesystem::path plugin_path;
+	std::vector<std::filesystem::path> layout_paths;
+	std::vector<std::filesystem::path> style_paths;
+	std::vector<std::filesystem::path> script_paths;
+	std::vector<WProperty> pluginProperties;
+	WPlugin() {}
+	WPlugin(std::string name, std::string version, std::string about, std::string script_namespace,
+		std::filesystem::path pluginP,
+		std::vector<std::filesystem::path> layout_paths,
+		std::vector<std::filesystem::path> style_paths,
+		std::vector<std::filesystem::path> script_paths)
+	{
+		this->name = name;
+		this->version = version;
+		this->about = about;
+		this->script_namespace = script_namespace;
+		this->plugin_path = pluginP;
+		this->layout_paths = layout_paths;
+		this->style_paths = style_paths;
+		this->script_paths = script_paths;
+	}
+};
 
 class ZIndexStack
 {
@@ -51,8 +98,6 @@ public:
 class UI
 {
 private:
-	std::shared_ptr<Application> owner; // Note: Change to weak_ptr
-
 	// Font variables
 	std::shared_ptr<Fonts> fontHandler;
 
@@ -72,6 +117,8 @@ private:
 // Rebuild Widgets
 	std::vector<int> rebuildWidgetIDList;
 	std::vector<std::weak_ptr<Widget>> rebuildWidgets;
+// Delete Widgets
+	std::vector<std::weak_ptr<Widget>> deleteWidgets;
 
 // Resize Widgets
 	std::vector<std::weak_ptr<Widget>> resizeWidgets;
@@ -79,8 +126,12 @@ private:
 // ZStack Variables
 	bool isZStackActive = false;
 
+// Miscellaneous Widget Variables
+
 protected:
 public:
+	std::shared_ptr<Application> owner; // Note: Change to weak_ptr
+
 	// Color Variables
 	CColor fgColor = black;
 	CColor bgColor = white;
@@ -113,6 +164,7 @@ public:
 
 // Entered Widgets
 	std::map<int, std::weak_ptr<Widget>> enteredWidgets;
+	std::map<int, std::weak_ptr<Widget>> overWidgets;
 
 // Active Widget
 	// Used to act as a 'this' pointer for global functions that act on the
@@ -262,6 +314,9 @@ public:
 	std::vector<std::weak_ptr<Widget>> getWidgetsByType(std::string typeName, std::string idExclusion);
 	std::weak_ptr<Widget> getRootWidgetByID(std::string rootID);
 	// Widget Delete
+	void requestWidgetDeletion(std::shared_ptr<CInterpreter> interpreter, std::string lookup);
+	void clearDeletionRequests();
+	int checkDeletionCount() { return (int)deleteWidgets.size(); }
 	bool deleteWidget_byID(std::shared_ptr<CInterpreter> interpreter, std::string lookup);
 	// Widget Sorting
 	bool sortTargetWidgetChildren(std::shared_ptr<CInterpreter> interpreter,
@@ -271,11 +326,12 @@ public:
 	std::string sortEffectsOrdering_matchValue(std::vector<std::string>* widgetValues, std::string fxSearchStr);
 
 	// Cursor Functions
-	bool widgetSweepTest(MouseEvent input);
-	bool widgetHitTest(MouseEvent input, bool dragOnly, bool shouldFocus);
-	//bool widgetFocusTest(MouseEvent input);
-	bool widgetHoverTest(MouseEvent* input);
-	bool widgetLeaveTest(MouseEvent* input, unsigned int maxZIndex);
+	bool widgetSweepTest(Input input);
+	bool widgetHitTest(Input input, bool dragOnly, bool shouldFocus);
+	//bool widgetFocusTest(Input input);
+	bool widgetHoverTest(Input* input);
+	bool widgetLeaveTest(Input* input, unsigned int maxZIndex);
+	bool widgetOverTest(Input* input, unsigned int maxZIndex);
 	void updateCursorImage(std::shared_ptr<CustomCursor> cursor);
 	std::shared_ptr<CustomCursor> getCursor();
 

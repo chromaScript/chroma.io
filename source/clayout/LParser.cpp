@@ -413,6 +413,11 @@ bool LParser::isValidElementType(std::shared_ptr<LToken> token)
 	case LTokenType::BLOCK:
 	case LTokenType::PARAGRAPH:
 	case LTokenType::TEXT_ENTRY:
+	case LTokenType::R_GRAPH:
+	case LTokenType::C_GRAPH:
+	case LTokenType::T_GRAPH:
+	case LTokenType::EDIT_GRADIENT:
+	case LTokenType::T_NOISE:
 		return true;
 		break;
 	default:

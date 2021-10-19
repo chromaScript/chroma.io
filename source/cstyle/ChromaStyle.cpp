@@ -5,13 +5,14 @@
 #include "../include/cstyle/ChromaStyle.h"
 #include "../include/cstyle/SToken.h"
 #include "../include/cstyle/SEnums.h"
-#include "../include/entities/WidgetStyle.h"
+#include "../include/entities/widgets/WidgetStyle.h"
 #include "../include/cscript/CEnvironment.h"
 #include "../include/cscript/ChromaScript.h"
+#include "../include/entities/UserInterface.h"
 
 #include "../include/Application.h"
 
-#include "../include/structs.h"
+
 
 #include "glm.hpp"
 

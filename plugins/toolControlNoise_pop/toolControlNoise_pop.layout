@@ -1,0 +1,838 @@
+<ROOT id="toolControlNoise_pop" defaultPosition="600,40">
+<V_BOX id="tcnp_wrapper" ondragstart="movePanel_tar(0, &quot;tcnp_wrapper&quot;)" ondrag="movePanel_tar(1, &quot;tcnp_wrapper&quot;)">
+	////////////////////////////////
+	// Tabs
+	////////////////////////////////
+	<H_BOX class="set_tabBar">
+		<H_BOX id="tcnp_tab_1d" class="set_tab, tcnp_tab"
+			onmouseenter="tcnp_swapTab(0, -2)" onmouseleave="tcnp_swapTab(0, -3)" onclick="tcnp_swapTab(0, 0)">
+			<TEXT class="barlow12, set_tabText, tcnp_tabText" value="1D NOISE"></TEXT>
+		</H_BOX>
+		<H_BOX id="tcnp_tab_2d" class="set_tab, tcnp_tab"
+			onmouseenter="tcnp_swapTab(1, -2)" onmouseleave="tcnp_swapTab(1, -3)" onclick="tcnp_swapTab(1, 1)">
+			<TEXT class="barlow12, set_tabText, tcnp_tabText" value="2D NOISE"></TEXT>
+		</H_BOX>
+		<IMAGE class="set_closeButton_s" style="margin-right:4;margin-top:4;float:right;"
+			onmouseenter="hoverCloseButton(0)" onmouseleave="hoverCloseButton(1)" 
+			onclick="closePopup(&quot;tcnp_wrapper&quot;)"></IMAGE>
+	</H_BOX>
+	<V_BOX id="tcnp_body">
+		////////////////////////////////
+		// Global Settings
+		////////////////////////////////
+		<V_BOX id="tcnp_bodyGlobal" class="set_blockWrapper" style="border-bottom: 4;">
+			<V_BOX class="set_block">
+				<H_BOX class="set_line">
+					<H_BOX class="set_headerLine" style="float:left;"></H_BOX>
+						<TEXT id="tcnp_header" class="set_text, barlow12" style="float:center;" value="FLOW"></TEXT>
+					<H_BOX class="set_headerLine" style="float:right;"></H_BOX>
+				</H_BOX>
+				<H_BOX class="set_line">
+					<TEXT class="set_text, barlow12" value="PRESET:"></TEXT>
+					<H_BOX class="set_dropWrapper" style="max-width:110;">
+						<V_BOX class="set_dropTop">
+							<TEXT class="set_dropText, barlow12" value="CUSTOM"></TEXT>
+							<V_BOX class="set_dropList">
+							/*
+								<H_BOX class="set_dropItem">
+									<TEXT class="barlow12, tsf_dropText, tsf_sub" value="PERLIN"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem">
+									<TEXT class="barlow12, tsf_dropText, tsf_sub" value="ALPHABET"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem">
+									<TEXT class="barlow12, tsf_dropText, tsf_sub" value="SWITCH"></TEXT></H_BOX>
+							*/
+							</V_BOX>
+						</V_BOX>
+						<IMAGE class="set_dropButton"></IMAGE>
+					</H_BOX>
+					<TEXT class="set_text, barlow12" style="border-left:14;" value="USE FUNC:"></TEXT>
+					<IMAGE id="tcnp_gen_useFunc" class="set_togBox"
+						onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 52)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 52)"
+						onclick="tSetToggle(true, 0, global::aNoiseSetID, 52)"></IMAGE>
+					<H_BOX class="set_inBox" style="width:100;">
+						<LINE id="tcnp_gen_funcName" class="set_inText, barlow12, textInputColor" value="FUNC NAME"
+							onentry="tLine_entryStr(global::aNoiseSetID, 50, true)"
+							oncancel="tLine_entryStr(global::aNoiseSetID, 50, false)"></LINE>
+					</H_BOX>
+					<TEXT class="set_text, barlow12" value="PRE:"></TEXT>
+					<IMAGE id="tcnp_gen_funcFirst" class="set_togBox"
+						onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 53)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 53)"
+						onclick="tSetToggle(true, 0, global::aNoiseSetID, 53)"></IMAGE>
+				</H_BOX>
+				// Global Blend Mode, Allow Overflow & Seed Settings
+				<H_BOX class="set_line">
+					<TEXT class="set_text, barlow12" value="BLEND:" style="border-left:12;"></TEXT>
+					<H_BOX class="set_dropWrapper" style="max-width:110;"
+						onmouseenter="tDropList(1, &quot;NULL&quot;)" onmouseleave="tDropList(2, &quot;NULL&quot;)"
+						onclick="tDropList(0, &quot;tcnp_gen_blendModeDrop&quot;)" onblur="tDropList(0, &quot;tcnp_gen_blendModeDrop&quot;)">
+						<V_BOX class="set_dropTop">
+							<TEXT id="tcnp_gen_blendModeText" class="set_dropText, barlow12" value="MULTIPLY"></TEXT>
+							<V_BOX id="tcnp_gen_blendModeDrop" class="set_dropList">
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;MULTIPLY&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="MULTIPLY"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;DARKEN&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="DARKEN"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;COLOR BURN&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="COLOR BURN"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;INEAR BURN&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="LINEAR BURN"></TEXT></H_BOX>
+							<H_BOX class="set_divider, set_sub"></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;LIGHTEN&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="LIGHTEN"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;SCREEN&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="SCREEN"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;COLOR DODGE&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="COLOR DODGE"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;LINEAR DODGE&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="LINEAR DODGE"></TEXT></H_BOX>
+							<H_BOX class="set_divider, set_sub"></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;OVERLAY&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="OVERLAY"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;HARD LIGHT&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="HARD LIGHT"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;SOFT LIGHT&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="SOFT LIGHT"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;VIVID LIGHT&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="VIVID LIGHT"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;LINEAR LIGHT&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="LINEAR LIGHT"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;PIN LIGHT&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="PIN LIGHT"></TEXT></H_BOX>
+							<H_BOX class="set_divider, set_sub"></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;ADD&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="ADD"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;MODULO&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="MODULO"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;DIFFERENCE&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="DIFFERENCE"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;EXCLUSION&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="EXCLUSION"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;SUBTRACT&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="SUBTRACT"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_blendModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_blendModeDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_blendModeDrop&quot;, &quot;tcnp_gen_blendModeText&quot;, global::aNoiseSetID, 7, &quot;DIVIDE&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="DIVIDE"></TEXT></H_BOX>
+							</V_BOX>
+						</V_BOX>
+						<IMAGE class="set_dropButton"></IMAGE>
+					</H_BOX>
+					<TEXT class="set_text, barlow12" value="CLAMP:"></TEXT>
+					<IMAGE id="tcnp_gen_overflow" class="set_togBox"
+						onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 3)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 3)"
+						onclick="tSetToggle(true, 0, global::aNoiseSetID, 3)"></IMAGE>
+					<TEXT class="set_text, barlow12" value="SEED:"></TEXT>
+					<H_BOX class="set_inBox" style="width:52;">
+						<LINE id="tcnp_gen_seed" class="set_inText, barlow12, textInputColor, numberWhole" value="-1"
+							onentry="tLine_entry(global::aNoiseSetID, 4, true, -1, &quot;nil&quot;, &quot;nil&quot;)"
+							oncancel="tLine_entry(global::aNoiseSetID, 4, false, -1, &quot;nil&quot;, &quot;nil&quot;)"></LINE>
+					</H_BOX>
+					<TEXT class="set_text, barlow12" value="RAND:"></TEXT>
+					<IMAGE id="tcnp_gen_randSeed" class="set_togBox"
+						onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 6)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 6)"
+						onclick="tSetToggle(true, 0, global::aNoiseSetID, 6)"></IMAGE>
+				</H_BOX>
+				// Noise Total Range
+				<H_BOX class="set_line">
+					<TEXT class="set_text, barlow12" value="RANGE:"></TEXT>
+					<H_BOX id="tcnp_gen_rangeBox" class="set_slBox_minMax"
+						onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+						onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+						ondragstart="tSli_double(0, global::aNoiseSetID, 8, global::aNoiseSetID, 9, true, &quot;tcnp_gen_rMin&quot;, &quot;tcnp_gen_rMax&quot;)" 
+						ondrag="tSli_double(1, global::aNoiseSetID, 8, global::aNoiseSetID, 9, true, &quot;tcnp_gen_rMin&quot;, &quot;tcnp_gen_rMax&quot;)"
+						ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+						<H_BOX class="set_slRail"></H_BOX>
+						<IMAGE id="tcnp_gen_slider_rMin" class="set_sl_min"></IMAGE>
+						<IMAGE id="tcnp_gen_slider_rMax" class="set_sl_max"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcnp_gen_rMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+							onentry="tLine_entry(global::aNoiseSetID, 8, true, 1, &quot;tcnp_gen_slider_rMin&quot;, &quot;tcnp_gen_rangeBox&quot;)"
+							oncancel="tLine_entry(global::aNoiseSetID, 8, false, 1, &quot;tcnp_gen_slider_rMin&quot;, &quot;tcnp_gen_rangeBox&quot;)"></LINE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcnp_gen_rMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+							onentry="tLine_entry(global::aNoiseSetID, 9, true, 1, &quot;tcnp_gen_slider_rMax&quot;, &quot;tcnp_gen_rangeBox&quot;)"
+							oncancel="tLine_entry(global::aNoiseSetID, 9, false, 1, &quot;tcnp_gen_slider_rMax&quot;, &quot;tcnp_gen_rangeBox&quot;)"></LINE>
+					</H_BOX>
+				</H_BOX>
+				<H_BOX class="set_line">
+					<TEXT class="set_text, barlow12" value="NOISE BLEND:" style="border-left:12;"></TEXT>
+					<H_BOX class="set_dropWrapper" style="max-width:110;"
+						onmouseenter="tDropList(1, &quot;NULL&quot;)" onmouseleave="tDropList(2, &quot;NULL&quot;)"
+						onclick="tDropList(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onblur="tDropList(0, &quot;tcnp_gen_noiseBlendDrop&quot;)">
+						<V_BOX class="set_dropTop">
+							<TEXT id="tcnp_gen_noiseBlendText" class="set_dropText, barlow12" value="MULTIPLY"></TEXT>
+							<V_BOX id="tcnp_gen_noiseBlendDrop" class="set_dropList">
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;MULTIPLY&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="MULTIPLY"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;DARKEN&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="DARKEN"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;COLOR BURN&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="COLOR BURN"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;INEAR BURN&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="LINEAR BURN"></TEXT></H_BOX>
+							<H_BOX class="set_divider, set_sub"></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;LIGHTEN&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="LIGHTEN"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;SCREEN&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="SCREEN"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;COLOR DODGE&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="COLOR DODGE"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;LINEAR DODGE&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="LINEAR DODGE"></TEXT></H_BOX>
+							<H_BOX class="set_divider, set_sub"></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;OVERLAY&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="OVERLAY"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;HARD LIGHT&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="HARD LIGHT"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;SOFT LIGHT&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="SOFT LIGHT"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;VIVID LIGHT&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="VIVID LIGHT"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;LINEAR LIGHT&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="LINEAR LIGHT"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;PIN LIGHT&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="PIN LIGHT"></TEXT></H_BOX>
+							<H_BOX class="set_divider, set_sub"></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;ADD&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="ADD"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;MODULO&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="MODULO"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;DIFFERENCE&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="DIFFERENCE"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;EXCLUSION&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="EXCLUSION"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;SUBTRACT&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="SUBTRACT"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+								onmouseenter="tDrop_hover(0, &quot;tcnp_gen_noiseBlendDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_gen_noiseBlendDrop&quot;)"
+								onclick="tDropList_entry(&quot;tcnp_gen_noiseBlendDrop&quot;, &quot;tcnp_gen_noiseBlendText&quot;, global::aNoiseSetID, 17, &quot;DIVIDE&quot;)">
+									<TEXT class="barlow12, set_dropText, set_sub" value="DIVIDE"></TEXT></H_BOX>
+							</V_BOX>
+						</V_BOX>
+						<IMAGE class="set_dropButton"></IMAGE>
+					</H_BOX>
+					<TEXT class="set_text, barlow12" value="2D OVER 1D:"></TEXT>
+					<IMAGE id="tcnp_gen_applyFirst" class="set_togBox"
+						onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 18)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 18)"
+						onclick="tSetToggle(true, 0, global::aNoiseSetID, 18)"></IMAGE>
+					<TEXT class="set_text, barlow12" value="CENTER NOISE:" style="border-left:8;"></TEXT>
+					<IMAGE id="tcnp_gen_centerFinal" class="set_togBox"
+						onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 74)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 74)"
+						onclick="tSetToggle(true, 0, global::aNoiseSetID, 74)"></IMAGE>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+		<H_BOX class="set_divider"></H_BOX>
+		////////////////////////////////
+		// 1D Noise
+		////////////////////////////////
+		<V_BOX id="tcnp_body1d" class="set_blockWrapper" style="visibility:hidden;">
+			<V_BOX class="set_block">
+				<H_BOX class="set_line">
+					<TEXT class="set_text, barlow12" value="USE 1D NOISE:"></TEXT>
+					<IMAGE id="tcnp_1d_useNoise" class="set_togBox"
+						onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 10)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 10)"
+						onclick="tSetToggle(true, 0, global::aNoiseSetID, 10)"></IMAGE>
+					// 1D Noise Mix Amount
+					<TEXT class="set_text, barlow12" value="MIX:"></TEXT>
+					<H_BOX id="tcnp_1d_sliderBox_mixAmount" class="set_slBox_single"
+						onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+						onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+						ondragstart="tSli_single(0, global::aNoiseSetID, 16, true, &quot;tcnp_1d_mixAmount&quot;)" 
+						ondrag="tSli_single(1, global::aNoiseSetID, 16, true, &quot;tcnp_1d_mixAmount&quot;)"
+						ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+						<H_BOX class="set_slRail"></H_BOX>
+						<IMAGE id="tcnp_1d_slider_mixAmount" class="set_sl_single"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcnp_1d_mixAmount" class="set_inText, barlow12, textInputColor, percent2d" value="0.0"
+							onentry="tLine_entry(global::aNoiseSetID, 16, true, 0, &quot;tcnp_1d_slider_mixAmount&quot;, &quot;tcnp_1d_sliderBox_mixAmount&quot;)"
+							oncancel="tLine_entry(global::aNoiseSetID, 16, false, 0, &quot;tcnp_1d_slider_mixAmount&quot;, &quot;tcnp_1d_sliderBox_mixAmount&quot;)"></LINE>
+					</H_BOX>
+				</H_BOX>
+				<H_BOX class="set_divider"></H_BOX>
+				// Interval
+				<H_BOX class="set_line">
+					<TEXT class="set_text, barlow12" value="INTVERVAL:" style="border-left:12;"></TEXT>
+					<H_BOX class="set_dropWrapper" style="max-width:86;"
+						onmouseenter="tDropList(1, &quot;NULL&quot;)" onmouseleave="tDropList(2, &quot;NULL&quot;)"
+						onclick="tDropList(0, &quot;tcnp_1d_intervalDrop&quot;)" onblur="tDropList(0, &quot;tcnp_1d_intervalDrop&quot;)">
+						<V_BOX class="set_dropTop">
+							<TEXT id="tcnp_1d_intervalText" class="set_dropText, barlow12" value="PER SHARD"></TEXT>
+							<V_BOX id="tcnp_1d_intervalDrop" class="set_dropList">
+								<H_BOX class="set_dropItem"
+									onmouseenter="tDrop_hover(0, &quot;tcnp_1d_intervalDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_1d_intervalDrop&quot;)"
+									onclick="tcnp_update1dInterval(70);
+										tDropList_entry(&quot;tcnp_1d_intervalDrop&quot;, &quot;tcnp_1d_intervalText&quot;, global::aNoiseSetID, 11, &quot;PER SHARD&quot;);">
+									<TEXT class="barlow12, set_dropText, set_sub" value="PER SHARD"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+									onmouseenter="tDrop_hover(0, &quot;tcnp_1d_intervalDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_1d_intervalDrop&quot;)"
+									onclick="tcnp_update1dInterval(71);
+										tDropList_entry(&quot;tcnp_1d_intervalDrop&quot;, &quot;tcnp_1d_intervalText&quot;, global::aNoiseSetID, 11, &quot;PER ANCHOR&quot;);">
+									<TEXT class="barlow12, set_dropText, set_sub" value="PER ANCHOR"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+									onmouseenter="tDrop_hover(0, &quot;tcnp_1d_intervalDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_1d_intervalDrop&quot;)"
+									onclick="tcnp_update1dInterval(72);
+										tDropList_entry(&quot;tcnp_1d_intervalDrop&quot;, &quot;tcnp_1d_intervalText&quot;, global::aNoiseSetID, 11, &quot;PER SPLINE&quot;);">
+									<TEXT class="barlow12, set_dropText, set_sub" value="PER SPLINE"></TEXT></H_BOX>
+								<H_BOX class="set_dropItem"
+									onmouseenter="tDrop_hover(0, &quot;tcnp_1d_intervalDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_1d_intervalDrop&quot;)"
+									onclick="tcnp_update1dInterval(73);
+										tDropList_entry(&quot;tcnp_1d_intervalDrop&quot;, &quot;tcnp_1d_intervalText&quot;, global::aNoiseSetID, 11, &quot;PER ENTITY&quot;);">
+									<TEXT class="barlow12, set_dropText, set_sub" value="PER ENTITY"></TEXT></H_BOX>
+							</V_BOX>
+						</V_BOX>
+						<IMAGE class="set_dropButton"></IMAGE>
+					</H_BOX>
+					// Enable Smoothing
+					<TEXT class="set_text, barlow12" value="SMOOTH:"></TEXT>
+					<IMAGE id="tcnp_1d_intervalSmooth" class="set_togBox"
+						onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 12)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 12)"
+						onclick="tSetToggle(true, 0, global::aNoiseSetID, 12)"></IMAGE>
+					// Count
+					<TEXT class="set_text, barlow12" style="border-left:2;" value="COUNT:"></TEXT>
+					<H_BOX id="tcnp_1d_sliderBox_intervalCount" class="set_slBox_single"
+						onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+						onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+						ondragstart="tSli_single(0, global::aNoiseSetID, global::tcnp::tcnp_1dIntervalSig, true, &quot;tcnp_1d_intervalCount&quot;)" 
+						ondrag="tSli_single(1, global::aNoiseSetID, global::tcnp::tcnp_1dIntervalSig, true, &quot;tcnp_1d_intervalCount&quot;)"
+						ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+						<H_BOX class="set_slRail"></H_BOX>
+						<IMAGE id="tcnp_1d_slider_intervalCount" class="set_sl_single"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:30;">
+						<LINE id="tcnp_1d_intervalCount" class="set_inText, barlow12, textInputColor, numberWhole" value="0"
+							onentry="tLine_entry(global::aNoiseSetID, global::tcnp::tcnp_1dIntervalSig, true, 0, &quot;tcnp_1d_slider_intervalCount&quot;, &quot;tcnp_1d_sliderBox_intervalCount&quot;)"
+							oncancel="tLine_entry(global::aNoiseSetID, global::tcnp::tcnp_1dIntervalSig, false, 0, &quot;tcnp_1d_slider_intervalCount&quot;, &quot;tcnp_1d_sliderBox_intervalCount&quot;)"></LINE>
+					</H_BOX>
+				</H_BOX>
+				// Weight / Intensity / Smoothing
+				<H_BOX class="set_line">
+					<TEXT class="set_text, barlow12" value="WEIGHT:" style="width:54;"></TEXT>
+					<H_BOX id="tcnp_1d_sliderBox_weight" class="set_slBox_single"
+						onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+						onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+						ondragstart="tSli_single(0, global::aNoiseSetID, 13, true, &quot;tcnp_1d_weight&quot;)" 
+						ondrag="tSli_single(1, global::aNoiseSetID, 13, true, &quot;tcnp_1d_weight&quot;)"
+						ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+						<H_BOX class="set_slRail"></H_BOX>
+						<IMAGE id="tcnp_1d_slider_weight" class="set_sl_single"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcnp_1d_weight" class="set_inText, barlow12, textInputColor, percent2d" value="0.0"
+							onentry="tLine_entry(global::aNoiseSetID, 13, true, 0, &quot;tcnp_1d_slider_weight&quot;, &quot;tcnp_1d_sliderBox_weight&quot;)"
+							oncancel="tLine_entry(global::aNoiseSetID, 13, false, 0, &quot;tcnp_1d_slider_weight&quot;, &quot;tcnp_1d_sliderBox_weight&quot;)"></LINE>
+					</H_BOX>
+				</H_BOX>
+				<H_BOX class="set_line">
+					<TEXT class="set_text, barlow12" value="INTENSITY:" style="width:54;"></TEXT>
+					<H_BOX id="tcnp_1d_sliderBox_intensity" class="set_slBox_single"
+						onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+						onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+						ondragstart="tSli_single(0, global::aNoiseSetID, 14, true, &quot;tcnp_1d_intensity&quot;)" 
+						ondrag="tSli_single(1, global::aNoiseSetID, 14, true, &quot;tcnp_1d_intensity&quot;)"
+						ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+						<H_BOX class="set_slRail"></H_BOX>
+						<IMAGE id="tcnp_1d_slider_intensity" class="set_sl_single"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcnp_1d_intensity" class="set_inText, barlow12, textInputColor, percent2d" value="0.0"
+							onentry="tLine_entry(global::aNoiseSetID, 14, true, 0, &quot;tcnp_1d_slider_intensity&quot;, &quot;tcnp_1d_sliderBox_intensity&quot;)"
+							oncancel="tLine_entry(global::aNoiseSetID, 14, false, 0, &quot;tcnp_1d_slider_intensity&quot;, &quot;tcnp_1d_sliderBox_intensity&quot;)"></LINE>
+					</H_BOX>
+				</H_BOX>
+				<H_BOX class="set_line" style="margin-bottom:4;">
+					<TEXT class="set_text, barlow12" value="SMOOTHING:" style="width:54;"></TEXT>
+					<H_BOX id="tcnp_1d_sliderBox_smoothing" class="set_slBox_single"
+						onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+						onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+						ondragstart="tSli_single(0, global::aNoiseSetID, 15, true, &quot;tcnp_1d_smoothing&quot;)" 
+						ondrag="tSli_single(1, global::aNoiseSetID, 15, true, &quot;tcnp_1d_smoothing&quot;)"
+						ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+						<H_BOX class="set_slRail"></H_BOX>
+						<IMAGE id="tcnp_1d_slider_smoothing" class="set_sl_single"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcnp_1d_smoothing" class="set_inText, barlow12, textInputColor, percent2d" value="0.0"
+							onentry="tLine_entry(global::aNoiseSetID, 15, true, 0, &quot;tcnp_1d_slider_smoothing&quot;, &quot;tcnp_1d_sliderBox_smoothing&quot;)"
+							oncancel="tLine_entry(global::aNoiseSetID, 15, false, 0, &quot;tcnp_1d_slider_smoothing&quot;, &quot;tcnp_1d_sliderBox_smoothing&quot;)"></LINE>
+					</H_BOX>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+		////////////////////////////////
+		// 2D Noise
+		////////////////////////////////
+		<V_BOX id="tcnp_body2d" class="set_blockWrapper" style="visibility:hidden;">
+			<V_BOX class="set_block">
+				<H_BOX class="set_line">
+					<TEXT class="set_text, barlow12" value="USE 2D NOISE:"></TEXT>
+					<IMAGE id="tcnp_2d_useNoise" class="set_togBox"
+						onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 20)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 20)"
+						onclick="tSetToggle(true, 0, global::aNoiseSetID, 20)"></IMAGE>
+					// 2D Mix Amount
+					<TEXT class="set_text, barlow12" value="MIX:"></TEXT>
+					<H_BOX id="tcnp_2d_sliderBox_mixAmount" class="set_slBox_single"
+						onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+						onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+						ondragstart="tSli_single(0, global::aNoiseSetID, 40, true, &quot;tcnp_2d_mixAmount&quot;)" 
+						ondrag="tSli_single(1, global::aNoiseSetID, 40, true, &quot;tcnp_2d_mixAmount&quot;)"
+						ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+						<H_BOX class="set_slRail"></H_BOX>
+						<IMAGE id="tcnp_2d_slider_mixAmount" class="set_sl_single"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_inBox" style="width:36;">
+						<LINE id="tcnp_2d_mixAmount" class="set_inText, barlow12, textInputColor, percent2d" value="0.0"
+							onentry="tLine_entry(global::aNoiseSetID, 40, true, 0, &quot;tcnp_2d_slider_mixAmount&quot;, &quot;tcnp_2d_sliderBox_mixAmount&quot;)"
+							oncancel="tLine_entry(global::aNoiseSetID, 40, false, 0, &quot;tcnp_2d_slider_mixAmount&quot;, &quot;tcnp_2d_sliderBox_mixAmount&quot;)"
+							></LINE>
+					</H_BOX>
+				</H_BOX>
+				<H_BOX class="set_divider"></H_BOX>
+				// Toggle Lock Origin to Canvas
+				<H_BOX class="set_line">
+					<TEXT class="set_text, barlow12" value="LOCK WITH CANVAS:"></TEXT>
+					<IMAGE id="tcnp_2d_useOriginOffset" class="set_togBox"
+						onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 22)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 22)"
+						onclick="tSetToggle(true, 0, global::aNoiseSetID, 22)"></IMAGE>
+					<TEXT class="set_text, barlow12" value="SCALE: TO CANVAS:"></TEXT>
+					<IMAGE id="tcnp_2d_scaleCanvasSize" class="set_togBox"
+						onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 23)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 23)"
+						onclick="tSetToggle(true, 0, global::aNoiseSetID, 23)"></IMAGE>
+					<TEXT class="set_text, barlow12" value="TO TOOL:"></TEXT>
+					<IMAGE id="tcnp_2d_scaleToolSize" class="set_togBox"
+						onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 24)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 24)"
+						onclick="tSetToggle(true, 0, global::aNoiseSetID, 24)"></IMAGE>
+				</H_BOX>
+				<H_BOX class="set_divider"></H_BOX>
+				// Noise Settings
+				<H_BOX class="set_expandLine" style="margin-bottom:8;">
+					// Noise Variables
+					<V_BOX class="set_block" style="width:fill;float:left;">
+						// Factor A
+						<H_BOX class="set_line">
+							<TEXT class="set_text, barlow12" value="VAR A:"></TEXT>
+							<H_BOX id="tcnp_2d_sliderBox_factorA" class="set_slBox_single"
+								onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+								onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+								ondragstart="tSli_single(0, global::aNoiseSetID, 25, true, &quot;tcnp_2d_factorA&quot;)" 
+								ondrag="tSli_single(1, global::aNoiseSetID, 25, true, &quot;tcnp_2d_factorA&quot;)"
+								ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+								<H_BOX class="set_slRail"></H_BOX>
+								<IMAGE id="tcnp_2d_slider_factorA" class="set_sl_single"></IMAGE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_factorA" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 25, true, 0, &quot;tcnp_2d_slider_factorA&quot;, &quot;tcnp_2d_sliderBox_factorA&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 25, false, 0, &quot;tcnp_2d_slider_factorA&quot;, &quot;tcnp_2d_sliderBox_factorA&quot;)"></LINE>
+							</H_BOX>
+						</H_BOX>
+						// Factor B
+						<H_BOX class="set_line">
+							<TEXT class="set_text, barlow12" value="VAR B:"></TEXT>
+							<H_BOX id="tcnp_2d_sliderBox_factorB" class="set_slBox_single"
+								onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+								onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+								ondragstart="tSli_single(0, global::aNoiseSetID, 26, true, &quot;tcnp_2d_factorB&quot;)" 
+								ondrag="tSli_single(1, global::aNoiseSetID, 26, true, &quot;tcnp_2d_factorB&quot;)"
+								ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+								<H_BOX class="set_slRail"></H_BOX>
+								<IMAGE id="tcnp_2d_slider_factorB" class="set_sl_single"></IMAGE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_factorB" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 26, true, 0, &quot;tcnp_2d_slider_factorB&quot;, &quot;tcnp_2d_sliderBox_factorB&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 26, false, 0, &quot;tcnp_2d_slider_factorB&quot;, &quot;tcnp_2d_sliderBox_factorB&quot;)"></LINE>
+							</H_BOX>
+						</H_BOX>
+						// Factor C
+						<H_BOX class="set_line">
+							<TEXT class="set_text, barlow12" value="VAR C:"></TEXT>
+							<H_BOX id="tcnp_2d_sliderBox_factorC" class="set_slBox_single"
+								onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+								onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+								ondragstart="tSli_single(0, global::aNoiseSetID, 27, true, &quot;tcnp_2d_factorC&quot;)" 
+								ondrag="tSli_single(1, global::aNoiseSetID, 27, true, &quot;tcnp_2d_factorC&quot;)"
+								ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+								<H_BOX class="set_slRail"></H_BOX>
+								<IMAGE id="tcnp_2d_slider_factorC" class="set_sl_single"></IMAGE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_factorC" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 27, true, 0, &quot;tcnp_2d_slider_factorC&quot;, &quot;tcnp_2d_sliderBox_factorC&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 27, false, 0, &quot;tcnp_2d_slider_factorC&quot;, &quot;tcnp_2d_sliderBox_factorC&quot;)"></LINE>
+							</H_BOX>
+						</H_BOX>
+						// Rotation
+						<H_BOX class="set_line" style="margin-right:0;">
+							<TEXT class="set_text, barlow12" value="ROT:"></TEXT>
+							<IMAGE id="tcnp_2d_rotateNoise" class="set_togBox"
+								onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 28)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 28)"
+								onclick="tSetToggle(true, 0, global::aNoiseSetID, 28)"></IMAGE>
+							<H_BOX id="tcnp_2d_sliderBox_rotation" class="set_slBox_single"
+								onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+								onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+								ondragstart="tSli_single(0, global::aNoiseSetID, 29, true, &quot;tcnp_2d_rotation&quot;)" 
+								ondrag="tSli_single(1, global::aNoiseSetID, 29, true, &quot;tcnp_2d_rotation&quot;)"
+								ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+								<H_BOX class="set_slRail"></H_BOX>
+								<IMAGE id="tcnp_2d_slider_rotation" class="set_sl_single"></IMAGE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_rotation" class="set_inText, barlow12, textInputColor, degree1d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 29, true, 0, &quot;tcnp_2d_slider_rotation&quot;, &quot;tcnp_2d_sliderBox_rotation&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 29, false, 0, &quot;tcnp_2d_slider_rotation&quot;, &quot;tcnp_2d_sliderBox_rotation&quot;)"></LINE>
+							</H_BOX>
+						</H_BOX>
+						// Range
+						<H_BOX class="set_line" style="margin-right:0;">
+							<TEXT class="set_text, barlow12" value="RANGE:"></TEXT>
+							<H_BOX id="tcnp_2d_sliderBox_range" class="set_slBox_minMax"
+								onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+								onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+								ondragstart="tSli_double(0, global::aNoiseSetID, 34, global::aNoiseSetID, 35, true, &quot;tcnp_2d_rangeMin&quot;, &quot;tcnp_2d_rangeMax&quot;)" 
+								ondrag="tSli_double(1, global::aNoiseSetID, 34, global::aNoiseSetID, 35, true, &quot;tcnp_2d_rangeMin&quot;, &quot;tcnp_2d_rangeMax&quot;)">
+								<H_BOX class="set_slRail"></H_BOX>
+								<IMAGE id="tcnp_2d_slider_rangeMin" class="set_sl_min"></IMAGE>
+								<IMAGE id="tcnp_2d_slider_rangeMax" class="set_sl_max"></IMAGE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_rangeMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 34, true, 1, &quot;tcnp_2d_slider_rangeMin&quot;, &quot;tcnp_2d_sliderBox_range&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 34, false, 1, &quot;tcnp_2d_slider_rangeMin&quot;, &quot;tcnp_2d_sliderBox_range&quot;)"></LINE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_rangeMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 35, true, 1, &quot;tcnp_2d_slider_rangeMax&quot;, &quot;tcnp_2d_sliderBox_range&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 35, false, 1, &quot;tcnp_2d_slider_rangeMax&quot;, &quot;tcnp_2d_sliderBox_range&quot;)"></LINE>
+							</H_BOX>
+						</H_BOX>
+						// Smoothing of Range
+						<H_BOX class="set_line">
+							<TEXT class="set_text, barlow12" value="SMOOTHING:"></TEXT>
+							<H_BOX id="tcnp_2d_sliderBox_valueSmooth" class="set_slBox_single"
+								onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+								onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+								ondragstart="tSli_single(0, global::aNoiseSetID, 36, true, &quot;tcnp_2d_valueSmooth&quot;)" 
+								ondrag="tSli_single(1, global::aNoiseSetID, 36, true, &quot;tcnp_2d_valueSmooth&quot;)"
+								ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+								<H_BOX class="set_slRail"></H_BOX>
+								<IMAGE id="tcnp_2d_slider_valueSmooth" class="set_sl_single"></IMAGE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_valueSmooth" class="set_inText, barlow12, textInputColor, percent2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 36, true, 0, &quot;tcnp_2d_slider_valueSmooth&quot;, &quot;tcnp_2d_sliderBox_valueSmooth&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 36, false, 0, &quot;tcnp_2d_slider_valueSmooth&quot;, &quot;tcnp_2d_sliderBox_valueSmooth&quot;)"></LINE>
+							</H_BOX>
+						</H_BOX>
+						// Brightness Contrast
+						<H_BOX class="set_line" style="margin-right:0;">
+							<TEXT class="set_text, barlow12" value="B/C:"></TEXT>
+							<H_BOX id="tcnp_2d_sliderBox_contrast" class="set_slBox_minMax"
+								onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+								onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+								ondragstart="tSli_double(0, global::aNoiseSetID, 33, global::aNoiseSetID, 32, true, &quot;tcnp_2d_contrastMin&quot;, &quot;tcnp_2d_contrastMax&quot;)" 
+								ondrag="tSli_double(1, global::aNoiseSetID, 33, global::aNoiseSetID, 32, true, &quot;tcnp_2d_contrastMin&quot;, &quot;tcnp_2d_contrastMax&quot;)"
+								ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+								<H_BOX class="set_slRail"></H_BOX>
+								<IMAGE id="tcnp_2d_slider_contrastMin" class="set_sl_min"></IMAGE>
+								<IMAGE id="tcnp_2d_slider_contrastMax" class="set_sl_max"></IMAGE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_contrastMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 33, true, 1, &quot;tcnp_2d_slider_contrastMin&quot;, &quot;tcnp_2d_sliderBox_contrast&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 33, false, 1, &quot;tcnp_2d_slider_contrastMin&quot;, &quot;tcnp_2d_sliderBox_contrast&quot;)"></LINE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_contrastMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 32, true, 1, &quot;tcnp_2d_slider_contrastMax&quot;, &quot;tcnp_2d_sliderBox_contrast&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 32, false, 1, &quot;tcnp_2d_slider_contrastMax&quot;, &quot;tcnp_2d_sliderBox_contrast&quot;)"></LINE>
+							</H_BOX>
+						</H_BOX>
+						// Black / White Levels
+						<H_BOX class="set_line" style="margin-right:0;">
+							<TEXT class="set_text, barlow12" value="B/W:"></TEXT>
+							<H_BOX id="tcnp_2d_sliderBox_white" class="set_slBox_minMax"
+								onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+								onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+								ondragstart="tSli_double(0, global::aNoiseSetID, 30, global::aNoiseSetID, 31, true, &quot;tcnp_2d_whiteMin&quot;, &quot;tcnp_2d_whiteMax&quot;)" 
+								ondrag="tSli_double(1, global::aNoiseSetID, 30, global::aNoiseSetID, 31, true, &quot;tcnp_2d_whiteMin&quot;, &quot;tcnp_2d_whiteMax&quot;)"
+								ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+								<H_BOX class="set_slRail"></H_BOX>
+								<IMAGE id="tcnp_2d_slider_whiteMin" class="set_sl_min"></IMAGE>
+								<IMAGE id="tcnp_2d_slider_whiteMax" class="set_sl_max"></IMAGE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_whiteMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 30, true, 1, &quot;tcnp_2d_slider_whiteMin&quot;, &quot;tcnp_2d_sliderBox_white&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 30, false, 1, &quot;tcnp_2d_slider_whiteMin&quot;, &quot;tcnp_2d_sliderBox_white&quot;)"></LINE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_whiteMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 31, true, 1, &quot;tcnp_2d_slider_whiteMax&quot;, &quot;tcnp_2d_sliderBox_white&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 31, false, 1, &quot;tcnp_2d_slider_whiteMax&quot;, &quot;tcnp_2d_sliderBox_white&quot;)"></LINE>
+							</H_BOX>
+						</H_BOX>
+						// Invert & Flip Toggles
+						<H_BOX class="set_line">
+							<TEXT class="set_text, barlow12" value="INVERT:"></TEXT>
+							<IMAGE id="tcnp_2d_invert" class="set_togBox"
+								onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 37)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 37)"
+								onclick="tSetToggle(true, 0, global::aNoiseSetID, 37)"></IMAGE>
+							<TEXT class="set_text, barlow12" value="FLIP: X:"></TEXT>
+							<IMAGE id="tcnp_2d_flipX" class="set_togBox"
+								onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 38)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 38)"
+								onclick="tSetToggle(true, 0, global::aNoiseSetID, 38)"></IMAGE>
+							<TEXT class="set_text, barlow12" value="Y:"></TEXT>
+							<IMAGE id="tcnp_2d_flipY" class="set_togBox"
+								onmouseenter="tSetToggle(false, 0, global::aNoiseSetID, 39)" onmouseleave="tSetToggle(false, 1, global::aNoiseSetID, 39)"
+								onclick="tSetToggle(true, 0, global::aNoiseSetID, 39)"></IMAGE>
+						</H_BOX>
+					</V_BOX>
+					// Noise Box
+					<V_BOX id="tcnp_noiseWrapper">
+						<H_BOX id="tcnp_noiseBoxCont">
+						
+							<T_NOISE id="tcnp_noiseBox">
+							</T_NOISE>
+							
+							<V_BOX id="tcnp_noiseButtons">
+								<IMAGE class="set_noiseButton, tcnp_nButton, set_iconSave_s, set_buttonDisabled"></IMAGE>
+								<IMAGE class="set_noiseButton, tcnp_nButton, set_iconReset_s"
+									onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+									onclick="tcnp_resetNoise2D()"></IMAGE>
+								<IMAGE class="set_noiseButton, tcnp_nButton, set_iconZoomIn_s"
+									onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+									onclick="tcnp_zoomNoise(0, &quot;tcnp_noiseBox&quot;)"
+									></IMAGE>
+								<IMAGE class="set_noiseButton, tcnp_nButton, set_iconZoomOut_s"
+									onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+									onclick="tcnp_zoomNoise(1, &quot;tcnp_noiseBox&quot;)"
+									></IMAGE>
+							</V_BOX>
+						</H_BOX>
+						<H_BOX class="set_line" style="margin-left:0;margin-right:12;">
+							<TEXT class="set_text, barlow12" value="FUNC:" style="border-left:12;"></TEXT>
+							<H_BOX class="set_dropWrapper" style="max-width:130;"
+								onmouseenter="tDropList(1, &quot;NULL&quot;)" onmouseleave="tDropList(2, &quot;NULL&quot;)"
+								onclick="tDropList(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onblur="tDropList(0, &quot;tcnp_2d_noiseFuncDrop&quot;)">
+								<V_BOX class="set_dropTop">
+									<TEXT id="tcnp_2d_noiseFuncText" class="set_dropText, barlow12" value="PERLIN"></TEXT>
+									<V_BOX id="tcnp_2d_noiseFuncDrop" class="set_dropList">
+										<H_BOX class="set_dropItem"
+											onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+											onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;PERLIN&quot;)">
+											<TEXT class="barlow12, set_dropText, set_sub" value="PERLIN"></TEXT></H_BOX>
+										<H_BOX class="set_dropItem"
+											onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+											onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;SIMPLEX&quot;)">
+											<TEXT class="barlow12, set_dropText, set_sub" value="SIMPLEX"></TEXT></H_BOX>
+										<H_BOX class="set_dropItem"
+											onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+											onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;RANDOM&quot;)">
+											<TEXT class="barlow12, set_dropText, set_sub" value="RANDOM"></TEXT></H_BOX>
+										<H_BOX class="set_dropItem"
+											onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+											onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;VORONI&quot;)">
+											<TEXT class="barlow12, set_dropText, set_sub" value="VORONI"></TEXT></H_BOX>
+										<H_BOX class="set_dropItem"
+											onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+											onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;VOROTWIST&quot;)">
+											<TEXT class="barlow12, set_dropText, set_sub" value="VOROTWIST"></TEXT></H_BOX>
+										<H_BOX class="set_dropItem"
+											onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+											onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;VOROBLUR&quot;)">
+											<TEXT class="barlow12, set_dropText, set_sub" value="VOROBLUR"></TEXT></H_BOX>
+										//<H_BOX class="set_dropItem"
+										//	onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+										//	onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;CANVAS&quot;)">
+										//	<TEXT class="barlow12, set_dropText, set_sub" value="CANVAS"></TEXT></H_BOX>
+										<H_BOX class="set_dropItem"
+											onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+											onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;CELLULAR A&quot;)">
+											<TEXT class="barlow12, set_dropText, set_sub" value="CELLULAR A"></TEXT></H_BOX>
+										<H_BOX class="set_dropItem"
+											onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+											onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;CELLULAR B&quot;)">
+											<TEXT class="barlow12, set_dropText, set_sub" value="CELLULAR B"></TEXT></H_BOX>
+										<H_BOX class="set_dropItem"
+											onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+											onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;HALFTONE DOTS&quot;)">
+											<TEXT class="barlow12, set_dropText, set_sub" value="HALFTONE DOTS"></TEXT></H_BOX>
+										<H_BOX class="set_dropItem"
+											onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+											onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;MAZE&quot;)">
+											<TEXT class="barlow12, set_dropText, set_sub" value="MAZE"></TEXT></H_BOX>
+										<H_BOX class="set_dropItem"
+											onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+											onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;ROUND&quot;)">
+											<TEXT class="barlow12, set_dropText, set_sub" value="ROUND"></TEXT></H_BOX>
+										<H_BOX class="set_dropItem"
+											onmouseenter="tDrop_hover(0, &quot;tcnp_2d_noiseFuncDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tcnp_2d_noiseFuncDrop&quot;)"
+											onclick="tDropList_entry(&quot;tcnp_2d_noiseFuncDrop&quot;, &quot;tcnp_2d_noiseFuncText&quot;, global::aNoiseSetID, 21, &quot;TRIANGLES&quot;)">
+											<TEXT class="barlow12, set_dropText, set_sub" value="TRIANGLES"></TEXT></H_BOX>
+									</V_BOX>
+								</V_BOX>
+								<IMAGE class="set_dropButton"></IMAGE>
+							</H_BOX>
+						</H_BOX>
+						// Scale X/Y
+						<H_BOX class="set_line">
+							//<TEXT class="set_text, barlow12" value="SCALE X/Y:"></TEXT>
+							<H_BOX id="tcnp_2d_sliderBox_scale" class="set_slBox_minMax"
+								onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+								onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+								ondragstart="tSli_double(0, global::aNoiseSetID, 41, global::aNoiseSetID, 42, true, &quot;tcnp_2d_scaleX&quot;, &quot;tcnp_2d_scaleY&quot;)" 
+								ondrag="tSli_double(1, global::aNoiseSetID, 41, global::aNoiseSetID, 42, true, &quot;tcnp_2d_scaleX&quot;, &quot;tcnp_2d_scaleY&quot;)"
+								ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+								<H_BOX class="set_slRail"></H_BOX>
+								<IMAGE id="tcnp_2d_slider_scaleX" class="set_sl_min"></IMAGE>
+								<IMAGE id="tcnp_2d_slider_scaleY" class="set_sl_max"></IMAGE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_scaleX" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 41, true, 1, &quot;tcnp_2d_slider_scaleX&quot;, &quot;tcnp_2d_sliderBox_scale&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 41, false, 1, &quot;tcnp_2d_slider_scaleX&quot;, &quot;tcnp_2d_sliderBox_scale&quot;)"></LINE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_scaleY" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 42, true, 1, &quot;tcnp_2d_slider_scaleY&quot;, &quot;tcnp_2d_sliderBox_scale&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 42, false, 1, &quot;tcnp_2d_slider_scaleY&quot;, &quot;tcnp_2d_sliderBox_scale&quot;)"></LINE>
+							</H_BOX>
+						</H_BOX>
+						// Skew Factor
+						<H_BOX class="set_line">
+							<TEXT class="set_text, barlow12" value="SKEW:"></TEXT>
+							<H_BOX id="tcnp_2d_sliderBox_skew" class="set_slBox_single"
+								onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+								onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+								ondragstart="tSli_single(0, global::aNoiseSetID, 43, true, &quot;tcnp_2d_skew&quot;)" 
+								ondrag="tSli_single(1, global::aNoiseSetID, 43, true, &quot;tcnp_2d_skew&quot;)"
+								ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+								<H_BOX class="set_slRail"></H_BOX>
+								<IMAGE id="tcnp_2d_slider_skew" class="set_sl_single"></IMAGE>
+							</H_BOX>
+							<H_BOX class="set_inBox" style="width:36;">
+								<LINE id="tcnp_2d_skew" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+									onentry="tLine_entry(global::aNoiseSetID, 43, true, 0, &quot;tcnp_2d_slider_skew&quot;, &quot;tcnp_2d_sliderBox_skew&quot;)"
+									oncancel="tLine_entry(global::aNoiseSetID, 43, false, 0, &quot;tcnp_2d_slider_skew&quot;, &quot;tcnp_2d_sliderBox_skew&quot;)"></LINE>
+							</H_BOX>
+						</H_BOX>
+					</V_BOX>
+				</H_BOX>
+			</V_BOX>
+		</V_BOX>
+	</V_BOX>
+	
+	/*
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()" 
+		ondragstart="resizeWidget(0, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		class="resizeBarLeft"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()" 
+		ondragstart="resizeWidget(0, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 0, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		class="resizeBarRight"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 1, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 1, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 1, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"		
+		class="resizeBarBottom"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"		
+		class="resizeBarBottomLeft, debugMagenta"></H_BOX>
+	<H_BOX 
+		onmouseenter="global::cursorHand()" onmouseleave="global::cursorPointer()"
+		ondragstart="resizeWidget(0, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondrag="resizeWidget(1, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		ondragend="resizeWidget(2, 2, &quot;tsf_wrapper&quot;, tsf_minWidth, tsf_minHeight)"
+		class="resizeBarBottomRight, debugMagenta"></H_BOX>
+		*/
+</V_BOX>
+</ROOT>

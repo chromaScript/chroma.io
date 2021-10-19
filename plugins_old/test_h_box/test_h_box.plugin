@@ -1,6 +1,0 @@
-<NAME=Test H_Box>
-<VERSION=1.0>
-<ABOUT=Testing horizontal box for setting up layout parsing and element creation>
-<NAMESPACE=test_h_box>
-<LAYOUT_PATH=test_h_box.layout>
-<STYLE_PATH=test_h_box.style>

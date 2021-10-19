@@ -3,9 +3,13 @@
 
 #include <glm.hpp>
 
-#include "../Color.h"
-#include "../structs.h"
-#include "../Shader.h"
+#include "../math/Color.h"
+#include "../math/blend.h"
+#include "../math/transform.h"
+
+#include <memory>
+
+class Shader;
 
 class VisualEntity
 {
@@ -25,7 +29,7 @@ protected:
 	
 	// Render Properties
 	int channelCount = 0;
-	BlendModes blendMode = BlendModes::normal;
+	BlendMode blendMode = BlendMode::normal;
 	std::shared_ptr<Shader> shader;
 
 	// Data variables
@@ -72,7 +76,7 @@ public:
 	glm::ivec2 getDimensions();
 	float getRatio();
 	int getiArea();
-	virtual void setVertData();
+	virtual void setVertData(bool flipY);
 
 	// Data Functions
 	void initializeData(int area);
@@ -81,8 +85,8 @@ public:
 	void clearData(int area);
 
 	// Blend functions
-	void setBlendMode(BlendModes mode);
-	BlendModes getBlendMode();
+	void setBlendMode(BlendMode mode);
+	BlendMode getBlendMode();
 
 	// Render Functions
 	void setShader(std::shared_ptr<Shader> program);
