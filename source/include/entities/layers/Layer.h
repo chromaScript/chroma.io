@@ -41,8 +41,8 @@ public:
 	// Management Functions
 	bool clearLayer();
 	// Render f\Functions
-	virtual void render(ShaderTransform xform, unsigned int targetBuffer) = 0;
-	virtual void draw(ShaderTransform xform) = 0;
+	virtual void render(ShaderTransform* xform, unsigned int targetBuffer) = 0;
+	virtual void draw(ShaderTransform* xform) = 0;
 };
 
 #endif

@@ -200,10 +200,12 @@
     <ClCompile Include="source\entities\VisualEntity.cpp" />
     <ClCompile Include="source\entities\visuals\Fragment.cpp" />
     <ClCompile Include="source\entities\visuals\FragmentAnchor.cpp" />
+    <ClCompile Include="source\entities\visuals\PreviewObj.cpp" />
     <ClCompile Include="source\entities\visuals\Shape.cpp" />
     <ClCompile Include="source\entities\visuals\Stroke.cpp" />
     <ClCompile Include="source\entities\visuals\StrokeShard.cpp" />
     <ClCompile Include="source\entities\visuals\VertexData.cpp" />
+    <ClCompile Include="source\entities\visuals\Visualizer.cpp" />
     <ClCompile Include="source\entities\widgets\Block.cpp" />
     <ClCompile Include="source\entities\widgets\ColorBox.cpp" />
     <ClCompile Include="source\entities\widgets\GradientBox.cpp" />
@@ -421,10 +423,12 @@
     <ClInclude Include="source\include\entities\VisualEntity.h" />
     <ClInclude Include="source\include\entities\visuals\Fragment.h" />
     <ClInclude Include="source\include\entities\visuals\FragmentAnchor.h" />
+    <ClInclude Include="source\include\entities\visuals\PreviewObj.h" />
     <ClInclude Include="source\include\entities\visuals\Shape.h" />
     <ClInclude Include="source\include\entities\visuals\Stroke.h" />
     <ClInclude Include="source\include\entities\visuals\StrokeShard.h" />
     <ClInclude Include="source\include\entities\visuals\VertexData.h" />
+    <ClInclude Include="source\include\entities\visuals\Visualizer.h" />
     <ClInclude Include="source\include\entities\widgets\Block.h" />
     <ClInclude Include="source\include\entities\widgets\ColorBox.h" />
     <ClInclude Include="source\include\entities\widgets\GradientBox.h" />
@@ -595,6 +599,9 @@
     <None Include="shaders\layerShader.vert" />
     <None Include="shaders\noiseWidgetShader.frag" />
     <None Include="shaders\noiseWidgetShader.vert" />
+    <None Include="shaders\previewShader.frag" />
+    <None Include="shaders\previewShader.geom" />
+    <None Include="shaders\previewShader.vert" />
     <None Include="shaders\shardShader.frag" />
     <None Include="shaders\shardShader.vert" />
     <None Include="shaders\textShader.frag" />

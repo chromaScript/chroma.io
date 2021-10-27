@@ -24,72 +24,78 @@ class ToolSettings;
 class TSet_ContinuousControl : public ToolSettings // 400
 {
 public:
-	TSetProp defaultMode; // draw / polyDraw // 400
-	Keybind alternateModeKey; // 401
+	TSetProp defaultMode = TSetProp::draw; // draw / line // 400
+	Keybind alternateModeKey = Keybind(InputKey::unknown, InputModKey::alt); // 401
+	Keybind altAngleSnapKeyA = Keybind(InputKey::unknown, InputModKey::shift); // 402
+	float altAngleSnapA_angle = 15.0f; // 403
+	Keybind altAngleSnapKeyB = Keybind(InputKey::unknown, InputModKey::ctrl); // 404
+	float altAngleSnapB_angle = 5.0f; // 405
+	bool subdivideAltMode = false; // 406
+	float pressureBoost = 1.0f; // 407
 	//
-	float anchorSpacing; // 402
-	bool relativeSpacing; // 403
-	bool useCanvas; // 404
+	bool closeShape = false; // 408
+	bool subdivideClose = false; // 409
+	//
+	Keybind connectLastStrokeKey = Keybind(InputKey::unknown, InputModKey::shift); // 410
+	bool subdivideConnectLast = false; // 411
+	//
+	float anchorSpacing = 2.5f; // 415
+	bool relativeSpacing = true; // 416
+	bool useCanvas = false; // 417
+	bool enableAltSnapA = true; // 418
+	bool enableAltSnapB = true; // 419
 	float trueSpacing = 0.5f;
-	bool useAngle; // 405
-	float angleMin; // 406
-	float angleMax; // 407
-	float angleBias; // 408
-	bool useDirection; // 410
-	bool relativeDistance; // 411
-	float splineRandomXMin; // 412
-	float splineRandomXMax; // 413
-	float splineRandomXBias; // 414
-	float splineRandomYMin; // 415
-	float splineRandomYMax; // 416
-	float splineRandomYBias; // 417
-	//
-	bool fillOnShiftClick;
-	bool fillOnPolyDraw;
-	float connectPropertiesWeighting;
+
+	float distRange = 500.0f;
+	float countRange = 50.0f;
+
+	TSetControl_Node angleNode = TSetControl_Node(-1.0f, 1.0f, true, "ANGLE"); // 420
+	TSetController angleController; // 421
+	TSetNoise angleNoise = TSetNoise(-1.0f, 1.0f, true, "ANGLE"); // 422
+
+	TSetControl_Node distanceXNode = TSetControl_Node(-1.0f, 1.0f, true, "DIST X"); // 423
+	TSetController distanceXController; // 424
+	TSetNoise distanceXNoise = TSetNoise(-1.0f, 1.0f, true, "DIST X"); // 425
+
+	TSetControl_Node distanceYNode = TSetControl_Node(-1.0f, 1.0f, true, "DIST Y"); // 426
+	TSetController distanceYController; // 427
+	TSetNoise distanceYNoise = TSetNoise(-1.0f, 1.0f, true, "DIST Y"); // 428
+
+	TSetControl_Node countNode = TSetControl_Node(0.0f, 1.0f, false, "COUNT"); // 429
+	TSetController countController; // 430
+	TSetNoise countNoise = TSetNoise(0.0f, 1.0f, false, "COUNT"); // 431
+	TSetProp connectionType = TSetProp::all; // 432
+	int connectInterval = 1; // 433
+
+	bool useAngle = false; // 434
+	bool useDirection = false; // 435
+	float offsetAngle = 0.0f; // 436
+	bool relativeDistance = false; // 437
+
 	// Constraint angles must always be between -90 to +90. Because they are an 'axis',
 	// the opposite angle will also be considered. Entering a negative angle, or angle beyond 180
 	// should be handled by the UI widget and corrected before sending, elsewise it will
 	// get clamped.
 	// The user may set a different mod key for each constraint, enabling more customization and
 	// finer control when two desired constraints would be difficult to distinguish.
-	float constraintLengthThreshold; // 430
+	float constraintLengthThreshold = 1.2f; // 440
 	// Constraint Angle A
-	bool enableConstrainA; // 431
-	float constrainA_angle; // 432
-	Keybind constrainA_modKey; // 433
+	bool enableConstrainA = true; // 441
+	float constrainA_angle = 0.0f; // 442
+	Keybind constrainA_modKey = Keybind(InputKey::unknown, InputModKey::shift); // 443
 	// Constraint Angle B
-	bool enableConstrainB; // 435
-	float constrainB_angle; // 436
-	Keybind constrainB_modKey; // 437
+	bool enableConstrainB = true; // 445
+	float constrainB_angle = 90.0f; // 446
+	Keybind constrainB_modKey = Keybind(InputKey::unknown, InputModKey::shift); // 447
 	// Constraint Angle C
-	bool enableConstrainC; // 440
-	float constrainC_angle; // 441
-	Keybind constrainC_modKey; // 442
+	bool enableConstrainC = true; // 450
+	float constrainC_angle = 45.0f; // 451
+	Keybind constrainC_modKey = Keybind(InputKey::unknown, InputModKey::shift); // 452
 	// Constraint Angle D
-	bool enableConstrainD; // 445
-	float constrainD_angle; // 446
-	Keybind constrainD_modKey; // 447
-	// Quick Swap Keys (Overrides constraint angle keys & all other hotkeys)
-	// These can be mapped to any tool and any regular key expression. Availability, accepted keys, and number of
-	// hot swaps able to be set depends on the input control mode, and thus hot swap keys are bound within each
-	// control mode for each tool, rather than as global key bindings.
-	// Hotswap Angle A
-	bool enableHotswapA; // 450
-	int hotswapA_toolID; // 451
-	Keybind hotswapA_modKey; // 452
-	// Hotswap Angle B
-	bool enableHotswapB; // 453
-	int hotswapB_toolID; // 454
-	Keybind hotswapB_modKey; // 455
-	// Hotswap Angle C
-	bool enableHotswapC; // 456
-	int hotswapC_toolID; // 457
-	Keybind hotswapC_modKey; // 458
-	// Hotswap Angle D
-	bool enableHotswapD; // 459
-	int hotswapD_toolID; // 460
-	Keybind hotswapD_modKey; // 461
+	bool enableConstrainD = true; // 455
+	float constrainD_angle = -45.0f; // 456
+	Keybind constrainD_modKey = Keybind(InputKey::unknown, InputModKey::shift); // 457
+
 	// Control Variables (Unexposed)
 	bool activated = false;
 	Keybind activeKey = Keybind();
@@ -111,6 +117,15 @@ public:
 	TSet_ContinuousControl();
 	void clearConstraint();
 	void updateTrueSpacing(std::shared_ptr<Tool> owner, int canvasWidth, int canvasHeight);
+	void initialize(float* trueSpacing, int* entityCount, int* tipSize, glm::ivec2* canvasDimensions);
+	glm::vec3 modulatePosition(
+		glm::vec3& finalPos, int* tipSize,
+		glm::vec3* pos, glm::vec3* origin, glm::vec3* dir, Input* input,
+		int* shardCount, int* anchorCount, int* splineCount);
+	int modulateCount(
+		int& outCount,
+		glm::vec3* pos, glm::vec3* origin, glm::vec3* dir, Input* input,
+		int* shardCount, int* anchorCount, int* splineCount);
 };
 
 #endif

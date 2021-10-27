@@ -1075,6 +1075,378 @@
 			// SAMPLER CONTROL
 			////////////////////////////////////////////
 			<V_BOX id="tsf_bodyControl_sampler" class="set_dynBlockWrapper" style="visibility:hidden;">
+				<V_BOX class="tsf_settingsBlock">
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="SAMPLE BG KEY:"></TEXT>
+						<H_BOX id="tsf_sampler_sampleBGKeyBox" class="tsf_inputBox" style="width:64;"
+							onmouseenter="global::hoverMidGreyButton(0)" 
+							onmouseleave="global::hoverMidGreyButton(1)"
+							onrightclick="tsf_removeBinding(928, -1, &quot;tsf_sampler_sampleBGKey&quot;)"
+							onclick="modOnly_key_targetKeyID = 928; 
+								beginKeyCapture(&quot;tsf_sampler_sampleBGKey&quot;, &quot;tsf_sampler_sampleBGKeyBox&quot;, &quot;enter key...&quot;, 4, tsf_modOnly_getKey);">
+							<TEXT id="tsf_sampler_sampleBGKey" class="tsf_dropText, barlow12" value="SET KEY..."></TEXT>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="SAMPLE:" style="border-left:6;"></TEXT>
+						<H_BOX class="set_dropWrapper" style="max-width:96;"
+							onmouseenter="tDropList(1, &quot;NULL&quot;)" onmouseleave="tDropList(2, &quot;NULL&quot;)"
+							onclick="tDropList(0, &quot;tsf_sampler_sampleTypeDrop&quot;)" onblur="tDropList(0, &quot;tsf_sampler_sampleTypeDrop&quot;)">
+							<V_BOX class="set_dropTop">
+								<TEXT id="tsf_sampler_sampleTypeText" class="set_dropText, barlow12" value="ALL LAYERS"></TEXT>
+								<V_BOX id="tsf_sampler_sampleTypeDrop" class="set_dropList">
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_sampler_sampleTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_sampler_sampleTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_sampler_sampleTypeDrop&quot;, &quot;tsf_sampler_sampleTypeText&quot;, 937, -1, &quot;ALL LAYERS&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="ALL LAYERS"></TEXT></H_BOX>
+								</V_BOX>
+							</V_BOX>
+							<IMAGE class="set_dropButton"></IMAGE>
+						</H_BOX>
+						<TEXT class="set_text, barlow12" value="SHAPE:" style="border-left:6;"></TEXT>
+						<H_BOX class="set_dropWrapper" style="max-width:66;"
+							onmouseenter="tDropList(1, &quot;NULL&quot;)" onmouseleave="tDropList(2, &quot;NULL&quot;)"
+							onclick="tDropList(0, &quot;tsf_sampler_shapeTypeDrop&quot;)" onblur="tDropList(0, &quot;tsf_sampler_shapeTypeDrop&quot;)">
+							<V_BOX class="set_dropTop">
+								<TEXT id="tsf_sampler_shapeTypeText" class="set_dropText, barlow12" value="POINT"></TEXT>
+								<V_BOX id="tsf_sampler_shapeTypeDrop" class="set_dropList">
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_sampler_shapeTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_sampler_shapeTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_sampler_shapeTypeDrop&quot;, &quot;tsf_sampler_shapeTypeText&quot;, 901, -1, &quot;POINT&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="POINT"></TEXT></H_BOX>
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_sampler_shapeTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_sampler_shapeTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_sampler_shapeTypeDrop&quot;, &quot;tsf_sampler_shapeTypeText&quot;, 901, -1, &quot;RADIUS&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="RADIUS"></TEXT></H_BOX>
+								</V_BOX>
+							</V_BOX>
+							<IMAGE class="set_dropButton"></IMAGE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="SAMPLE SIZE:"></TEXT>
+						<H_BOX id="tsf_sampler_sliderBox_size" class="set_slBox_single"
+							onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+							onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+							ondragstart="tSli_single(0, 902, -1, true, &quot;tsf_sampler_size&quot;)" 
+							ondrag="tSli_single(1, 902, -1, true, &quot;tsf_sampler_size&quot;)"
+							ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_sampler_slider_size" class="set_sl_single"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:38;">
+							<LINE id="tsf_sampler_size" class="set_inText, barlow12, textInputcharacter, numberWhole" value="0"
+								onentry="tLine_entry(902, -1, true, 0, &quot;tsf_sampler_slider_size&quot;, &quot;tsf_sampler_sliderBox_size&quot;)"
+								oncancel="tLine_entry(902, -1, false, 0, &quot;tsf_sampler_slider_size&quot;, &quot;tsf_sampler_sliderBox_size&quot;)"></LINE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_divider"></H_BOX>
+					// FG Color Dynamics Control/Noise
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="FG COLOR:"></TEXT>
+						<TEXT class="set_text, barlow12" value="ENABLE:"></TEXT>
+						<IMAGE id="tsf_sampler_tog_fgDynamics" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 929, -1)" onmouseleave="tSetToggle(false, 1, 929, -1)"
+							onclick="tSetToggle(true, 0, 929, -1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="CONTROL:"></TEXT>
+						<IMAGE class="set_controlTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(false, &quot;tcgp_wrapper&quot;, 933, 930, 931, 932)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="TYPE:" style="border-left:6;"></TEXT>
+						<H_BOX class="set_dropWrapper" style="max-width:56;"
+							onmouseenter="tDropList(1, &quot;NULL&quot;)" onmouseleave="tDropList(2, &quot;NULL&quot;)"
+							onclick="tDropList(0, &quot;tsf_sampler_fgTypeDrop&quot;)" onblur="tDropList(0, &quot;tsf_sampler_fgTypeDrop&quot;)">
+							<V_BOX class="set_dropTop">
+								<TEXT id="tsf_sampler_fgTypeText" class="set_dropText, barlow12" value="HSL"></TEXT>
+								<V_BOX id="tsf_sampler_fgTypeDrop" class="set_dropList">
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_sampler_fgTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_sampler_fgTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_sampler_fgTypeDrop&quot;, &quot;tsf_sampler_fgTypeText&quot;, 937, -1, &quot;HSL&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="HSL"></TEXT></H_BOX>
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_sampler_fgTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_sampler_fgTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_sampler_fgTypeDrop&quot;, &quot;tsf_sampler_fgTypeText&quot;, 937, -1, &quot;RGB&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="RGB"></TEXT></H_BOX>
+								</V_BOX>
+							</V_BOX>
+							<IMAGE class="set_dropButton"></IMAGE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="HUE/RED:" style="width:32;margin-left:20;"></TEXT>
+						<TEXT class="set_text, barlow12" value="ENABLE CONROL:" style="border-left:24;"></TEXT>
+						<IMAGE id="tsf_sampler_tog_fgControlRed" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 930, 1)" onmouseleave="tSetToggle(false, 1, 930, 1)"
+							onclick="tSetToggle(true, 0, 930, 1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="ENABLE NOISE:" style="border-left:6;"></TEXT>
+						<IMAGE id="tsf_sampler_tog_fgNoiseRed" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 934, 1)" onmouseleave="tSetToggle(false, 1, 934, 1)"
+							onclick="tSetToggle(true, 0, 934, 1)"></IMAGE>
+						<IMAGE class="set_noiseTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(true, &quot;tcnp_wrapper&quot;, 934, -1, -1, -1)"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="SAT/GREEN:" style="width:32;margin-left:20;"></TEXT>
+						<TEXT class="set_text, barlow12" value="ENABLE CONROL:" style="border-left:24;"></TEXT>
+						<IMAGE id="tsf_sampler_tog_fgControlGreen" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 931, 1)" onmouseleave="tSetToggle(false, 1, 931, 1)"
+							onclick="tSetToggle(true, 0, 931, 1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="ENABLE NOISE:" style="border-left:6;"></TEXT>
+						<IMAGE id="tsf_sampler_tog_fgNoiseGreen" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 935, 1)" onmouseleave="tSetToggle(false, 1, 935, 1)"
+							onclick="tSetToggle(true, 0, 935, 1)"></IMAGE>
+						<IMAGE class="set_noiseTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(true, &quot;tcnp_wrapper&quot;, 935, -1, -1, -1)"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="VAL/BLUE:" style="width:32;margin-left:20;"></TEXT>
+						<TEXT class="set_text, barlow12" value="ENABLE CONROL:" style="border-left:24;"></TEXT>
+						<IMAGE id="tsf_sampler_tog_fgControlBlue" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 932, 1)" onmouseleave="tSetToggle(false, 1, 932, 1)"
+							onclick="tSetToggle(true, 0, 932, 1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="ENABLE NOISE:" style="border-left:6;"></TEXT>
+						<IMAGE id="tsf_sampler_tog_fgNoiseBlue" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 936, 1)" onmouseleave="tSetToggle(false, 1, 936, 1)"
+							onclick="tSetToggle(true, 0, 936, 1)"></IMAGE>
+						<IMAGE class="set_noiseTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(true, &quot;tcnp_wrapper&quot;, 936, -1, -1, -1)"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_divider"></H_BOX>
+					// Offset Sliders
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="AUTO UPDATE BG:"></TEXT>
+						<IMAGE id="tsf_sampler_tog_autoUpdateBG" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 940, -1)" onmouseleave="tSetToggle(false, 1, 940, -1)"
+							onclick="tSetToggle(true, 0, 940, -1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="AFTER FG NOISE:"></TEXT>
+						<IMAGE id="tsf_sampler_tog_copyFGLast" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 944, -1)" onmouseleave="tSetToggle(false, 1, 944, -1)"
+							onclick="tSetToggle(true, 0, 944, -1)"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" style="width:68;border-left:2;" value="HUE OFFSET:"></TEXT>
+						<H_BOX id="tsf_sampler_sliderBox_bgHueOffset" class="set_slBox_single"
+							onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+							onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+							ondragstart="tSli_single(0, 941, -1, true, &quot;tsf_sampler_bgHueOffset&quot;)" 
+							ondrag="tSli_single(1, 941, -1, true, &quot;tsf_sampler_bgHueOffset&quot;)"
+							ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_sampler_slider_bgHueOffset" class="set_sl_single"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:38;">
+							<LINE id="tsf_sampler_bgHueOffset" class="set_inText, barlow12, textInputColor, number2d" value="0"
+								onentry="tLine_entry(941, -1, true, 0, &quot;tsf_sampler_slider_bgHueOffset&quot;, &quot;tsf_sampler_sliderBox_bgHueOffset&quot;)"
+								oncancel="tLine_entry(941, -1, false, 0, &quot;tsf_sampler_slider_bgHueOffset&quot;, &quot;tsf_sampler_sliderBox_bgHueOffset&quot;)"></LINE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" style="width:68;border-left:2;" value="SAT OFFSET:"></TEXT>
+						<H_BOX id="tsf_sampler_sliderBox_bgSatOffset" class="set_slBox_single"
+							onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+							onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+							ondragstart="tSli_single(0, 942, -1, true, &quot;tsf_sampler_bgSatOffset&quot;)" 
+							ondrag="tSli_single(1, 942, -1, true, &quot;tsf_sampler_bgSatOffset&quot;)"
+							ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_sampler_slider_bgSatOffset" class="set_sl_single"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:38;">
+							<LINE id="tsf_sampler_bgSatOffset" class="set_inText, barlow12, textInputColor, number2d" value="0"
+								onentry="tLine_entry(942, -1, true, 0, &quot;tsf_sampler_slider_bgSatOffset&quot;, &quot;tsf_sampler_sliderBox_bgSatOffset&quot;)"
+								oncancel="tLine_entry(942, -1, false, 0, &quot;tsf_sampler_slider_bgSatOffset&quot;, &quot;tsf_sampler_sliderBox_bgSatOffset&quot;)"></LINE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" style="width:68;border-left:2;" value="VALUE OFFSET:"></TEXT>
+						<H_BOX id="tsf_sampler_sliderBox_bgValueOffset" class="set_slBox_single"
+							onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+							onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+							ondragstart="tSli_single(0, 943, -1, true, &quot;tsf_sampler_bgValueOffset&quot;)" 
+							ondrag="tSli_single(1, 943, -1, true, &quot;tsf_sampler_bgValueOffset&quot;)"
+							ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_sampler_slider_bgValueOffset" class="set_sl_single"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:38;">
+							<LINE id="tsf_sampler_bgValueOffset" class="set_inText, barlow12, textInputColor, number2d" value="0"
+								onentry="tLine_entry(943, -1, true, 0, &quot;tsf_sampler_slider_bgValueOffset&quot;, &quot;tsf_sampler_sliderBox_bgValueOffset&quot;)"
+								oncancel="tLine_entry(943, -1, false, 0, &quot;tsf_sampler_slider_bgValueOffset&quot;, &quot;tsf_sampler_sliderBox_bgValueOffset&quot;)"></LINE>
+						</H_BOX>
+					</H_BOX>
+					// BG Color Dynamics Control/Noise
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="BG COLOR:"></TEXT>
+						<TEXT class="set_text, barlow12" value="CONTROL:"></TEXT>
+						<IMAGE class="set_controlTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(false, &quot;tcgp_wrapper&quot;, 953, 950, 951, 952)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="TYPE:" style="border-left:6;"></TEXT>
+						<H_BOX class="set_dropWrapper" style="max-width:56;"
+							onmouseenter="tDropList(1, &quot;NULL&quot;)" onmouseleave="tDropList(2, &quot;NULL&quot;)"
+							onclick="tDropList(0, &quot;tsf_sampler_bgTypeDrop&quot;)" onblur="tDropList(0, &quot;tsf_sampler_bgTypeDrop&quot;)">
+							<V_BOX class="set_dropTop">
+								<TEXT id="tsf_sampler_bgTypeText" class="set_dropText, barlow12" value="RGB"></TEXT>
+								<V_BOX id="tsf_sampler_bgTypeDrop" class="set_dropList">
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_sampler_bgTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_sampler_bgTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_sampler_bgTypeDrop&quot;, &quot;tsf_sampler_bgTypeText&quot;, 957, -1, &quot;HSL&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="HSL"></TEXT></H_BOX>
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_sampler_bgTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_sampler_bgTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_sampler_bgTypeDrop&quot;, &quot;tsf_sampler_bgTypeText&quot;, 957, -1, &quot;RGB&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="RGB"></TEXT></H_BOX>
+								</V_BOX>
+							</V_BOX>
+							<IMAGE class="set_dropButton"></IMAGE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="HUE/RED:" style="width:32;margin-left:20;"></TEXT>
+						<TEXT class="set_text, barlow12" value="ENABLE CONROL:" style="border-left:24;"></TEXT>
+						<IMAGE id="tsf_sampler_tog_bgControlRed" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 950, 1)" onmouseleave="tSetToggle(false, 1, 950, 1)"
+							onclick="tSetToggle(true, 0, 950, 1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="ENABLE NOISE:" style="border-left:6;"></TEXT>
+						<IMAGE id="tsf_sampler_tog_bgNoiseRed" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 954, 1)" onmouseleave="tSetToggle(false, 1, 954, 1)"
+							onclick="tSetToggle(true, 0, 954, 1)"></IMAGE>
+						<IMAGE class="set_noiseTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(true, &quot;tcnp_wrapper&quot;, 954, -1, -1, -1)"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="SAT/GREEN:" style="width:32;margin-left:20;"></TEXT>
+						<TEXT class="set_text, barlow12" value="ENABLE CONROL:" style="border-left:24;"></TEXT>
+						<IMAGE id="tsf_sampler_tog_bgControlGreen" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 951, 1)" onmouseleave="tSetToggle(false, 1, 951, 1)"
+							onclick="tSetToggle(true, 0, 951, 1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="ENABLE NOISE:" style="border-left:6;"></TEXT>
+						<IMAGE id="tsf_sampler_tog_bgNoiseGreen" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 955, 1)" onmouseleave="tSetToggle(false, 1, 955, 1)"
+							onclick="tSetToggle(true, 0, 955, 1)"></IMAGE>
+						<IMAGE class="set_noiseTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(true, &quot;tcnp_wrapper&quot;, 955, -1, -1, -1)"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="VAL/BLUE:" style="width:32;margin-left:20;"></TEXT>
+						<TEXT class="set_text, barlow12" value="ENABLE CONROL:" style="border-left:24;"></TEXT>
+						<IMAGE id="tsf_sampler_tog_bgControlBlue" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 952, 1)" onmouseleave="tSetToggle(false, 1, 952, 1)"
+							onclick="tSetToggle(true, 0, 952, 1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="ENABLE NOISE:" style="border-left:6;"></TEXT>
+						<IMAGE id="tsf_sampler_tog_bgNoiseBlue" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 956, 1)" onmouseleave="tSetToggle(false, 1, 956, 1)"
+							onclick="tSetToggle(true, 0, 956, 1)"></IMAGE>
+						<IMAGE class="set_noiseTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(true, &quot;tcnp_wrapper&quot;, 956, -1, -1, -1)"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_divider"></H_BOX>
+					// Palette Constraint Options
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="USE PALETTE:"></TEXT>
+						<IMAGE id="tsf_sampler_tog_paletteConstrain" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 960, -1)" onmouseleave="tSetToggle(false, 1, 960, -1)"
+							onclick="tSetToggle(true, 0, 960, -1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="TYPE:" style="border-left:6;"></TEXT>
+						<H_BOX class="set_dropWrapper" style="max-width:56;"
+							onmouseenter="tDropList(1, &quot;NULL&quot;)" onmouseleave="tDropList(2, &quot;NULL&quot;)"
+							onclick="tDropList(0, &quot;tsf_sampler_paletteTypeDrop&quot;)" onblur="tDropList(0, &quot;tsf_sampler_paletteTypeDrop&quot;)">
+							<V_BOX class="set_dropTop">
+								<TEXT id="tsf_sampler_paletteTypeText" class="set_dropText, barlow12" value="SIMPLE"></TEXT>
+								<V_BOX id="tsf_sampler_paletteTypeDrop" class="set_dropList">
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_sampler_paletteTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_sampler_paletteTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_sampler_paletteTypeDrop&quot;, &quot;tsf_sampler_paletteTypeText&quot;, 961, -1, &quot;SIMPLE&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="SIMPLE"></TEXT></H_BOX>
+								</V_BOX>
+							</V_BOX>
+							<IMAGE class="set_dropButton"></IMAGE>
+						</H_BOX>
+						<TEXT class="set_text, barlow12" value="MODE:" style="border-left:6;"></TEXT>
+						<H_BOX class="set_dropWrapper" style="max-width:56;"
+							onmouseenter="tDropList(1, &quot;NULL&quot;)" onmouseleave="tDropList(2, &quot;NULL&quot;)"
+							onclick="tDropList(0, &quot;tsf_sampler_paletteModeTypeDrop&quot;)" onblur="tDropList(0, &quot;tsf_sampler_paletteModeTypeDrop&quot;)">
+							<V_BOX class="set_dropTop">
+								<TEXT id="tsf_sampler_paletteModeTypeText" class="set_dropText, barlow12" value="HSL"></TEXT>
+								<V_BOX id="tsf_sampler_paletteModeTypeDrop" class="set_dropList">
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_sampler_paletteModeTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_sampler_paletteModeTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_sampler_paletteModeTypeDrop&quot;, &quot;tsf_sampler_paletteModeTypeText&quot;, 968, -1, &quot;HSL&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="HSL"></TEXT></H_BOX>
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_sampler_paletteModeTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_sampler_paletteModeTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_sampler_paletteModeTypeDrop&quot;, &quot;tsf_sampler_paletteModeTypeText&quot;, 968, -1, &quot;RGB&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="RGB"></TEXT></H_BOX>
+								</V_BOX>
+							</V_BOX>
+							<IMAGE class="set_dropButton"></IMAGE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<H_BOX id="tsf_sampler_sliderBox_palHue" class="set_slBox_minMax"
+							onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							ondragstart="tSli_double(0, 962, -1, 963, -1, true, &quot;tsf_sampler_palHueMin&quot;, &quot;tsf_sampler_palHueMax&quot;)" 
+							ondrag="tSli_double(1, 962, -1, 963, -1, true, &quot;tsf_sampler_palHueMin&quot;, &quot;tsf_sampler_palHueMax&quot;)"
+							ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_sampler_slider_palHueMin" class="set_sl_min"></IMAGE>
+							<IMAGE id="tsf_sampler_slider_palHueMax" class="set_sl_max"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_sampler_palHueMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(962, -1, true, 1, &quot;tsf_sampler_slider_palHueMin&quot;, &quot;tsf_sampler_sliderBox_palHue&quot;)"
+								oncancel="tLine_entry(962, -1, false, 1, &quot;tsf_sampler_slider_palHueMin&quot;, &quot;tsf_sampler_sliderBox_palHue&quot;)"></LINE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_sampler_palHueMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(963, -1, true, 1, &quot;tsf_sampler_slider_palHueMax&quot;, &quot;tsf_sampler_sliderBox_palHue&quot;)"
+								oncancel="tLine_entry(963, -1, false, 1, &quot;tsf_sampler_slider_palHueMax&quot;, &quot;tsf_sampler_sliderBox_palHue&quot;)"></LINE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<H_BOX id="tsf_sampler_sliderBox_palSat" class="set_slBox_minMax"
+							onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							ondragstart="tSli_double(0, 964, -1, 965, -1, true, &quot;tsf_sampler_palSatMin&quot;, &quot;tsf_sampler_palSatMax&quot;)" 
+							ondrag="tSli_double(1, 964, -1, 965, -1, true, &quot;tsf_sampler_palSatMin&quot;, &quot;tsf_sampler_palSatMax&quot;)"
+							ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_sampler_slider_palSatMin" class="set_sl_min"></IMAGE>
+							<IMAGE id="tsf_sampler_slider_palSatMax" class="set_sl_max"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_sampler_palSatMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(964, -1, true, 1, &quot;tsf_sampler_slider_palSatMin&quot;, &quot;tsf_sampler_sliderBox_palSat&quot;)"
+								oncancel="tLine_entry(964, -1, false, 1, &quot;tsf_sampler_slider_palSatMin&quot;, &quot;tsf_sampler_sliderBox_palSat&quot;)"></LINE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_sampler_palSatMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(965, -1, true, 1, &quot;tsf_sampler_slider_palSatMax&quot;, &quot;tsf_sampler_sliderBox_palSat&quot;)"
+								oncancel="tLine_entry(965, -1, false, 1, &quot;tsf_sampler_slider_palSatMax&quot;, &quot;tsf_sampler_sliderBox_palSat&quot;)"></LINE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<H_BOX id="tsf_sampler_sliderBox_palVal" class="set_slBox_minMax"
+							onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							ondragstart="tSli_double(0, 966, -1, 967, -1, true, &quot;tsf_sampler_palValMin&quot;, &quot;tsf_sampler_palValMax&quot;)" 
+							ondrag="tSli_double(1, 966, -1, 967, -1, true, &quot;tsf_sampler_palValMin&quot;, &quot;tsf_sampler_palValMax&quot;)"
+							ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_sampler_slider_palValMin" class="set_sl_min"></IMAGE>
+							<IMAGE id="tsf_sampler_slider_palValMax" class="set_sl_max"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_sampler_palValMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(966, -1, true, 1, &quot;tsf_sampler_slider_palValMin&quot;, &quot;tsf_sampler_sliderBox_palVal&quot;)"
+								oncancel="tLine_entry(966, -1, false, 1, &quot;tsf_sampler_slider_palValMin&quot;, &quot;tsf_sampler_sliderBox_palVal&quot;)"></LINE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_sampler_palValMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(967, -1, true, 1, &quot;tsf_sampler_slider_palValMax&quot;, &quot;tsf_sampler_sliderBox_palVal&quot;)"
+								oncancel="tLine_entry(967, -1, false, 1, &quot;tsf_sampler_slider_palValMax&quot;, &quot;tsf_sampler_sliderBox_palVal&quot;)"></LINE>
+						</H_BOX>
+					</H_BOX>
+				</V_BOX>
 			</V_BOX>
 			
 			////////////////////////////////////////////
@@ -1085,249 +1457,499 @@
 					// Spacing
 					<H_BOX class="tsf_settingsLine">
 						<TEXT class="tsf_settingsText, barlow12" value="RELATIVE SPACING:"></TEXT>
-						<IMAGE id="tsf_cont_toggle_relativeSpacing" 
-							onmouseenter="tsf_hoverToggle(0, 403)" onmouseleave="tsf_hoverToggle(1, 403)" 
-							onclick="tsf_toggleSetting(403)" class="tsf_checkBox" value="off"></IMAGE>
+						<IMAGE id="tsf_cont_tog_relativeSpacing" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 416, -1)" onmouseleave="tSetToggle(false, 1, 416, -1)"
+							onclick="tSetToggle(true, 0, 416, -1)"></IMAGE>
 						<TEXT class="tsf_settingsText, barlow12" value="USE CANVAS:"></TEXT>
-						<IMAGE id="tsf_cont_toggle_useCanvas" 
-							onmouseenter="tsf_hoverToggle(0, 404)" onmouseleave="tsf_hoverToggle(1, 404)" 
-							onclick="tsf_toggleSetting(404)" class="tsf_checkBox" value="off"></IMAGE>
+						<IMAGE id="tsf_cont_tog_useCanvas" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 417, -1)" onmouseleave="tSetToggle(false, 1, 417, -1)"
+							onclick="tSetToggle(true, 0, 417, -1)"></IMAGE>
 					</H_BOX>
 					<H_BOX class="tsf_settingsLine">
-						<TEXT class="tsf_settingsText, barlow12" style="margin-left:0;" value="VERTEX SPACING:"></TEXT>
-						<H_BOX id="tsf_cont_sliderBox_spacing" class="tsf_inputSliderBox_single" style="border-left:18;"
-							ondragstart="dragSingleSlider(0, 402, true, &quot;tsf_cont_spacing&quot;)"
-							ondrag="dragSingleSlider(1, 402, true, &quot;tsf_cont_spacing&quot;)"
-							ondragend="dragSingleSlider(2, 402, true, &quot;tsf_cont_spacing&quot;)">
-							<H_BOX class="tsf_inputSliderRail"></H_BOX>
-							<H_BOX id="tsf_cont_slider_spacing" class="tsf_inputSlider_single, tsf_inputSlider_center"></H_BOX>
+						<TEXT class="set_text, barlow12" value="VERTEX SPACING:"></TEXT>
+						<H_BOX id="tsf_cont_sliderBox_spacing" class="set_slBox_single"
+							onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+							onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+							ondragstart="tSli_single(0, 415, -1, true, &quot;tsf_cont_spacing&quot;)" 
+							ondrag="tSli_single(1, 415, -1, true, &quot;tsf_cont_spacing&quot;)"
+							ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_cont_slider_spacing" class="set_sl_single"></IMAGE>
 						</H_BOX>
-						<H_BOX class="tsf_inputBox" style="width:42;border-right:3;">
-							<LINE id="tsf_cont_spacing" class="tsf_inputText, barlow12, textInputColor, number2d"
-								onentry="settingsTextTrigger_slider(402, -1, true, &quot;tsf_cont_slider_spacing&quot;, &quot;tsf_cont_sliderBox_spacing&quot;)" 
-								oncancel="settingsTextTrigger_slider(402, -1, false, &quot;tsf_cont_slider_spacing&quot;, &quot;tsf_cont_sliderBox_spacing&quot;)" 
-								value="0.0"></LINE>
-						</H_BOX>
-					</H_BOX>
-					<H_BOX class="tsf_settingsDivider"></H_BOX>
-				// Random Distance
-					// Angle Toggles & Control
-					<H_BOX class="tsf_settingsLine">
-						<TEXT class="tsf_settingsText, barlow12" value="USE ANGLE:"></TEXT>
-						<IMAGE id="tsf_cont_toggle_angle" 
-							onmouseenter="tsf_hoverToggle(0, 405)" onmouseleave="tsf_hoverToggle(1, 405)" 
-							onclick="tsf_toggleSetting(405)" class="tsf_checkBox" value="off"></IMAGE>
-						<IMAGE class="tsf_controllerButton"></IMAGE>
-						<IMAGE class="tsf_noiseButton"></IMAGE>
-						<TEXT class="tsf_settingsText, barlow12" value="DIRECTION:"></TEXT>
-						<IMAGE id="tsf_cont_toggle_direction" 
-							onmouseenter="tsf_hoverToggle(0, 410)" onmouseleave="tsf_hoverToggle(1, 410)" 
-							onclick="tsf_toggleSetting(410)" class="tsf_checkBox" value="off"></IMAGE>
-						<TEXT class="tsf_settingsText, barlow12" value="RELATIVE:"></TEXT>
-						<IMAGE id="tsf_cont_toggle_relative" 
-							onmouseenter="tsf_hoverToggle(0, 411)" onmouseleave="tsf_hoverToggle(1, 411)" 
-							onclick="tsf_toggleSetting(411)" class="tsf_checkBox" value="off"></IMAGE>
-					</H_BOX>
-					// Angle Sliders
-					<H_BOX class="tsf_settingsLine">
-						<TEXT class="tsf_settingsText, barlow12" style="margin-left:18;" value="ANGLE:"></TEXT>
-						<H_BOX id="tsf_cont_sliderBox_angle"  class="tsf_inputSliderBox_minMax" style="border-left:18;"
-							ondragstart="dragMinMaxSlider(0, 406, true, &quot;tsf_cont_angleMin&quot;, &quot;tsf_cont_angleMax&quot;)"
-							ondrag="dragMinMaxSlider(1, 406, true, &quot;tsf_cont_angleMin&quot;, &quot;tsf_cont_angleMax&quot;)"
-							ondragend="dragMinMaxSlider(2, 406, true, &quot;tsf_cont_angleMin&quot;, &quot;tsf_cont_angleMax&quot;)">
-							<H_BOX class="tsf_inputSliderRail"></H_BOX>
-							<H_BOX id="tsf_cont_slider_angleMin" class="tsf_inputSlider_minMax, tsf_inputSlider_min"></H_BOX>
-							<H_BOX id="tsf_cont_slider_angleMax" class="tsf_inputSlider_minMax, tsf_inputSlider_max"></H_BOX>
-						</H_BOX>
-						<H_BOX class="tsf_inputBox" style="width:42;border-right:3;">
-							<LINE id="tsf_cont_angleMin" class="tsf_inputText, barlow12, textInputColor, degree1d"
-								onentry="settingsTextTrigger_slider(406, -1, true, &quot;tsf_cont_slider_angleMin&quot;, &quot;tsf_cont_sliderBox_angle&quot;)" 
-								oncancel="settingsTextTrigger_slider(406, -1, false, &quot;tsf_cont_slider_angleMin&quot;, &quot;tsf_cont_sliderBox_angle&quot;)" 
-								value="0.0"></LINE>
-						</H_BOX>
-						<H_BOX class="tsf_inputBox" style="width:42;border-right:3;">
-							<LINE id="tsf_cont_angleMax" class="tsf_inputText, barlow12, textInputColor, degree1d"
-								onentry="settingsTextTrigger_slider(407, -1, true, &quot;tsf_cont_slider_angleMax&quot;, &quot;tsf_cont_sliderBox_angle&quot;)" 
-								oncancel="settingsTextTrigger_slider(407, -1, false, &quot;tsf_cont_slider_angleMax&quot;, &quot;tsf_cont_sliderBox_angle&quot;)" 
-								value="0.0"></LINE>
-						</H_BOX>
-						<H_BOX class="tsf_inputBox" style="width:42;">
-							<LINE id="tsf_cont_angleBias" class="tsf_inputText, barlow12, textInputColor, number1d"
-								onentry="settingsTextTrigger(408, -1, true)" 
-								oncancel="settingsTextTrigger(408, -1, false)" 
-								value="0.0"></LINE>
+						<H_BOX class="set_inBox" style="width:38;">
+							<LINE id="tsf_cont_spacing" class="set_inText, barlow12, textInputcharacter, numberWhole" value="0"
+								onentry="tLine_entry(415, -1, true, 0, &quot;tsf_cont_slider_spacing&quot;, &quot;tsf_cont_sliderBox_spacing&quot;)"
+								oncancel="tLine_entry(415, -1, false, 0, &quot;tsf_cont_slider_spacing&quot;, &quot;tsf_cont_sliderBox_spacing&quot;)"></LINE>
 						</H_BOX>
 					</H_BOX>
 					<H_BOX class="tsf_settingsDivider"></H_BOX>
-				// Distance Sliders
-					// Distance X Sliders
+					// Alternate Mode Settings
 					<H_BOX class="tsf_settingsLine">
-						<TEXT class="tsf_settingsText, barlow12" value="DIST X:"></TEXT>
-						<H_BOX id="tsf_cont_sliderBox_distX"  class="tsf_inputSliderBox_minMax"
-							ondragstart="dragMinMaxSlider(0, 412, true, &quot;tsf_cont_distXMin&quot;, &quot;tsf_cont_distXMax&quot;)"
-							ondrag="dragMinMaxSlider(1, 412, true, &quot;tsf_cont_distXMin&quot;, &quot;tsf_cont_distXMax&quot;)"
-							ondragend="dragMinMaxSlider(2, 412, true, &quot;tsf_cont_distXMin&quot;, &quot;tsf_cont_distXMax&quot;)">
-							<H_BOX class="tsf_inputSliderRail"></H_BOX>
-							<H_BOX id="tsf_cont_slider_distXMin" class="tsf_inputSlider_minMax, tsf_inputSlider_min"></H_BOX>
-							<H_BOX id="tsf_cont_slider_distXMax" class="tsf_inputSlider_minMax, tsf_inputSlider_max"></H_BOX>
+						<TEXT class="set_text, barlow12" value="DEFAULT MODE:" style="border-left:6;"></TEXT>
+						<H_BOX class="set_dropWrapper" style="max-width:56;"
+							onmouseenter="tDropList(1, &quot;NULL&quot;)" onmouseleave="tDropList(2, &quot;NULL&quot;)"
+							onclick="tDropList(0, &quot;tsf_cont_defaultModeDrop&quot;)" onblur="tDropList(0, &quot;tsf_cont_defaultModeDrop&quot;)">
+							<V_BOX class="set_dropTop">
+								<TEXT id="tsf_cont_defaultModeText" class="set_dropText, barlow12" value="DRAW"></TEXT>
+								<V_BOX id="tsf_cont_defaultModeDrop" class="set_dropList">
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_cont_defaultModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_cont_defaultModeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_cont_defaultModeDrop&quot;, &quot;tsf_color_finalTypeText&quot;, 400, -1, &quot;DRAW&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="DRAW"></TEXT></H_BOX>
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_cont_defaultModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_cont_defaultModeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_cont_defaultModeDrop&quot;, &quot;tsf_color_finalTypeText&quot;, 400, -1, &quot;LINE&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="LINE"></TEXT></H_BOX>
+								</V_BOX>
+							</V_BOX>
+							<IMAGE class="set_dropButton"></IMAGE>
 						</H_BOX>
-						<H_BOX class="tsf_inputBox" style="width:42;border-right:3;">
-							<LINE id="tsf_cont_distXMin" class="tsf_inputText, barlow12, textInputColor, numberWhole"
-								onentry="settingsTextTrigger_slider(412, -1, true, &quot;tsf_cont_slider_distXMin&quot;, &quot;tsf_cont_sliderBox_distX&quot;)" 
-								oncancel="settingsTextTrigger_slider(412, -1, false, &quot;tsf_cont_slider_distXMin&quot;, &quot;tsf_cont_sliderBox_distX&quot;)" 
+						<TEXT class="tsf_settingsText, barlow12" value="ALT MODE KEY:"></TEXT>
+						<H_BOX id="tsf_cont_altModeKeyBox" class="tsf_inputBox" style="width:42;border-right:6;"
+							onmouseenter="global::hoverMidGreyButton(0)" 
+							onmouseleave="global::hoverMidGreyButton(1)"
+							onrightclick="tsf_removeBinding(401, -1, &quot;tsf_cont_altModeKey&quot;)"
+							onclick="modOnly_key_targetKeyID = 401; 
+								beginKeyCapture(&quot;tsf_cont_altModeKey&quot;, &quot;tsf_cont_altModeKeyBox&quot;, &quot;enter key...&quot;, 4, tsf_modOnly_getKey);">
+							<TEXT id="tsf_cont_altModeKey" class="tsf_dropText, barlow12" value="SET KEY..."></TEXT>
+						</H_BOX>
+					</H_BOX>
+					// ALT Mode Snap Key
+					<H_BOX class="tsf_settingsLine">
+						// Snap Key A
+						<TEXT class="tsf_settingsText, barlow12" value="A:"></TEXT>
+						<IMAGE id="tsf_cont_tog_altSnapA" class="set_togBox" style="border-right:1;" value="off"
+							onmouseenter="tSetToggle(false, 0, 418, -1)" onmouseleave="tSetToggle(false, 1, 418, -1)"
+							onclick="tSetToggle(true, 0, 418, -1)"></IMAGE>
+						<TEXT class="tsf_settingsText, barlow12" value="KEY:"></TEXT>
+						<H_BOX id="tsf_cont_altSnapAKeyBox" class="tsf_inputBox" style="width:42;border-right:6;"
+							onmouseenter="global::hoverMidGreyButton(0)" 
+							onmouseleave="global::hoverMidGreyButton(1)"
+							onrightclick="tsf_removeBinding(402, -1, &quot;tsf_cont_altSnapKeyA&quot;)"
+							onclick="modOnly_key_targetKeyID = 402; 
+								beginKeyCapture(&quot;tsf_cont_altSnapKeyA&quot;, &quot;tsf_cont_altSnapAKeyBox&quot;, &quot;enter key...&quot;, 4, tsf_modOnly_getKey);">
+							<TEXT id="tsf_cont_altSnapKeyA" class="tsf_dropText, barlow12" value="SET KEY..."></TEXT>
+						</H_BOX>
+						<IMAGE class="set_symAngle_s, set_sym"></IMAGE>
+						<H_BOX class="tsf_inputBox" style="width:28;border-right:6;">
+							<LINE id="tsf_cont_altSnapA" class="tsf_inputText, barlow12, textInputColor, degree1d"
+								onentry="settingsTextTrigger(403, -1, true)" 
+								oncancel="settingsTextTrigger(403, -1, false)" 
 								value="0.0"></LINE>
 						</H_BOX>
-						<H_BOX class="tsf_inputBox" style="width:42;border-right:3;">
-							<LINE id="tsf_cont_distXMax" class="tsf_inputText, barlow12, textInputColor, numberWhole"
-								onentry="settingsTextTrigger_slider(413, -1, true, &quot;tsf_cont_slider_distXMax&quot;, &quot;tsf_cont_sliderBox_distX&quot;)" 
-								oncancel="settingsTextTrigger_slider(413, -1, false, &quot;tsf_cont_slider_distXMax&quot;, &quot;tsf_cont_sliderBox_distX&quot;)" 
-								value="0.0"></LINE>
+						// Snap Key B
+						<TEXT class="tsf_settingsText, barlow12" value="B:"></TEXT>
+						<IMAGE id="tsf_cont_tog_altSnapB" class="set_togBox" style="border-right:1;" value="off"
+							onmouseenter="tSetToggle(false, 0, 419, -1)" onmouseleave="tSetToggle(false, 1, 419, -1)"
+							onclick="tSetToggle(true, 0, 419, -1)"></IMAGE>
+						<TEXT class="tsf_settingsText, barlow12" value="KEY:"></TEXT>
+						<H_BOX id="tsf_cont_altSnapBKeyBox" class="tsf_inputBox" style="width:42;border-right:6;"
+							onmouseenter="global::hoverMidGreyButton(0)" 
+							onmouseleave="global::hoverMidGreyButton(1)"
+							onrightclick="tsf_removeBinding(404, -1, &quot;tsf_cont_altSnapKeyB&quot;)"
+							onclick="modOnly_key_targetKeyID = 404; 
+								beginKeyCapture(&quot;tsf_cont_altSnapKeyB&quot;, &quot;tsf_cont_altSnapBKeyBox&quot;, &quot;enter key...&quot;, 4, tsf_modOnly_getKey);">
+							<TEXT id="tsf_cont_altSnapKeyB" class="tsf_dropText, barlow12" value="SET KEY..."></TEXT>
 						</H_BOX>
-						<H_BOX class="tsf_inputBox" style="width:42;">
-							<LINE id="tsf_cont_distXBias" class="tsf_inputText, barlow12, textInputColor, number2d"
-								onentry="settingsTextTrigger(414, -1, true)" 
-								oncancel="settingsTextTrigger(414, -1, false)" 
+						<IMAGE class="set_symAngle_s, set_sym"></IMAGE>
+						<H_BOX class="tsf_inputBox" style="width:28;">
+							<LINE id="tsf_cont_altSnapB" class="tsf_inputText, barlow12, textInputColor, degree1d"
+								onentry="settingsTextTrigger(405, -1, true)" 
+								oncancel="settingsTextTrigger(405, -1, false)" 
 								value="0.0"></LINE>
 						</H_BOX>
 					</H_BOX>
-					// Distance Y Sliders
 					<H_BOX class="tsf_settingsLine">
-						<TEXT class="tsf_settingsText, barlow12" value="DIST Y:"></TEXT>
-						<H_BOX id="tsf_cont_sliderBox_distY"  class="tsf_inputSliderBox_minMax"
-							ondragstart="dragMinMaxSlider(0, 415, true, &quot;tsf_cont_distYMin&quot;, &quot;tsf_cont_distYMax&quot;)"
-							ondrag="dragMinMaxSlider(1, 415, true, &quot;tsf_cont_distYMin&quot;, &quot;tsf_cont_distYMax&quot;)"
-							ondragend="dragMinMaxSlider(2, 415, true, &quot;tsf_cont_distYMin&quot;, &quot;tsf_cont_distYMax&quot;)">
-							<H_BOX class="tsf_inputSliderRail"></H_BOX>
-							<H_BOX id="tsf_cont_slider_distYMin" class="tsf_inputSlider_minMax, tsf_inputSlider_min"></H_BOX>
-							<H_BOX id="tsf_cont_slider_distYMax" class="tsf_inputSlider_minMax, tsf_inputSlider_max"></H_BOX>
+						<TEXT class="tsf_settingsText, barlow12" value="SUBDIVIDE:"></TEXT>
+						<IMAGE id="tsf_cont_tog_altSubdivide" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 406, -1)" onmouseleave="tSetToggle(false, 1, 406, -1)"
+							onclick="tSetToggle(true, 0, 406, -1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="PRESSURE BOOST (ALL):"></TEXT>
+						<H_BOX id="tsf_cont_sliderBox_pressureBoost" class="set_slBox_single"
+							onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+							onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+							ondragstart="tSli_single(0, 407, -1, true, &quot;tsf_cont_pressureBoost&quot;)" 
+							ondrag="tSli_single(1, 407, -1, true, &quot;tsf_cont_pressureBoost&quot;)"
+							ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_cont_slider_pressureBoost" class="set_sl_single"></IMAGE>
 						</H_BOX>
-						<H_BOX class="tsf_inputBox" style="width:42;border-right:3;">
-							<LINE id="tsf_cont_distYMin" class="tsf_inputText, barlow12, textInputColor, numberWhole"
-								onentry="settingsTextTrigger_slider(415, -1, true, &quot;tsf_cont_slider_distYMin&quot;, &quot;tsf_cont_sliderBox_distY&quot;)" 
-								oncancel="settingsTextTrigger_slider(415, -1, false, &quot;tsf_cont_slider_distYMin&quot;, &quot;tsf_cont_sliderBox_distY&quot;)" 
-								value="0.0"></LINE>
+						<H_BOX class="set_inBox" style="width:38;">
+							<LINE id="tsf_cont_pressureBoost" class="set_inText, barlow12, textInputcharacter, numberWhole" value="0"
+								onentry="tLine_entry(407, -1, true, 0, &quot;tsf_cont_slider_pressureBoost&quot;, &quot;tsf_cont_sliderBox_pressureBoost&quot;)"
+								oncancel="tLine_entry(407, -1, false, 0, &quot;tsf_cont_slider_pressureBoost&quot;, &quot;tsf_cont_sliderBox_pressureBoost&quot;)"></LINE>
 						</H_BOX>
-						<H_BOX class="tsf_inputBox" style="width:42;border-right:3;">
-							<LINE id="tsf_cont_distYMax" class="tsf_inputText, barlow12, textInputColor, numberWhole"
-								onentry="settingsTextTrigger_slider(416, -1, true, &quot;tsf_cont_slider_distYMax&quot;, &quot;tsf_cont_sliderBox_distY&quot;)" 
-								oncancel="settingsTextTrigger_slider(416, -1, false, &quot;tsf_cont_slider_distYMax&quot;, &quot;tsf_cont_sliderBox_distY&quot;)" 
-								value="0.0"></LINE>
+					</H_BOX>
+					<H_BOX class="tsf_settingsDivider"></H_BOX>
+					// Close Shape
+					<H_BOX class="tsf_settingsLine">
+						<TEXT class="tsf_settingsText, barlow12" value="CLOSE SHAPE:"></TEXT>
+						<IMAGE id="tsf_cont_tog_closeShape" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 408, -1)" onmouseleave="tSetToggle(false, 1, 408, -1)"
+							onclick="tSetToggle(true, 0, 408, -1)"></IMAGE>
+						<TEXT class="tsf_settingsText, barlow12" value="SUBDIVIDE:"></TEXT>
+						<IMAGE id="tsf_cont_tog_closeSubdivide" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 409, -1)" onmouseleave="tSetToggle(false, 1, 409, -1)"
+							onclick="tSetToggle(true, 0, 409, -1)"></IMAGE>
+					</H_BOX>
+					<H_BOX class="tsf_settingsDivider"></H_BOX>
+					// Connect Last Keys
+					<H_BOX class="tsf_settingsLine">
+						<TEXT class="tsf_settingsText, barlow12" value="CONNECT LAST KEY:"></TEXT>
+						<H_BOX id="tsf_cont_connectLastKeyBox" class="tsf_inputBox" style="width:42;border-right:6;"
+							onmouseenter="global::hoverMidGreyButton(0)" 
+							onmouseleave="global::hoverMidGreyButton(1)"
+							onrightclick="tsf_removeBinding(410, -1, &quot;tsf_cont_connectLastKey&quot;)"
+							onclick="modOnly_key_targetKeyID = 410; 
+								beginKeyCapture(&quot;tsf_cont_connectLastKey&quot;, &quot;tsf_cont_connectLastKeyBox&quot;, &quot;enter key...&quot;, 4, tsf_modOnly_getKey);">
+							<TEXT id="tsf_cont_connectLastKey" class="tsf_dropText, barlow12" value="SET KEY..."></TEXT>
 						</H_BOX>
-						<H_BOX class="tsf_inputBox" style="width:42;">
-							<LINE id="tsf_cont_distYBias" class="tsf_inputText, barlow12, textInputColor, number2d"
-								onentry="settingsTextTrigger(417, -1, true)" 
-								oncancel="settingsTextTrigger(417, -1, false)" 
-								value="0.0"></LINE>
-						</H_BOX>
+						<TEXT class="tsf_settingsText, barlow12" value="SUBDIVIDE:"></TEXT>
+						<IMAGE id="tsf_cont_tog_connectSubdivide" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 411, -1)" onmouseleave="tSetToggle(false, 1, 411, -1)"
+							onclick="tSetToggle(true, 0, 411, -1)"></IMAGE>
 					</H_BOX>
 					<H_BOX class="tsf_settingsDivider"></H_BOX>
 					// Constraint Threshold
 					<H_BOX class="tsf_settingsLine">
-						<TEXT class="tsf_settingsText, barlow12" style="margin-left:0;" value="CONSTRAINT THRESHOLD:"></TEXT>
-						<H_BOX id="tsf_cont_sliderBox_constraintThreshold" class="tsf_inputSliderBox_single" style="border-left:18;"
-							ondragstart="dragSingleSlider(0, 430, true, &quot;tsf_cont_constraintThreshold&quot;)"
-							ondrag="dragSingleSlider(1, 430, true, &quot;tsf_cont_constraintThreshold&quot;)"
-							ondragend="dragSingleSlider(2, 430, true, &quot;tsf_cont_constraintThreshold&quot;)">
-							<H_BOX class="tsf_inputSliderRail"></H_BOX>
-							<H_BOX id="tsf_cont_slider_constraintThreshold" class="tsf_inputSlider_single, tsf_inputSlider_center"></H_BOX>
+						<TEXT class="set_text, barlow12" value="CONSTRAINT THRESHOLD:"></TEXT>
+						<H_BOX id="tsf_cont_sliderBox_constraintThreshold" class="set_slBox_single"
+							onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+							onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+							ondragstart="tSli_single(0, 440, -1, true, &quot;tsf_cont_constraintThreshold&quot;)" 
+							ondrag="tSli_single(1, 440, -1, true, &quot;tsf_cont_constraintThreshold&quot;)"
+							ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_cont_slider_constraintThreshold" class="set_sl_single"></IMAGE>
 						</H_BOX>
-						<H_BOX class="tsf_inputBox" style="width:42;border-right:3;">
-							<LINE id="tsf_cont_constraintThreshold" class="tsf_inputText, barlow12, textInputColor, number2d"
-								onentry="settingsTextTrigger_slider(430, -1, true, &quot;tsf_cont_slider_constraintThreshold&quot;, &quot;tsf_cont_sliderBox_constraintThreshold&quot;)" 
-								oncancel="settingsTextTrigger_slider(430, -1, false, &quot;tsf_cont_slider_constraintThreshold&quot;, &quot;tsf_cont_sliderBox_constraintThreshold&quot;)" 
-								value="0.0"></LINE>
+						<H_BOX class="set_inBox" style="width:38;">
+							<LINE id="tsf_cont_constraintThreshold" class="set_inText, barlow12, textInputcharacter, numberWhole" value="0"
+								onentry="tLine_entry(440, -1, true, 0, &quot;tsf_cont_slider_constraintThreshold&quot;, &quot;tsf_cont_sliderBox_constraintThreshold&quot;)"
+								oncancel="tLine_entry(440, -1, false, 0, &quot;tsf_cont_slider_constraintThreshold&quot;, &quot;tsf_cont_sliderBox_constraintThreshold&quot;)"></LINE>
 						</H_BOX>
 					</H_BOX>
 					// CONSTRAINT Key A
 					<H_BOX class="tsf_settingsLine">
-						<TEXT class="tsf_settingsText, barlow12" value="A: ENABLE:"></TEXT>
-						<IMAGE id="tsf_cont_toggle_constraintA" 
-							onmouseenter="tsf_hoverToggle(0, 431)" onmouseleave="tsf_hoverToggle(1, 431)" 
-							onclick="tsf_toggleSetting(431)" class="tsf_checkBox" value="off"></IMAGE>
+						// CONSTRAINT Key A
+						<TEXT class="tsf_settingsText, barlow12" value="A:"></TEXT>
+						<IMAGE id="tsf_cont_tog_constraintA" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 441, -1)" onmouseleave="tSetToggle(false, 1, 441, -1)"
+							onclick="tSetToggle(true, 0, 441, -1)"></IMAGE>
 						<TEXT class="tsf_settingsText, barlow12" value="KEY:"></TEXT>
-						<H_BOX id="tsf_cont_constraintAKeyBox" class="tsf_inputBox" style="width:64;"
+						<H_BOX id="tsf_cont_constraintAKeyBox" class="tsf_inputBox" style="width:42;border-right:6;"
 							onmouseenter="global::hoverMidGreyButton(0)" 
 							onmouseleave="global::hoverMidGreyButton(1)"
-							onrightclick="tsf_removeBinding(433, -1, &quot;tsf_cont_constraintKeyA&quot;)"
-							onclick="modOnly_key_targetKeyID = 433; 
+							onrightclick="tsf_removeBinding(443, -1, &quot;tsf_cont_constraintKeyA&quot;)"
+							onclick="modOnly_key_targetKeyID = 443; 
 								beginKeyCapture(&quot;tsf_cont_constraintKeyA&quot;, &quot;tsf_cont_constraintAKeyBox&quot;, &quot;enter key...&quot;, 4, tsf_modOnly_getKey);">
 							<TEXT id="tsf_cont_constraintKeyA" class="tsf_dropText, barlow12" value="SET KEY..."></TEXT>
 						</H_BOX>
-						<TEXT class="tsf_settingsText, barlow12" value="ANGLE:"></TEXT>
-						<H_BOX class="tsf_inputBox" style="width:42;border-right:3;">
+						<IMAGE class="set_symAngle_s, set_sym"></IMAGE>
+						<H_BOX class="tsf_inputBox" style="width:28;border-right:3;">
 							<LINE id="tsf_cont_constraintA" class="tsf_inputText, barlow12, textInputColor, degree1d"
-								onentry="settingsTextTrigger(432, -1, true)" 
-								oncancel="settingsTextTrigger(432, -1, false)" 
+								onentry="settingsTextTrigger(442, -1, true)" 
+								oncancel="settingsTextTrigger(442, -1, false)" 
 								value="0.0"></LINE>
 						</H_BOX>
-					</H_BOX>
-					// CONSTRAINT Key B
-					<H_BOX class="tsf_settingsLine">
-						<TEXT class="tsf_settingsText, barlow12" value="B: ENABLE:"></TEXT>
-						<IMAGE id="tsf_cont_toggle_constraintB" 
-							onmouseenter="tsf_hoverToggle(0, 435)" onmouseleave="tsf_hoverToggle(1, 435)" 
-							onclick="tsf_toggleSetting(435)" class="tsf_checkBox" value="off"></IMAGE>
+						// CONSTRAINT Key B
+						<TEXT class="tsf_settingsText, barlow12" value="B:"></TEXT>
+						<IMAGE id="tsf_cont_tog_constraintB" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 445, -1)" onmouseleave="tSetToggle(false, 1, 445, -1)"
+							onclick="tSetToggle(true, 0, 445, -1)"></IMAGE>
 						<TEXT class="tsf_settingsText, barlow12" value="KEY:"></TEXT>
-						<H_BOX id="tsf_cont_constraintBKeyBox" class="tsf_inputBox" style="width:64;"
+						<H_BOX id="tsf_cont_constraintBKeyBox" class="tsf_inputBox" style="width:42;border-right:6;"
 							onmouseenter="global::hoverMidGreyButton(0)" 
 							onmouseleave="global::hoverMidGreyButton(1)"
-							onrightclick="tsf_removeBinding(437, -1, &quot;tsf_cont_constraintKeyB&quot;)"
-							onclick="modOnly_key_targetKeyID = 437; 
+							onrightclick="tsf_removeBinding(447, -1, &quot;tsf_cont_constraintKeyB&quot;)"
+							onclick="modOnly_key_targetKeyID = 447; 
 								beginKeyCapture(&quot;tsf_cont_constraintKeyB&quot;, &quot;tsf_cont_constraintBKeyBox&quot;, &quot;enter key...&quot;, 4, tsf_modOnly_getKey);">
 							<TEXT id="tsf_cont_constraintKeyB" class="tsf_dropText, barlow12" value="SET KEY..."></TEXT>
 						</H_BOX>
-						<TEXT class="tsf_settingsText, barlow12" value="ANGLE:"></TEXT>
-						<H_BOX class="tsf_inputBox" style="width:42;border-right:3;">
+						<IMAGE class="set_symAngle_s, set_sym"></IMAGE>
+						<H_BOX class="tsf_inputBox" style="width:28;border-right:3;">
 							<LINE id="tsf_cont_constraintB" class="tsf_inputText, barlow12, textInputColor, degree1d"
-								onentry="settingsTextTrigger(436, -1, true)" 
-								oncancel="settingsTextTrigger(436, -1, false)" 
+								onentry="settingsTextTrigger(446, -1, true)" 
+								oncancel="settingsTextTrigger(446, -1, false)" 
 								value="0.0"></LINE>
 						</H_BOX>
 					</H_BOX>
 					// CONSTRAINT Key C
 					<H_BOX class="tsf_settingsLine">
-						<TEXT class="tsf_settingsText, barlow12" value="C: ENABLE:"></TEXT>
-						<IMAGE id="tsf_cont_toggle_constraintC" 
-							onmouseenter="tsf_hoverToggle(0, 440)" onmouseleave="tsf_hoverToggle(1, 440)" 
-							onclick="tsf_toggleSetting(440)" class="tsf_checkBox" value="off"></IMAGE>
+						// CONSTRAINT Key C
+						<TEXT class="tsf_settingsText, barlow12" value="C:"></TEXT>
+						<IMAGE id="tsf_cont_tog_constraintC" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 450, -1)" onmouseleave="tSetToggle(false, 1, 450, -1)"
+							onclick="tSetToggle(true, 0, 450, -1)"></IMAGE>
 						<TEXT class="tsf_settingsText, barlow12" value="KEY:"></TEXT>
-						<H_BOX id="tsf_cont_constraintCKeyBox" class="tsf_inputBox" style="width:64;"
+						<H_BOX id="tsf_cont_constraintCKeyBox" class="tsf_inputBox" style="width:42;border-right:6;"
 							onmouseenter="global::hoverMidGreyButton(0)" 
 							onmouseleave="global::hoverMidGreyButton(1)"
-							onrightclick="tsf_removeBinding(442, -1, &quot;tsf_cont_constraintKeyC&quot;)"
-							onclick="modOnly_key_targetKeyID = 442; 
+							onrightclick="tsf_removeBinding(452, -1, &quot;tsf_cont_constraintKeyC&quot;)"
+							onclick="modOnly_key_targetKeyID = 452; 
 								beginKeyCapture(&quot;tsf_cont_constraintKeyC&quot;, &quot;tsf_cont_constraintCKeyBox&quot;, &quot;enter key...&quot;, 4, tsf_modOnly_getKey);">
 							<TEXT id="tsf_cont_constraintKeyC" class="tsf_dropText, barlow12" value="SET KEY..."></TEXT>
 						</H_BOX>
-						<TEXT class="tsf_settingsText, barlow12" value="ANGLE:"></TEXT>
-						<H_BOX class="tsf_inputBox" style="width:42;border-right:3;">
+						<IMAGE class="set_symAngle_s, set_sym"></IMAGE>
+						<H_BOX class="tsf_inputBox" style="width:28;border-right:3;">
 							<LINE id="tsf_cont_constraintC" class="tsf_inputText, barlow12, textInputColor, degree1d"
-								onentry="settingsTextTrigger(441, -1, true)" 
-								oncancel="settingsTextTrigger(441, -1, false)" 
+								onentry="settingsTextTrigger(451, -1, true)" 
+								oncancel="settingsTextTrigger(451, -1, false)" 
 								value="0.0"></LINE>
 						</H_BOX>
-					</H_BOX>
-					// CONSTRAINT Key D
-					<H_BOX class="tsf_settingsLine">
-						<TEXT class="tsf_settingsText, barlow12" value="D: ENABLE:"></TEXT>
-						<IMAGE id="tsf_cont_toggle_constraintD" 
-							onmouseenter="tsf_hoverToggle(0, 445)" onmouseleave="tsf_hoverToggle(1, 445)" 
-							onclick="tsf_toggleSetting(445)" class="tsf_checkBox" value="off"></IMAGE>
+						// CONSTRAINT Key D
+						<TEXT class="tsf_settingsText, barlow12" value="D:"></TEXT>
+						<IMAGE id="tsf_cont_tog_constraintD" class="set_togBox" value="off"
+							onmouseenter="tSetToggle(false, 0, 455, -1)" onmouseleave="tSetToggle(false, 1, 455, -1)"
+							onclick="tSetToggle(true, 0, 455, -1)"></IMAGE>
 						<TEXT class="tsf_settingsText, barlow12" value="KEY:"></TEXT>
-						<H_BOX id="tsf_cont_constraintDKeyBox" class="tsf_inputBox" style="width:64;"
+						<H_BOX id="tsf_cont_constraintDKeyBox" class="tsf_inputBox" style="width:42;border-right:6;"
 							onmouseenter="global::hoverMidGreyButton(0)" 
 							onmouseleave="global::hoverMidGreyButton(1)"
-							onrightclick="tsf_removeBinding(447, -1, &quot;tsf_cont_constraintKeyA&quot;)"
-							onclick="modOnly_key_targetKeyID = 447; 
+							onrightclick="tsf_removeBinding(457, -1, &quot;tsf_cont_constraintKeyA&quot;)"
+							onclick="modOnly_key_targetKeyID = 457; 
 								beginKeyCapture(&quot;tsf_cont_constraintKeyD&quot;, &quot;tsf_cont_constraintDKeyBox&quot;, &quot;enter key...&quot;, 4, tsf_modOnly_getKey);">
 							<TEXT id="tsf_cont_constraintKeyD" class="tsf_dropText, barlow12" value="SET KEY..."></TEXT>
 						</H_BOX>
-						<TEXT class="tsf_settingsText, barlow12" value="ANGLE:"></TEXT>
-						<H_BOX class="tsf_inputBox" style="width:42;border-right:3;">
+						<IMAGE class="set_symAngle_s, set_sym"></IMAGE>
+						<H_BOX class="tsf_inputBox" style="width:28;border-right:3;">
 							<LINE id="tsf_cont_constraintD" class="tsf_inputText, barlow12, textInputColor, degree1d"
-								onentry="settingsTextTrigger(446, -1, true)" 
-								oncancel="settingsTextTrigger(446, -1, false)" 
+								onentry="settingsTextTrigger(456, -1, true)" 
+								oncancel="settingsTextTrigger(456, -1, false)" 
 								value="0.0"></LINE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="tsf_settingsDivider"></H_BOX>
+				// Scattering
+					// Angle Toggles and C/N Buttons
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="USE ANGLE:"></TEXT>
+						<IMAGE id="tsf_cont_tog_angleEnable" 
+							onmouseenter="tSetToggle(false, 0, 434, 1)" onmouseleave="tSetToggle(false, 1, 434, 1)"
+							onclick="tSetToggle(true, 0, 434, 1)"
+							class="set_togBox" value="off"></IMAGE>
+						<TEXT class="set_text, barlow12" value="CONTROL:"></TEXT>
+						<IMAGE id="tsf_cont_tog_angleControl" 
+							onmouseenter="tSetToggle(false, 0, 420, 1)" onmouseleave="tSetToggle(false, 1, 420, 1)"
+							onclick="tSetToggle(true, 0, 420, 1)"
+							class="set_togBox" value="off"></IMAGE>
+						<IMAGE class="set_controlTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(false, &quot;tcgp_wrapper&quot;, 421, 420, -1, -1)"></IMAGE>
+						<IMAGE id="tsf_cont_tog_angleNoise"
+							onmouseenter="tSetToggle(false, 0, 422, 1)" onmouseleave="tSetToggle(false, 1, 422, 1)"
+							onclick="tSetToggle(true, 0, 422, 1)"
+							class="set_togBox" value="off"></IMAGE>
+						<IMAGE class="set_noiseTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(true, &quot;tcnp_wrapper&quot;, 422, -1, -1, -1)"></IMAGE>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="OFFSET:"></TEXT>
+						<H_BOX id="tsf_cont_sliderBox_angleOffset" class="set_slBox_single"
+							onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+							onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+							ondragstart="tSli_single(0, 436, -1, true, &quot;tsf_cont_angleOffset&quot;)" 
+							ondrag="tSli_single(1, 436, -1, true, &quot;tsf_cont_angleOffset&quot;)"
+							ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_cont_slider_angleOffset" class="set_sl_single"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;margin-right:8;">
+							<LINE id="tsf_cont_angleOffset" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(436, -1, true, 0, &quot;tsf_cont_slider_angleOffset&quot;, &quot;tsf_cont_sliderBox_angleOffset&quot;)"
+								oncancel="tLine_entry(436, -1, false, 0, &quot;tsf_cont_slider_angleOffset&quot;, &quot;tsf_cont_sliderBox_angleOffset&quot;)"></LINE>
+						</H_BOX>
+						<TEXT class="set_text, barlow12" value="USE DIR:"></TEXT>
+						<IMAGE id="tsf_cont_tog_useDir" 
+							onmouseenter="tSetToggle(false, 0, 435, 1)" onmouseleave="tSetToggle(false, 1, 435, 1)"
+							onclick="tSetToggle(true, 0, 435, 1)"
+							class="set_togBox" value="off"></IMAGE>
+					</H_BOX>
+					// Quick Edit Min/Max Angle Sliders
+					<H_BOX class="set_line">
+						<H_BOX id="tsf_cont_sliderBox_angle" class="set_slBox_minMax"
+							onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							ondragstart="tSli_double(0, 420, 3, 420, 4, true, &quot;tsf_cont_angleMin&quot;, &quot;tsf_cont_angleMax&quot;)" 
+							ondrag="tSli_double(1, 420, 3, 420, 4, true, &quot;tsf_cont_angleMin&quot;, &quot;tsf_cont_angleMax&quot;)"
+							ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_cont_slider_angleMin" class="set_sl_min"></IMAGE>
+							<IMAGE id="tsf_cont_slider_angleMax" class="set_sl_max"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_cont_angleMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(420, 3, true, 1, &quot;tsf_cont_slider_angleMin&quot;, &quot;tsf_cont_sliderBox_angle&quot;)"
+								oncancel="tLine_entry(420, 3, false, 1, &quot;tsf_cont_slider_angleMin&quot;, &quot;tsf_cont_sliderBox_angle&quot;)"></LINE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_cont_angleMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(420, 4, true, 1, &quot;tsf_cont_angleMax&quot;, &quot;tsf_cont_sliderBox_angle&quot;)"
+								oncancel="tLine_entry(420, 4, false, 1, &quot;tsf_cont_angleMax&quot;, &quot;tsf_cont_sliderBox_angle&quot;)"></LINE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_divider"></H_BOX>
+				// Distance X/Y Toggles and C/N Buttons
+					// Distance X
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="DIST X:"></TEXT>
+						<IMAGE id="tsf_cont_tog_distXControl" 
+							onmouseenter="tSetToggle(false, 0, 423, 1)" onmouseleave="tSetToggle(false, 1, 423, 1)"
+							onclick="tSetToggle(true, 0, 423, 1)"
+							class="set_togBox" value="off"></IMAGE>
+						<IMAGE class="set_controlTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(false, &quot;tcgp_wrapper&quot;, 424, 423, -1, -1)"></IMAGE>
+						<IMAGE id="tsf_cont_tog_distXNoise"
+							onmouseenter="tSetToggle(false, 0, 425, 1)" onmouseleave="tSetToggle(false, 1, 425, 1)"
+							onclick="tSetToggle(true, 0, 425, 1)"
+							class="set_togBox" value="off"></IMAGE>
+						<IMAGE class="set_noiseTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(true, &quot;tcnp_wrapper&quot;, 425, -1, -1, -1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="DIST Y:"></TEXT>
+						<IMAGE id="tsf_cont_tog_distYControl" 
+							onmouseenter="tSetToggle(false, 0, 426, 1)" onmouseleave="tSetToggle(false, 1, 426, 1)"
+							onclick="tSetToggle(true, 0, 426, 1)"
+							class="set_togBox" value="off"></IMAGE>
+						<IMAGE class="set_controlTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(false, &quot;tcgp_wrapper&quot;, 427, 426, -1, -1)"></IMAGE>
+						<IMAGE id="tsf_cont_tog_distYNoise"
+							onmouseenter="tSetToggle(false, 0, 428, 1)" onmouseleave="tSetToggle(false, 1, 428, 1)"
+							onclick="tSetToggle(true, 0, 428, 1)"
+							class="set_togBox" value="off"></IMAGE>
+						<IMAGE class="set_noiseTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(true, &quot;tcnp_wrapper&quot;, 428, -1, -1, -1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="REL:"></TEXT>
+						<IMAGE id="tsf_cont_tog_dirRelative" 
+							onmouseenter="tSetToggle(false, 0, 437, 1)" onmouseleave="tSetToggle(false, 1, 437, 1)"
+							onclick="tSetToggle(true, 0, 437, 1)"
+							class="set_togBox" value="off"></IMAGE>
+					</H_BOX>
+					// Quick Edit Min/Max DIST X Sliders
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="X:"></TEXT>
+						<H_BOX id="tsf_cont_sliderBox_distX" class="set_slBox_minMax"
+							onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							ondragstart="tSli_double(0, 423, 3, 423, 4, true, &quot;tsf_cont_distXMin&quot;, &quot;tsf_cont_distXMax&quot;)" 
+							ondrag="tSli_double(1, 423, 3, 423, 4, true, &quot;tsf_cont_distXMin&quot;, &quot;tsf_cont_distXMax&quot;)"
+							ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_cont_slider_distXMin" class="set_sl_min"></IMAGE>
+							<IMAGE id="tsf_cont_slider_distXMax" class="set_sl_max"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_cont_distXMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(423, 3, true, 1, &quot;tsf_cont_slider_distXMin&quot;, &quot;tsf_cont_sliderBox_distX&quot;)"
+								oncancel="tLine_entry(423, 3, false, 1, &quot;tsf_cont_slider_distXMin&quot;, &quot;tsf_cont_sliderBox_distX&quot;)"></LINE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_cont_distXMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(423, 4, true, 1, &quot;tsf_cont_slider_distXMax&quot;, &quot;tsf_cont_sliderBox_distX&quot;)"
+								oncancel="tLine_entry(423, 4, false, 1, &quot;tsf_cont_slider_distXMax&quot;, &quot;tsf_cont_sliderBox_distX&quot;)"></LINE>
+						</H_BOX>
+					</H_BOX>
+					// Distance Y
+					// Quick Edit Min/Max DIST Y Sliders
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="Y:"></TEXT>
+						<H_BOX id="tsf_cont_sliderBox_distY" class="set_slBox_minMax"
+							onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							ondragstart="tSli_double(0, 426, 3, 426, 4, true, &quot;tsf_cont_distYMin&quot;, &quot;tsf_cont_distYMax&quot;)" 
+							ondrag="tSli_double(1, 426, 3, 426, 4, true, &quot;tsf_cont_distYMin&quot;, &quot;tsf_cont_distYMax&quot;)"
+							ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_cont_slider_distYMin" class="set_sl_min"></IMAGE>
+							<IMAGE id="tsf_cont_slider_distYMax" class="set_sl_max"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_cont_distYMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(426, 3, true, 1, &quot;tsf_cont_slider_distYMin&quot;, &quot;tsf_cont_sliderBox_distY&quot;)"
+								oncancel="tLine_entry(426, 3, false, 1, &quot;tsf_cont_slider_distYMin&quot;, &quot;tsf_cont_sliderBox_distY&quot;)"></LINE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_cont_distYMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(426, 4, true, 1, &quot;tsf_cont_distYMax&quot;, &quot;tsf_cont_sliderBox_distY&quot;)"
+								oncancel="tLine_entry(426, 4, false, 1, &quot;tsf_cont_distYMax&quot;, &quot;tsf_cont_sliderBox_distY&quot;)"></LINE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_divider"></H_BOX>
+				// Count Toggles and C/N Buttons
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="COUNT:"></TEXT>
+						<IMAGE id="tsf_cont_tog_countControl" 
+							onmouseenter="tSetToggle(false, 0, 429, 1)" onmouseleave="tSetToggle(false, 1, 429, 1)"
+							onclick="tSetToggle(true, 0, 429, 1)"
+							class="set_togBox" value="off"></IMAGE>
+						<IMAGE class="set_controlTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(false, &quot;tcgp_wrapper&quot;, 430, 429, -1, -1)"></IMAGE>
+						<IMAGE id="tsf_cont_tog_countNoise"
+							onmouseenter="tSetToggle(false, 0, 431, 1)" onmouseleave="tSetToggle(false, 1, 431, 1)"
+							onclick="tSetToggle(true, 0, 431, 1)"
+							class="set_togBox" value="off"></IMAGE>
+						<IMAGE class="set_noiseTog" onmouseenter="hoverCNButton(0)" onmouseleave="hoverCNButton(1)"
+							onclick="clickCNButton(true, &quot;tcnp_wrapper&quot;, 431, -1, -1, -1)"></IMAGE>
+					</H_BOX>
+					// Quick Edit Min/Max Count Sliders
+					<H_BOX class="set_line">
+						<H_BOX id="tsf_cont_sliderBox_count" class="set_slBox_minMax"
+							onmouseover="tSli_double(-1, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							onmouseleave="tSli_double(-2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)"
+							ondragstart="tSli_double(0, 429, 3, 429, 4, true, &quot;tsf_cont_countMin&quot;, &quot;tsf_cont_countMax&quot;)" 
+							ondrag="tSli_double(1, 429, 3, 429, 4, true, &quot;tsf_cont_countMin&quot;, &quot;tsf_cont_countMax&quot;)"
+							ondragend="tSli_double(2, -1, -1, -1, -1, false, &quot;NULL&quot;, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_cont_slider_countMin" class="set_sl_min"></IMAGE>
+							<IMAGE id="tsf_cont_slider_countMax" class="set_sl_max"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_cont_countMin" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(429, 3, true, 1, &quot;tsf_cont_slider_countMin&quot;, &quot;tsf_cont_sliderBox_count&quot;)"
+								oncancel="tLine_entry(429, 3, false, 1, &quot;tsf_cont_slider_countMin&quot;, &quot;tsf_cont_sliderBox_count&quot;)"></LINE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;">
+							<LINE id="tsf_cont_countMax" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(429, 4, true, 1, &quot;tsf_cont_countMax&quot;, &quot;tsf_cont_sliderBox_count&quot;)"
+								oncancel="tLine_entry(429, 4, false, 1, &quot;tsf_cont_countMax&quot;, &quot;tsf_cont_sliderBox_count&quot;)"></LINE>
+						</H_BOX>
+					</H_BOX>
+					// Connection Type / Interval
+					<H_BOX class="set_line">
+						<TEXT class="set_text, barlow12" value="CONNECT TYPE:" style="border-left:6;"></TEXT>
+						<H_BOX class="set_dropWrapper" style="max-width:86;"
+							onmouseenter="tDropList(1, &quot;NULL&quot;)" onmouseleave="tDropList(2, &quot;NULL&quot;)"
+							onclick="tDropList(0, &quot;tsf_cont_connectTypeDrop&quot;)" onblur="tDropList(0, &quot;tsf_cont_connectTypeDrop&quot;)">
+							<V_BOX class="set_dropTop">
+								<TEXT id="tsf_cont_connectTypeText" class="set_dropText, barlow12" value="ALL"></TEXT>
+								<V_BOX id="tsf_cont_connectTypeDrop" class="set_dropList">
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_cont_connectTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_cont_connectTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_cont_connectTypeDrop&quot;, &quot;tsf_color_finalTypeText&quot;, 432, -1, &quot;ALL&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="ALL"></TEXT></H_BOX>
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_cont_connectTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_cont_connectTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_cont_connectTypeDrop&quot;, &quot;tsf_color_connectTypeText&quot;, 432, -1, &quot;PER SCATTER&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="PER SCATTER"></TEXT></H_BOX>
+									<H_BOX class="set_dropItem"
+										onmouseenter="tDrop_hover(0, &quot;tsf_cont_connectTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_cont_connectTypeDrop&quot;)"
+										onclick="tDropList_entry(&quot;tsf_cont_connectTypeDrop&quot;, &quot;tsf_color_connectTypeText&quot;, 432, -1, &quot;INTERVAL&quot;);">
+										<TEXT class="barlow12, set_dropText, set_sub" value="INTERVAL"></TEXT></H_BOX>
+								</V_BOX>
+							</V_BOX>
+							<IMAGE class="set_dropButton"></IMAGE>
+						</H_BOX>
+						<TEXT class="set_text, barlow12" value="INTERVAL:"></TEXT>
+						<H_BOX id="tsf_cont_sliderBox_connectInterval" class="set_slBox_single"
+							onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+							onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+							ondragstart="tSli_single(0, 436, -1, true, &quot;tsf_cont_connectInterval&quot;)" 
+							ondrag="tSli_single(1, 436, -1, true, &quot;tsf_cont_connectInterval&quot;)"
+							ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_cont_slider_connectInterval" class="set_sl_single"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:36;margin-right:8;">
+							<LINE id="tsf_cont_connectInterval" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
+								onentry="tLine_entry(436, -1, true, 0, &quot;tsf_cont_slider_connectInterval&quot;, &quot;tsf_cont_sliderBox_connectInterval&quot;)"
+								oncancel="tLine_entry(436, -1, false, 0, &quot;tsf_cont_slider_connectInterval&quot;, &quot;tsf_cont_sliderBox_connectInterval&quot;)"></LINE>
 						</H_BOX>
 					</H_BOX>
 				</V_BOX>

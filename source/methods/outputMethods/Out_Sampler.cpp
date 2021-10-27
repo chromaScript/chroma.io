@@ -15,7 +15,10 @@ void Out_Sampler::preview(Application* sender, VertexData* dat)
 {
 	// Kick bad calls
 	if (dat->anchors.size() < 2) { return; }
-	if (dat->anchors.front().input.flagPrimary == InputFlag::newInput) { lastSeenAnchorID = -1; }
+	if (dat->anchors.front().input.flagPrimary == InputFlag::newInput) { 
+		sampler = *sender->toolbox.get()->getActiveTool().get()->getSampler();
+		lastSeenAnchorID = -1; 
+	}
 	else
 	{
 		// Exit if the anchors weren't updated
@@ -24,56 +27,48 @@ void Out_Sampler::preview(Application* sender, VertexData* dat)
 	// Get the position data, the screen coordinates are found in the second anchor
 	int x1 = (int)dat->anchors[1].pos.x;
 	int y1 = (int)dat->anchors[1].pos.y;
-	TSet_Sampler* samplerSettings = sender->toolbox.get()->getActiveTool().get()->getSampler();
 	CColor sample = black;
-	if (samplerSettings->shapeType == TSetProp::point)
+	if (sampler.shapeType == TSetProp::point)
 	{
-		if (samplerSettings->pointRandAmount != 0)
+		if (sampler.sampleType == TSetProp::allLayers)
 		{
-
+			sample = sender->sampleScreen(x1, y1);
 		}
-		else
+	}
+	else if (sampler.shapeType == TSetProp::radius)
+	{
+		if (sampler.sampleType == TSetProp::allLayers)
 		{
-			if (samplerSettings->sampleType == TSetProp::allLayers)
-			{
-				sample = sender->sampleScreen(x1, y1);
-			}
-			else
-			{
-
-			}
+			sample = sender->sampleScreen(x1, y1, sampler.radius);
 		}
-		
 	}
-	else if (samplerSettings->shapeType == TSetProp::radius)
+	else if (sampler.shapeType == TSetProp::shape)
 	{
 
 	}
-	else if (samplerSettings->shapeType == TSetProp::shape)
+	else if (sampler.shapeType == TSetProp::tip)
 	{
 
 	}
-	else if (samplerSettings->shapeType == TSetProp::tip)
-	{
 
-	}
-	// Check for FGVariance
-	if (samplerSettings->useFGVariance)
-	{
-		// Modify the sample color accordingly
-	}
+	CColor fgColor = sample;
+	CColor bgColor = sender->ui.get()->bgColor;
+	// Modulate Color samples
+	sampler.modulateColor(fgColor, bgColor, &sample, 
+		&dat->anchors.back().pos, &dat->transform.origin, &dat->anchors.back().dir, &dat->anchors.back().input,
+		&dat->anchors.back().ID, &dat->anchors.back().ID, &dat->anchors.back().ID);
 	// Send the FG Color Sample
-	if (dat->activeModKey == samplerSettings->sampleBGModKey.modKey) { sender->ui.get()->updateBGColor(sample, x1, y1); }
-	else { sender->ui.get()->updateFGColor(sample, x1, y1); }
-
-	// Do BG Color matching if enabled
-	if (samplerSettings->useAutoBGUpdater && dat->activeModKey != samplerSettings->sampleBGModKey.modKey)
-	{
-		CColor bgSample = sample;
-		// Modify the BG Color
-
-		// Send the BG Color sample
-		sender->ui.get()->updateBGColor(sample, x1, y1);
+	if (dat->activeModKey == sampler.sampleBGModKey.modKey) {
+		sender->ui.get()->updateBGColor(fgColor, x1, y1);
+		if (sampler.useAutoBGUpdater) {
+			sender->ui.get()->updateFGColor(bgColor, x1, y1);
+		}
+	}
+	else { 
+		sender->ui.get()->updateFGColor(fgColor, x1, y1);
+		if (sampler.useAutoBGUpdater) {
+			sender->ui.get()->updateBGColor(bgColor, x1, y1);
+		}
 	}
 
 	return;

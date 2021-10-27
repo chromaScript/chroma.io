@@ -28,4 +28,6 @@ public:
 	void centerVertsToOrigin();
 };
 
+void copyVertexData(VertexData& target, VertexData* copy);
+
 #endif // !VERTEXDATA_H

@@ -16,6 +16,7 @@
 #include "../include/clayout/LEnums.h"
 #include "../include/cscript/CObject.h"
 #include "../include/tool/Toolbox.h"
+#include "../include/entities/visuals/Visualizer.h"
 
 #include <filesystem>
 #include <string>
@@ -34,6 +35,7 @@ UI::UI(std::shared_ptr<Application> owner)
 	this->owner = owner;
 	// Initialize the fontHandler
 	fontHandler = std::make_shared<Fonts>();
+	visualizer = std::make_unique<Visualizer>();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1689,7 +1691,7 @@ void UI::drawWidgets()
 void UI::drawZStack()
 {
 	if (zIndexMap.size() == 0) { isZStackActive = false; return; }
-	ShaderTransform xform = owner.get()->getCamera()->getShaderTransform();
+	ShaderTransform* xform = owner.get()->getCamera()->getShaderTransform();
 	bool didZIndexDraw = false;
 	for (auto& zindex : zIndexMap)
 	{

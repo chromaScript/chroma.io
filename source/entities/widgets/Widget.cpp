@@ -2778,7 +2778,7 @@ std::shared_ptr<CObject> Widget::getProperty(std::shared_ptr<CInterpreter> inter
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Render Functions
-void Widget::draw(ShaderTransform xform)
+void Widget::draw(ShaderTransform* xform)
 {
 	if (childWidgets.size() == 0 && style.visibility == UI_VISIBILITY_SHOW)
 	{

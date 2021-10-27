@@ -80,7 +80,7 @@ public:
 	glm::mat4 getView();
 	glm::mat4 getProjection();
 	glm::mat4 getModel();
-	ShaderTransform getShaderTransform();
+	ShaderTransform* getShaderTransform();
 	glm::vec3 getPosition();
 	glm::vec3 getCenterPosition();
 	ObjectTransform* getTransform();

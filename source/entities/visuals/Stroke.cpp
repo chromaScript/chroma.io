@@ -228,8 +228,6 @@ Stroke::Stroke(std::shared_ptr<Layer> container, std::shared_ptr<Shader> shader,
 	// Generate Buffers for the lineVAO/lineVBO
 	glGenVertexArrays(1, &linesVAO);
 	glGenBuffers(1, &linesVBO);
-	glGenVertexArrays(1, &boundsVAO);
-	glGenBuffers(1, &boundsVBO);
 }
 
 void Stroke::cleanup_stroke()
@@ -253,8 +251,6 @@ void Stroke::cleanup_stroke()
 
 	glDeleteVertexArrays(1, &linesVAO);
 	glDeleteBuffers(1, &linesVBO);
-	glDeleteVertexArrays(1, &boundsVAO);
-	glDeleteBuffers(1, &boundsVBO);
 
 	/* // Commenting this portion out - The smart pointers should automatically be cleaned when the entity destructs
 	frameShader.reset();
@@ -912,40 +908,9 @@ void Stroke::disableLineDraw()
 {
 	drawShapeLines = false;
 }
-void Stroke::setBoundsDraw(EntityTransform transform)
-{
-	drawBoundsLines = true;
-	// Apply rotation here because it's easier and saves time in the draw call
-	glm::quat rotation = glm::quat(glm::vec3(0, 0, glm::radians(fragData.transform.roll)));
-	std::vector<glm::vec3> points = {
-		fragData.transform.origin + (rotation * (fragData.transform.bounds.p1 - fragData.transform.origin)),
-		fragData.transform.origin + (rotation * (fragData.transform.bounds.p2 - fragData.transform.origin)),
-		fragData.transform.origin + (rotation * (fragData.transform.bounds.p3 - fragData.transform.origin)),
-		fragData.transform.origin + (rotation * (fragData.transform.bounds.p4 - fragData.transform.origin)),
-		fragData.transform.origin
-	};
-	// Update the boundsVerts with the new points
-	for (int i = 0; i < 5; i++)
-	{
-		boundsVerts[(i * 3) + 0] = (float)points[i].x;
-		boundsVerts[(i * 3) + 1] = (float)points[i].y;
-		boundsVerts[(i * 3) + 2] = (float)points[i].z;
-	}
-	// Bind the vertex data
-	glBindVertexArray(boundsVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, boundsVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(boundsVerts), boundsVerts, GL_STATIC_DRAW);
-	// Set vertex position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-}
-void Stroke::disableBoundsDraw()
-{
-	drawBoundsLines = false;
-}
 
 // Render Functions
-void Stroke::draw(ShaderTransform xform)
+void Stroke::draw(ShaderTransform* xform)
 {
 	if ((int)fragData.anchors.size() != 0 && (int)shards.size() != 0)
 	{
@@ -959,7 +924,7 @@ void Stroke::draw(ShaderTransform xform)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBlendEquation(GL_FUNC_ADD);
 		modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(xform.m, glm::vec3(compositePos));
+		modelMatrix = glm::translate(xform->m, glm::vec3(compositePos));
 
 		setCompositeShaderUniforms(xform);
 		if (effects.isEnabled)
@@ -983,8 +948,8 @@ void Stroke::draw(ShaderTransform xform)
 	if (drawShapeLines && lineLoop != nullptr)
 	{
 		debugLineShader->use();
-		debugLineShader->setMat4("projection", xform.p);
-		debugLineShader->setMat4("view", xform.v);
+		debugLineShader->setMat4("projection", xform->p);
+		debugLineShader->setMat4("view", xform->v);
 		
 		glm::vec4 color = glm::vec4(basic.currentFGColor.makeVec3(), 1.0f);
 		debugLineShader->setVec4("lineColor", color);
@@ -996,48 +961,15 @@ void Stroke::draw(ShaderTransform xform)
 		{
 			glPointSize(2 + ((fragData.anchors[i].input.pressure / 1.0f) * (lineSize - 2)));
 			modelMatrix = glm::mat4(1.0f);
-			modelMatrix = glm::translate(xform.m, glm::vec3(lineLoop[(i * 3) + 0], lineLoop[(i * 3) + 1], 0));
+			modelMatrix = glm::translate(xform->m, glm::vec3(lineLoop[(i * 3) + 0], lineLoop[(i * 3) + 1], 0));
 			debugLineShader->setMat4("model", modelMatrix);
 			glDrawArrays(GL_POINTS, i, 1);
 		}
-	}
-	if (drawBoundsLines)
-	{
-		debugLineShader->use();
-		debugLineShader->setMat4("projection", xform.p);
-		debugLineShader->setMat4("view", xform.v);
-		
-		glm::vec4 color = glm::vec4(blue.r, blue.g, blue.b, 1.0f);
-		debugLineShader->setVec4("lineColor", color);
 		glPointSize(4);
-		glBindVertexArray(boundsVAO);
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, boundsVBO);
-		glm::quat rotation = glm::quat(glm::vec3(0, 0, glm::radians(fragData.transform.roll)));
-		for (int i = 0; i < 5; i++)
-		{
-			modelMatrix = glm::mat4(1.0f);
-			switch (i)
-			{
-			case 0:
-				modelMatrix = glm::translate(xform.m, glm::vec3(0, 0, 0)); break;
-			case 1:
-				modelMatrix = glm::translate(xform.m, glm::vec3(0, 0, 0)); break;
-			case 2:
-				modelMatrix = glm::translate(xform.m, glm::vec3(0, 0, 0)); break;
-			case 3:
-				modelMatrix = glm::translate(xform.m, glm::vec3(0, 0, 0)); break;
-			case 4:
-			default:
-				modelMatrix = glm::translate(xform.m, glm::vec3(0, 0, 0)); break;
-			}
-			debugLineShader->setMat4("model", modelMatrix);
-			glDrawArrays(GL_POINTS, i, 1);
-		}
 	}
 }
 // Render to file
-void Stroke::render(ShaderTransform xform, unsigned int targetBuffer)
+void Stroke::render(ShaderTransform* xform, unsigned int targetBuffer)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, targetBuffer);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -1046,7 +978,7 @@ void Stroke::render(ShaderTransform xform, unsigned int targetBuffer)
 	if ((int)fragData.anchors.size() != 0 && (int)shards.size() != 0)
 	{
 		modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(xform.m, glm::vec3(compositePos));
+		modelMatrix = glm::translate(xform->m, glm::vec3(compositePos));
 
 		setCompositeShaderUniforms(xform);
 		glBindVertexArray(compVAO);
@@ -1114,7 +1046,7 @@ void Stroke::initializeDebugData()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void Stroke::drawDebugData(ShaderTransform xform)
+void Stroke::drawDebugData(ShaderTransform* xform)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -1138,14 +1070,14 @@ void Stroke::drawDebugData(ShaderTransform xform)
 		// to a different program
 		shader->use();
 		shader->setInt("texture1", 0);
-		shader->setMat4("projection", xform.p);
-		shader->setMat4("view", xform.v);
+		shader->setMat4("projection", xform->p);
+		shader->setMat4("view", xform->v);
 		glBindVertexArray(VAO);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, TEX0);
 
 		modelMatrix = glm::mat4(1.0f);
-		modelMatrix = glm::translate(xform.m, obj->pos);
+		modelMatrix = glm::translate(xform->m, obj->pos);
 		modelMatrix = glm::rotate(modelMatrix, atan2(obj->dir.x, obj->dir.y), glm::vec3(0.0f, 0.0f, 1.0f));
 		shader->setMat4("model", modelMatrix);
 		// Drawing with opacity by pressure enabled
@@ -1194,13 +1126,13 @@ void Stroke::drawDebugData(ShaderTransform xform)
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void Stroke::setCompositeShaderUniforms(ShaderTransform xform)
+void Stroke::setCompositeShaderUniforms(ShaderTransform* xform)
 {
 	compositeShader->use();
 	compositeShader->setInt("texture1", 0);
 	compositeShader->setInt("texture2", 1);
-	compositeShader->setMat4("projection", xform.p);
-	compositeShader->setMat4("view", xform.v);
+	compositeShader->setMat4("projection", xform->p);
+	compositeShader->setMat4("view", xform->v);
 	compositeShader->setMat4("model", modelMatrix);
 	compositeShader->setFloat("strokeOpacity", alpha.opacityNode.controlMax);
 	// Set Effects Uniforms

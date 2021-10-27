@@ -35,93 +35,29 @@ TSet_ContinuousControl::TSet_ContinuousControl()
 {
 	this->type = TSetType::continuous;
 	this->isEnabled = true;
-	// Input Mode
-	this->defaultMode = TSetProp::draw; // draw / polyLine
-	this->alternateModeKey = Keybind(InputKey::unknown, InputModKey::alt);
 	//
-	this->fillOnShiftClick = true;
-	this->fillOnPolyDraw = false;
-	this->connectPropertiesWeighting = 0.85f;
-	//
-	this->relativeSpacing = true;
-	this->useCanvas = false;
-	this->anchorSpacing = 5.0f;
 	this->trueSpacing = anchorSpacing;
-	this->useAngle = false; // 405
-	this->angleMin = 0.0f; // 406
-	this->angleMax = 0.0f; // 407
-	this->angleBias = 0.0f; // 408
-	this->useDirection = false; // 410
-	this->relativeDistance = false; // 411
-	this->splineRandomXMin = 0.0f; // 412
-	this->splineRandomXMax = 0.0f; // 413
-	this->splineRandomXBias = 0.0f; // 414
-	this->splineRandomYMin = 0.0f; // 415
-	this->splineRandomYMax = 0.0f; // 416
-	this->splineRandomYBias = 0.0f; // 417
-	// Constraint Global
-	this->constraintLengthThreshold = 1.2f; // 419
-	// Constrathis->Angle A
-	this->enableConstrainA = true; // 420
-	this->constrainA_angle = 0.0f; // 421
-	this->constrainA_modKey = Keybind(InputKey::unknown, InputModKey::shift); // 422
-	// Constrathis->Angle B
-	this->enableConstrainB = true; // 423
-	this->constrainB_angle = 90.0f; // 424
-	this->constrainB_modKey = Keybind(InputKey::unknown, InputModKey::shift); // 425
-	// Constrathis->Angle C
-	this->enableConstrainC = true; // 426
-	this->constrainC_angle = 45.0f; // 427
-	this->constrainC_modKey = Keybind(InputKey::unknown, InputModKey::shift); // 428
-	// Constrathis->Angle D
-	this->enableConstrainD = true; // 429
-	this->constrainD_angle = -45.0f; // 430
-	this->constrainD_modKey = Keybind(InputKey::unknown, InputModKey::shift); // 431
-	// Hotswap Angle A
-	this->enableHotswapA = false; // 450
-	this->hotswapA_toolID = 0; // 451
-	this->hotswapA_modKey = Keybind(); // 452
-	// Hotswap Angle B
-	this->enableHotswapB = false; // 453
-	this->hotswapB_toolID = 0; // 454
-	this->hotswapB_modKey = Keybind(); // 455
-	// Hotswap Angle C
-	this->enableHotswapC = false; // 456
-	this->hotswapC_toolID = 0; // 457
-	this->hotswapC_modKey = Keybind(); // 458
-	// Hotswap Angle D
-	this->enableHotswapD = false; // 459
-	this->hotswapD_toolID = 0; // 460
-	this->hotswapD_modKey = Keybind(); // 461
 }
 std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 	std::shared_ptr<CInterpreter> interpreter, std::shared_ptr<Tool> owner,
 	int settingsSig, int subSig, std::shared_ptr<CObject> object, bool isGet, bool asPercentage, bool asString)
 {
 	// Spacing Settings
-	if (settingsSig >= 400 && settingsSig <= 404)
+	if (settingsSig >= 400 && settingsSig < 420)
 	{
-		if (settingsSig == 400)
-		{
-			if (isGet)
-			{
+		if (settingsSig == 400) {
+			if (!isGet) { defaultMode = stringToTSetProp(std::get<std::string>(object.get()->obj)); }
+			else {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(defaultMode, settingsSig, subSig, "defaultMode")); }
-				//return std::make_shared<CObject>(double(alternateModeKey));
-			}
-			else
-			{
-				//alternateModeKey = (int)std::get<double>(object.get()->obj);
+				return std::make_shared<CObject>(TSetPropToString(defaultMode));
 			}
 		}
-		else if (settingsSig == 401)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 401) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(alternateModeKey, settingsSig, subSig, "alternateModeKey")); }
 				return std::make_shared<CObject>(double(keybindToInt(alternateModeKey)));
 			}
-			else
-			{
+			else {
 				if (object.get()->objType.type == CLiteralTypes::_CString) {
 					alternateModeKey = stringToKeybind(std::get<std::string>(object.get()->obj));
 				}
@@ -130,10 +66,147 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 				}
 			}
 		}
-		else if (settingsSig == 402)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 402) {
+			if (isGet) {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(altAngleSnapKeyA, settingsSig, subSig, "altAngleSnapKeyA")); }
+				return std::make_shared<CObject>(double(keybindToInt(altAngleSnapKeyA)));
+			}
+			else {
+				if (object.get()->objType.type == CLiteralTypes::_CString) {
+					altAngleSnapKeyA = stringToKeybind(std::get<std::string>(object.get()->obj));
+				}
+				else {
+					altAngleSnapKeyA = intToKeybind((int)std::get<double>(object.get()->obj));
+				}
+			}
+		}
+		else if (settingsSig == 403) {
+			if (isGet) {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(altAngleSnapA_angle, settingsSig, subSig, "altAngleSnapA_angle")); }
+				if (asPercentage) {
+					return std::make_shared<CObject>(double(
+						percentRange(altAngleSnapA_angle, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX, true)));
+				}
+				else { return std::make_shared<CObject>(double(altAngleSnapA_angle)); }
+			}
+			else {
+				if (asPercentage) {
+					altAngleSnapA_angle = percentRange(
+						(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX, false);
+				}
+				else {
+					altAngleSnapA_angle = clampf((float)std::get<double>(object.get()->obj),
+						TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN,
+						TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX);
+				}
+			}
+		}
+		else if (settingsSig == 404) {
+			if (isGet) {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(altAngleSnapKeyB, settingsSig, subSig, "altAngleSnapKeyB")); }
+				return std::make_shared<CObject>(double(keybindToInt(altAngleSnapKeyB)));
+			}
+			else {
+				if (object.get()->objType.type == CLiteralTypes::_CString) {
+					altAngleSnapKeyB = stringToKeybind(std::get<std::string>(object.get()->obj));
+				}
+				else {
+					altAngleSnapKeyB = intToKeybind((int)std::get<double>(object.get()->obj));
+				}
+			}
+		}
+		else if (settingsSig == 405) {
+			if (isGet) {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(altAngleSnapB_angle, settingsSig, subSig, "altAngleSnapB_angle")); }
+				if (asPercentage) {
+					return std::make_shared<CObject>(double(
+						percentRange(altAngleSnapB_angle, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX, true)));
+				}
+				else { return std::make_shared<CObject>(double(altAngleSnapB_angle)); }
+			}
+			else {
+				if (asPercentage) {
+					altAngleSnapB_angle = percentRange(
+						(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX, false);
+				}
+				else {
+					altAngleSnapB_angle = clampf((float)std::get<double>(object.get()->obj),
+						TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN,
+						TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX);
+				}
+			}
+		}
+		else if (settingsSig == 406) {
+			if (isGet) {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(subdivideAltMode, settingsSig, subSig, "subdivideAltMode")); }
+				return std::make_shared<CObject>(subdivideAltMode);
+			}
+			else {
+				subdivideAltMode = std::get<bool>(object.get()->obj);
+			}
+		}
+		else if (settingsSig == 407) {
+			if (isGet) {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(pressureBoost, settingsSig, subSig, "pressureBoost")); }
+				if (asPercentage) {
+					return std::make_shared<CObject>(double(
+						percentRange(pressureBoost, 0.01f, 6.0f, true)));
+				}
+				else { return std::make_shared<CObject>(double(constrainB_angle)); }
+			}
+			else {
+				if (asPercentage) {
+					pressureBoost = percentRange(
+						(float)std::get<double>(object.get()->obj), 0.01f, 6.0f, false);
+				}
+				else {
+					pressureBoost = clampf((float)std::get<double>(object.get()->obj), 0.01f, 6.0f);
+				}
+			}
+		}
+		else if (settingsSig == 408) {
+			if (isGet) {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(closeShape, settingsSig, subSig, "closeShape")); }
+				return std::make_shared<CObject>(closeShape);
+			}
+			else {
+				closeShape = std::get<bool>(object.get()->obj);
+			}
+		}
+		else if (settingsSig == 409) {
+			if (isGet) {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(subdivideClose, settingsSig, subSig, "subdivideClose")); }
+				return std::make_shared<CObject>(subdivideClose);
+			}
+			else {
+				subdivideClose = std::get<bool>(object.get()->obj);
+			}
+		}
+		else if (settingsSig == 410) {
+			if (isGet) {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(connectLastStrokeKey, settingsSig, subSig, "connectLastStrokeKey")); }
+				return std::make_shared<CObject>(double(keybindToInt(connectLastStrokeKey)));
+			}
+			else {
+				if (object.get()->objType.type == CLiteralTypes::_CString) {
+					connectLastStrokeKey = stringToKeybind(std::get<std::string>(object.get()->obj));
+				}
+				else {
+					connectLastStrokeKey = intToKeybind((int)std::get<double>(object.get()->obj));
+				}
+			}
+		}
+		else if (settingsSig == 411) {
+			if (isGet) {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(subdivideConnectLast, settingsSig, subSig, "subdivideConnectLast")); }
+				return std::make_shared<CObject>(subdivideConnectLast);
+			}
+			else {
+				subdivideConnectLast = std::get<bool>(object.get()->obj);
+			}
+		}
+		else if (settingsSig == 415) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(anchorSpacing, settingsSig, subSig, "anchorSpacing")); }
 				if (asPercentage) {
 					return std::make_shared<CObject>(double(
@@ -141,8 +214,7 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 				}
 				else { return std::make_shared<CObject>(double(anchorSpacing)); }
 			}
-			else
-			{
+			else {
 				if (asPercentage) {
 					anchorSpacing = percentRange_cubed(
 						(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_ANCHORSPACING_MIN, TSET_CONTINUOUS_ANCHORSPACING_MAX, false);
@@ -150,238 +222,155 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 				else { anchorSpacing = (float)std::get<double>(object.get()->obj); }
 			}
 		}
-		else if (settingsSig == 403)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 416) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(relativeSpacing, settingsSig, subSig, "relativeSpacing")); }
 				return std::make_shared<CObject>(relativeSpacing);
 			}
-			else
-			{
+			else {
 				relativeSpacing = std::get<bool>(object.get()->obj);
 			}
 		}
-		else if (settingsSig == 404)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 417) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(useCanvas, settingsSig, subSig, "useCanvas")); }
 				return std::make_shared<CObject>(useCanvas);
 			}
-			else
-			{
+			else {
 				useCanvas = std::get<bool>(object.get()->obj);
 			}
 		}
-	}
-	// Angle Settings
-	else if (settingsSig >= 405 && settingsSig <= 411)
-	{
-		if (settingsSig == 405)
-		{
-			if (!isGet)
-			{
-				useAngle = std::get<bool>(object.get()->obj);
+		else if (settingsSig == 418) {
+			if (isGet) {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(enableAltSnapA, settingsSig, subSig, "enableAltSnapA")); }
+				return std::make_shared<CObject>(enableAltSnapA);
 			}
-			else
-			{
+			else {
+				enableAltSnapA = std::get<bool>(object.get()->obj);
+			}
+		}
+		else if (settingsSig == 419) {
+			if (isGet) {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(enableAltSnapB, settingsSig, subSig, "enableAltSnapB")); }
+				return std::make_shared<CObject>(enableAltSnapB);
+			}
+			else {
+				enableAltSnapB = std::get<bool>(object.get()->obj);
+			}
+		}
+	}
+	// Scatter Settings
+	else if (settingsSig >= 420 && settingsSig < 440)
+	{
+		if (settingsSig == 420) {
+			return angleNode.putProperty(interpreter, owner, settingsSig, subSig, object, isGet, asPercentage, asString);
+		}
+		else if (settingsSig == 421) {
+			return angleController.putProperty(interpreter, owner, settingsSig, subSig, object, isGet, asPercentage, asString);
+		}
+		else if (settingsSig == 422) {
+			return angleNoise.putProperty(interpreter, owner, settingsSig, subSig, object, isGet, asPercentage, asString);
+		}
+		else if (settingsSig == 423) {
+			return distanceXNode.putProperty(interpreter, owner, settingsSig, subSig, object, isGet, asPercentage, asString);
+		}
+		else if (settingsSig == 424) {
+			return distanceXController.putProperty(interpreter, owner, settingsSig, subSig, object, isGet, asPercentage, asString);
+		}
+		else if (settingsSig == 425) {
+			return distanceXNoise.putProperty(interpreter, owner, settingsSig, subSig, object, isGet, asPercentage, asString);
+		}
+		else if (settingsSig == 426) {
+			return distanceYNode.putProperty(interpreter, owner, settingsSig, subSig, object, isGet, asPercentage, asString);
+		}
+		else if (settingsSig == 427) {
+			return distanceYController.putProperty(interpreter, owner, settingsSig, subSig, object, isGet, asPercentage, asString);
+		}
+		else if (settingsSig == 428) {
+			return distanceYNoise.putProperty(interpreter, owner, settingsSig, subSig, object, isGet, asPercentage, asString);
+		}
+		else if (settingsSig == 429) {
+			return countNode.putProperty(interpreter, owner, settingsSig, subSig, object, isGet, asPercentage, asString);
+		}
+		else if (settingsSig == 430) {
+			return countController.putProperty(interpreter, owner, settingsSig, subSig, object, isGet, asPercentage, asString);
+		}
+		else if (settingsSig == 431) {
+			return countNoise.putProperty(interpreter, owner, settingsSig, subSig, object, isGet, asPercentage, asString);
+		}
+		else if (settingsSig == 432) {
+			if (!isGet) { connectionType = stringToTSetProp(std::get<std::string>(object.get()->obj)); }
+			else {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(connectionType, settingsSig, subSig, "connectionType")); }
+				return std::make_shared<CObject>(TSetPropToString(connectionType));
+			}
+		}
+		else if (settingsSig == 433) {
+			if (!isGet) {
+				if (asPercentage) {
+					connectInterval = (int)percentRange_cubed(
+						(float)std::get<double>(object.get()->obj), 1.0f, 250.0f, false);
+				}
+				else { connectInterval = clampi((int)std::get<double>(object.get()->obj), 1, 250.0f); }
+			}
+			else {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(connectInterval, settingsSig, subSig, "connectInterval")); }
+				if (asPercentage) {
+					return std::make_shared<CObject>(double(
+						percentRange_cubed((float)connectInterval, 1.0f, 250.0f, true)));
+				}
+				else { return std::make_shared<CObject>(double(connectInterval)); }
+			}
+		}
+		else if (settingsSig == 434) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(useAngle, settingsSig, subSig, "useAngle")); }
 				return std::make_shared<CObject>(useAngle);
 			}
-		}
-		else if (settingsSig == 406)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(angleMin, settingsSig, subSig, "angleMin")); }
-				if (asPercentage) {
-					return std::make_shared<CObject>(double(
-						percentRange(angleMin, TSET_CONTINUOUS_ANGLERAND_MIN, TSET_CONTINUOUS_ANGLERAND_MAX, true)));
-				}
-				else { return std::make_shared<CObject>(double(angleMin)); }
-			}
-			else
-			{
-				if (asPercentage) {
-					angleMin = percentRange(
-						(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_ANGLERAND_MIN, TSET_CONTINUOUS_ANGLERAND_MAX, false);
-				}
-				else { angleMin = clampf((float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_ANGLERAND_MIN, TSET_CONTINUOUS_ANGLERAND_MAX); }
+			else {
+				useAngle = std::get<bool>(object.get()->obj);
 			}
 		}
-		else if (settingsSig == 407)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(angleMax, settingsSig, subSig, "angleMax")); }
-				if (asPercentage) {
-					return std::make_shared<CObject>(double(
-						percentRange(angleMax, -180.0f, 180.0f, true)));
-				}
-				else { return std::make_shared<CObject>(double(angleMax)); }
-			}
-			else
-			{
-				if (asPercentage) {
-					angleMax = percentRange(
-						(float)std::get<double>(object.get()->obj), -180.0f, 180.0f, false);
-				}
-				else { angleMax = clampf((float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_ANGLERAND_MIN, TSET_CONTINUOUS_ANGLERAND_MAX); }
-			}
-		}
-		else if (settingsSig == 408)
-		{
-			if (!isGet)
-			{
-				angleBias = clampf((float)std::get<double>(object.get()->obj), -1.0f, 1.0f);
-			}
-			else
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(angleBias, settingsSig, subSig, "angleBias")); }
-				return std::make_shared<CObject>((double)angleBias);
-			}
-		}
-		else if (settingsSig == 410)
-		{
-			if (!isGet)
-			{
-				useDirection = std::get<bool>(object.get()->obj);
-			}
-			else
-			{
+		else if (settingsSig == 435) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(useDirection, settingsSig, subSig, "useDirection")); }
 				return std::make_shared<CObject>(useDirection);
 			}
-		}
-		else if (settingsSig == 411)
-		{
-			if (!isGet)
-			{
-				relativeDistance = std::get<bool>(object.get()->obj);
+			else {
+				useDirection = std::get<bool>(object.get()->obj);
 			}
-			else
-			{
+		}
+		else if (settingsSig == 436) {
+			if (!isGet) {
+				if (asPercentage) {
+					offsetAngle = (int)percentRange(
+						(float)std::get<double>(object.get()->obj), -180.0f, 180.0f, false);
+				}
+				else { offsetAngle = clampi((int)std::get<double>(object.get()->obj), -180.0f, 180.0f); }
+			}
+			else {
+				if (asString) { return std::make_shared<CObject>(makeSettingString(offsetAngle, settingsSig, subSig, "offsetAngle")); }
+				if (asPercentage) {
+					return std::make_shared<CObject>(double(
+						percentRange((float)offsetAngle, -180.0f, 180.0f, true)));
+				}
+				else { return std::make_shared<CObject>(double(offsetAngle)); }
+			}
+		}
+		else if (settingsSig == 437) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(relativeDistance, settingsSig, subSig, "relativeDistance")); }
 				return std::make_shared<CObject>(relativeDistance);
 			}
-
-		}
-	}
-	// Distance Settings
-	else if (settingsSig >= 412 && settingsSig <= 417)
-	{
-		if (settingsSig == 412)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(splineRandomXMin, settingsSig, subSig, "splineRandomXMin")); }
-				if (asPercentage) {
-					return std::make_shared<CObject>(double(
-						percentRange(splineRandomXMin, TSET_CONTINUOUS_SPLINERAND_MIN, TSET_CONTINUOUS_SPLINERAND_MAX, true)));
-				}
-				else { return std::make_shared<CObject>(double(splineRandomXMin)); }
+			else {
+				relativeDistance = std::get<bool>(object.get()->obj);
 			}
-			else
-			{
-				if (asPercentage) {
-					splineRandomXMin = percentRange(
-						(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_SPLINERAND_MIN, TSET_CONTINUOUS_SPLINERAND_MAX, false);
-				}
-				else { splineRandomXMin = (float)std::get<double>(object.get()->obj); }
-			}
-		}
-		else if (settingsSig == 413)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(splineRandomXMax, settingsSig, subSig, "splineRandomXMax")); }
-				if (asPercentage) {
-					return std::make_shared<CObject>(double(
-						percentRange(splineRandomXMax, TSET_CONTINUOUS_SPLINERAND_MIN, TSET_CONTINUOUS_SPLINERAND_MAX, true)));
-				}
-				else { return std::make_shared<CObject>(double(splineRandomXMax)); }
-			}
-			else
-			{
-				if (asPercentage) {
-					splineRandomXMax = percentRange(
-						(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_SPLINERAND_MIN, TSET_CONTINUOUS_SPLINERAND_MAX, false);
-				}
-				else { splineRandomXMax = (float)std::get<double>(object.get()->obj); }
-			}
-		}
-		else if (settingsSig == 414)
-		{
-			if (!isGet)
-			{
-				splineRandomXBias = clampf((float)std::get<double>(object.get()->obj), -1.0f, 1.0f);
-			}
-			else
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(splineRandomXBias, settingsSig, subSig, "splineRandomXBias")); }
-				return std::make_shared<CObject>((double)splineRandomXBias);
-			}
-		}
-		else if (settingsSig == 415)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(splineRandomYMin, settingsSig, subSig, "splineRandomYMin")); }
-				if (asPercentage) {
-					return std::make_shared<CObject>(double(
-						percentRange(splineRandomYMin, TSET_CONTINUOUS_SPLINERAND_MIN, TSET_CONTINUOUS_SPLINERAND_MAX, true)));
-				}
-				else { return std::make_shared<CObject>(double(splineRandomYMin)); }
-			}
-			else
-			{
-				if (asPercentage) {
-					splineRandomYMin = percentRange(
-						(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_SPLINERAND_MIN, TSET_CONTINUOUS_SPLINERAND_MAX, false);
-				}
-				else { splineRandomYMin = (float)std::get<double>(object.get()->obj); }
-			}
-		}
-		else if (settingsSig == 416)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(splineRandomYMax, settingsSig, subSig, "splineRandomYMax")); }
-				if (asPercentage) {
-					return std::make_shared<CObject>(double(
-						percentRange(splineRandomYMax, TSET_CONTINUOUS_SPLINERAND_MIN, TSET_CONTINUOUS_SPLINERAND_MAX, true)));
-				}
-				else { return std::make_shared<CObject>(double(splineRandomYMax)); }
-			}
-			else
-			{
-				if (asPercentage) {
-					splineRandomYMax = percentRange(
-						(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_SPLINERAND_MIN, TSET_CONTINUOUS_SPLINERAND_MAX, false);
-				}
-				else { splineRandomYMax = (float)std::get<double>(object.get()->obj); }
-			}
-		}
-		else if (settingsSig == 417)
-		{
-			if (!isGet)
-			{
-				splineRandomYBias = clampf((float)std::get<double>(object.get()->obj), -1.0f, 1.0f);
-			}
-			else
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(splineRandomYBias, settingsSig, subSig, "splineRandomYBias")); }
-				return std::make_shared<CObject>((double)splineRandomYBias);
-			}
-
 		}
 	}
 	// Constraint Length Threshold
-	else if (settingsSig == 430)
+	else if (settingsSig == 440)
 	{
-		if (isGet)
-		{
+		if (isGet) {
 			if (asString) { return std::make_shared<CObject>(makeSettingString(constraintLengthThreshold, settingsSig, subSig, "constraintLengthThreshold")); }
 			if (asPercentage) {
 				return std::make_shared<CObject>(double(
@@ -389,39 +378,31 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 			}
 			else { return std::make_shared<CObject>(double(constraintLengthThreshold)); }
 		}
-		else
-		{
+		else {
 			if (asPercentage) {
 				constraintLengthThreshold = percentRange(
 					(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_CONSTRAINT_LEN_THRESH_MIN, TSET_CONTINUOUS_CONSTRAINT_LEN_THRESH_MAX, false);
 			}
 			else {
 				constraintLengthThreshold = clampf(
-					(float)std::get<double>(object.get()->obj),
-					TSET_CONTINUOUS_CONSTRAINT_LEN_THRESH_MIN,
-					TSET_CONTINUOUS_CONSTRAINT_LEN_THRESH_MAX);
+					(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_CONSTRAINT_LEN_THRESH_MIN, TSET_CONTINUOUS_CONSTRAINT_LEN_THRESH_MAX);
 			}
 		}
 	}
 	// Constraint Key and Angle Settings
-	else if (settingsSig >= 431 && settingsSig <= 447)
+	else if (settingsSig >= 441 && settingsSig <= 457)
 	{
-		if (settingsSig == 431)
-		{
-			if (isGet)
-			{
+		if (settingsSig == 441) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(enableConstrainA, settingsSig, subSig, "enableConstrainA")); }
 				return std::make_shared<CObject>(enableConstrainA);
 			}
-			else
-			{
+			else {
 				enableConstrainA = std::get<bool>(object.get()->obj);
 			}
 		}
-		else if (settingsSig == 432)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 442) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(constrainA_angle, settingsSig, subSig, "constrainA_angle")); }
 				if (asPercentage) {
 					return std::make_shared<CObject>(double(
@@ -429,28 +410,22 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 				}
 				else { return std::make_shared<CObject>(double(constrainA_angle)); }
 			}
-			else
-			{
+			else {
 				if (asPercentage) {
 					constrainA_angle = percentRange(
 						(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX, false);
 				}
 				else {
-					constrainA_angle = clampf((float)std::get<double>(object.get()->obj),
-						TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN,
-						TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX);
+					constrainA_angle = clampf((float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX);
 				}
 			}
 		}
-		else if (settingsSig == 433)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 443) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(constrainA_modKey, settingsSig, subSig, "constrainA_modKey")); }
 				return std::make_shared<CObject>(double(keybindToInt(constrainA_modKey)));
 			}
-			else
-			{
+			else {
 				if (object.get()->objType.type == CLiteralTypes::_CString) {
 					constrainA_modKey = stringToKeybind(std::get<std::string>(object.get()->obj));
 				}
@@ -459,22 +434,17 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 				}
 			}
 		}
-		else if (settingsSig == 435)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 445) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(enableConstrainB, settingsSig, subSig, "enableConstrainB")); }
 				return std::make_shared<CObject>(enableConstrainB);
 			}
-			else
-			{
+			else {
 				enableConstrainB = std::get<bool>(object.get()->obj);
 			}
 		}
-		else if (settingsSig == 436)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 446) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(constrainB_angle, settingsSig, subSig, "constrainB_angle")); }
 				if (asPercentage) {
 					return std::make_shared<CObject>(double(
@@ -482,28 +452,22 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 				}
 				else { return std::make_shared<CObject>(double(constrainB_angle)); }
 			}
-			else
-			{
+			else {
 				if (asPercentage) {
 					constrainB_angle = percentRange(
 						(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX, false);
 				}
 				else {
-					constrainB_angle = clampf((float)std::get<double>(object.get()->obj),
-						TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN,
-						TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX);
+					constrainB_angle = clampf((float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX);
 				}
 			}
 		}
-		else if (settingsSig == 437)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 447) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(constrainB_modKey, settingsSig, subSig, "constrainB_modKey")); }
 				return std::make_shared<CObject>(double(keybindToInt(constrainB_modKey)));
 			}
-			else
-			{
+			else {
 				if (object.get()->objType.type == CLiteralTypes::_CString) {
 					constrainB_modKey = stringToKeybind(std::get<std::string>(object.get()->obj));
 				}
@@ -512,22 +476,17 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 				}
 			}
 		}
-		else if (settingsSig == 440)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 450) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(enableConstrainC, settingsSig, subSig, "enableConstrainC")); }
 				return std::make_shared<CObject>(enableConstrainC);
 			}
-			else
-			{
+			else {
 				enableConstrainC = std::get<bool>(object.get()->obj);
 			}
 		}
-		else if (settingsSig == 441)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 451) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(constrainC_angle, settingsSig, subSig, "constrainC_angle")); }
 				if (asPercentage) {
 					return std::make_shared<CObject>(double(
@@ -535,28 +494,22 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 				}
 				else { return std::make_shared<CObject>(double(constrainC_angle)); }
 			}
-			else
-			{
+			else {
 				if (asPercentage) {
 					constrainC_angle = percentRange(
 						(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX, false);
 				}
 				else {
-					constrainC_angle = clampf((float)std::get<double>(object.get()->obj),
-						TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN,
-						TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX);
+					constrainC_angle = clampf((float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX);
 				}
 			}
 		}
-		else if (settingsSig == 442)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 452) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(constrainC_modKey, settingsSig, subSig, "constrainC_modKey")); }
 				return std::make_shared<CObject>(double(keybindToInt(constrainC_modKey)));
 			}
-			else
-			{
+			else {
 				if (object.get()->objType.type == CLiteralTypes::_CString) {
 					constrainC_modKey = stringToKeybind(std::get<std::string>(object.get()->obj));
 				}
@@ -565,22 +518,17 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 				}
 			}
 		}
-		else if (settingsSig == 445)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 455) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(enableConstrainD, settingsSig, subSig, "enableConstrainD")); }
 				return std::make_shared<CObject>(enableConstrainD);
 			}
-			else
-			{
+			else {
 				enableConstrainD = std::get<bool>(object.get()->obj);
 			}
 		}
-		else if (settingsSig == 446)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 456) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(constrainD_angle, settingsSig, subSig, "constrainD_angle")); }
 				if (asPercentage) {
 					return std::make_shared<CObject>(double(
@@ -588,225 +536,27 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 				}
 				else { return std::make_shared<CObject>(double(constrainD_angle)); }
 			}
-			else
-			{
+			else {
 				if (asPercentage) {
 					constrainD_angle = percentRange(
 						(float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX, false);
 				}
 				else {
-					constrainD_angle = clampf((float)std::get<double>(object.get()->obj),
-						TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN,
-						TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX);
+					constrainD_angle = clampf((float)std::get<double>(object.get()->obj), TSET_CONTINUOUS_CONSTRAINT_ANGLE_MIN, TSET_CONTINUOUS_CONSTRAINT_ANGLE_MAX);
 				}
 			}
 		}
-		else if (settingsSig == 447)
-		{
-			if (isGet)
-			{
+		else if (settingsSig == 457) {
+			if (isGet) {
 				if (asString) { return std::make_shared<CObject>(makeSettingString(constrainD_modKey, settingsSig, subSig, "constrainD_modKey")); }
 				return std::make_shared<CObject>(double(keybindToInt(constrainD_modKey)));
 			}
-			else
-			{
+			else {
 				if (object.get()->objType.type == CLiteralTypes::_CString) {
 					constrainD_modKey = stringToKeybind(std::get<std::string>(object.get()->obj));
 				}
 				else {
 					constrainD_modKey = intToKeybind((int)std::get<double>(object.get()->obj));
-				}
-			}
-		}
-	}
-	// Hot Swap Keys
-	else if (settingsSig >= 450 && settingsSig <= 461)
-	{
-		if (settingsSig == 450)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(enableHotswapA, settingsSig, subSig, "enableHotswapA")); }
-				return std::make_shared<CObject>(enableHotswapA);
-			}
-			else
-			{
-				enableHotswapA = std::get<bool>(object.get()->obj);
-			}
-		}
-		else if (settingsSig == 451)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(hotswapA_toolID, settingsSig, subSig, "hotswapA_toolID")); }
-				if (asPercentage) {
-					return std::make_shared<CObject>(double(hotswapA_toolID));
-				}
-				else { return std::make_shared<CObject>(double(hotswapA_toolID)); }
-			}
-			else
-			{
-				if (asPercentage) {
-					hotswapA_toolID = (int)std::get<double>(object.get()->obj);
-				}
-				else { hotswapA_toolID = (int)std::get<double>(object.get()->obj); }
-			}
-		}
-		else if (settingsSig == 452)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(hotswapA_modKey, settingsSig, subSig, "hotswapA_modKey")); }
-				return std::make_shared<CObject>(double(keybindToInt(hotswapA_modKey)));
-			}
-			else
-			{
-				if (object.get()->objType.type == CLiteralTypes::_CString) {
-					hotswapA_modKey = stringToKeybind(std::get<std::string>(object.get()->obj));
-				}
-				else {
-					hotswapA_modKey = intToKeybind((int)std::get<double>(object.get()->obj));
-				}
-			}
-		}
-		else if (settingsSig == 453)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(enableHotswapB, settingsSig, subSig, "enableHotswapB")); }
-				return std::make_shared<CObject>(enableHotswapB);
-			}
-			else
-			{
-				enableHotswapB = std::get<bool>(object.get()->obj);
-			}
-		}
-		else if (settingsSig == 454)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(hotswapB_toolID, settingsSig, subSig, "hotswapB_toolID")); }
-				if (asPercentage) {
-					return std::make_shared<CObject>(double(hotswapB_toolID));
-				}
-				else { return std::make_shared<CObject>(double(hotswapB_toolID)); }
-			}
-			else
-			{
-				if (asPercentage) {
-					hotswapB_toolID = (int)std::get<double>(object.get()->obj);
-				}
-				else { hotswapB_toolID = (int)std::get<double>(object.get()->obj); }
-			}
-		}
-		else if (settingsSig == 455)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(hotswapB_modKey, settingsSig, subSig, "hotswapB_modKey")); }
-				return std::make_shared<CObject>(double(keybindToInt(hotswapB_modKey)));
-			}
-			else
-			{
-				if (object.get()->objType.type == CLiteralTypes::_CString) {
-					hotswapB_modKey = stringToKeybind(std::get<std::string>(object.get()->obj));
-				}
-				else {
-					hotswapB_modKey = intToKeybind((int)std::get<double>(object.get()->obj));
-				}
-			}
-		}
-		else if (settingsSig == 456)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(enableHotswapC, settingsSig, subSig, "enableHotswapC")); }
-				return std::make_shared<CObject>(enableHotswapC);
-			}
-			else
-			{
-				enableHotswapC = std::get<bool>(object.get()->obj);
-			}
-		}
-		else if (settingsSig == 457)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(hotswapC_toolID, settingsSig, subSig, "hotswapC_toolID")); }
-				if (asPercentage) {
-					return std::make_shared<CObject>(double(hotswapC_toolID));
-				}
-				else { return std::make_shared<CObject>(double(hotswapC_toolID)); }
-			}
-			else
-			{
-				if (asPercentage) {
-					hotswapC_toolID = (int)std::get<double>(object.get()->obj);
-				}
-				else { hotswapC_toolID = (int)std::get<double>(object.get()->obj); }
-			}
-		}
-		else if (settingsSig == 458)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(hotswapC_modKey, settingsSig, subSig, "hotswapC_modKey")); }
-				return std::make_shared<CObject>(double(keybindToInt(hotswapC_modKey)));
-			}
-			else
-			{
-				if (object.get()->objType.type == CLiteralTypes::_CString) {
-					hotswapC_modKey = stringToKeybind(std::get<std::string>(object.get()->obj));
-				}
-				else {
-					hotswapC_modKey = intToKeybind((int)std::get<double>(object.get()->obj));
-				}
-			}
-		}
-		else if (settingsSig == 459)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(enableHotswapD, settingsSig, subSig, "enableHotswapD")); }
-				return std::make_shared<CObject>(enableHotswapD);
-			}
-			else
-			{
-				enableHotswapD = std::get<bool>(object.get()->obj);
-			}
-		}
-		else if (settingsSig == 460)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(hotswapD_toolID, settingsSig, subSig, "hotswapD_toolID")); }
-				if (asPercentage) {
-					return std::make_shared<CObject>(double(hotswapD_toolID));
-				}
-				else { return std::make_shared<CObject>(double(hotswapD_toolID)); }
-			}
-			else
-			{
-				if (asPercentage) {
-					hotswapD_toolID = (int)std::get<double>(object.get()->obj);
-				}
-				else { hotswapD_toolID = (int)std::get<double>(object.get()->obj); }
-			}
-		}
-		else if (settingsSig == 461)
-		{
-			if (isGet)
-			{
-				if (asString) { return std::make_shared<CObject>(makeSettingString(hotswapD_modKey, settingsSig, subSig, "hotswapD_modKey")); }
-				return std::make_shared<CObject>(double(keybindToInt(hotswapD_modKey)));
-			}
-			else
-			{
-				if (object.get()->objType.type == CLiteralTypes::_CString) {
-					hotswapD_modKey = stringToKeybind(std::get<std::string>(object.get()->obj));
-				}
-				else {
-					hotswapD_modKey = intToKeybind((int)std::get<double>(object.get()->obj));
 				}
 			}
 		}
@@ -818,18 +568,62 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 
 TSetControl_Node* TSet_ContinuousControl::getControlNode(int settingSig, int subSig)
 {
+	if (settingSig == 420) { return &angleNode; }
+	else if (settingSig == 423) { return &distanceXNode; }
+	else if (settingSig == 426) { return &distanceYNode; }
+	else if (settingSig == 429) { return &countNode; }
 	return nullptr;
 }
 TSetController* TSet_ContinuousControl::getController(int settingSig, int subSig)
 {
+	if (settingSig == 421) { return &angleController; }
+	else if (settingSig == 424) { return &distanceXController; }
+	else if (settingSig == 427) { return &distanceYController; }
+	else if (settingSig == 430) { return &countController; }
 	return nullptr;
 }
 TSetGraph* TSet_ContinuousControl::getGraph(int settingSig, int subSig)
 {
+	if (settingSig == 421)
+	{
+		if (subSig == -1) { return &angleController.pressureGraph; }
+		else if (subSig == -2) { return &angleController.directionGraph; }
+		else if (subSig == -3) { return &angleController.tiltGraph; }
+		else if (subSig == -4) { return &angleController.velocityGraph; }
+		else if (subSig == -5) { return &angleController.rotationGraph; }
+	}
+	else if (settingSig == 424)
+	{
+		if (subSig == -1) { return &distanceXController.pressureGraph; }
+		else if (subSig == -2) { return &distanceXController.directionGraph; }
+		else if (subSig == -3) { return &distanceXController.tiltGraph; }
+		else if (subSig == -4) { return &distanceXController.velocityGraph; }
+		else if (subSig == -5) { return &distanceXController.rotationGraph; }
+	}
+	else if (settingSig == 427)
+	{
+		if (subSig == -1) { return &distanceYController.pressureGraph; }
+		else if (subSig == -2) { return &distanceYController.directionGraph; }
+		else if (subSig == -3) { return &distanceYController.tiltGraph; }
+		else if (subSig == -4) { return &distanceYController.velocityGraph; }
+		else if (subSig == -5) { return &distanceYController.rotationGraph; }
+	}
+	else if (settingSig == 430)
+	{
+		if (subSig == -1) { return &countController.pressureGraph; }
+		else if (subSig == -2) { return &countController.directionGraph; }
+		else if (subSig == -3) { return &countController.tiltGraph; }
+		else if (subSig == -4) { return &countController.velocityGraph; }
+		else if (subSig == -5) { return &countController.rotationGraph; }
+	}
 	return nullptr;
 }
 TSetNoise* TSet_ContinuousControl::getNoise(int settingSig, int subSig)
 {
+	if (settingSig == 422) { return &angleNoise; }
+	else if (settingSig == 425) { return &distanceXNoise; }
+	else if (settingSig == 428) { return &distanceYNoise; }
+	else if (settingSig == 431) { return &countNoise; }
 	return nullptr;
 }
 
@@ -864,4 +658,126 @@ void TSet_ContinuousControl::updateTrueSpacing(std::shared_ptr<Tool> owner, int 
 		trueSpacing = anchorSpacing;
 	}
 	trueSpacing = clampf(trueSpacing, TSET_CONTINUOUS_ANCHORSPACING_MIN, TSET_CONTINUOUS_ANCHORSPACING_MAX);
+}
+
+void TSet_ContinuousControl::initialize(float* trueSpacing, int* entityCount, int* tipSize, glm::ivec2* canvasDimensions)
+{
+	if (!isEnabled) { return; }
+	if (angleNoise.isEnabled) { angleNoise.initialize(trueSpacing, entityCount, canvasDimensions); }
+	//
+	if (distanceXNoise.isEnabled) { distanceXNoise.initialize(trueSpacing, entityCount, canvasDimensions); }
+	if (distanceYNoise.isEnabled) { distanceYNoise.initialize(trueSpacing, entityCount, canvasDimensions); }
+	//
+	if (countNoise.isEnabled) { countNoise.initialize(trueSpacing, entityCount, canvasDimensions); }
+}
+
+glm::vec3 TSet_ContinuousControl::modulatePosition(
+	glm::vec3& finalPos, int* tipSize,
+	glm::vec3* pos, glm::vec3* origin, glm::vec3* dir, Input* input,
+	int* shardCount, int* anchorCount, int* splineCount)
+{
+	glm::vec3 outPos = *pos;
+	float tip = float(*tipSize);
+
+	float controlX = 1.0f; float controlY = 1.0f;
+	float offsetX = 1.0f; float offsetY = 1.0f;
+	bool xNoiseEnabled = false; bool yNoiseEnabled = false;
+	bool xControlEnabled = false; bool yControlEnabled = false;
+
+	// Calculate distance amounts
+	// X DIST - Use shuffleSeed option on calculateNoise to prevent shard-stacking
+	if (distanceXNode.reportEnabled()) {
+		xControlEnabled = true;
+		distanceXNode.calculateControl(controlX, pos, dir, input, &distanceXController, anchorCount);
+	}
+	if (distanceXNoise.reportEnabled()) {
+		xNoiseEnabled = true;
+		distanceXNoise.calculateNoise(offsetX, pos, origin, dir, input, shardCount, anchorCount, splineCount, true);
+	}
+	else if (xControlEnabled) {
+		offsetX = controlX;
+	}
+	//
+	if (!xControlEnabled && !xNoiseEnabled) { offsetX = 0.0f; }
+	else {
+		offsetX = lerpf(
+			distanceXNode.controlMin * distRange * ((xControlEnabled && !xNoiseEnabled) ? 1.0f : controlX),
+			distanceXNode.controlMax * distRange * ((xControlEnabled && !xNoiseEnabled) ? 1.0f : controlX),
+			offsetX);
+	}
+	// Y DIST - Use shuffleSeed option on calculateNoise to prevent shard-stacking
+	if (distanceYNode.reportEnabled()) {
+		yControlEnabled = true;
+		distanceYNode.calculateControl(controlY, pos, dir, input, &distanceYController, anchorCount);
+	}
+	if (distanceYNoise.reportEnabled()) {
+		yNoiseEnabled = true;
+		distanceYNoise.calculateNoise(offsetY, pos, origin, dir, input, shardCount, anchorCount, splineCount, true);
+	}
+	else if (yControlEnabled) {
+		offsetY = controlY;
+	}
+	//
+	if (!yControlEnabled && !yNoiseEnabled) { offsetY = 0.0f; }
+	else {
+		offsetY = lerpf(
+			distanceYNode.controlMin * distRange * ((yControlEnabled && !yNoiseEnabled) ? 1.0f : controlY),
+			distanceYNode.controlMax * distRange * ((yControlEnabled && !yNoiseEnabled) ? 1.0f : controlY),
+			offsetY);
+	}
+
+	if (!useAngle)
+	{
+		outPos.x = outPos.x + offsetX;
+		outPos.y = outPos.y + offsetY;
+	}
+	else
+	{
+		float angleControl = 1.0f;
+		if (angleNode.reportEnabled()) {
+			angleNode.calculateControl(angleControl, pos, dir, input, &distanceXController, anchorCount);
+		}
+		if (angleNoise.isEnabled) {
+			angleNoise.calculateNoise(angleControl, pos, origin, dir, input, shardCount, anchorCount, splineCount, true);
+		}
+		float outAngle = -clampAngle_180(lerpf(angleNode.controlMin * 180.0f, angleNode.controlMax * 180.0f, angleControl) + offsetAngle);
+		glm::vec3 inDir = (useDirection) ? *dir : glm::vec3(cos(MATH_RAD_90), sin(MATH_RAD_90), 0.0f);
+		glm::vec3 rotDir = glm::vec3(
+			inDir.x * cos(outAngle * (MATH_PI / 180.0f)) - -inDir.y * sin(outAngle * (MATH_PI / 180.0f)),
+			inDir.x * sin(outAngle * (MATH_PI / 180.0f)) + -inDir.y * cos(outAngle * (MATH_PI / 180.0f)),
+			inDir.z);
+		outPos += (rotDir * offsetX);
+		glm::vec3 rotPerpDir = glm::vec3(
+			rotDir.x * cos(MATH_RAD_90) - -rotDir.y * sin(MATH_RAD_90),
+			rotDir.x * sin(MATH_RAD_90) + -rotDir.y * cos(MATH_RAD_90),
+			rotDir.z);
+		outPos += (rotPerpDir * offsetY);
+	}
+
+	finalPos = outPos;
+	return finalPos;
+}
+int TSet_ContinuousControl::modulateCount(int& outCount,
+	glm::vec3* pos, glm::vec3* origin, glm::vec3* dir, Input* input,
+	int* shardCount, int* anchorCount, int* splineCount)
+{
+	int count = 1;
+
+	float countValue = 1.0f;
+	bool countEnabled = false;
+	if (countNode.reportEnabled()) {
+		countEnabled = true;
+		countNode.calculateControl(countValue, pos, dir, input, &countController, anchorCount);
+	}
+	if (countNoise.isEnabled) {
+		countEnabled = true;
+		countNoise.calculateNoise(countValue, pos, origin, dir, input, shardCount, anchorCount, splineCount, false);
+	}
+	if (countEnabled) {
+		count = clampi(int(countRange * lerpf(countNode.controlMin, countNode.controlMax, countValue)), 1, int(countRange));
+	}
+	else {
+		count = clampi(int(countRange * countNode.controlMax), 1, int(countRange));
+	}
+	return count;
 }

@@ -81,7 +81,7 @@ glm::ivec2 ImageWidget::findWidgetLocation(std::shared_ptr<Widget> childWidget)
 }
 
 // Render Functions
-void ImageWidget::drawSelf(ShaderTransform xform)
+void ImageWidget::drawSelf(ShaderTransform* xform)
 {
 	if (nameAttrib == "tg_handle0")
 	{

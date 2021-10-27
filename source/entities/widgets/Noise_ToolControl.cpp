@@ -105,7 +105,7 @@ glm::ivec2 Noise_ToolControl::findWidgetLocation(std::shared_ptr<Widget> childWi
 }
 
 // Render Functions
-void Noise_ToolControl::drawSelf(ShaderTransform xform)
+void Noise_ToolControl::drawSelf(ShaderTransform* xform)
 {
 	
 	glm::vec3 fillColor = style.fillColor.makeVec3();

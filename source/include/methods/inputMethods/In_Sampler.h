@@ -12,6 +12,7 @@ class In_Sampler : public InputMethod
 {
 private:
 protected:
+	int sampleCount = 0;
 	TSet_Sampler sampler;
 public:
 	In_Sampler(MethodType id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }

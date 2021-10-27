@@ -73,7 +73,7 @@ glm::ivec2 HorizontalBox::findWidgetLocation(std::shared_ptr<Widget> childWidget
 }
 
 // Render Functions
-void HorizontalBox::drawSelf(ShaderTransform xform)
+void HorizontalBox::drawSelf(ShaderTransform* xform)
 {
 	glm::vec3 backgroundColor;
 	glm::vec3 fillColor = style.fillColor.makeVec3();

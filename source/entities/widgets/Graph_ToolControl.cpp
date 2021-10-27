@@ -495,7 +495,7 @@ glm::ivec2 Graph_ToolControl::findWidgetLocation(std::shared_ptr<Widget> childWi
 }
 
 // Render Functions
-void Graph_ToolControl::drawSelf(ShaderTransform xform)
+void Graph_ToolControl::drawSelf(ShaderTransform* xform)
 {
 	glm::vec3 backgroundColor;
 	glm::vec3 fillColor = style.fillColor.makeVec3();

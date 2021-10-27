@@ -39,3 +39,16 @@ void VertexData::centerVertsToOrigin()
 	}
 	transform.origin = glm::vec3(0.0f);
 }
+
+void copyVertexData(VertexData& target, VertexData* copy)
+{
+	target.transform = copy->transform;
+	target.activeModKey = copy->activeModKey;
+	target.constantSize = copy->constantSize;
+	target.linearStream = copy->linearStream;
+	target.connectEnds = copy->connectEnds;
+	target.centerAboutOrigin = copy->centerAboutOrigin;
+	target.anchors = copy->anchors;
+	target.startTime = copy->startTime;
+	target.endTime = copy->endTime;
+}

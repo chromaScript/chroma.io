@@ -112,7 +112,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_ANY_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE); // ENABLE DEBUG CONTEXT
-	//glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -178,6 +178,7 @@ int main()
 // INITIALIZE SHADERS
 	// Instruct application to construct the shaders
 	chromaIO.get()->initializeShaders();
+	chromaIO.get()->ui->visualizer->setPreviewShader(chromaIO.get()->getPreviewShader());
 
 // INITIALIZE UI, CAMERA, CANVAS, AND TOOLS
 	// Initialize UI
@@ -241,12 +242,16 @@ int main()
 		// Clear the Buffer
 		chromaIO.get()->clearScreen();
 
+		ShaderTransform* xform = chromaIO.get()->getCamera()->getShaderTransform();
 		// Draw the canvas background (Checker Pattern)
 		if (chromaIO.get()->getUI()->activeCanvas != nullptr)
 		{
-			chromaIO.get()->getUI()->getCanvas()->draw(chromaIO.get()->getCamera()->getShaderTransform());
+			chromaIO.get()->getUI()->getCanvas()->draw(xform);
 			// Draw the canvas objects
-			chromaIO.get()->getUI()->getCanvas()->drawLayers(chromaIO.get()->getCamera()->getShaderTransform());
+			chromaIO.get()->getUI()->getCanvas()->drawLayers(xform);
+			// Draw Virtual Objects (Brush Tip, Preview Data, Vertices, Lines, etc.)
+			
+			chromaIO.get()->ui->visualizer->draw(xform, chromaIO.get()->getWindowDimensions());
 		}
 
 		// Draw the UI

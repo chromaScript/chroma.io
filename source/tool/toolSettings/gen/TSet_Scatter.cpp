@@ -142,42 +142,18 @@ std::shared_ptr<CObject> TSet_Scatter::putProperty(
 
 TSetControl_Node* TSet_Scatter::getControlNode(int settingSig, int subSig)
 {
-	if (settingSig == 2600)
-	{
-		return &angleNode;
-	}
-	else if (settingSig == 2610)
-	{
-		return &distanceXNode;
-	}
-	else if (settingSig == 2620)
-	{
-		return &distanceYNode;
-	}
-	else if (settingSig == 2630)
-	{
-		return &countNode;
-	}
+	if (settingSig == 2600) { return &angleNode; }
+	else if (settingSig == 2610) { return &distanceXNode; }
+	else if (settingSig == 2620) { return &distanceYNode; }
+	else if (settingSig == 2630) { return &countNode; }
 	return nullptr;
 }
 TSetController* TSet_Scatter::getController(int settingSig, int subSig)
 {
-	if (settingSig == 2601)
-	{
-		return &angleController;
-	}
-	else if (settingSig == 2611)
-	{
-		return &distanceXController;
-	}
-	else if (settingSig == 2621)
-	{
-		return &distanceYController;
-	}
-	else if (settingSig == 2631)
-	{
-		return &countController;
-	}
+	if (settingSig == 2601) { return &angleController; }
+	else if (settingSig == 2611) { return &distanceXController; }
+	else if (settingSig == 2621) { return &distanceYController; }
+	else if (settingSig == 2631) { return &countController; }
 	return nullptr;
 }
 TSetGraph* TSet_Scatter::getGraph(int settingSig, int subSig)
@@ -228,22 +204,10 @@ TSetGraph* TSet_Scatter::getGraph(int settingSig, int subSig)
 }
 TSetNoise* TSet_Scatter::getNoise(int settingSig, int subSig)
 {
-	if (settingSig == 2602)
-	{
-		return &angleNoise;
-	}
-	else if (settingSig == 2612)
-	{
-		return &distanceXNoise;
-	}
-	else if (settingSig == 2622)
-	{
-		return &distanceYNoise;
-	}
-	else if (settingSig == 2632)
-	{
-		return &countNoise;
-	}
+	if (settingSig == 2602) { return &angleNoise; }
+	else if (settingSig == 2612) { return &distanceXNoise; }
+	else if (settingSig == 2622) { return &distanceYNoise; }
+	else if (settingSig == 2632) { return &countNoise; }
 	return nullptr;
 }
 

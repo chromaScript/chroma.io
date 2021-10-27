@@ -13,8 +13,8 @@ protected:
 public:
 	DataLayer(glm::ivec2 dimensions, std::string name, CColor fill, std::shared_ptr<Shader> shader);
 
-	virtual void render(ShaderTransform xform, unsigned int targetBuffer);
-	virtual void draw(ShaderTransform xform);
+	virtual void render(ShaderTransform* xform, unsigned int targetBuffer);
+	virtual void draw(ShaderTransform* xform);
 };
 
 #endif

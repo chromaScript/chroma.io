@@ -66,6 +66,7 @@ private:
 	bool isLandscape = true;
 	int winWidth = 0;
 	int winHeight = 0;
+	glm::ivec2 winDimensions = glm::ivec2(0);
 	glm::vec4 bgColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	
 	// Input Handler Variables
@@ -92,6 +93,7 @@ private:
 	std::shared_ptr<Shader> widgetShader = nullptr;
 	std::shared_ptr<Shader> textShader = nullptr;
 	std::shared_ptr<Shader> debugLineShader = nullptr;
+	std::shared_ptr<Shader> previewShader = nullptr;
 	std::shared_ptr<Shader> gradientBoxShader = nullptr;
 	std::shared_ptr<Shader> graphWidgetShader = nullptr;
 	std::shared_ptr<Shader> noiseWidgetShader = nullptr;
@@ -181,6 +183,7 @@ public:
 	void setWindowProperties(int width, int height); // By initialization / indirect framebufferSize
 	GLFWwindow* getWindow();
 	glm::ivec2 getWindowPosition();
+	glm::ivec2* getWindowDimensions();
 	int getWindowWidth();
 	int getWindowHeight();
 	float getWindowRatio();
@@ -202,6 +205,7 @@ public:
 	std::shared_ptr<Shader> getWidgetShader() { return widgetShader; }
 	std::shared_ptr<Shader> getTextShader() { return textShader; }
 	std::shared_ptr<Shader> getDebugLineShader() { return debugLineShader; }
+	std::shared_ptr<Shader> getPreviewShader() { return previewShader; }
 	std::shared_ptr<Shader> getGradientBoxShader() { return gradientBoxShader; }
 	std::shared_ptr<Shader> getGraphWidgetShader() { return graphWidgetShader; }
 	std::shared_ptr<Shader> getNoiseWidgetShader() { return noiseWidgetShader; }
@@ -221,6 +225,7 @@ public:
 
 	// Color Functions
 	CColor sampleScreen(int x, int y);
+	CColor sampleScreen(int x, int y, int radius);
 
 	// UI Functions
 	void createUI();

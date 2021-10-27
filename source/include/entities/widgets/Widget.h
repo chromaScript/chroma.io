@@ -185,10 +185,10 @@ public:
 	std::shared_ptr<CObject> getProperty(std::shared_ptr<CInterpreter> interpreter, std::string name);
 
 	// Render Functions
-	virtual void render(ShaderTransform xform, unsigned int targetBuffer) {};
+	virtual void render(ShaderTransform* xform, unsigned int targetBuffer) {};
 	void notifyVisibilityChanged();
-	virtual void draw(ShaderTransform xform);
-	virtual void drawSelf(ShaderTransform xform) = 0;
+	virtual void draw(ShaderTransform* xform);
+	virtual void drawSelf(ShaderTransform* xform) = 0;
 };
 
 #endif

@@ -207,7 +207,41 @@ std::string TFSettingsWriter::writeSetting_pan(std::shared_ptr<Tool> target, TSe
 std::string TFSettingsWriter::writeSetting_sampler(std::shared_ptr<Tool> target, TSet_Sampler* sampler)
 {
 	std::string output = "sampler \n{\n";
-
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 900, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 901, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 902, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 928, -1, nullptr, true, false, true).get()->obj);
+	//
+	output += makeSettingString(target, sampler->getControlNode(930, -1), 930, -1, sampler->getControlNode(930, -1)->nodeName);
+	output += makeSettingString(target, sampler->getControlNode(931, -1), 931, -1, sampler->getControlNode(931, -1)->nodeName);
+	output += makeSettingString(target, sampler->getControlNode(932, -1), 932, -1, sampler->getControlNode(932, -1)->nodeName);
+	output += makeSettingString(target, sampler->getController(933, -1), 933, -1, "CONTROLLER");
+	output += makeSettingString(target, sampler->getNoise(934, -1), 934, -1, sampler->getNoise(934, -1)->noiseName);
+	output += makeSettingString(target, sampler->getNoise(935, -1), 935, -1, sampler->getNoise(935, -1)->noiseName);
+	output += makeSettingString(target, sampler->getNoise(936, -1), 936, -1, sampler->getNoise(936, -1)->noiseName);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 929, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 937, -1, nullptr, true, false, true).get()->obj);
+	//
+	output += makeSettingString(target, sampler->getControlNode(950, -1), 950, -1, sampler->getControlNode(950, -1)->nodeName);
+	output += makeSettingString(target, sampler->getControlNode(951, -1), 951, -1, sampler->getControlNode(951, -1)->nodeName);
+	output += makeSettingString(target, sampler->getControlNode(952, -1), 952, -1, sampler->getControlNode(952, -1)->nodeName);
+	output += makeSettingString(target, sampler->getController(953, -1), 953, -1, "CONTROLLER");
+	output += makeSettingString(target, sampler->getNoise(954, -1), 954, -1, sampler->getNoise(954, -1)->noiseName);
+	output += makeSettingString(target, sampler->getNoise(955, -1), 955, -1, sampler->getNoise(955, -1)->noiseName);
+	output += makeSettingString(target, sampler->getNoise(956, -1), 956, -1, sampler->getNoise(956, -1)->noiseName);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 940, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 944, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 957, -1, nullptr, true, false, true).get()->obj);
+	//
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 960, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 961, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 962, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 963, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 964, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 965, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 966, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 967, -1, nullptr, true, false, true).get()->obj);
+	output += std::get<std::string>(sampler->putProperty(nullptr, target, 968, -1, nullptr, true, false, true).get()->obj);
 	output += "}\n\n";
 	return output;
 }

@@ -10,6 +10,7 @@
 #include "../CustomCursor.h"
 #include "../Application.h"
 #include "../cscript/CObject.h"
+#include "visuals/Visualizer.h"
 
 class WidgetStyle;
 class CInterpreter;
@@ -84,7 +85,7 @@ public:
 		if (stack.size() == 0) { return; }
 		stack.clear();
 	}
-	bool drawStack(ShaderTransform xform)
+	bool drawStack(ShaderTransform* xform)
 	{
 		if (stack.size() == 0) { return false; }
 		for (int i = 0; i < stack.size(); i++)
@@ -230,6 +231,9 @@ public:
 	UI(std::shared_ptr<Application>);
 
 	// Documents
+
+// Visualizer Utility
+	std::unique_ptr<Visualizer> visualizer;
 
 	size_t getDocumentsCount() { return documents.size(); }
 	// Utility Functions

@@ -813,6 +813,12 @@
     <ClCompile Include="source\presets\texture\TextureProperties.cpp">
       <Filter>Source Files\presets\texture</Filter>
     </ClCompile>
+    <ClCompile Include="source\entities\visuals\Visualizer.cpp">
+      <Filter>Source Files\entities\visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\visuals\PreviewObj.cpp">
+      <Filter>Source Files\entities\visuals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\include\Application.h">
@@ -1487,6 +1493,12 @@
     <ClInclude Include="source\include\presets\image\ImageLayer_Vector.h">
       <Filter>Header Files\presets\image</Filter>
     </ClInclude>
+    <ClInclude Include="source\include\entities\visuals\Visualizer.h">
+      <Filter>Header Files\entities\visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\entities\visuals\PreviewObj.h">
+      <Filter>Header Files\entities\visuals</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt">
@@ -1570,6 +1582,15 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="shaders\noiseWidgetShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\previewShader.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\previewShader.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\previewShader.geom">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

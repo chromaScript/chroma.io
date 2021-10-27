@@ -14,6 +14,8 @@ class Application;
 class Out_Stroke : public OutputMethod
 {
 private:
+	unsigned int activePointsLayer = 0;
+	unsigned int activeLinesLayer = 0;
 protected:
 	bool requestNewStroke = true;
 	bool isPaused = false;

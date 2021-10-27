@@ -39,6 +39,46 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath, std::string n)
 	glDeleteShader(fragment);
 }
 
+Shader::Shader(const char* geoPath, const char* vertexPath, const char* fragmentPath, std::string n)
+{
+	name = n;
+	//1. Retrieve the vertex/fragment source code from filePath
+	std::string geoString = loadShaderFile(geoPath);
+	std::string vertString = loadShaderFile(vertexPath);
+	std::string fragString = loadShaderFile(fragmentPath);
+	const char* gShaderCode = geoString.c_str();
+	const char* vShaderCode = vertString.c_str();
+	const char* fShaderCode = fragString.c_str();
+	// 2. Compile shaders
+	unsigned int geometry, vertex, fragment;
+	// Build Geometry Shader
+	geometry = glCreateShader(GL_GEOMETRY_SHADER);
+	glShaderSource(geometry, 1, &gShaderCode, NULL);
+	glCompileShader(geometry);
+	checkCompileErrors(geometry, "GEOMETRY");
+	// Build Vertex Shader
+	vertex = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertex, 1, &vShaderCode, NULL);
+	glCompileShader(vertex);
+	checkCompileErrors(vertex, "VERTEX");
+	// Build Fragment Shader
+	fragment = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragment, 1, &fShaderCode, NULL);
+	glCompileShader(fragment);
+	checkCompileErrors(fragment, "FRAGMENT");
+	// Build Shader Program and copy the Fragment and Vertex Shaders into it
+	ID = glCreateProgram(); 
+	glAttachShader(ID, vertex);
+	glAttachShader(ID, geometry);
+	glAttachShader(ID, fragment);
+	glLinkProgram(ID);
+	checkCompileErrors(ID, "PROGRAM");
+	// Delete the component shaders
+	glDeleteShader(geometry);
+	glDeleteShader(vertex);
+	glDeleteShader(fragment);
+}
+
 // Check for compile errors
 void Shader::checkCompileErrors(unsigned int shader, std::string type)
 {

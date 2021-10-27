@@ -37,14 +37,14 @@ DataLayer::DataLayer(glm::ivec2 dimensions, std::string name, CColor fill, std::
 		<< static_cast<int>(fill.b) << ", " << std::endl;
 }
 
-void DataLayer::draw(ShaderTransform xform)
+void DataLayer::draw(ShaderTransform* xform)
 {
 	modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::translate(xform.m, transform.pos);
+	modelMatrix = glm::translate(xform->m, transform.pos);
 	shader->use();
 	shader->setInt("texture1", 0);
-	shader->setMat4("projection", xform.p);
-	shader->setMat4("view", xform.v);
+	shader->setMat4("projection", xform->p);
+	shader->setMat4("view", xform->v);
 	shader->setMat4("model", modelMatrix);
 	glBindVertexArray(VAO);
 	glActiveTexture(GL_TEXTURE0);
@@ -60,18 +60,18 @@ void DataLayer::draw(ShaderTransform xform)
 	}
 }
 
-void DataLayer::render(ShaderTransform xform, unsigned int targetBuffer)
+void DataLayer::render(ShaderTransform* xform, unsigned int targetBuffer)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, targetBuffer);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendEquation(GL_FUNC_ADD);
 
 	modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::translate(xform.m, transform.pos);
+	modelMatrix = glm::translate(xform->m, transform.pos);
 	shader->use();
 	shader->setInt("texture1", 0);
-	shader->setMat4("projection", xform.p);
-	shader->setMat4("view", xform.v);
+	shader->setMat4("projection", xform->p);
+	shader->setMat4("view", xform->v);
 	shader->setMat4("model", modelMatrix);
 	glBindVertexArray(VAO);
 	glActiveTexture(GL_TEXTURE0);

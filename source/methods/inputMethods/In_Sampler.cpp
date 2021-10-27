@@ -21,36 +21,39 @@ InputHandlerFlag In_Sampler::move(Application* sender, Input dat)
 	fragData.activeModKey = dat.modKey;
 
 	// If the array is empty, insert the first element, otherwise overwrite it with the passed Input
+	bool isNew = (fragData.anchors.front().input.flagPrimary == InputFlag::newInput) ? true : false;
 	if (data.inputEvents.size() < maxBufferLength) { data.inputEvents.push_back(dat); }
 	else { data.inputEvents.erase(data.inputEvents.begin()); data.inputEvents.push_back(dat); }
-	// Adjust the anchor points
-	fragData.anchors.front().input.flagPrimary = InputFlag::null;
 	// Update the Anchor
 	glm::vec3 pos = sender->pickScreenCoord(dat.x, dat.y);
+	glm::vec3 dir = glm::normalize(pos - fragData.anchors.back().pos);
 	glm::vec3 screenPos = glm::vec3((float)dat.x, (float)dat.y, 0.0f);
 	// Only update the anchors if there was a significant movement
+	InputHandlerFlag result = InputHandlerFlag::noSignal;
 	if (glm::length(fragData.anchors.back().pos - screenPos) > ROOT2 * 1.2f)
 	{
 		fragData.anchors = {
-			FragmentAnchor(anchorIDCount, pos, glm::vec3(0, 0, 0),
+			FragmentAnchor(anchorIDCount, pos, dir,
 				1.0f,
 				HandleType::linear, false, pos,
 				HandleType::linear, false, pos,
 				HandleRel::independent,
 				data.inputEvents.back()),
-			FragmentAnchor(anchorIDCount, screenPos, glm::vec3(0, 0, 0),
+			FragmentAnchor(anchorIDCount, screenPos, dir,
 				1.0f,
 				HandleType::linear, false, screenPos,
 				HandleType::linear, false, screenPos,
 				HandleRel::independent,
 				data.inputEvents.back()) };
 		anchorIDCount++;
-		return InputHandlerFlag::allowPress_updateCursor;
+		result = InputHandlerFlag::allowPress_updateCursor;
 	}
 	else
 	{
-		return InputHandlerFlag::wait;
+		result = InputHandlerFlag::wait;
 	}
+	if (isNew) { fragData.anchors.front().input.flagPrimary = InputFlag::null; }
+	return result;
 }
 
 InputHandlerFlag In_Sampler::click(Application* sender, Input dat)
@@ -62,6 +65,10 @@ InputHandlerFlag In_Sampler::click(Application* sender, Input dat)
 	{
 		// Get the settings
 		sampler = *owner.get()->getSampler();
+		float trueSpacing = 1.0f; 
+		glm::ivec2 canvasDimensions = sender->getCanvasDimensions();
+		sampler.initialize(&trueSpacing, &sampleCount, &canvasDimensions);
+		sampleCount++;
 		// For new inputs, clear the current array, and then set start to the passed Input
 		anchorIDCount = 0;
 		data.reset();
@@ -81,7 +88,7 @@ InputHandlerFlag In_Sampler::click(Application* sender, Input dat)
 		// Add the first and second anchor points
 		// The second anchor point is used to hold the raw screen-coordinates
 		fragData.anchors.push_back(
-			FragmentAnchor(anchorIDCount, origin, glm::vec3(0, 0, 0),
+			FragmentAnchor(anchorIDCount, origin, DEFAULT_DIR,
 				1.0f,
 				HandleType::linear, false, origin,
 				HandleType::linear, false, origin,
@@ -89,12 +96,13 @@ InputHandlerFlag In_Sampler::click(Application* sender, Input dat)
 				data.inputEvents.back()));
 		glm::vec3 screenPos = glm::vec3((float)dat.x, (float)dat.y, 0.0f);
 		fragData.anchors.push_back(
-			FragmentAnchor(anchorIDCount, screenPos, glm::vec3(0, 0, 0),
+			FragmentAnchor(anchorIDCount, screenPos, DEFAULT_DIR,
 				1.0f,
 				HandleType::linear, false, screenPos,
 				HandleType::linear, false, screenPos,
 				HandleRel::independent,
 				data.inputEvents.back()));
+		fragData.anchors.front().input.flagPrimary = InputFlag::newInput;
 		anchorIDCount++;
 		wasHandled = InputHandlerFlag::allowPress_updateCursor;
 		//std::cout << "MethodType::in_point::CLICK::ALLOW_PRESS" << std::endl;

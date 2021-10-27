@@ -20,7 +20,6 @@ InputHandlerFlag In_Draw::move(Application* sender, Input dat)
 	//std::cout << "MethodType::in_draw::MOVE" << std::endl;
 	glm::vec3 pos = sender->pickScreenCoord(dat.x, dat.y);
 	glm::vec3 dir = glm::normalize(glm::vec3(
-		//pos.x - fragData.anchors.back().pos.x,
 		pos.x - fragData.anchors.back().pos.x,
 		pos.y - fragData.anchors.back().pos.y,
 		0.0f));

@@ -47,7 +47,7 @@ public:
 	virtual glm::ivec2 findWidgetLocation(std::shared_ptr<Widget> childWidget);
 
 	// Render Function
-	virtual void drawSelf(ShaderTransform xform);
+	virtual void drawSelf(ShaderTransform* xform);
 };
 
 #endif

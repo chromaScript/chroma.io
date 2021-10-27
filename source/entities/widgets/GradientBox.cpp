@@ -131,7 +131,7 @@ glm::ivec2 GradientBox::findWidgetLocation(std::shared_ptr<Widget> childWidget)
 }
 
 // Render Functions
-void GradientBox::drawSelf(ShaderTransform xform)
+void GradientBox::drawSelf(ShaderTransform* xform)
 {
 	glm::vec3 backgroundColor;
 	glm::vec3 fillColor = style.fillColor.makeVec3();

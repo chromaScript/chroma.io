@@ -42,9 +42,9 @@ public:
 	// Render functions
 	float* renderCanvas();
 	void deleteRenderData();
-	virtual void render(ShaderTransform xform, unsigned int targetBuffer);
-	virtual void draw(ShaderTransform xform);
-	void drawLayers(ShaderTransform xform);
+	virtual void render(ShaderTransform* xform, unsigned int targetBuffer);
+	virtual void draw(ShaderTransform* xform);
+	void drawLayers(ShaderTransform* xform);
 };
 
 #endif

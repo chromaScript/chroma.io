@@ -71,7 +71,7 @@ glm::ivec2 VerticalBox::findWidgetLocation(std::shared_ptr<Widget> childWidget)
 }
 
 // Render Functions
-void VerticalBox::drawSelf(ShaderTransform xform)
+void VerticalBox::drawSelf(ShaderTransform* xform)
 {
 	if (idAttrib == "tsf_effects_dropListCont")
 	{

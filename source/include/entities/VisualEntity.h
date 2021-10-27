@@ -96,8 +96,8 @@ public:
 	void deleteBuffers();
 	virtual void bindBuffers();
 	virtual void bindTexture(int width, int height);
-	virtual void render(ShaderTransform xform, unsigned int targetBuffer) = 0;
-	virtual void draw(ShaderTransform xform) = 0;
+	virtual void render(ShaderTransform* xform, unsigned int targetBuffer) = 0;
+	virtual void draw(ShaderTransform* xform) = 0;
 
 	// Utilities
 	unsigned int bindTexture_utility(int channelCount, int width, int height, unsigned int& texID, unsigned char* data);

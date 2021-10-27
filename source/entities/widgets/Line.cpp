@@ -289,7 +289,7 @@ void Line::bindBuffers()
 	glEnableVertexAttribArray(1);
 	glBindVertexArray(0);
 }
-void Line::drawSelf(ShaderTransform xform)
+void Line::drawSelf(ShaderTransform* xform)
 {
 	glm::vec4 textColor;
 	glm::vec2 screenLocation;

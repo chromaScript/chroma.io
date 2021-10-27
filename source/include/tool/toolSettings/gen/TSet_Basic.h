@@ -35,6 +35,29 @@ public:
 	CColor currentFGColor;
 	CColor savedBGColor;
 	CColor currentBGColor;
+	// Quick Swap Keys (Overrides constraint angle keys & all other hotkeys)
+	// These can be mapped to any tool and any regular key expression. Availability, accepted keys, and number of
+	// hot swaps able to be set depends on the input control mode, and thus hot swap keys are bound within each
+	// control mode for each tool, rather than as global key bindings.
+	// Hotswap Angle A
+	bool enableHotswapA; // 2140
+	int hotswapA_toolID; // 2141
+	Keybind hotswapA_modKey; // 2142
+	// Hotswap Angle B
+	bool enableHotswapB; // 2143
+	int hotswapB_toolID; // 2144
+	Keybind hotswapB_modKey; // 2145
+	// Hotswap Angle C
+	bool enableHotswapC; // 2146
+	int hotswapC_toolID; // 2147
+	Keybind hotswapC_modKey; // 2148
+	// Hotswap Angle D
+	bool enableHotswapD; // 2149
+	int hotswapD_toolID; // 2150
+	Keybind hotswapD_modKey; // 2151
+	// Hotswap Globals
+	bool copySwapGlobal;
+
 	virtual TSetType getType() { return type; }
 
 	virtual TSetControl_Node* getControlNode(int settingSig, int subSig);

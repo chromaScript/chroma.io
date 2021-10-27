@@ -285,5 +285,5 @@ glm::vec3 Camera::getCenterPosition() { return centerPos; }
 glm::mat4 Camera::getView() { return transform.v; }
 glm::mat4 Camera::getProjection() { return transform.p; }
 glm::mat4 Camera::getModel() { return transform.m; }
-ShaderTransform Camera::getShaderTransform() { return transform; }
+ShaderTransform* Camera::getShaderTransform() { return &transform; }
 

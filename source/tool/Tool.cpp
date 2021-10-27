@@ -394,7 +394,7 @@ bool Tool::sendInput(Keybind input, InputModKey activeModKey)
 	if (inID == MethodType::in_spline && checkInterestMask(TSetType::spline))
 	{
 		Keybind splineCaptureKey = getSpline()->captureKey;
-		if (compareModKey(input, splineCaptureKey, false) || compareModKey(input, splineCaptureKey, true))
+		if (compareKeybind(input, splineCaptureKey, false) || compareModKey(input, splineCaptureKey, false))
 		{
 			dynamic_cast<In_Spline*>(this->input.get())->beginRecording();
 			return true;

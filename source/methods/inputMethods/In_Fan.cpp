@@ -94,38 +94,40 @@ InputHandlerFlag In_Fan::click(Application* sender, Input dat)
 			glm::vec3 pos = sender->pickScreenCoord(dat.x, dat.y);
 			
 			int lastSplineIndex = (int)splineData.anchors.size() - 1;
-			if (continuous.fillOnShiftClick)
+			glm::vec3 connectPoint = splineData.anchors.back().pos;
+			glm::vec3 connectLineDir = glm::normalize(glm::vec3(
+				pos.x - connectPoint.x,
+				pos.y - connectPoint.y,
+				0.0f));
+			glm::vec3 splinePos = glm::vec3(0), splineDir = glm::vec3(0);
+			float splinePressure = data.inputEvents.back().pressure;
+			float splineTiltx = data.inputEvents.back().tiltX;
+			float splineTilty = data.inputEvents.back().tiltY;
+			float splineRotation = data.inputEvents.back().rotation;
+			float splineVelocity = sender->getMouseVelocity(0.4f);
+			float distance = glm::length(pos - splineData.anchors.back().pos);
+			float usedDistance = continuous.anchorSpacing;
+			while (usedDistance < distance)
 			{
-				glm::vec3 connectPoint = splineData.anchors.back().pos;
-				glm::vec3 connectLineDir = glm::normalize(glm::vec3(
-					pos.x - connectPoint.x,
-					pos.y - connectPoint.y,
+				float splinePressure = lerpf(data.inputEvents.back().pressure, splineData.anchors.back().input.pressure, usedDistance);
+				float splineTiltx = lerpf(data.inputEvents.back().tiltX, splineData.anchors.back().input.tiltX, usedDistance);
+				float splineTilty = lerpf(data.inputEvents.back().tiltY, splineData.anchors.back().input.tiltY, usedDistance);
+				float splineRotation = lerpf(data.inputEvents.back().rotation, splineData.anchors.back().input.rotation, usedDistance);
+				float splineVelocity = lerpf(sender->getMouseVelocity(0.4f), splineData.anchors.back().input.velocity, usedDistance);
+				splinePos = connectPoint + (connectLineDir * -usedDistance);
+				splineDir = glm::normalize(glm::vec3(
+					splinePos.x - fragData.transform.origin.x,
+					splinePos.y - fragData.transform.origin.y,
 					0.0f));
-				glm::vec3 splinePos = glm::vec3(0), splineDir = glm::vec3(0);
-				float splinePressure = lerpf(data.inputEvents.back().pressure, splineData.anchors.back().input.pressure, continuous.connectPropertiesWeighting);
-				float splineTiltx = lerpf(data.inputEvents.back().tiltX, splineData.anchors.back().input.tiltX, continuous.connectPropertiesWeighting);
-				float splineTilty = lerpf(data.inputEvents.back().tiltY, splineData.anchors.back().input.tiltY, continuous.connectPropertiesWeighting);
-				float splineRotation = lerpf(data.inputEvents.back().rotation, splineData.anchors.back().input.rotation, continuous.connectPropertiesWeighting);
-				float splineVelocity = lerpf(sender->getMouseVelocity(0.4f), splineData.anchors.back().input.velocity, continuous.connectPropertiesWeighting);
-				float distance = glm::length(pos - splineData.anchors.back().pos);
-				float usedDistance = continuous.anchorSpacing;
-				while (usedDistance < distance)
-				{
-					splinePos = connectPoint + (connectLineDir * -usedDistance);
-					splineDir = glm::normalize(glm::vec3(
-						splinePos.x - fragData.transform.origin.x,
-						splinePos.y - fragData.transform.origin.y,
-						0.0f));
-					usedDistance += continuous.anchorSpacing;
-					splineIDCount++;
-					splineData.anchors.push_back(FragmentAnchor(anchorIDCount, splinePos, splineDir,
-						1.0f,
-						HandleType::linear, false, splinePos,
-						HandleType::linear, false, splinePos,
-						HandleRel::independent,
-						Input(splinePressure, splineTiltx,
-							splineTilty, splineRotation, splineVelocity)));
-				}
+				usedDistance += continuous.anchorSpacing;
+				splineIDCount++;
+				splineData.anchors.push_back(FragmentAnchor(anchorIDCount, splinePos, splineDir,
+					1.0f,
+					HandleType::linear, false, splinePos,
+					HandleType::linear, false, splinePos,
+					HandleRel::independent,
+					Input(splinePressure, splineTiltx,
+						splineTilty, splineRotation, splineVelocity)));
 			}
 			// Insert new anchor, set dirInterpFactor to 0.0f so that the stroke will hard-snap
 			// the shards to the new direction rather than smoothly interpolate the change

@@ -115,6 +115,10 @@ void Application::initializeShaders()
 		"shaders/debugLineShader.vert", "shaders/debugLineShader.frag", "DEBUG_LINE_SHADER");
 	std::cout << "APPLICATION::DEBUG_LINE_SHADER::BOUND" << std::endl;
 	//
+	previewShader = std::make_shared<Shader>(
+		"shaders/previewShader.geom", "shaders/previewShader.vert", "shaders/previewShader.frag", "PREVIEW_SHADER");
+	std::cout << "APPLICATION::PREVIEW_SHADER::BOUND" << std::endl;
+	//
 	gradientBoxShader = std::make_shared<Shader>(
 		"shaders/gradientBoxShader.vert", "shaders/gradientBoxShader.frag", "GRADIENT_BOX_SHADER");
 	std::cout << "APPLICATION::GRADIENT_BOX_SHADER::BOUND" << std::endl;
@@ -207,6 +211,7 @@ void Application::setWindowProperties()
 	}
 	WINDOW_WIDTH = winWidth;
 	WINDOW_HEIGHT = winHeight;
+	winDimensions = glm::ivec2(winWidth, winHeight);
 }
 void Application::setWindowProperties(int width, int height)
 {
@@ -221,7 +226,7 @@ void Application::setWindowProperties(int width, int height)
 	}
 	winWidth = WINDOW_WIDTH = width;
 	winHeight = WINDOW_HEIGHT = height;
-
+	winDimensions = glm::ivec2(winWidth, winHeight);
 }
 void Application::setWindowColor(glm::vec4 color)
 {
@@ -236,6 +241,7 @@ glm::ivec2 Application::getWindowPosition()
 GLFWwindow* Application::getWindow() { return appWindow; }
 int Application::getWindowWidth() { return winWidth; }
 int Application::getWindowHeight() { return winHeight; }
+glm::ivec2* Application::getWindowDimensions() { return &winDimensions; }
 float Application::getWindowRatio() { return winRatio; }
 bool Application::getWindowOrientation() { return isLandscape; }
 glm::vec4 Application::getBoundsVec4() { return glm::vec4(0.0f, 0.0f, (float)winWidth, (float)winHeight); }
@@ -1429,6 +1435,31 @@ CColor Application::sampleScreen(int x, int y)
 	glReadPixels(x, winHeight - y, 1, 1, GL_RGB, GL_FLOAT, &pixel);
 	return CColor(pixel[0], pixel[1], pixel[2]);
 }
+CColor Application::sampleScreen(int x, int y, int radius)
+{
+	if (radius <= 0) { return sampleScreen(x, y); }
+	GLsizei rad = radius;
+	GLubyte* pixels = new GLubyte[(size_t)rad * (size_t)rad * (size_t)4];
+	GLint xRead = clampi(x - (rad / 2), 0, INT_MAX);
+	GLint yRead = clampi(winHeight - (y + (rad / 2)), 0, INT_MAX);
+	glReadPixels(xRead, yRead, rad, rad, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	int redSum = 0.0f; int greenSum = 0.0f; int blueSum = 0.0f; int pixelCount = 0.0f;
+	for (int y = 0; y < rad; y++)
+	{
+		for (int x = 0; x < rad; x++)
+		{
+			if (pow((x - rad), 2) + pow((y - rad), 2) < pow(rad, 2)) {
+				redSum += pixels[((x + (y * rad)) * 4) + 0];
+				greenSum += pixels[((x + (y * rad)) * 4) + 1];
+				blueSum += pixels[((x + (y * rad)) * 4) + 2];
+				pixelCount++;
+			}
+		}
+	}
+	delete[]pixels;
+	redSum /= pixelCount; greenSum /= pixelCount; blueSum /= pixelCount;
+	return CColor(redSum / 255.0f, greenSum / 255.0f, blueSum / 255.0f);
+}
 
 // Take a screen coordinate as X/Y and return a vec4 as | X & Y in -1 and 1 range | Z as pixel depth | W normal (1.0)
 // Used for screen to world projection
@@ -1447,11 +1478,11 @@ glm::vec4 Application::convertScreenCoord(double x, double y)
 glm::vec3 Application::pickScreenCoord(double x, double y)
 {
 	// Get the view / projection matrix
-	ShaderTransform matrix = getCamera()->getShaderTransform();
+	ShaderTransform* matrix = getCamera()->getShaderTransform();
 	// Convert the screenCoord to NDC
 	glm::vec4 screenCoord = convertScreenCoord(x, y);
 	// Create the inverse matrix transform and apply it to screenCoord
-	glm::mat4 inverseMatrix = matrix.v * matrix.p;
+	glm::mat4 inverseMatrix = matrix->v * matrix->p;
 	inverseMatrix = glm::inverse(inverseMatrix);
 	screenCoord = screenCoord * inverseMatrix;
 	glm::vec3 outPos = glm::vec3(screenCoord.x, screenCoord.y, 0.0f);

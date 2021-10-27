@@ -86,7 +86,6 @@ protected:
 
 	// Rendering Management
 	bool drawShapeLines = false;
-	bool drawBoundsLines = false;
 	float* lineLoop = nullptr;
 	int lineLoopLen = 0;
 	int lineSize = 18;
@@ -138,14 +137,12 @@ public:
 	void cleanup_stroke();
 
 	// Render Functions
-	void setCompositeShaderUniforms(ShaderTransform xform);
-	void setBoundsDraw(EntityTransform transform);
-	void disableBoundsDraw();
+	void setCompositeShaderUniforms(ShaderTransform* xform);
 	void setLineDraw(std::vector<glm::vec3> lines);
 	void disableLineDraw();
-	virtual void render(ShaderTransform xform, unsigned int targetBuffer);
-	virtual void draw(ShaderTransform xform);
-	void drawDebugData(ShaderTransform xform);
+	virtual void render(ShaderTransform* xform, unsigned int targetBuffer);
+	virtual void draw(ShaderTransform* xform);
+	void drawDebugData(ShaderTransform* xform);
 };
 
 #endif

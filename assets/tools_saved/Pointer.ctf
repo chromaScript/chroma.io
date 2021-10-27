@@ -1,0 +1,27 @@
+[header]
+
+metadata 
+{
+ID=0::SID=-1::id = 0 ;
+ID=1::SID=-1::inID = in_noInput ;
+ID=2::SID=-1::outID = out_noOutput ;
+ID=3::SID=-1::name = "Pointer" ;
+ID=8::SID=-1::useTipAsIcon = "true" ;
+ID=15::SID=-1::tags = "" ;
+ID=16::SID=-1::category = "Default Tools" ;
+ID=17::SID=-1::toolType = "Default" ;
+ID=18::SID=-1::date = "08.15.21" ;
+ID=19::SID=-1::author = "chromaTinker" ;
+ID=20::SID=-1::bindType = 0 ;
+ID=21::SID=-1::keybind = "F1" ;
+ID=24::SID=-1::cursorUp = "Pointer" ;
+ID=25::SID=-1::cursorDown = "Pointer" ;
+ID=30::SID=-1::input = "No Input" ;
+ID=31::SID=-1::output = "No Output" ;
+ID=32::SID=-1::controlScheme = "NULL" ;
+ID=41::SID=-1::activeSettingsPage = 0 ;
+ID=51::SID=-1::lockSettings = "false" ;
+ID=52::SID=-1::autoSaveSettings = "false" ;
+}
+
+[end]

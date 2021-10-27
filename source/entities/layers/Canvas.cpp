@@ -101,14 +101,14 @@ bool Canvas::close(bool saveBeforeExit)
 
 // Render Functions
 // Activate the shader program, Bind the vertex and texture to use, then Draw Elements (Rectangle)
-void Canvas::draw(ShaderTransform xform)
+void Canvas::draw(ShaderTransform* xform)
 {
 	shader->use();
 	shader->setInt("texture1", 0);
-	shader->setFloat("camZoom", xform.zoom);
-	shader->setMat4("projection", xform.p);
-	shader->setMat4("view", xform.v);
-	shader->setMat4("model", xform.m);
+	shader->setFloat("camZoom", xform->zoom);
+	shader->setMat4("projection", xform->p);
+	shader->setMat4("view", xform->v);
+	shader->setMat4("model", xform->m);
 	shader->setInt("checkerSize", checkerSize);
 	glBindVertexArray(VAO);
 	glActiveTexture(GL_TEXTURE0);
@@ -117,7 +117,7 @@ void Canvas::draw(ShaderTransform xform)
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 // Loop through renders for layers
-void Canvas::drawLayers(ShaderTransform xform)
+void Canvas::drawLayers(ShaderTransform* xform)
 {
 	for (std::shared_ptr<Layer> layer : layers)
 	{
@@ -127,7 +127,8 @@ void Canvas::drawLayers(ShaderTransform xform)
 // Render to file output
 float* Canvas::renderCanvas()
 {
-	render(ShaderTransform(), renderBuffer);
+	ShaderTransform xform = ShaderTransform();
+	render(&xform, renderBuffer);
 	renderData = new float[(size_t)transform.boundBox.x2 * (size_t)transform.boundBox.y2 * 4];
 	glBindFramebuffer(GL_FRAMEBUFFER, renderBuffer);
 	glReadPixels(0, 0, transform.boundBox.x2, transform.boundBox.y2, GL_RGBA, GL_FLOAT, renderData);
@@ -146,22 +147,8 @@ void Canvas::deleteRenderData()
 	}
 }
 // Render
-void Canvas::render(ShaderTransform xform, unsigned int targetBuffer)
+void Canvas::render(ShaderTransform* xform, unsigned int targetBuffer)
 {
-	/*
-	shader->use();
-	shader->setInt("texture1", 0);
-	shader->setFloat("camZoom", xform.zoom);
-	shader->setMat4("projection", xform.p);
-	shader->setMat4("view", xform.v);
-	shader->setMat4("model", xform.m);
-	shader->setInt("checkerSize", checkerSize);
-	glBindVertexArray(VAO);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, TEX0);
-	// Insert camera transforms later here
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	*/
 	glm::mat4 projection = glm::ortho(float(-transform.boundBox.x2), 0.0f, float(transform.boundBox.y2), 0.0f, -10.0f, 10.0f);
 	glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 0.0f, -1.0f),
@@ -169,6 +156,8 @@ void Canvas::render(ShaderTransform xform, unsigned int targetBuffer)
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(-transform.boundBox.x2, 0.0f, 0.0f));
 	glViewport(0, 0, transform.boundBox.x2, transform.boundBox.y2);
+
+	ShaderTransform transform = ShaderTransform(projection, view, model);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, renderBuffer);
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -178,7 +167,7 @@ void Canvas::render(ShaderTransform xform, unsigned int targetBuffer)
 	
 	for (std::shared_ptr<Layer> layer : layers)
 	{
-		layer.get()->render(ShaderTransform(projection, view, model), renderBuffer);
+		layer.get()->render(&transform, renderBuffer);
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

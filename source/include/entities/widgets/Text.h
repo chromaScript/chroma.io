@@ -36,7 +36,7 @@ public:
 
 	// Render Function
 	virtual void bindBuffers();
-	virtual void drawSelf(ShaderTransform xform);
+	virtual void drawSelf(ShaderTransform* xform);
 };
 
 #endif
