@@ -52,3 +52,8 @@ void copyVertexData(VertexData& target, VertexData* copy)
 	target.startTime = copy->startTime;
 	target.endTime = copy->endTime;
 }
+
+void copyVertices(VertexData& target, VertexData* copy)
+{
+	target.anchors = copy->anchors;
+}

@@ -14,8 +14,8 @@ VisualEntity::~VisualEntity()
 void VisualEntity::deleteBuffers()
 {
 	glDeleteTextures(1, &this->TEX0);
-	glDeleteBuffers(1, &this->VBO);
-	glDeleteBuffers(1, &this->EBO);
+	//glDeleteBuffers(1, &this->VBO);
+	//glDeleteBuffers(1, &this->EBO);
 	glDeleteVertexArrays(1, &this->VAO);
 }
 
@@ -155,10 +155,10 @@ void VisualEntity::generateBuffers(unsigned int* va, unsigned int* vb, unsigned 
 void VisualEntity::bindBuffers()
 {
 	// Bind vertex array and buffers with data
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindVertexArray(this->VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 	glBufferData(GL_ARRAY_BUFFER, vertData_size, vertData, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertArrangement_size, vertArrangement, GL_STATIC_DRAW);
 	// Set vertex position attribute
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, attribStride, (void*)0);

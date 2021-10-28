@@ -224,10 +224,6 @@ Stroke::Stroke(std::shared_ptr<Layer> container, std::shared_ptr<Shader> shader,
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// Generate Buffers for the lineVAO/lineVBO
-	glGenVertexArrays(1, &linesVAO);
-	glGenBuffers(1, &linesVBO);
 }
 
 void Stroke::cleanup_stroke()
@@ -249,9 +245,6 @@ void Stroke::cleanup_stroke()
 	glDeleteFramebuffers(1, &compTempBuffer);
 	glDeleteTextures(1, &compTempColorBuffer);
 
-	glDeleteVertexArrays(1, &linesVAO);
-	glDeleteBuffers(1, &linesVBO);
-
 	/* // Commenting this portion out - The smart pointers should automatically be cleaned when the entity destructs
 	frameShader.reset();
 	compositeShader.reset();
@@ -264,8 +257,6 @@ Stroke::~Stroke()
 {
 	delete []strokeImageData;
 	delete strokeImageData;
-	delete []lineLoop;
-	delete lineLoop;
 	delete []tempImageData;
 	delete tempImageData;
 }
@@ -883,32 +874,6 @@ void Stroke::setVertData_composite(int width, int height)
 	for (int i = 0; i < 20; i++) { compositeVerts[i] = newData[i]; }
 }
 
-// Line Drawing Functions
-void Stroke::setLineDraw(std::vector<glm::vec3> lines)
-{
-	drawShapeLines = true;
-	delete[] lineLoop;
-	lineLoopLen = (int)lines.size();
-	lineLoop = new float [(size_t)lineLoopLen * 3];
-	for (int i = 0; i < (int)lines.size(); i++)
-	{
-		lineLoop[(i * 3) + 0] = (float)lines[i].x;
-		lineLoop[(i * 3) + 1] = (float)lines[i].y;
-		lineLoop[(i * 3) + 2] = (float)lines[i].z;
-	}
-	// Bind the vertex data
-	glBindVertexArray(linesVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, linesVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(lineLoop), lineLoop, GL_STATIC_DRAW);
-	// Set vertex position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-}
-void Stroke::disableLineDraw()
-{
-	drawShapeLines = false;
-}
-
 // Render Functions
 void Stroke::draw(ShaderTransform* xform)
 {
@@ -944,28 +909,6 @@ void Stroke::draw(ShaderTransform* xform)
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		}
 		
-	}
-	if (drawShapeLines && lineLoop != nullptr)
-	{
-		debugLineShader->use();
-		debugLineShader->setMat4("projection", xform->p);
-		debugLineShader->setMat4("view", xform->v);
-		
-		glm::vec4 color = glm::vec4(basic.currentFGColor.makeVec3(), 1.0f);
-		debugLineShader->setVec4("lineColor", color);
-		glPointSize((GLfloat)lineSize);
-		glBindVertexArray(linesVAO);
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, linesVBO);
-		for (int i = 0; i < lineLoopLen; i++)
-		{
-			glPointSize(2 + ((fragData.anchors[i].input.pressure / 1.0f) * (lineSize - 2)));
-			modelMatrix = glm::mat4(1.0f);
-			modelMatrix = glm::translate(xform->m, glm::vec3(lineLoop[(i * 3) + 0], lineLoop[(i * 3) + 1], 0));
-			debugLineShader->setMat4("model", modelMatrix);
-			glDrawArrays(GL_POINTS, i, 1);
-		}
-		glPointSize(4);
 	}
 }
 // Render to file

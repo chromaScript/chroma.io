@@ -267,6 +267,10 @@ bool InputMethod::onePointMove(Application* sender, Input dat,
 	bool constrainRatio = (sender->getKeyState(onePointControl->constrainRatioKey.modKey)) ? true : false;
 	// Set up the data
 	glm::vec3 lastPos = sender->pickScreenCoord(lastInput.x, lastInput.y);
+	glm::vec3 dir = glm::normalize(glm::vec3(
+		fragData.transform.origin.x - cursorPos.x,
+		fragData.transform.origin.y - cursorPos.y,
+		0.0f));
 
 	// Apply Movement if enabled. Cannot apply move and rotate at the same time
 	if (moveMode && !rotateMode)
@@ -329,7 +333,6 @@ bool InputMethod::onePointMove(Application* sender, Input dat,
 	// any rasterizer receiving the box can apply the transform virtually itself before rendering
 	fragData.transform.bounds.p2 = fragData.transform.bounds.p1 + glm::vec3(fragData.transform.bounds.p3.x - fragData.transform.bounds.p1.x, 0.0f, 0.0f);
 	fragData.transform.bounds.p4 = fragData.transform.bounds.p1 + glm::vec3(0.0f, fragData.transform.bounds.p3.y - fragData.transform.bounds.p1.y, 0.0f);
-
 	return true;
 }
 

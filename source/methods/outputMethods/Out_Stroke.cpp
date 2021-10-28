@@ -51,6 +51,7 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 				activeFrag.get()->fragData.linearStream = dat->linearStream;
 				activeFrag.get()->fragData.connectEnds = dat->connectEnds;
 				lastAnchorIndex = 0;
+				activePointsLayer = activeLinesLayer = activeBoundsLayer = 0;
 				lastAnchorArrayIndex = 0;
 				//std::cout << "OUT_STROKE::CREATENEWSTROKE::CONST_POSITION= " << std::endl;
 			}
@@ -117,17 +118,23 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 			{
 				activeFrag = sender->getUI()->getCanvas()->getActiveLayer().lock()->createNewStroke(
 					sender->getShardShader(), owner, increaseEntityCount());
-				activePointsLayer = activeLinesLayer = 0; lastAnchorIndex = -1;
+				activePointsLayer = activeLinesLayer = activeBoundsLayer = 0; lastAnchorIndex = -1;
 				copyVertexData(activeFrag.get()->fragData, dat);
+				// Create Preview Layers
 				unsigned int pointsLayer = sender->ui->visualizer->requestNewLayer(PreviewLayerType::inputPoint);
 				if (sender->ui->visualizer->addLayer(pointsLayer, polycount, BlendMode::multiply) == pointsLayer) {
 					activePointsLayer = pointsLayer;
-					sender->ui->visualizer->setPreview_inputPoints(true);
+					sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, true);
 				}
 				unsigned int linesLayer = sender->ui->visualizer->requestNewLayer(PreviewLayerType::inputLine);
 				if (sender->ui->visualizer->addLayer(linesLayer, polycount, BlendMode::multiply) == linesLayer) {
 					activeLinesLayer = linesLayer;
-					sender->ui->visualizer->setPreview_inputLines(true);
+					sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, true);
+				}
+				unsigned int boundsLayer = sender->ui->visualizer->requestNewLayer(PreviewLayerType::inputBounds);
+				if (sender->ui->visualizer->addLayer(boundsLayer, 8, BlendMode::multiply) == boundsLayer) {
+					activeBoundsLayer = boundsLayer;
+					sender->ui->visualizer->setPreview(PreviewLayerType::inputBounds, true);
 				}
 			}
 		}
@@ -135,13 +142,8 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 		{
 			// Copy the transform data
 			activeFrag.get()->fragData.transform = dat->transform;
-			// Copy the vertices
-			std::vector<glm::vec3> lineLoop;
-			for (int i = 0; i < dat->anchors.size(); i++)
-			{
-				activeFrag.get()->fragData.anchors[i] = dat->anchors[i];
-				lineLoop.push_back(dat->anchors[i].pos);
-			}
+			copyVertices(activeFrag.get()->fragData, dat);
+			// Update Preview Layers
 			if (activePointsLayer != 0) {
 				for (size_t i = 0; i < polycount; i++) {
 					sender->ui->visualizer->updateLayerObject(activePointsLayer, i,
@@ -149,7 +151,7 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 							activeFrag.get()->fragData.anchors[i].pos,
 							activeFrag.get()->fragData.anchors[i].dir,
 							sender->ui->fgColor, ShapeType::square, 
-							2.0f + ((activeFrag.get()->fragData.anchors[i].input.pressure / 1.0f) * (6.0f)))
+							3.0f + ((activeFrag.get()->fragData.anchors[i].input.pressure / 1.0f) * (8.0f)))
 					);
 				}
 			}
@@ -168,9 +170,12 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 					}
 					sender->ui->visualizer->updateLayerObject(activeLinesLayer, i,
 						PreviewObj(activeFrag.get()->fragData.anchors[i].ID,
-							pos1, pos2, sender->ui->fgColor, ShapeType::line, 2.0f)
+							pos1, pos2, sender->ui->fgColor, ShapeType::line, 3.0f)
 					);
 				}
+			}
+			if (activeBoundsLayer != 0) {
+				sender->ui->visualizer->putBoundsObject(activeBoundsLayer, activeFrag.get()->fragData.transform);
 			}
 			lastAnchorIndex = dat->anchors.front().ID;
 		}
@@ -179,10 +184,10 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 			//std::cout << "MethodType::out_stroke::CONST_VERTCOUNT::INPUT_STREAM_PAUSED" << std::endl;
 		}
 	}
-
 	// Handle vertex data that may or may not be constant, but follows a non-linear input pattern
 	else if (!dat->linearStream)
 	{
+		size_t polycount = (int)dat->anchors.size();
 		// Non-linear stream with either constant or varying size
 		if (dat->anchors.front().input.flagPrimary == InputFlag::newInput)
 		{
@@ -190,46 +195,79 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 			{
 				activeFrag = sender->getUI()->getCanvas()->getActiveLayer().lock()->createNewStroke(
 					sender->getShardShader(), owner, increaseEntityCount());
-				//std::cout << "MethodType::out_stroke::CREATENEWSTROKE::NON_LINEAR_STREAM= " << std::endl;
-				lastAnchorIndex = 0;
-				activeFrag.get()->fragData.constantSize = dat->constantSize;
-				activeFrag.get()->fragData.linearStream = dat->linearStream;
-				activeFrag.get()->fragData.connectEnds = dat->connectEnds;
-				activeFrag.get()->fragData.transform = dat->transform;
-				//activeFrag.get()->fragData.anchors = dat->anchors;
+				activePointsLayer = activeLinesLayer = activeBoundsLayer = 0; lastAnchorIndex = -1;
+				copyVertexData(activeFrag.get()->fragData, dat);
+				// Create Preview Layers
+				unsigned int pointsLayer = sender->ui->visualizer->requestNewLayer(PreviewLayerType::inputPoint);
+				if (sender->ui->visualizer->addLayer(pointsLayer, polycount, BlendMode::multiply) == pointsLayer) {
+					activePointsLayer = pointsLayer;
+					sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, true);
+				}
+				unsigned int linesLayer = sender->ui->visualizer->requestNewLayer(PreviewLayerType::inputLine);
+				if (sender->ui->visualizer->addLayer(linesLayer, polycount, BlendMode::multiply) == linesLayer) {
+					activeLinesLayer = linesLayer;
+					sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, true);
+				}
+				unsigned int boundsLayer = sender->ui->visualizer->requestNewLayer(PreviewLayerType::inputBounds);
+				if (sender->ui->visualizer->addLayer(boundsLayer, 8, BlendMode::multiply) == boundsLayer) {
+					activeBoundsLayer = boundsLayer;
+					sender->ui->visualizer->setPreview(PreviewLayerType::inputBounds, true);
+				}
 			}
-			
 		}
-		if (lastAnchorIndex != dat->anchors.back().ID)
+		if (activeFrag != nullptr && lastAnchorIndex != dat->anchors.front().ID)
 		{
 			// Copy the transform data
+			copyVertices(activeFrag.get()->fragData, dat);
 			activeFrag.get()->fragData.transform = dat->transform;
-			lastAnchorIndex = dat->anchors.front().ID;
-			// Copy the anchors
-			std::vector<glm::vec3> lineLoop;
-			if (activeFrag.get()->fragData.anchors.size() != dat->anchors.size())
-			{
-				// For if the size was not constant
-				activeFrag.get()->fragData.resetAnchors();
-				for (int i = 0; i < dat->anchors.size(); i++)
-				{
-					activeFrag.get()->fragData.anchors.push_back(dat->anchors[i]);
-					lineLoop.push_back(dat->anchors[i].pos);
+			// Update Preview Layers
+			if (activePointsLayer != 0) {
+				for (size_t i = 0; i < polycount; i++) {
+					sender->ui->visualizer->putLayerObject(activePointsLayer, i,
+						PreviewObj(activeFrag.get()->fragData.anchors[i].ID,
+							activeFrag.get()->fragData.anchors[i].pos,
+							activeFrag.get()->fragData.anchors[i].dir,
+							sender->ui->fgColor, ShapeType::square, 5.0f)
+					);
 				}
 			}
-			else
-			{
-				// For if the size was constant
-				for (int i = 0; i < dat->anchors.size(); i++)
+			if (activeLinesLayer != 0) {
+				glm::vec3 pos1 = glm::vec3(0.0f);
+				glm::vec3 pos2 = glm::vec3(0.0f);
+				CColor color = sender->ui->fgColor;
+				for (size_t i = 0; i < polycount; i++)
 				{
-					activeFrag.get()->fragData.anchors[i] = dat->anchors[i];
-					lineLoop.push_back(dat->anchors[i].pos);
+					color = sender->ui->fgColor;
+					if (i != polycount - 1) {
+						if (activeFrag.get()->fragData.anchors[i + 1].input.flagPrimary != InputFlag::point) {
+							pos1 = activeFrag.get()->fragData.anchors[i].pos;
+							pos2 = activeFrag.get()->fragData.anchors[i + 1].pos;
+						}
+						else {
+							color.a = 0.0f;
+							pos1 = glm::vec3(0.0f);
+							pos2 = glm::vec3(0.0f);
+						}
+					}
+					else if (dat->connectEnds) {
+						pos1 = activeFrag.get()->fragData.anchors[i].pos;
+						pos2 = activeFrag.get()->fragData.anchors[0].pos;
+					}
+					else {
+						color.a = 0.0f;
+						pos1 = glm::vec3(0.0f);
+						pos2 = glm::vec3(0.0f);
+					}
+					sender->ui->visualizer->putLayerObject(activeLinesLayer, i,
+						PreviewObj(activeFrag.get()->fragData.anchors[i].ID,
+							pos1, pos2, color, ShapeType::line, 2.0f)
+					);
 				}
 			}
-			// Enable the preview-drawing / set the preview vert data
-			activeFrag.get()->setLineDraw(lineLoop);
+			if (activeBoundsLayer != 0) {
+				sender->ui->visualizer->putBoundsObject(activeBoundsLayer, activeFrag.get()->fragData.transform);
+			}
 			lastAnchorIndex = dat->anchors.front().ID;
-			
 		}
 		else
 		{
@@ -245,12 +283,21 @@ void Out_Stroke::finalize(Application* sender, VertexData* dat)
 	// Clear these just in case
 	if (activeFrag != nullptr)
 	{
-		activeFrag.get()->disableLineDraw();
-		sender->ui->visualizer->setPreview_inputPoints(false);
-		sender->ui->visualizer->setPreview_inputLines(false);
+		sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, false);
+		sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, false);
+		sender->ui->visualizer->setPreview(PreviewLayerType::inputBounds, false);
 		if (activePointsLayer != 0) { sender->ui->visualizer->removeLayer(activePointsLayer); }
 		if (activeLinesLayer != 0) { sender->ui->visualizer->removeLayer(activeLinesLayer); }
+		if (activeBoundsLayer != 0) { sender->ui->visualizer->removeLayer(activeBoundsLayer); }
 	}
+	// Clear Preview Data
+	activePointsLayer = activeLinesLayer = activeBoundsLayer = 0;
+	sender->ui->visualizer->removeLayer(activePointsLayer);
+	sender->ui->visualizer->removeLayer(activeLinesLayer);
+	sender->ui->visualizer->removeLayer(activeBoundsLayer);
+	sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, false);
+	sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, false);
+	sender->ui->visualizer->setPreview(PreviewLayerType::inputBounds, false);
 	// Kick bad-calls
 	if (dat->anchors.size() == 0 || activeFrag == nullptr) { return; }
 
@@ -285,10 +332,13 @@ void Out_Stroke::finalize(Application* sender, VertexData* dat)
 			lastAnchorIndex = dat->anchors.front().ID;
 		}
 		activeFrag.get()->fragData.transform = dat->transform;
+		activePointsLayer = activeLinesLayer = activeBoundsLayer = 0;
 		sender->ui->visualizer->removeLayer(activePointsLayer);
 		sender->ui->visualizer->removeLayer(activeLinesLayer);
-		sender->ui->visualizer->setPreview_inputPoints(false);
-		sender->ui->visualizer->setPreview_inputLines(false);
+		sender->ui->visualizer->removeLayer(activeBoundsLayer);
+		sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, false);
+		sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, false);
+		sender->ui->visualizer->setPreview(PreviewLayerType::inputBounds, false);
 		activeFrag = nullptr;
 	}
 	else if (!dat->linearStream)
@@ -308,7 +358,13 @@ void Out_Stroke::finalize(Application* sender, VertexData* dat)
 			lastAnchorIndex = dat->anchors.front().ID;
 		}
 		activeFrag.get()->fragData.transform = dat->transform;
-		activeFrag.get()->disableLineDraw();
+		activePointsLayer = activeLinesLayer = activeBoundsLayer = 0;
+		sender->ui->visualizer->removeLayer(activePointsLayer);
+		sender->ui->visualizer->removeLayer(activeLinesLayer);
+		sender->ui->visualizer->removeLayer(activeBoundsLayer);
+		sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, false);
+		sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, false);
+		sender->ui->visualizer->setPreview(PreviewLayerType::inputBounds, false);
 		activeFrag = nullptr;
 	}
 	

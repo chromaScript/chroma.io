@@ -128,8 +128,10 @@ InputHandlerFlag In_Vortex::move(Application* sender, Input dat)
 								HandleRel::independent,
 								data.inputEvents.back()));
 					}
+					fragData.anchors.at(fragData.anchors.size() - vortex.ringDensity).input.flagPrimary = InputFlag::point;
 				}
 			}
+			fragData.anchors.at(fragData.anchors.size() - ((int)vortex.rings * vortex.ringDensity)).input.flagPrimary = InputFlag::point;
 		}
 	}
 

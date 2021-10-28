@@ -46,6 +46,7 @@ UI::UI(std::shared_ptr<Application> owner)
 
 bool UI::newDocument(std::string docName, int width, int height, bool setAsActive)
 {
+	closeDocument("NULL", -1, true, false);
 	documents.push_back(std::make_shared<Canvas>(docName, width, height, owner.get()->getCanvasShader()));
 	documents.back()->newDataLayer(
 		glm::ivec2(width, height), 
@@ -81,6 +82,7 @@ bool UI::closeDocument(std::string docName, int docID, bool closeActive, bool sa
 			documents.erase(it);
 			documents.shrink_to_fit();
 		}
+		visualizer.get()->clearLayers();
 	}
 	else
 	{

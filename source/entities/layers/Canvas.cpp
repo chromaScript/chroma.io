@@ -60,7 +60,7 @@ Canvas::Canvas(std::string documentName, int width, int height, std::shared_ptr<
 
 Canvas::~Canvas()
 {
-	glDeleteBuffers(1, &renderBuffer);
+	glDeleteFramebuffers(1, &renderBuffer);
 	glDeleteTextures(1, &renderColorBuffer);
 	layers.shrink_to_fit();
 }

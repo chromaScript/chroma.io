@@ -84,13 +84,6 @@ protected:
 	int storedSplineCount = 0;
 	float storedLength = 0.0f;
 
-	// Rendering Management
-	bool drawShapeLines = false;
-	float* lineLoop = nullptr;
-	int lineLoopLen = 0;
-	int lineSize = 18;
-	unsigned int linesVAO = 0, linesVBO = 0;
-
 	// Inherited Tool Settings
 	TSet_Basic basic;
 	TSet_Image image;
@@ -138,8 +131,6 @@ public:
 
 	// Render Functions
 	void setCompositeShaderUniforms(ShaderTransform* xform);
-	void setLineDraw(std::vector<glm::vec3> lines);
-	void disableLineDraw();
 	virtual void render(ShaderTransform* xform, unsigned int targetBuffer);
 	virtual void draw(ShaderTransform* xform);
 	void drawDebugData(ShaderTransform* xform);
