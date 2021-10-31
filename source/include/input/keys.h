@@ -10,7 +10,8 @@ class CObject;
 enum class InputAction : int {
 	press = 1,
 	release = 0,
-	repeat = 2
+	repeat = 2,
+	move = 3
 };
 // Documentation: Use these as flags for input flow gates
 enum class InputHandlerFlag : int {
@@ -20,8 +21,15 @@ enum class InputHandlerFlag : int {
 	continueInput = 3,
 	allowPress = 4,
 	allowPress_updateCursor = 5,
+	release_continueInput = 6,
+	allowMove_updateCursor = 7,
 	noSignal = 8,
-	wait = 12
+	allowMove = 9,
+	wait = 12,
+	previewLine = 13,
+	releaseConnect = 14,
+	previewCurves = 15,
+	releaseCurve = 16
 };
 // Documentation: Use these to define mod-key combinations, these match the GLFW macros
 enum class InputModKey : int {
@@ -195,6 +203,10 @@ bool compareKeybind(Keybind left, InputKey rightKey, InputModKey rightModKey, bo
 bool compareModKey(Keybind left, Keybind right, bool allowNone);
 bool compareModKey(Keybind left, InputModKey right, bool allowNone);
 bool compareModKey(InputModKey left, InputModKey right, bool allowNone);
+bool compareModKeyComponent(Keybind left, Keybind right, bool allowNone);
+bool compareModKeyComponent(Keybind left, InputModKey right, bool allowNone);
+bool compareModKeyComponent(InputModKey left, InputModKey right, bool allowNone);
+bool compareModKeyComponent(InputModKey left, Keybind right, bool allowNone);
 bool isKeybindModOnly(Keybind keybind, bool acceptNoneMod);
 int keybindToInt(Keybind key);
 std::string keybindToString(Keybind keybind);

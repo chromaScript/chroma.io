@@ -11,6 +11,15 @@
 #define MATH_RAD_90 90.0f * (MATH_PI / 180.0f)
 #define MATH_RAD_180 180.0f * (MATH_PI / 180.0f)
 
+// Create normalized 2D direction vector from two positions. Direction flows from pos1 to pos2.
+glm::vec3 makeDir(glm::vec3 pos1, glm::vec3 pos2)
+{
+	return glm::normalize(glm::vec3(
+		pos2.x - pos1.x,
+		pos2.y - pos1.y,
+		0.0f));
+}
+
 glm::vec3 lerpDir(glm::vec3 dirA, glm::vec3 dirB, float t)
 {
 	glm::vec3 out = glm::normalize(glm::vec3(
@@ -18,6 +27,16 @@ glm::vec3 lerpDir(glm::vec3 dirA, glm::vec3 dirB, float t)
 		dirA.y + (t * (dirB.y - dirA.y)),
 		dirA.z + (t * (dirB.z - dirA.z))
 	));
+	return out;
+}
+
+glm::vec3 lerpPos(glm::vec3 posA, glm::vec3 posB, float t)
+{
+	glm::vec3 out = glm::vec3(
+		posA.x + (t * (posB.x - posA.x)),
+		posA.y + (t * (posB.y - posA.y)),
+		posA.z + (t * (posB.z - posA.z))
+	);
 	return out;
 }
 
@@ -555,4 +574,24 @@ glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec3 lineP1, glm::vec3 dir,
 glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec3 lineP1, float angle, bool flipY)
 {
 	return projectPointToLine2D(point, lineP1, createDirVec2D(angle), flipY);
+}
+
+float lengthPointVec(std::vector<glm::vec3>* points)
+{
+	if (points->size() < 2) { return 0.0f; }
+	float outLen = 0.0f;
+	for (size_t i = 1; i < points->size(); i++) {
+		outLen += glm::length(points->at(i) - points->at(i - 1));
+	}
+	return outLen;
+}
+
+float lengthPointVec(std::vector<std::pair<float, glm::vec3>>* points)
+{
+	if (points->size() < 2) { return 0.0f; }
+	float outLen = 0.0f;
+	for (size_t i = 1; i < points->size(); i++) {
+		outLen += glm::length(points->at(i).second - points->at(i - 1).second);
+	}
+	return outLen;
 }

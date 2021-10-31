@@ -819,6 +819,9 @@
     <ClCompile Include="source\entities\visuals\PreviewObj.cpp">
       <Filter>Source Files\entities\visuals</Filter>
     </ClCompile>
+    <ClCompile Include="source\math\curve.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\include\Application.h">
@@ -1499,6 +1502,9 @@
     <ClInclude Include="source\include\entities\visuals\PreviewObj.h">
       <Filter>Header Files\entities\visuals</Filter>
     </ClInclude>
+    <ClInclude Include="source\include\math\curve.h">
+      <Filter>Header Files\math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="readme.txt">
@@ -1584,13 +1590,22 @@
     <None Include="shaders\noiseWidgetShader.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="shaders\previewShader.frag">
+    <None Include="shaders\previewShader_curves.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="shaders\previewShader.vert">
+    <None Include="shaders\previewShader_pointLines.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="shaders\previewShader.geom">
+    <None Include="shaders\previewShader_pointLines.geom">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\previewShader_pointLines.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\previewShader_curves.geom">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\previewShader_curves.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

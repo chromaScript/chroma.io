@@ -27,6 +27,7 @@ private:
 	// Tool Settings
 	TSet_Smoothing smoothing;
 	TSet_Image image;
+	TSetProp activeMode = TSetProp::draw;
 protected:
 public:
 	In_Draw(MethodType id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
@@ -54,6 +55,8 @@ public:
 	};
 	virtual InputHandlerFlag move(Application* sender, Input dat);
 	virtual InputHandlerFlag click(Application* sender, Input dat);
+	void addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
+	void generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
 };
 
 #endif

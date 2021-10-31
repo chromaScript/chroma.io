@@ -1,5 +1,6 @@
 #include "../../include/methods/outputMethods/Out_Stroke.h"
 #include "../../include/math/Color.h"
+#include "../../include/math/curve.h"
 
 #ifndef APPLICATION_H
 #include "../../include/Application.h"
@@ -26,13 +27,14 @@
 #include <memory>
 #include <iostream>
 
-void Out_Stroke::preview(Application* sender, VertexData* dat)
+void Out_Stroke::preview(Application* sender, VertexData* dat, InputHandlerFlag action)
 {
 	// Kick bad-calls
 	if (dat->anchors.size() == 0) { return; }
 
 	// Handle incoming vertex data that is not of constant size, all behavior is
 	// influenced by this variable, so follow two main logic branches
+	
 	if (!dat->constantSize && dat->linearStream)
 	{
 		// Check if the input is new. Inputs will always mark their first anchor with NEW_INPUT and then
@@ -42,7 +44,7 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 			// Begin new stroke, pass copies of the tool settings to the new stroke
 			// Only the settings that the stroke needs to render will get passed. Settings for
 			// things like smoothing and correction do not get passed along.
-			if (!sender->getUI()->getCanvas()->getActiveLayer().expired())
+			if (activeFrag == nullptr && !sender->getUI()->getCanvas()->getActiveLayer().expired())
 			{
 				activeFrag = sender->getUI()->getCanvas()->getActiveLayer().lock()->createNewStroke(
 					sender->getShardShader(), owner, increaseEntityCount());
@@ -51,59 +53,270 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 				activeFrag.get()->fragData.linearStream = dat->linearStream;
 				activeFrag.get()->fragData.connectEnds = dat->connectEnds;
 				lastAnchorIndex = 0;
-				activePointsLayer = activeLinesLayer = activeBoundsLayer = 0;
+				activePointsLayer = activeLinesLayer = activeBoundsLayer = activeCurvesLayer = 0;
 				lastAnchorArrayIndex = 0;
-				//std::cout << "OUT_STROKE::CREATENEWSTROKE::CONST_POSITION= " << std::endl;
-			}
-		}
-		// Prevent bad pointer access, should not trigger this, but checking just in case
-		if (activeFrag == nullptr) { return; }
-		if (dat->anchors.size() != 0 && lastAnchorArrayIndex != 0)
-		{
-			if (lastAnchorArrayIndex >= dat->anchors.size()) { std::cout << "SKIP_A" << std::endl; }
-			if (dat->anchors.size() < lastAnchorArrayIndex || dat->anchors[size_t(lastAnchorArrayIndex) - size_t(1)].ID != lastAnchorIndex)
-			{
-				int i = 0;
-				int syncIndex = -1;
-				while (i < dat->anchors.size())
-				{
-					if (dat->anchors[i].ID >= lastAnchorIndex) { syncIndex = i; break; }
-					i++;
-				}
-				if (syncIndex != -1) 
-				{ 
-					lastAnchorArrayIndex = syncIndex; 
-					lastAnchorIndex = dat->anchors[lastAnchorArrayIndex].ID;
-				}
-				else 
-				{ 
-					lastAnchorArrayIndex = dat->anchors.size() - 1; 
-					lastAnchorIndex = dat->anchors[lastAnchorArrayIndex].ID;
-				}
-			}
-		}
-		while (lastAnchorArrayIndex < dat->anchors.size())
-		{
-			bool enableBatch = false;
-			// Special handling for batch rendering
-			if (enableBatch && dat->anchors.size() - lastAnchorArrayIndex > 3)
-			{
-				int advance = lastAnchorArrayIndex;
-				for (int i = advance; i < dat->anchors.size(); i++)
-				{
-					int k = 5;
-				}
-			}
-			// Regular linear input stream
-			else if (true)
-			{
-				activeFrag.get()->fragData.anchors.push_back(dat->anchors[lastAnchorArrayIndex]);
-				activeFrag.get()->processNewAnchor();
-				lastAnchorArrayIndex++;
-				lastAnchorIndex = activeFrag.get()->fragData.anchors.back().ID;
+				std::cout << "OUT_STROKE::CREATENEWSTROKE::CONST_POSITION= " << std::endl;
 			}
 
 		}
+		if (action == InputHandlerFlag::previewLine)
+		{
+			if (activeFrag == nullptr) { 
+				sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, false);
+				sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, false);
+				sender->ui->visualizer->setPreview(PreviewLayerType::inputCurves, false);
+				if (activePointsLayer != 0) { sender->ui->visualizer->removeLayer(activePointsLayer); }
+				if (activeLinesLayer != 0) { sender->ui->visualizer->removeLayer(activeLinesLayer); }
+				if (activeCurvesLayer != 0) { sender->ui->visualizer->removeLayer(activeCurvesLayer); }
+				activePointsLayer = activeLinesLayer = activeCurvesLayer = 0;
+				return; 
+			}
+			if (dat->anchors.size() < 2) { return; }
+			if (activePointsLayer == 0) {
+				unsigned int pointsLayer = sender->ui->visualizer->requestNewLayer(PreviewLayerType::inputPoint);
+				if (sender->ui->visualizer->addLayer(pointsLayer, (size_t)dat->subdivCount + 2, BlendMode::multiply) == pointsLayer) {
+					activePointsLayer = pointsLayer;
+					sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, true);
+				}
+			}
+			if (activeLinesLayer == 0) {
+				unsigned int linesLayer = sender->ui->visualizer->requestNewLayer(PreviewLayerType::inputLine);
+				if (sender->ui->visualizer->addLayer(linesLayer, 1, BlendMode::multiply) == linesLayer) {
+					activeLinesLayer = linesLayer;
+					sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, true);
+				}
+			}
+			if (activeCurvesLayer != 0) {
+				sender->ui->visualizer->removeLayer(activeCurvesLayer);
+				sender->ui->visualizer->setPreview(PreviewLayerType::inputCurves, false);
+				activeCurvesLayer = 0;
+			}
+			size_t size = dat->anchors.size();
+			if (activePointsLayer != 0) {
+				glm::vec3 pos1 = dat->anchors[size - 2].pos;
+				glm::vec3 dir1 = dat->anchors[size - 2].dir;
+				glm::vec3 pos2 = dat->anchors[size - 1].pos;
+				glm::vec3 dir2 = dat->anchors[size - 1].dir;
+				float pressure1 = dat->anchors[size - 2].input.pressure;
+				float pressure2 = dat->anchors[size - 1].input.pressure;
+				glm::vec3 subPos = pos1; glm::vec3 subDir = dir1;
+				for (int i = 0; i < dat->subdivCount + 2; i++) {
+					if (i == 0) {
+						sender->ui->visualizer->putLayerObject(activePointsLayer, 0,
+							PreviewObj(dat->anchors[size - 2].ID, pos1, dir1,
+								sender->ui->fgColor, ShapeType::square,
+								3.0f + (pressure1 * (4.0f))));
+					}
+					else if (i == dat->subdivCount + 1) {
+						sender->ui->visualizer->putLayerObject(activePointsLayer, (size_t)dat->subdivCount + 1,
+							PreviewObj(dat->anchors[size - 1].ID, pos2, dir2,
+								sender->ui->fgColor, ShapeType::square,
+								3.0f + (pressure2 * (4.0f))));
+					}
+					else {
+						float t = float(i) / float(dat->subdivCount + 1);
+						subPos = lerpPos(pos1, pos2, t);
+						subDir = lerpDir(dir1, dir2, t);
+						sender->ui->visualizer->putLayerObject(activePointsLayer, i,
+							PreviewObj(dat->anchors[size - 1].ID, subPos, subDir,
+								sender->ui->fgColor, ShapeType::square,
+								3.0f + (lerpf(pressure1, pressure2, t) * (4.0f))));
+					}
+					sender->ui->visualizer->trimLayer(activePointsLayer, (size_t)dat->subdivCount + 2);
+				}
+			}
+			if (activeLinesLayer != 0) {
+				sender->ui->visualizer->updateLayerObject(activeLinesLayer, 0,
+					PreviewObj(dat->anchors[size - 1].ID,
+						dat->anchors[size - 2].pos, dat->anchors[size - 1].pos, sender->ui->fgColor, ShapeType::line, 2.0f));
+			}
+			return;
+		}
+		else if (action == InputHandlerFlag::previewCurves)
+		{
+			if (activeFrag == nullptr) {
+				sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, false);
+				sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, false);
+				if (activePointsLayer != 0) { sender->ui->visualizer->removeLayer(activePointsLayer); }
+				if (activeLinesLayer != 0) { sender->ui->visualizer->removeLayer(activeLinesLayer); }
+				activePointsLayer = activeLinesLayer = 0;
+				return;
+			}
+			if (activePointsLayer == 0) {
+				unsigned int pointsLayer = sender->ui->visualizer->requestNewLayer(PreviewLayerType::inputPoint);
+				if (sender->ui->visualizer->addLayer(pointsLayer, (size_t)dat->subdivCount + 2, BlendMode::multiply) == pointsLayer) {
+					activePointsLayer = pointsLayer;
+					sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, true);
+				}
+			}
+			else {
+				sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, true);
+			}
+			if (activeLinesLayer == 0) {
+				unsigned int linesLayer = sender->ui->visualizer->requestNewLayer(PreviewLayerType::inputLine);
+				if (sender->ui->visualizer->addLayer(linesLayer, 1, BlendMode::multiply) == linesLayer) {
+					activeLinesLayer = linesLayer;
+					sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, true);
+				}
+			}
+			else {
+				sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, true);
+			}
+			if (activeCurvesLayer == 0) {
+				unsigned int curvesLayer = sender->ui->visualizer->requestNewLayer(PreviewLayerType::inputCurves);
+				if (sender->ui->visualizer->addLayer(curvesLayer, 1, BlendMode::multiply) == curvesLayer) {
+					activeCurvesLayer = curvesLayer;
+					sender->ui->visualizer->setPreview(PreviewLayerType::inputCurves, true);
+				}
+			}
+			else {
+				sender->ui->visualizer->setPreview(PreviewLayerType::inputCurves, true);
+			}
+			size_t size = dat->anchors.size();
+			if (activePointsLayer != 0) {
+				glm::vec3 pos1 = dat->anchors[size - 3].pos;
+				glm::vec3 pos2 = dat->anchors[size - 2].pos;
+				glm::vec3 pos3 = dat->anchors[size - 1].pos;
+				float pressure1 = dat->anchors[size - 3].input.pressure;
+				float pressure2 = dat->anchors[size - 2].input.pressure;
+				float pressure3 = dat->anchors[size - 1].input.pressure;
+				// Start / End Points
+				sender->ui->visualizer->putLayerObject(activePointsLayer, 0,
+					PreviewObj(dat->anchors[size - 1].ID, pos1, makeDir(pos1, pos2),
+						sender->ui->fgColor, ShapeType::square,
+						3.0f + (pressure1 * (4.0f))));
+				//sender->ui->visualizer->putLayerObject(activePointsLayer, 1,
+				//	PreviewObj(dat->anchors[size - 2].ID, pos2, makeDir(pos2, pos3),
+				//		sender->ui->fgColor, ShapeType::square,
+				//		3.0f + (pressure2 * (4.0f))));
+				sender->ui->visualizer->putLayerObject(activePointsLayer, 1,
+					PreviewObj(dat->anchors[size - 3].ID, pos3, makeDir(pos2, pos3),
+						sender->ui->fgColor, ShapeType::square,
+						3.0f + (pressure3 * (4.0f))));
+				// Handle Points
+				sender->ui->visualizer->putLayerObject(activePointsLayer, 2,
+					PreviewObj(dat->anchors[size - 3].ID, 
+						dat->anchors[size - 3].headHandle, dat->anchors[size - 3].dir,
+						blue, ShapeType::square,
+						4.0f));
+				sender->ui->visualizer->putLayerObject(activePointsLayer, 3,
+					PreviewObj(dat->anchors[size - 1].ID,
+						dat->anchors[size - 1].tailHandle, dat->anchors[size - 1].dir,
+						blue, ShapeType::square,
+						4.0f));
+				sender->ui->visualizer->trimLayer(activePointsLayer, 4);
+			}
+			if (activeLinesLayer != 0) {
+				// Lines to Cursor Point
+				//sender->ui->visualizer->putLayerObject(activeLinesLayer, 0,
+				//	PreviewObj(dat->anchors[size - 2].ID,
+				//		dat->anchors[size - 3].pos, dat->anchors[size - 2].pos, sender->ui->fgColor, ShapeType::line, 2.0f));
+				//sender->ui->visualizer->putLayerObject(activeLinesLayer, 1,
+				//	PreviewObj(dat->anchors[size - 1].ID,
+				//		dat->anchors[size - 2].pos, dat->anchors[size - 1].pos, sender->ui->fgColor, ShapeType::line, 2.0f));
+				// Lines to Handles
+				sender->ui->visualizer->putLayerObject(activeLinesLayer, 0,
+					PreviewObj(dat->anchors[size - 1].ID,
+						dat->anchors[size - 3].pos, dat->anchors[size - 3].headHandle,
+						blue, ShapeType::line, 1.0f));
+				sender->ui->visualizer->putLayerObject(activeLinesLayer, 1,
+					PreviewObj(dat->anchors[size - 1].ID,
+						dat->anchors[size - 1].tailHandle, dat->anchors[size - 1].pos,
+						blue, ShapeType::line, 1.0f));
+				sender->ui->visualizer->trimLayer(activeLinesLayer, 2);
+			}
+			if (activeCurvesLayer != 0) {
+				// Construct the bounds and points data for the curves preview object
+				RectBounds bezierBounds = RectBounds();
+				getCubicBezierOBB(bezierBounds, &dat->anchors[size - 3], &dat->anchors[size - 1], true, 50.0f);
+				sender->ui->visualizer->putLayerObject(activeCurvesLayer, 0,
+					PreviewObj(dat->anchors[size - 1].ID,
+						dat->anchors[size - 3].pos, dat->anchors[size - 3].headHandle, 
+						dat->anchors[size - 1].tailHandle, dat->anchors[size - 1].pos,
+						bezierBounds, sender->ui->fgColor, ShapeType::curve, 2.0f));
+			}
+		}
+		else {
+			if (activePointsLayer != 0) {
+				sender->ui->visualizer->removeLayer(activePointsLayer);
+				sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, false);
+				activePointsLayer = 0;
+			}
+			if (activeLinesLayer != 0) {
+				sender->ui->visualizer->removeLayer(activeLinesLayer);
+				sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, false);
+				activeLinesLayer = 0;
+			}
+			if (activeCurvesLayer != 0) {
+				sender->ui->visualizer->removeLayer(activeCurvesLayer);
+				sender->ui->visualizer->setPreview(PreviewLayerType::inputCurves, false);
+				activeCurvesLayer = 0;
+			}
+			if (action == InputHandlerFlag::continueInput)
+			{
+				if (lastFrag != nullptr) { 
+					activeFrag = lastFrag; 
+				}
+			}
+			if (activeFrag == nullptr) { return; }
+			if (dat->anchors.size() != 0 && lastAnchorArrayIndex != 0)
+			{
+				if (dat->anchors.size() < lastAnchorArrayIndex || dat->anchors[size_t(lastAnchorArrayIndex) - size_t(1)].ID != lastAnchorIndex)
+				{
+					std::cout << "LAST_INDEX::" << lastAnchorArrayIndex << "  ANCHOR_SIZE::" << dat->anchors.size() << "  SKIP_A" << std::endl;
+					int i = 0;
+					int syncIndex = -1;
+					while (i < dat->anchors.size())
+					{
+						if (dat->anchors[i].ID >= lastAnchorIndex) { syncIndex = i; break; }
+						i++;
+					}
+					if (syncIndex != -1)
+					{
+						lastAnchorArrayIndex = syncIndex;
+						lastAnchorIndex = dat->anchors[lastAnchorArrayIndex].ID;
+					}
+					else
+					{
+						lastAnchorArrayIndex = dat->anchors.size() - 1;
+						lastAnchorIndex = dat->anchors[lastAnchorArrayIndex].ID;
+					}
+				}
+			}
+			while (lastAnchorArrayIndex < dat->anchors.size())
+			{
+				bool enableBatch = false;
+				// Special handling for batch rendering
+				if (enableBatch && dat->anchors.size() - lastAnchorArrayIndex > 3)
+				{
+					int advance = lastAnchorArrayIndex;
+					for (int i = advance; i < dat->anchors.size(); i++)
+					{
+						int k = 5;
+					}
+				}
+				// Regular linear input stream
+				else if (true)
+				{
+					if (dat->anchors[lastAnchorArrayIndex].input.flagSecondary == InputFlag::updateData) {
+						size_t size = activeFrag.get()->fragData.anchors.size();
+						for (int i = size - 1; i > size - ((size_t)dat->depth + 1); i--) {
+							size_t depth = 1;
+							activeFrag.get()->fragData.anchors[i] = dat->anchors[(size_t)lastAnchorArrayIndex - depth];
+							depth++;
+						}
+						dat->anchors[lastAnchorArrayIndex].input.flagSecondary == InputFlag::null;
+						dat->depth = 0;
+					}
+					activeFrag.get()->fragData.anchors.push_back(dat->anchors[lastAnchorArrayIndex]);
+					activeFrag.get()->processNewAnchor();
+					lastAnchorArrayIndex++;
+					lastAnchorIndex = activeFrag.get()->fragData.anchors.back().ID;
+				}
+
+			}
+		}
+		
 	}
 	// Handle vertex data that is of a constant size, and also follows a linear input pattern
 	else if (dat->constantSize && dat->linearStream)
@@ -239,7 +452,7 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 				{
 					color = sender->ui->fgColor;
 					if (i != polycount - 1) {
-						if (activeFrag.get()->fragData.anchors[i + 1].input.flagPrimary != InputFlag::point) {
+						if (activeFrag.get()->fragData.anchors[i + 1].input.flagSecondary != InputFlag::point) {
 							pos1 = activeFrag.get()->fragData.anchors[i].pos;
 							pos2 = activeFrag.get()->fragData.anchors[i + 1].pos;
 						}
@@ -280,38 +493,30 @@ void Out_Stroke::preview(Application* sender, VertexData* dat)
 
 void Out_Stroke::finalize(Application* sender, VertexData* dat)
 {
-	// Clear these just in case
-	if (activeFrag != nullptr)
-	{
-		sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, false);
-		sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, false);
-		sender->ui->visualizer->setPreview(PreviewLayerType::inputBounds, false);
-		if (activePointsLayer != 0) { sender->ui->visualizer->removeLayer(activePointsLayer); }
-		if (activeLinesLayer != 0) { sender->ui->visualizer->removeLayer(activeLinesLayer); }
-		if (activeBoundsLayer != 0) { sender->ui->visualizer->removeLayer(activeBoundsLayer); }
-	}
 	// Clear Preview Data
-	activePointsLayer = activeLinesLayer = activeBoundsLayer = 0;
-	sender->ui->visualizer->removeLayer(activePointsLayer);
-	sender->ui->visualizer->removeLayer(activeLinesLayer);
-	sender->ui->visualizer->removeLayer(activeBoundsLayer);
 	sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, false);
 	sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, false);
 	sender->ui->visualizer->setPreview(PreviewLayerType::inputBounds, false);
+	sender->ui->visualizer->setPreview(PreviewLayerType::inputCurves, false);
+	if (activePointsLayer != 0) { sender->ui->visualizer->removeLayer(activePointsLayer); }
+	if (activeLinesLayer != 0) { sender->ui->visualizer->removeLayer(activeLinesLayer); }
+	if (activeBoundsLayer != 0) { sender->ui->visualizer->removeLayer(activeBoundsLayer); }
+	if (activeCurvesLayer != 0) { sender->ui->visualizer->removeLayer(activeCurvesLayer); }
+	activePointsLayer = activeLinesLayer = activeBoundsLayer = activeCurvesLayer = 0;
+
 	// Kick bad-calls
 	if (dat->anchors.size() == 0 || activeFrag == nullptr) { return; }
 
 	if (!dat->constantSize && dat->linearStream)
 	{
-		lastAnchorIndex++;
-		if (activeFrag.get()->fragData.connectEnds)
-		{
-			activeFrag.get()->fragData.anchors.push_back(dat->anchors.front());
-			activeFrag.get()->processNewAnchor();
-		}
+		lastAnchorIndex = dat->anchors.back().ID;
 		if (dat->anchors.back().input.flagSecondary == InputFlag::endRecording)
 		{
 			sender->requestRemove_targetStroke(activeFrag.get()->container, activeFrag.get()->weak_from_this());
+		}
+		else {
+			lastFrag = activeFrag;
+			activeFrag = nullptr;
 		}
 		// See comments below for cues as to what might be done for non-constant, linear input
 	}
@@ -329,16 +534,10 @@ void Out_Stroke::finalize(Application* sender, VertexData* dat)
 				activeFrag.get()->fragData.anchors.push_back(dat->anchors[0]);
 				activeFrag.get()->processNewAnchor();
 			}
-			lastAnchorIndex = dat->anchors.front().ID;
+			lastAnchorIndex = dat->anchors.back().ID;
 		}
 		activeFrag.get()->fragData.transform = dat->transform;
-		activePointsLayer = activeLinesLayer = activeBoundsLayer = 0;
-		sender->ui->visualizer->removeLayer(activePointsLayer);
-		sender->ui->visualizer->removeLayer(activeLinesLayer);
-		sender->ui->visualizer->removeLayer(activeBoundsLayer);
-		sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, false);
-		sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, false);
-		sender->ui->visualizer->setPreview(PreviewLayerType::inputBounds, false);
+		lastFrag = activeFrag;
 		activeFrag = nullptr;
 	}
 	else if (!dat->linearStream)
@@ -355,16 +554,10 @@ void Out_Stroke::finalize(Application* sender, VertexData* dat)
 				activeFrag.get()->fragData.anchors.push_back(dat->anchors[0]);
 				activeFrag.get()->processNewAnchor();
 			}
-			lastAnchorIndex = dat->anchors.front().ID;
+			lastAnchorIndex = dat->anchors.back().ID;
 		}
 		activeFrag.get()->fragData.transform = dat->transform;
-		activePointsLayer = activeLinesLayer = activeBoundsLayer = 0;
-		sender->ui->visualizer->removeLayer(activePointsLayer);
-		sender->ui->visualizer->removeLayer(activeLinesLayer);
-		sender->ui->visualizer->removeLayer(activeBoundsLayer);
-		sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, false);
-		sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, false);
-		sender->ui->visualizer->setPreview(PreviewLayerType::inputBounds, false);
+		lastFrag = activeFrag;
 		activeFrag = nullptr;
 	}
 	

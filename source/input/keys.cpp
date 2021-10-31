@@ -63,6 +63,52 @@ bool compareModKey(InputModKey left, InputModKey right, bool allowNone)
 	if (left == right) { return true; }
 	return false;
 }
+// Compare keys as components, where the right key is checked whether it is a component of the left.
+// Use when comparing keys for inputs where two key states can simultaneously be true.
+bool compareModKeyComponent(InputModKey left, InputModKey right, bool allowNone)
+{
+	if ((left == InputModKey::none || right == InputModKey::none) && !allowNone) { return false; }
+	if (left == right) { return true; }
+	switch (right) {
+	case InputModKey::alt:
+		switch (left) {
+		case InputModKey::ctrlalt: case InputModKey::shiftalt: case InputModKey::shiftctrlalt: return true; break;
+		}
+		return false;
+	case InputModKey::shift:
+		switch (left) {
+		case InputModKey::shiftalt: case InputModKey::shiftctrl: case InputModKey::shiftctrlalt: return true; break;
+		}
+		return false;
+	case InputModKey::ctrl:
+		switch (left) {
+		case InputModKey::ctrlalt: case InputModKey::shiftctrl: case InputModKey::shiftctrlalt: return true; break;
+		}
+		return false;
+	case InputModKey::ctrlalt:
+	case InputModKey::shiftalt:
+	case InputModKey::shiftctrlalt:
+		// Only valid case is '==', handled at the top, or shiftctrlalt
+		switch (left) {
+		case InputModKey::shiftctrlalt: return true; break;
+		}
+	default:
+		return false;
+	}
+	return false;
+}
+bool compareModKeyComponent(InputModKey left, Keybind right, bool allowNone)
+{
+	return compareModKeyComponent(left, right.modKey, allowNone);
+}
+bool compareModKeyComponent(Keybind left, Keybind right, bool allowNone)
+{
+	return compareModKeyComponent(left.modKey, right.modKey, allowNone);
+}
+bool compareModKeyComponent(Keybind left, InputModKey right, bool allowNone)
+{
+	return compareModKeyComponent(left.modKey, right, allowNone);
+}
 
 bool isKeybindModOnly(Keybind keybind, bool acceptNoneMod)
 {

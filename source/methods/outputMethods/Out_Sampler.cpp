@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-void Out_Sampler::preview(Application* sender, VertexData* dat)
+void Out_Sampler::preview(Application* sender, VertexData* dat, InputHandlerFlag action)
 {
 	// Kick bad calls
 	if (dat->anchors.size() < 2) { return; }

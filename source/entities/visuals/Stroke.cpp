@@ -2,6 +2,7 @@
 
 #include "../../include/entities/visuals/Stroke.h"
 #include "../../include/math/Color.h"
+#include "../../include/math/curve.h"
 #include "../../include/tool/Tool.h"
 #include "../../include/tool/ToolSettings.h"
 #include "../../include/tool/toolSettings/ToolSettings_Forward.h"
@@ -454,34 +455,38 @@ void Stroke::processNewAnchor()
 	int size = (int)fragData.anchors.size();
 	int shardCount = 0;
 	if (fragData.anchors.size() == 0) { return; } // Kick back if bad call
-	InputFlag flagNew = fragData.anchors.back().input.flagPrimary;
+	InputFlag flagNew = fragData.anchors.back().input.flagSecondary;
 	//std::cout << inputFlagStringMap.at(flagNew) << std::endl;
+	FragmentAnchor* faNew = nullptr;
+	FragmentAnchor* faPrev = nullptr;
+	float tipSize = (float)image.tipSize;
+	glm::vec2 control_points[4] = { glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(0.0f) };
+	glm::vec3 bounds[4] = { glm::vec3(0.0f) };
+	bool isCurve = false;
 	if (fragData.anchors.size() == 1 || flagNew == InputFlag::point || flagNew == InputFlag::originPoint)
 	{
 		// Place first Shard
-		FragmentAnchor* fa = &fragData.anchors.front();
-		
-		glm::vec3 outDir = fa->dir;
-		if (isnan(fa->dir.x) || (fa->dir.x == 0.0f && fa->dir.y == 0.0f)) { outDir = DEFAULT_DIR; }
+		faNew = &fragData.anchors.front();
+		faPrev = &fragData.anchors.front();
+		control_points[0] = faNew->pos; control_points[1] = faNew->headHandle;
+		control_points[2] = faNew->tailHandle; control_points[3] = faNew->pos;
+		glm::vec3 outDir = faNew->dir;
+		if (isnan(faNew->dir.x) || (faNew->dir.x == 0.0f && faNew->dir.y == 0.0f)) { outDir = DEFAULT_DIR; }
 		// Update Effects Data
-		updateGenData(lastShardID, fa->pos, outDir, averagePos.z, (float)image.trueSpacing, (float)image.tipSize);
+		updateGenData(lastShardID, faNew->pos, outDir, averagePos.z, (float)image.trueSpacing, (float)image.tipSize);
 
 		glm::vec4 outScale = glm::vec4(1.0f);
 		float outScaleX = 1.0f;
 		float outScaleY = 1.0f;
-		Input input = Input(fa->input.pressure, fa->input.rotation, fa->input.tiltX, fa->input.tiltY, fa->input.velocity);
+		Input input = Input(faNew->input.pressure, faNew->input.rotation, faNew->input.tiltX, faNew->input.tiltY, faNew->input.velocity);
 
-		//character.modulateScale(
-		//	outScale, &fa->pos, &fragData.transform.origin, &outDir, &input, &lastShardID, &size, &storedSplineCount);
-
-		generateShards(shardCount, lastShardID, fa->pos, outDir, outScale,
-			Input(fa->input.pressure, fa->input.rotation, fa->input.tiltX, fa->input.tiltY, fa->input.velocity));
+		generateShards(shardCount, lastShardID, faNew->pos, outDir, outScale,
+			Input(faNew->input.pressure, faNew->input.rotation, faNew->input.tiltX, faNew->input.tiltY, faNew->input.velocity));
 		storedSplineCount++;
 	}
 	else
 	{
-		FragmentAnchor* faNew = &fragData.anchors[size_t(size) - 1];
-		FragmentAnchor* faPrev = nullptr;
+		faNew = &fragData.anchors[size_t(size) - 1];
 		switch (faNew->input.flagPrimary)
 		{
 		case InputFlag::null:
@@ -507,6 +512,14 @@ void Stroke::processNewAnchor()
 		}
 		
 		if (faNew->input.flagPrimary == InputFlag::start) { return; }
+		// Check if the segment is a curve, and initialize curve data
+		if (faPrev->headType == HandleType::manual || faNew->tailType == HandleType::manual ||
+			faPrev->headType == HandleType::_auto || faNew->tailType == HandleType::_auto) {
+			isCurve = true;
+			control_points[0] = faPrev->pos; control_points[1] = faPrev->headHandle;
+			control_points[2] = faNew->tailHandle; control_points[3] = faNew->pos;
+			getCubicBezierOBB(&bounds[0], &bounds[1], &bounds[2], &bounds[3], faPrev, faNew, true, compositePadding);
+		}
 		// 1. Define the length of AnchorP -> anchorN (where P = previous, N = new)
 		// 2. Define the X/Y amount to add between each new shard based on spacing value
 		float segLen = glm::length(faNew->pos - faPrev->pos);
@@ -514,16 +527,29 @@ void Stroke::processNewAnchor()
 		float incY = (faNew->pos.y - faPrev->pos.y);
 		// Note, calculate a new dir here, rather than use anchor.dir. Anchor.dir is used for shard properties
 		glm::vec3 dir = glm::normalize(glm::vec3(incX, incY, 0.0f));
-		if (isnan(dir.x) || isnan(dir.y))
-		{
-			dir = DEFAULT_DIR;
-		}
+		if (isnan(dir.x) || isnan(dir.y)) { dir = DEFAULT_DIR; }
 		// Update Effects Data
 		updateGenData(lastShardID, faNew->pos, dir, averagePos.z, (float)image.trueSpacing, (float)image.tipSize);
 		// Becausue length of dir should always be 1, dir can be used as a reliable source for the X/Y spacing
 		incX = dir.x * image.trueSpacing;
 		incY = dir.y * image.trueSpacing;
 		float spacingLen = glm::length(glm::vec2(incX, incY));
+		std::vector<glm::vec3> points;
+		if (isCurve) {
+			float x = glm::length(control_points[1] - control_points[0]);
+			float y = glm::length(control_points[2] - control_points[0]);
+			int resolution = int(10 + ((x * y) / 10000.0f));
+			glm::vec4 startScale = glm::vec4(1.0f); glm::vec4 endScale = glm::vec4(1.0f);
+			if (character.isEnabled) {
+				character.modulateScale(startScale, &tipSize, false,
+					&faPrev->pos, &fragData.transform.origin, &dir, &faPrev->input, &lastShardID, &size, &storedSplineCount);
+				startScale.z = abs(startScale.z);
+				character.modulateScale(endScale, &tipSize, false,
+					&faNew->pos, &fragData.transform.origin, &dir, &faNew->input, &lastShardID, &size, &storedSplineCount);
+				endScale.z = abs(endScale.z);
+			}
+			getCubicBezierPoints(control_points, resolution, storedLength, points, segLen, image.trueSpacing, startScale.z, endScale.z);
+		}
 		// 3. Beginning from AnchorP, for float = 0, less than length Ap -> An
 
 			// A. Check if the spacing length minus storedLength is greater than segment length
@@ -537,12 +563,12 @@ void Stroke::processNewAnchor()
 		}
 		else
 		{
-
 			// Set initial outbound position to the previous anchor position
-			glm::vec3 outPos = faPrev->pos;
+			glm::vec3 outPos = faPrev->pos; 
+			glm::vec3 prevPos = faPrev->pos;
 
-			float tipSize = (float)image.tipSize;
 			float usedLen = 0;
+			size_t index = 0;
 			while (usedLen < segLen)
 			{
 				// B1. Calculate the lerp values for the pen data first. They are needed to fix the spacing value.
@@ -564,37 +590,43 @@ void Stroke::processNewAnchor()
 					outScale.z = abs(outScale.z); outScale.w = abs(outScale.w);
 				}
 
-				if (storedLength > 0.01)
-				{
-					float remainder = ((spacingLen * outScale.z) - storedLength) / (spacingLen * outScale.z);
-					outPos += glm::vec3(
-						((incX * outScale.z) * remainder),
-						((incY * outScale.z) * remainder),
-						0.0f);
-					storedLength = 0;
-					usedLen += clampf(remainder * (spacingLen * outScale.z), 0.2f, (float)INT_MAX);
-				}
-				else if (shardCount != 0)
-				{
-					outPos += glm::vec3(
-						(incX * outScale.z),
-						(incY * outScale.z),
-						0.0f);
-					usedLen += clampf((spacingLen * outScale.z), 0.2f, (float)INT_MAX);
-				}
-
-				// B3. Find the relative position of shard.pos between Ap -> An
-				
-				// B4. Use this value to assign floating values based on tool settings
-				// Using lerp formula a + t(b - a), where A = 0.0, and B = 1.0
-				// Make sure that neither dir isnan, Note: this can be removed later once real time anchor culling is implemented
 				glm::vec3 outDir, dirA, dirB;
-				if (isnan(faPrev->dir.x)) { dirA = DEFAULT_DIR; }
-				else { dirA = faPrev->dir; }
-				if (isnan(faNew->dir.x)) { dirB = DEFAULT_DIR; }
-				else { dirB = faNew->dir; }
-				outDir = lerpDir(dirA, dirB, t * faNew->dirInterpFactor);
-
+				if (isCurve)
+				{
+					if (index >= points.size()) { storedLength = abs(segLen - usedLen); break; }
+					outPos = points[index];
+					index++;
+					outDir = makeDir(prevPos, outPos);
+					prevPos = outPos;
+					usedLen += image.trueSpacing * outScale.z;
+				}
+				else
+				{
+					if (storedLength > 0.01)
+					{
+						float remainder = ((spacingLen * outScale.z) - storedLength) / (spacingLen * outScale.z);
+						outPos += glm::vec3(
+							((incX * outScale.z) * remainder),
+							((incY * outScale.z) * remainder),
+							0.0f);
+						storedLength = 0;
+						usedLen += clampf(remainder * (spacingLen * outScale.z), 0.2f, (float)INT_MAX);
+					}
+					else if (shardCount != 0)
+					{
+						outPos += glm::vec3(
+							(incX * outScale.z),
+							(incY * outScale.z),
+							0.0f);
+						usedLen += clampf((spacingLen * outScale.z), 0.2f, (float)INT_MAX);
+					}
+					if (isnan(faPrev->dir.x)) { dirA = DEFAULT_DIR; }
+					else { dirA = faPrev->dir; }
+					if (isnan(faNew->dir.x)) { dirB = DEFAULT_DIR; }
+					else { dirB = faNew->dir; }
+					outDir = lerpDir(dirA, dirB, t * faNew->dirInterpFactor);
+				}
+				
 				generateShards(shardCount, lastShardID, outPos, outDir, outScale,
 					Input(outPressure, outRotation, outTiltx, outTilty, outVelocity));
 
@@ -604,6 +636,9 @@ void Stroke::processNewAnchor()
 					storedLength = abs(segLen - usedLen); // Use abs for sign safety
 					break;
 				}
+			}
+			if (isCurve && index < points.size()) {
+				std::cout << "STROKE::CURVE_GEN::MISSING POINTS:: " << index << "  POINTS:: " << points.size() << std::endl;
 			}
 		}
 	}
@@ -644,14 +679,25 @@ void Stroke::processNewAnchor()
 	// Check if the bounding box needs to be resized
 	glm::ivec3 oldPos = compositePos;
 	glm::ivec2 oldSize = compositeSize;
-	glm::vec3 newPos = fragData.anchors.back().pos;
 	bool didUpdate = false;
 
-	if (newPos.x + compositePadding > compMaxX) { compMaxX = (int)newPos.x + compositePadding; didUpdate = true; }
-	if (newPos.y < compMaxY + compositePadding) { compMaxY = (int)newPos.y - compositePadding; didUpdate = true; }
-	if (newPos.x - compositePadding < compMinX) { compMinX = (int)newPos.x - compositePadding; compositePos.x = compMinX; didUpdate = true; }
-	if (newPos.y > compMinY - compositePadding) { compMinY = (int)newPos.y + compositePadding; compositePos.y = compMinY; didUpdate = true; }
-
+	if (isCurve) {
+		for (int i = 0; i < 4; i++) {
+			glm::vec3 newPos = bounds[i];
+			if (newPos.x + compositePadding > compMaxX) { compMaxX = (int)newPos.x + compositePadding; didUpdate = true; }
+			if (newPos.y < compMaxY + compositePadding) { compMaxY = (int)newPos.y - compositePadding; didUpdate = true; }
+			if (newPos.x - compositePadding < compMinX) { compMinX = (int)newPos.x - compositePadding; compositePos.x = compMinX; didUpdate = true; }
+			if (newPos.y > compMinY - compositePadding) { compMinY = (int)newPos.y + compositePadding; compositePos.y = compMinY; didUpdate = true; }
+		}
+	}
+	else {
+		glm::vec3 newPos = fragData.anchors.back().pos;
+		if (newPos.x + compositePadding > compMaxX) { compMaxX = (int)newPos.x + compositePadding; didUpdate = true; }
+		if (newPos.y < compMaxY + compositePadding) { compMaxY = (int)newPos.y - compositePadding; didUpdate = true; }
+		if (newPos.x - compositePadding < compMinX) { compMinX = (int)newPos.x - compositePadding; compositePos.x = compMinX; didUpdate = true; }
+		if (newPos.y > compMinY - compositePadding) { compMinY = (int)newPos.y + compositePadding; compositePos.y = compMinY; didUpdate = true; }
+	}
+	
 	if (didUpdate)
 	{
 

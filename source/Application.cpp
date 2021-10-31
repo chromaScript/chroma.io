@@ -115,9 +115,13 @@ void Application::initializeShaders()
 		"shaders/debugLineShader.vert", "shaders/debugLineShader.frag", "DEBUG_LINE_SHADER");
 	std::cout << "APPLICATION::DEBUG_LINE_SHADER::BOUND" << std::endl;
 	//
-	previewShader = std::make_shared<Shader>(
-		"shaders/previewShader.geom", "shaders/previewShader.vert", "shaders/previewShader.frag", "PREVIEW_SHADER");
-	std::cout << "APPLICATION::PREVIEW_SHADER::BOUND" << std::endl;
+	previewShader_pointLines = std::make_shared<Shader>(
+		"shaders/previewShader_pointLines.geom", "shaders/previewShader_pointLines.vert", "shaders/previewShader_pointLines.frag", "PREVIEW_SHADER_POINTSLINES");
+	std::cout << "APPLICATION::PREVIEW_SHADER_POINTSLINES::BOUND" << std::endl;
+	//
+	previewShader_curves = std::make_shared<Shader>(
+		"shaders/previewShader_curves.geom", "shaders/previewShader_curves.vert", "shaders/previewShader_curves.frag", "PREVIEW_SHADER_CURVES");
+	std::cout << "APPLICATION::PREVIEW_SHADER_CURVES::BOUND" << std::endl;
 	//
 	gradientBoxShader = std::make_shared<Shader>(
 		"shaders/gradientBoxShader.vert", "shaders/gradientBoxShader.frag", "GRADIENT_BOX_SHADER");
@@ -857,9 +861,7 @@ void Application::keyEventHandler(Keybind keybind, InputAction action)
 		// Should only ever trigger ESCAPE on key press
 		if (action == InputAction::press || action == InputAction::repeat) { return; }
 		if (ui.get()->sendPopupEscape()) { return; }
-		// If active context or brush stroke, cancel action without closing application
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "ESCAPE" << std::endl; }
-		//shouldClose = true;
 		return;
 	}
 	if (isKeybind_delete(keybind)) // DELETE
@@ -1287,23 +1289,36 @@ void Application::clickEventHandler(InputMouseButton button, InputAction action,
 	case InputHandlerFlag::reject:
 		isDoingInput = false;
 		break;
+	case InputHandlerFlag::previewLine:
+	case InputHandlerFlag::previewCurves:
+		toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->splineData, i);
+		isDoingInput = true;
+		break;
 	case InputHandlerFlag::continueInput:
-		ui->updateCursorImage(toolbox->getActiveTool()->getCursorDown());
-		toolbox->sendPreview(this);
+	case InputHandlerFlag::release_continueInput:
+	case InputHandlerFlag::allowMove_updateCursor:
+	case InputHandlerFlag::allowMove:
+		if (i == InputHandlerFlag::allowMove_updateCursor) {
+			ui->updateCursorImage(toolbox->getActiveTool()->getCursorDown());
+		}
+		toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, i);
 		isDoingInput = true;
 		return;
 	case InputHandlerFlag::allowPress:
-		toolbox->sendPreview(this);
-		toolbox->startCallback(scriptConsole.get()->getInterpreter(), inputEvent.x, inputEvent.y);
-		isDoingInput = true;
-		return;
 	case InputHandlerFlag::allowPress_updateCursor:
-		ui->updateCursorImage(toolbox->getActiveTool()->getCursorDown());
-		toolbox->sendPreview(this);
+		if (i == InputHandlerFlag::allowPress_updateCursor) {
+			ui->updateCursorImage(toolbox->getActiveTool()->getCursorDown());
+		}
+		toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, i);
 		toolbox->startCallback(scriptConsole.get()->getInterpreter(), inputEvent.x, inputEvent.y);
 		isDoingInput = true;
 		return;
+	case InputHandlerFlag::releaseConnect:
+	case InputHandlerFlag::releaseCurve:
 	case InputHandlerFlag::release:
+		if (i == InputHandlerFlag::releaseConnect || i == InputHandlerFlag::releaseCurve) {
+			toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, i);
+		}
 		ui->updateCursorImage(toolbox->getActiveTool().get()->getCursorUp());
 		// Do finalize, then postprocess. Tools without either step simply have blank functions.
 		toolbox->sendFinialize(this);
@@ -1362,8 +1377,17 @@ void Application::mousePosEventHandler(Input inputEvent)
 		// 2. Do preview visualization & fragment data building via Tool.outputMethod.preview
 		if (result != InputHandlerFlag::wait)
 		{
-			toolbox->sendPreview(this);
-			toolbox->moveCallback(scriptConsole.get()->getInterpreter(), inputEvent.x, inputEvent.y);
+			switch (result)
+			{
+			case InputHandlerFlag::wait: return; break;
+			case InputHandlerFlag::previewLine:
+			case InputHandlerFlag::previewCurves:
+				toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->splineData, result);
+				break;
+			default:
+				toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, result);
+				toolbox->moveCallback(scriptConsole.get()->getInterpreter(), inputEvent.x, inputEvent.y);
+			}
 		}
 	}
 	else

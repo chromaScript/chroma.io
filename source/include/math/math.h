@@ -13,7 +13,10 @@
 #define MATH_RAD_180 180.0f * (MATH_PI / 180.0f)
 #define DEFAULT_DIR glm::vec3(1.0f, 0.0f, 0.0f)
 
+glm::vec3 makeDir(glm::vec3 pos1, glm::vec3 pos2);
+
 glm::vec3 lerpDir(glm::vec3 dirA, glm::vec3 dirB, float t);
+glm::vec3 lerpPos(glm::vec3 posA, glm::vec3 posB, float t);
 bool compareVec3_byDistance(glm::vec3 pos1, glm::vec3 pos2, float threshold);
 bool compareVec3_isEqual(glm::vec3* first, glm::vec3* second, float threshold);
 bool compareVec3_byXYZ(glm::vec3 pos1, glm::vec3 pos2, float threshold);
@@ -71,5 +74,8 @@ glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec4 line, bool flipY);
 
 glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec3 lineP1, glm::vec3 dir, bool flipY);
 glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec3 lineP1, float angle, bool flipY);
+
+float lengthPointVec(std::vector<glm::vec3>* points);
+float lengthPointVec(std::vector<std::pair<float, glm::vec3>>* points);
 
 #endif

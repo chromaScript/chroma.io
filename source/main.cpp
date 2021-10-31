@@ -178,7 +178,9 @@ int main()
 // INITIALIZE SHADERS
 	// Instruct application to construct the shaders
 	chromaIO.get()->initializeShaders();
-	chromaIO.get()->ui->visualizer->setPreviewShader(chromaIO.get()->getPreviewShader());
+	chromaIO.get()->ui->visualizer->setPreviewShaders(
+		chromaIO.get()->getPreviewShader_pointLines(), 
+		chromaIO.get()->getPreviewShader_curves());
 
 // INITIALIZE UI, CAMERA, CANVAS, AND TOOLS
 	// Initialize UI
@@ -452,7 +454,8 @@ static void custom_cursor_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (chromaIO.get()->getWinStylusHandler()->getStylusIsHover() == true)
 		return;
-	Input move(chromaIO.get()->getModKeys(), InputMouseButton::hover, InputAction::press, InputFlag::null, InputFlag::null,
+	InputAction moveAction = (glfwGetMouseButton(chromaIO->getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) ? InputAction::press : InputAction::move;
+	Input move(chromaIO.get()->getModKeys(), InputMouseButton::hover, moveAction, InputFlag::null, InputFlag::null,
 		xpos, ypos, (float)glfwGetTime(), 1.0f, 0.0f, 0.0f, 0.0f, chromaIO.get()->getMouseVelocity(0.2f));
 	chromaIO.get()->updateMouseBuffer(move);
 	chromaIO.get()->mousePosEventHandler(move);

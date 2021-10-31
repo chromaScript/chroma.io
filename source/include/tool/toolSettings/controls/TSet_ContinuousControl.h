@@ -30,14 +30,14 @@ public:
 	float altAngleSnapA_angle = 15.0f; // 403
 	Keybind altAngleSnapKeyB = Keybind(InputKey::unknown, InputModKey::ctrl); // 404
 	float altAngleSnapB_angle = 5.0f; // 405
-	bool subdivideAltMode = false; // 406
+	//
+	bool subdivide = false; // 406
 	float pressureBoost = 1.0f; // 407
-	//
 	bool closeShape = false; // 408
-	bool subdivideClose = false; // 409
-	//
+	float subdivideAmount = 1.0f; // 409
 	Keybind connectLastStrokeKey = Keybind(InputKey::unknown, InputModKey::shift); // 410
-	bool subdivideConnectLast = false; // 411
+	bool scatterConnections = false; // 411
+	Keybind alternateSubModeKey = Keybind(InputKey::unknown, InputModKey::ctrl); // 412
 	//
 	float anchorSpacing = 2.5f; // 415
 	bool relativeSpacing = true; // 416

@@ -162,6 +162,79 @@ bool InputMethod::continuousMove(Application* sender, Input dat,
 	return true;
 }
 
+bool InputMethod::continuousHover(Application* sender, Input dat,
+	TSet_ContinuousControl* continuousControl, TSet_Smoothing* smoothing,
+	VertexData* target, float vertexSpacing, glm::vec3& outPos, glm::vec3& outDir)
+{
+	// Kick bad-calls
+	if (target->anchors.size() == 0) { return false; }
+
+
+	// Add the input data
+	if (data.inputEvents.size() < maxBufferLength) { data.inputEvents.push_back(dat); }
+	else { data.inputEvents.erase(data.inputEvents.begin()); data.inputEvents.push_back(dat); }
+
+	int i;
+	float length, angle;
+
+	// Do setup of variables that all logic branches need
+	i = (int)target->anchors.size() - 1;
+	while (i >= 0 && (std::isnan(outDir.x) || std::isnan(outDir.y) || std::isnan(outDir.z)))
+	{
+		outDir = target->anchors[(size_t)i].dir;
+		i--;
+	}
+	length = glm::length(outPos - target->anchors.back().pos);
+	angle = glm::degrees(std::atan2f(outDir.y, outDir.x));
+
+	// Return and do not add an anchor if the length is less than the diagonal of 1 pixel * vertexSpacing
+	if (length < ROOT2 * vertexSpacing) { return false; }
+	if (continuousControl->activated)
+	{
+		// Replace this section with angle snapping for line-mode
+		/*
+		glm::vec3 perpLineP2 = outPos + (continuousControl->perpendicular * 100.0f);
+		glm::vec4 perpLine = glm::vec4(outPos.x, outPos.y, perpLineP2.x, perpLineP2.y);
+		outPos = glm::vec3(lineIntersect2D(continuousControl->line, perpLine), 0.0f);
+		outDir = glm::vec3(
+			cos(continuousControl->activeAngle * (MATH_PI / 180.0f)),
+			sin(continuousControl->activeAngle * (MATH_PI / 180.0f)),
+			0.0f);
+		if (!compareModKey(continuousControl->activeKey, dat.modKey, false))
+		{
+			continuousControl->clearConstraint();
+		}
+		// Must recheck the length again after adjustment, otherwise the input gets sluggish as it piles
+		// up anchors on top of eachother
+		length = glm::length(outPos - target->anchors.back().pos);
+		if (length < ROOT2 * vertexSpacing) { return false; }
+		*/
+	}
+	else
+	{
+		// Adjust the direction on a wait-flag
+		if (target->anchors.size() == 1 && target->anchors.front().wait > 0)
+		{
+			target->anchors.front().dir = outDir;
+			target->anchors.front().wait = 0;
+		}
+		else
+		{
+			// Apply smoothing to the direction value as applicable
+			glm::vec3 lastDir = target->anchors.back().dir;
+			float angleChange = angle - glm::degrees(atan2(lastDir.x, lastDir.y));
+			if (smoothing != nullptr && smoothing->isEnabled && smoothing->smoothDirection && angleChange >= smoothing->directionThreshold)
+			{
+				//std::cout << angleChange << std::endl;
+				outDir = lerpDir(outDir, lastDir, smoothing->directionFactor);
+			}
+		}
+	}
+	// Clear the NEW TAG
+	//target->anchors.front()flagPrimary = InputFlag::null;
+	return true;
+}
+
 bool InputMethod::dragMove(Application* sender, Input dat, 
 	TSet_DragControl* dragControl, glm::vec3& cursorPos)
 {

@@ -1477,7 +1477,7 @@
 							<IMAGE id="tsf_cont_slider_spacing" class="set_sl_single"></IMAGE>
 						</H_BOX>
 						<H_BOX class="set_inBox" style="width:38;">
-							<LINE id="tsf_cont_spacing" class="set_inText, barlow12, textInputcharacter, numberWhole" value="0"
+							<LINE id="tsf_cont_spacing" class="set_inText, barlow12, textInputcharacter, number2d" value="0"
 								onentry="tLine_entry(415, -1, true, 0, &quot;tsf_cont_slider_spacing&quot;, &quot;tsf_cont_sliderBox_spacing&quot;)"
 								oncancel="tLine_entry(415, -1, false, 0, &quot;tsf_cont_slider_spacing&quot;, &quot;tsf_cont_sliderBox_spacing&quot;)"></LINE>
 						</H_BOX>
@@ -1494,11 +1494,11 @@
 								<V_BOX id="tsf_cont_defaultModeDrop" class="set_dropList">
 									<H_BOX class="set_dropItem"
 										onmouseenter="tDrop_hover(0, &quot;tsf_cont_defaultModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_cont_defaultModeDrop&quot;)"
-										onclick="tDropList_entry(&quot;tsf_cont_defaultModeDrop&quot;, &quot;tsf_color_finalTypeText&quot;, 400, -1, &quot;DRAW&quot;);">
+										onclick="tDropList_entry(&quot;tsf_cont_defaultModeDrop&quot;, &quot;tsf_cont_defaultModeText&quot;, 400, -1, &quot;DRAW&quot;);">
 										<TEXT class="barlow12, set_dropText, set_sub" value="DRAW"></TEXT></H_BOX>
 									<H_BOX class="set_dropItem"
 										onmouseenter="tDrop_hover(0, &quot;tsf_cont_defaultModeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_cont_defaultModeDrop&quot;)"
-										onclick="tDropList_entry(&quot;tsf_cont_defaultModeDrop&quot;, &quot;tsf_color_finalTypeText&quot;, 400, -1, &quot;LINE&quot;);">
+										onclick="tDropList_entry(&quot;tsf_cont_defaultModeDrop&quot;, &quot;tsf_cont_defaultModeText&quot;, 400, -1, &quot;LINE&quot;);">
 										<TEXT class="barlow12, set_dropText, set_sub" value="LINE"></TEXT></H_BOX>
 								</V_BOX>
 							</V_BOX>
@@ -1538,11 +1538,11 @@
 								value="0.0"></LINE>
 						</H_BOX>
 						// Snap Key B
-						<TEXT class="tsf_settingsText, barlow12" value="B:"></TEXT>
+						<TEXT class="set_text, barlow12" value="B:"></TEXT>
 						<IMAGE id="tsf_cont_tog_altSnapB" class="set_togBox" style="border-right:1;" value="off"
 							onmouseenter="tSetToggle(false, 0, 419, -1)" onmouseleave="tSetToggle(false, 1, 419, -1)"
 							onclick="tSetToggle(true, 0, 419, -1)"></IMAGE>
-						<TEXT class="tsf_settingsText, barlow12" value="KEY:"></TEXT>
+						<TEXT class="set_text, barlow12" value="KEY:"></TEXT>
 						<H_BOX id="tsf_cont_altSnapBKeyBox" class="tsf_inputBox" style="width:42;border-right:6;"
 							onmouseenter="global::hoverMidGreyButton(0)" 
 							onmouseleave="global::hoverMidGreyButton(1)"
@@ -1559,12 +1559,34 @@
 								value="0.0"></LINE>
 						</H_BOX>
 					</H_BOX>
+					<H_BOX class="tsf_settingsDivider"></H_BOX>
 					<H_BOX class="tsf_settingsLine">
-						<TEXT class="tsf_settingsText, barlow12" value="SUBDIVIDE:"></TEXT>
+						<TEXT class="set_text, barlow12" value="SUBDIVIDE:"></TEXT>
 						<IMAGE id="tsf_cont_tog_altSubdivide" class="set_togBox" value="off"
 							onmouseenter="tSetToggle(false, 0, 406, -1)" onmouseleave="tSetToggle(false, 1, 406, -1)"
 							onclick="tSetToggle(true, 0, 406, -1)"></IMAGE>
-						<TEXT class="set_text, barlow12" value="PRESSURE BOOST (ALL):"></TEXT>
+						<TEXT class="set_text, barlow12" value="SUBDIV AMOUNT:"></TEXT>
+						<H_BOX id="tsf_cont_sliderBox_subdivAmount" class="set_slBox_single"
+							onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
+							onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
+							ondragstart="tSli_single(0, 409, -1, true, &quot;tsf_cont_subdivAmount&quot;)" 
+							ondrag="tSli_single(1, 409, -1, true, &quot;tsf_cont_subdivAmount&quot;)"
+							ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
+							<H_BOX class="set_slRail"></H_BOX>
+							<IMAGE id="tsf_cont_slider_subdivAmount" class="set_sl_single"></IMAGE>
+						</H_BOX>
+						<H_BOX class="set_inBox" style="width:38;">
+							<LINE id="tsf_cont_subdivAmount" class="set_inText, barlow12, textInputcharacter, number2d" value="0"
+								onentry="tLine_entry(409, -1, true, 0, &quot;tsf_cont_slider_subdivAmount&quot;, &quot;tsf_cont_sliderBox_subdivAmount&quot;)"
+								oncancel="tLine_entry(409, -1, false, 0, &quot;tsf_cont_slider_subdivAmount&quot;, &quot;tsf_cont_sliderBox_subdivAmount&quot;)"></LINE>
+						</H_BOX>
+					</H_BOX>
+					<H_BOX class="set_line">
+						<TEXT class="tsf_settingsText, barlow12" value="SCATTER CONNECTIONS:"></TEXT>
+						<IMAGE id="tsf_cont_tog_scatterConnect" class="set_togBox" style="border-right:1;" value="off"
+							onmouseenter="tSetToggle(false, 0, 411, -1)" onmouseleave="tSetToggle(false, 1, 411, -1)"
+							onclick="tSetToggle(true, 0, 411, -1)"></IMAGE>
+						<TEXT class="set_text, barlow12" value="PRESSURE BOOST:"></TEXT>
 						<H_BOX id="tsf_cont_sliderBox_pressureBoost" class="set_slBox_single"
 							onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
 							onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
@@ -1575,26 +1597,17 @@
 							<IMAGE id="tsf_cont_slider_pressureBoost" class="set_sl_single"></IMAGE>
 						</H_BOX>
 						<H_BOX class="set_inBox" style="width:38;">
-							<LINE id="tsf_cont_pressureBoost" class="set_inText, barlow12, textInputcharacter, numberWhole" value="0"
+							<LINE id="tsf_cont_pressureBoost" class="set_inText, barlow12, textInputcharacter, number2d" value="0"
 								onentry="tLine_entry(407, -1, true, 0, &quot;tsf_cont_slider_pressureBoost&quot;, &quot;tsf_cont_sliderBox_pressureBoost&quot;)"
 								oncancel="tLine_entry(407, -1, false, 0, &quot;tsf_cont_slider_pressureBoost&quot;, &quot;tsf_cont_sliderBox_pressureBoost&quot;)"></LINE>
 						</H_BOX>
 					</H_BOX>
-					<H_BOX class="tsf_settingsDivider"></H_BOX>
 					// Close Shape
 					<H_BOX class="tsf_settingsLine">
 						<TEXT class="tsf_settingsText, barlow12" value="CLOSE SHAPE:"></TEXT>
 						<IMAGE id="tsf_cont_tog_closeShape" class="set_togBox" value="off"
 							onmouseenter="tSetToggle(false, 0, 408, -1)" onmouseleave="tSetToggle(false, 1, 408, -1)"
 							onclick="tSetToggle(true, 0, 408, -1)"></IMAGE>
-						<TEXT class="tsf_settingsText, barlow12" value="SUBDIVIDE:"></TEXT>
-						<IMAGE id="tsf_cont_tog_closeSubdivide" class="set_togBox" value="off"
-							onmouseenter="tSetToggle(false, 0, 409, -1)" onmouseleave="tSetToggle(false, 1, 409, -1)"
-							onclick="tSetToggle(true, 0, 409, -1)"></IMAGE>
-					</H_BOX>
-					<H_BOX class="tsf_settingsDivider"></H_BOX>
-					// Connect Last Keys
-					<H_BOX class="tsf_settingsLine">
 						<TEXT class="tsf_settingsText, barlow12" value="CONNECT LAST KEY:"></TEXT>
 						<H_BOX id="tsf_cont_connectLastKeyBox" class="tsf_inputBox" style="width:42;border-right:6;"
 							onmouseenter="global::hoverMidGreyButton(0)" 
@@ -1604,10 +1617,6 @@
 								beginKeyCapture(&quot;tsf_cont_connectLastKey&quot;, &quot;tsf_cont_connectLastKeyBox&quot;, &quot;enter key...&quot;, 4, tsf_modOnly_getKey);">
 							<TEXT id="tsf_cont_connectLastKey" class="tsf_dropText, barlow12" value="SET KEY..."></TEXT>
 						</H_BOX>
-						<TEXT class="tsf_settingsText, barlow12" value="SUBDIVIDE:"></TEXT>
-						<IMAGE id="tsf_cont_tog_connectSubdivide" class="set_togBox" value="off"
-							onmouseenter="tSetToggle(false, 0, 411, -1)" onmouseleave="tSetToggle(false, 1, 411, -1)"
-							onclick="tSetToggle(true, 0, 411, -1)"></IMAGE>
 					</H_BOX>
 					<H_BOX class="tsf_settingsDivider"></H_BOX>
 					// Constraint Threshold
@@ -1922,15 +1931,15 @@
 								<V_BOX id="tsf_cont_connectTypeDrop" class="set_dropList">
 									<H_BOX class="set_dropItem"
 										onmouseenter="tDrop_hover(0, &quot;tsf_cont_connectTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_cont_connectTypeDrop&quot;)"
-										onclick="tDropList_entry(&quot;tsf_cont_connectTypeDrop&quot;, &quot;tsf_color_finalTypeText&quot;, 432, -1, &quot;ALL&quot;);">
+										onclick="tDropList_entry(&quot;tsf_cont_connectTypeDrop&quot;, &quot;tsf_cont_connectTypeText&quot;, 432, -1, &quot;ALL&quot;);">
 										<TEXT class="barlow12, set_dropText, set_sub" value="ALL"></TEXT></H_BOX>
 									<H_BOX class="set_dropItem"
 										onmouseenter="tDrop_hover(0, &quot;tsf_cont_connectTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_cont_connectTypeDrop&quot;)"
-										onclick="tDropList_entry(&quot;tsf_cont_connectTypeDrop&quot;, &quot;tsf_color_connectTypeText&quot;, 432, -1, &quot;PER SCATTER&quot;);">
+										onclick="tDropList_entry(&quot;tsf_cont_connectTypeDrop&quot;, &quot;tsf_cont_connectTypeText&quot;, 432, -1, &quot;PER SCATTER&quot;);">
 										<TEXT class="barlow12, set_dropText, set_sub" value="PER SCATTER"></TEXT></H_BOX>
 									<H_BOX class="set_dropItem"
 										onmouseenter="tDrop_hover(0, &quot;tsf_cont_connectTypeDrop&quot;)" onmouseleave="tDrop_hover(1, &quot;tsf_cont_connectTypeDrop&quot;)"
-										onclick="tDropList_entry(&quot;tsf_cont_connectTypeDrop&quot;, &quot;tsf_color_connectTypeText&quot;, 432, -1, &quot;INTERVAL&quot;);">
+										onclick="tDropList_entry(&quot;tsf_cont_connectTypeDrop&quot;, &quot;tsf_cont_connectTypeText&quot;, 432, -1, &quot;INTERVAL&quot;);">
 										<TEXT class="barlow12, set_dropText, set_sub" value="INTERVAL"></TEXT></H_BOX>
 								</V_BOX>
 							</V_BOX>
@@ -1940,16 +1949,16 @@
 						<H_BOX id="tsf_cont_sliderBox_connectInterval" class="set_slBox_single"
 							onmouseenter="tSli_single(-1, -1, -1, false, &quot;NULL&quot;)"
 							onmouseleave="tSli_single(-2, -1, -1, false, &quot;NULL&quot;)"
-							ondragstart="tSli_single(0, 436, -1, true, &quot;tsf_cont_connectInterval&quot;)" 
-							ondrag="tSli_single(1, 436, -1, true, &quot;tsf_cont_connectInterval&quot;)"
+							ondragstart="tSli_single(0, 433, -1, true, &quot;tsf_cont_connectInterval&quot;)" 
+							ondrag="tSli_single(1, 433, -1, true, &quot;tsf_cont_connectInterval&quot;)"
 							ondragend="tSli_single(2, -1, -1, false, &quot;NULL&quot;)">
 							<H_BOX class="set_slRail"></H_BOX>
 							<IMAGE id="tsf_cont_slider_connectInterval" class="set_sl_single"></IMAGE>
 						</H_BOX>
 						<H_BOX class="set_inBox" style="width:36;margin-right:8;">
 							<LINE id="tsf_cont_connectInterval" class="set_inText, barlow12, textInputColor, number2d" value="0.0"
-								onentry="tLine_entry(436, -1, true, 0, &quot;tsf_cont_slider_connectInterval&quot;, &quot;tsf_cont_sliderBox_connectInterval&quot;)"
-								oncancel="tLine_entry(436, -1, false, 0, &quot;tsf_cont_slider_connectInterval&quot;, &quot;tsf_cont_sliderBox_connectInterval&quot;)"></LINE>
+								onentry="tLine_entry(433, -1, true, 0, &quot;tsf_cont_slider_connectInterval&quot;, &quot;tsf_cont_sliderBox_connectInterval&quot;)"
+								oncancel="tLine_entry(433, -1, false, 0, &quot;tsf_cont_slider_connectInterval&quot;, &quot;tsf_cont_sliderBox_connectInterval&quot;)"></LINE>
 						</H_BOX>
 					</H_BOX>
 				</V_BOX>

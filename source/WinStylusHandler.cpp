@@ -79,7 +79,7 @@ HRESULT WinStylusHandler::InAirPackets(IRealTimeStylus* pStylus, const StylusInf
 	// Create an empty Input, and then build it.
 	Input mouse;
 	InputModKey op = owner.get()->getModKeys();
-	mouse.action = InputAction::release;
+	mouse.action = InputAction::move;
 	mouse.modKey = op;
 	// The application will not use Wacom SDK, so it sacrifices some precision and uses GLFW's getCursorPos
 	// Warning: Need to clarify the pen data here later. Not sure if tilt & rotation should be zero

@@ -7,6 +7,7 @@ void VertexData::reset()
 	transform.reset();
 	startTime = 0.0f;
 	endTime = 0.0f;
+	subdivCount = 0;
 	resetAnchors();
 }
 void VertexData::resetAnchors() 

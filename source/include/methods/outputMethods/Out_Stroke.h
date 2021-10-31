@@ -17,6 +17,7 @@ private:
 	unsigned int activePointsLayer = 0;
 	unsigned int activeLinesLayer = 0;
 	unsigned int activeBoundsLayer = 0;
+	unsigned int activeCurvesLayer = 0;
 protected:
 	bool requestNewStroke = true;
 	bool isPaused = false;
@@ -36,6 +37,7 @@ protected:
 	size_t pauseBuffer = 4;
 	size_t stabilizationMin = 0; // Note: Need to read these from tool settings later
 	size_t stabilizationMax = 0;
+	std::shared_ptr<Stroke> lastFrag; // Previous Active Fragment
 	std::shared_ptr<Stroke> activeFrag; // Active Fragment being added
 	bool activeStroke = false;
 	int anchorIndex = 0;
@@ -66,7 +68,7 @@ public:
 			TSetType::effects };
 		this->name = "Stroke";
 	}
-	virtual void preview(Application* sender, VertexData* dat);
+	virtual void preview(Application* sender, VertexData* dat, InputHandlerFlag action);
 	virtual void finalize(Application* sender, VertexData* dat);
 	virtual void postprocess(Application* sender, VertexData* dat);
 	bool compareInputByProperties(FragmentAnchor* anchor1, FragmentAnchor* anchor2);

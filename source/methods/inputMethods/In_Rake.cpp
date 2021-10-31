@@ -157,7 +157,7 @@ InputHandlerFlag In_Rake::move(Application* sender, Input dat)
 					HandleType::linear, false, pointB,
 					HandleRel::independent,
 					data.inputEvents.back()));
-			fragData.anchors.at(fragData.anchors.size() - 2).input.flagPrimary = InputFlag::point;
+			fragData.anchors.at(fragData.anchors.size() - 2).input.flagSecondary = InputFlag::point;
 		}
 		else
 		{
@@ -176,7 +176,7 @@ InputHandlerFlag In_Rake::move(Application* sender, Input dat)
 						HandleRel::independent,
 						data.inputEvents.back()));
 			}
-			fragData.anchors.at(fragData.anchors.size() - size_t((rake.pointsCount * 2) + 3)).input.flagPrimary = InputFlag::point;
+			fragData.anchors.at(fragData.anchors.size() - size_t((rake.pointsCount * 2) + 3)).input.flagSecondary = InputFlag::point;
 		}
 	}
 

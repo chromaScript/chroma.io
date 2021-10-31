@@ -32,6 +32,7 @@ protected:
 	float startExtrude = 0.0f;
 	float currentLength = 0.0f;
 	glm::vec3 lastCursor = glm::vec3(0);
+	int storedEntityCount = 0;
 public:
 	MethodType type = MethodType::in_noInput;
 	// SplineData is the public spline data management structure that is used internally
@@ -60,8 +61,12 @@ public:
 	virtual InputHandlerFlag move(Application* sender, Input dat) = 0;
 	virtual InputHandlerFlag click(Application* sender, Input dat) = 0;
 	bool continuousMove(Application* sender, Input dat,
-		TSet_ContinuousControl* lineControl, 
+		TSet_ContinuousControl* continuousControl,
 		TSet_Smoothing* smoothing,
+		VertexData* target, float vertexSpacing,
+		glm::vec3& outPos, glm::vec3& outDir);
+	bool continuousHover(Application* sender, Input dat,
+		TSet_ContinuousControl* continuousControl, TSet_Smoothing* smoothing,
 		VertexData* target, float vertexSpacing,
 		glm::vec3& outPos, glm::vec3& outDir);
 	bool dragMove(Application* sender, Input dat,

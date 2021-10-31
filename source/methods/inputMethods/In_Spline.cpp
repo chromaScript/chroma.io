@@ -106,7 +106,7 @@ InputHandlerFlag In_Spline::move(Application* sender, Input dat)
 				fragData.anchors.back().input.flagPrimary = InputFlag::null;
 				fragData.anchors.back().input.flagSecondary = InputFlag::null;
 			}
-			fragData.anchors.at(fragData.anchors.size() - activeSpline.anchors.size()).input.flagPrimary = InputFlag::point;
+			fragData.anchors.at(fragData.anchors.size() - activeSpline.anchors.size()).input.flagSecondary = InputFlag::point;
 
 			// Update Flags
 			if (isNew)

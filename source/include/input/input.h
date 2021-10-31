@@ -40,7 +40,10 @@ enum class InputFlag
 	pause,
 	connect,
 	newRecording,
-	endRecording
+	endRecording,
+	previewLine,
+	previewLineTip,
+	updateData,
 };
 
 inline std::map<InputFlag, std::string> inputFlagStringMap = {
@@ -68,7 +71,9 @@ inline std::map<InputFlag, std::string> inputFlagStringMap = {
 	{ InputFlag::pause, "pause" },
 	{ InputFlag::connect, "connect" },
 	{ InputFlag::newRecording, "newRecording" },
-	{ InputFlag::endRecording, "endRecording" }
+	{ InputFlag::endRecording, "endRecording" },
+	{ InputFlag::previewLine, "previewLine" },
+	{ InputFlag::updateData, "updateData" }
 };
 
 struct Input

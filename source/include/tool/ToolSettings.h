@@ -61,6 +61,7 @@ enum class TSetProp
 	shuffleOrder,
 	pointsShuffle,
 	// misc
+	line,
 	draw,
 	polyLine,
 	polyDraw,
@@ -167,6 +168,7 @@ inline std::map<std::string, TSetProp> TSetPropNamesMap = {
 	{"shuffleorder", TSetProp::shuffleOrder },
 	{"pointsshuffle", TSetProp::pointsShuffle },
 	// misc
+	{"line", TSetProp::line },
 	{"draw", TSetProp::draw },
 	{"polyline", TSetProp::polyLine },
 	{"polydraw", TSetProp::polyDraw },

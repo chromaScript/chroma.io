@@ -69,6 +69,13 @@ CColor::CColor(float red, float green, float blue, float alpha)
 	b = blue;
 	a = alpha;
 }
+CColor::CColor(glm::vec4 rgba)
+{
+	r = rgba.r;
+	g = rgba.g;
+	b = rgba.b;
+	a = rgba.a;
+}
 void CColor::setUniformly(float value)
 {
 	r = value;
@@ -269,6 +276,22 @@ CColor percentValue_toRGB(double percent)
 {
 	float clampPercent = clampf((float)percent, 0.0f, 1.0f);
 	return CColor(clampPercent, clampPercent, clampPercent);
+}
+
+CColor encodeFloatRGBA(float v)
+{
+	glm::vec4 kEncodeMul = glm::vec4(1.0, 255.0, 65025.0, 160581375.0);
+	float kEncodeBit = 1.0 / 255.0;
+	glm::vec4 enc = kEncodeMul * v;
+	enc = glm::fract(enc);
+	glm::vec4 encChannel = glm::vec4(enc.y, enc.z, enc.w, enc.w);
+	enc -= encChannel * kEncodeBit;
+	return CColor(enc);
+}
+float decodeFloatRGBA(CColor enc)
+{
+	glm::vec4 kDecodeDot = glm::vec4(1.0, 1 / 255.0, 1 / 65025.0, 1 / 160581375.0);
+	return glm::dot(enc.makeVec4(), kDecodeDot);
 }
 
 void Gradient::generateTexture()

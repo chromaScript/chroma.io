@@ -14,7 +14,7 @@
 #include <iostream>
 #include <cmath>
 
-void Out_PanCamera::preview(Application* sender, VertexData* dat)
+void Out_PanCamera::preview(Application* sender, VertexData* dat, InputHandlerFlag action)
 {
 	if (dat->anchors.front().input.flagPrimary == InputFlag::newInput) { 
 		pan = *sender->toolbox.get()->getActiveTool().get()->getPan(); 

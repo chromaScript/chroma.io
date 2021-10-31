@@ -23,7 +23,7 @@ public:
 		interestMask = { TSetType::pan }; 
 		this->name = "Camera Pan";
 	}
-	virtual void preview(Application* sender, VertexData* dat);
+	virtual void preview(Application* sender, VertexData* dat, InputHandlerFlag action);
 	virtual void finalize(Application* sender, VertexData* dat);
 	virtual void postprocess(Application* sender, VertexData* dat);
 };

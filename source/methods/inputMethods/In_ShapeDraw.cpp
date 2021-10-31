@@ -93,7 +93,7 @@ InputHandlerFlag In_ShapeDraw::move(Application* sender, Input dat)
 			fragData.anchors.back().input.flagPrimary = InputFlag::null;
 			fragData.anchors.back().input.flagSecondary = InputFlag::null;
 		}
-		fragData.anchors.at(fragData.anchors.size() - verts.size()).input.flagPrimary = InputFlag::point;
+		fragData.anchors.at(fragData.anchors.size() - verts.size()).input.flagSecondary = InputFlag::point;
 	}
 
 	if (isNew)

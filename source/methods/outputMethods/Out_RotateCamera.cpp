@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-void Out_RotateCamera::preview(Application* sender, VertexData* dat)
+void Out_RotateCamera::preview(Application* sender, VertexData* dat, InputHandlerFlag action)
 {
 	if (dat->anchors.empty()) { return; }
 	std::shared_ptr<Camera> camera = sender->getCamera();

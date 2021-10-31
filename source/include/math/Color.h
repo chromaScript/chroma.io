@@ -41,6 +41,7 @@ struct CColor
 	CColor(float fill);
 	CColor(float red, float green, float blue);
 	CColor(float red, float green, float blue, float alpha);
+	CColor(glm::vec4 rgba);
 	void setUniformly(float value);
 	CColor_uc makeCColor_uc();
 	std::string makeString();
@@ -87,6 +88,10 @@ CColor HSL_toRGB(glm::dvec3 input);
 // Convert a Percent value to RGB
 CColor percentValue_toRGB(double percent);
 
+// Encode / Decode RGBA to single float channel
+// Encoding/decoding [0..1) floats into 8 bit/channel RGBA. Note that 1.0 will not be encoded properly.
+CColor encodeFloatRGBA(float v);
+float decodeFloatRGBA(CColor enc);
 // Gradient Structs (Move to New File?)
 struct GradientNode
 {

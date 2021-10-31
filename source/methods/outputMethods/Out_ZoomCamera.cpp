@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-void Out_ZoomCamera::preview(Application* sender, VertexData* dat)
+void Out_ZoomCamera::preview(Application* sender, VertexData* dat, InputHandlerFlag action)
 {
 	
 	// Kick bad-calls. In_Zoom should always send at least the origin + 1 anchor point

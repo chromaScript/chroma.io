@@ -5,7 +5,8 @@
 
 Visualizer::Visualizer()
 {
-	this->previewShader = previewShader;
+	inputCurvesAlloc.reserve(100);
+	for (unsigned int i = inputCurvesRange.first; i < inputCurvesRange.first + 100; i++) { inputCurvesAlloc.push_back(i); }
 	inputLinesAlloc.reserve(100);
 	for (unsigned int i = inputLinesRange.first; i < inputLinesRange.first + 100; i++) { inputLinesAlloc.push_back(i); }
 	inputPointsAlloc.reserve(100);
@@ -46,6 +47,12 @@ void Visualizer::generateBuffers()
 	// Set vertex attributes
 	bindAttribs_typeA(&inputBoundsVAO, &inputBoundsVBO);
 	generateVertexData_typeA(&inputBoundsVAO, &inputBoundsVBO, &emptyDimensions, nullptr);
+
+	glGenVertexArrays(1, &inputCurvesVAO);
+	glGenBuffers(1, &inputCurvesVBO);
+	// Set vertex attributes
+	bindAttribs_typeB(&inputCurvesVAO, &inputCurvesVBO);
+	generateVertexData_typeB(&inputCurvesVAO, &inputCurvesVBO, &emptyDimensions, nullptr);
 }
 
 void Visualizer::bindAttribs_typeA(unsigned int* VAO, unsigned int* VBO)
@@ -67,6 +74,29 @@ void Visualizer::bindAttribs_typeA(unsigned int* VAO, unsigned int* VBO)
 	glEnableVertexAttribArray(5);
 	glBindVertexArray(0);
 }
+void Visualizer::bindAttribs_typeB(unsigned int* VAO, unsigned int* VBO)
+{
+	// Set vertex attributes
+	glBindVertexArray(*VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, *VBO);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, inputTypeBStride, 0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, inputTypeBStride, (void*)inputTypeBOffset_startHandle);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, inputTypeBStride, (void*)inputTypeBOffset_endHandle);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, inputTypeBStride, (void*)inputTypeBOffset_endPos);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, inputTypeBStride, (void*)inputTypeBOffset_boundsP1);
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, inputTypeBStride, (void*)inputTypeBOffset_boundsP2);
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(6, 2, GL_FLOAT, GL_FALSE, inputTypeBStride, (void*)inputTypeBOffset_boundsP3);
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(7, 2, GL_FLOAT, GL_FALSE, inputTypeBStride, (void*)inputTypeBOffset_boundsP4);
+	glEnableVertexAttribArray(7);
+	glBindVertexArray(0);
+}
 
 void Visualizer::resetVisualizer()
 {
@@ -75,9 +105,10 @@ void Visualizer::resetVisualizer()
 	generateBuffers();
 }
 
-void Visualizer::setPreviewShader(std::shared_ptr<Shader> previewShader)
+void Visualizer::setPreviewShaders(std::shared_ptr<Shader> previewShader_pointLines, std::shared_ptr<Shader> previewShader_curves)
 {
-	this->previewShader = previewShader;
+	this->previewShader_pointLines = previewShader_pointLines;
+	this->previewShader_curves = previewShader_curves;
 }
 
 bool Visualizer::setPreview_all(bool set)
@@ -100,6 +131,10 @@ bool Visualizer::setPreview(PreviewLayerType select, bool set)
 		enablePreview_inputBounds = set; 
 		if (set) { inputBoundsDirty = true; }
 		return enablePreview_inputBounds; break;
+	case PreviewLayerType::inputCurves:
+		enablePreview_inputCurves = set;
+		if (set) { inputCurvesDirty = true; }
+		return enablePreview_inputCurves; break;
 	}
 }
 
@@ -122,6 +157,12 @@ unsigned int Visualizer::requestNewLayer(PreviewLayerType containerType)
 		if (inputBoundsAlloc.size() > 0) {
 			layerID = inputBoundsAlloc.front();
 			inputBoundsAlloc.erase(inputBoundsAlloc.begin());
+		}
+	}
+	else if (containerType == PreviewLayerType::inputCurves) {
+		if (inputCurvesAlloc.size() > 0) {
+			layerID = inputCurvesAlloc.front();
+			inputCurvesAlloc.erase(inputCurvesAlloc.begin());
 		}
 	}
 	return layerID;
@@ -160,18 +201,29 @@ void Visualizer::removeLayer(unsigned int layer)
 		else if (layer >= inputBoundsRange.first && layer < inputBoundsRange.first + inputBoundsRange.second) {
 			inputBoundsAlloc.push_back(layer);
 		}
+		else if (layer >= inputCurvesRange.first && layer < inputCurvesRange.first + inputCurvesRange.second) {
+			inputCurvesAlloc.push_back(layer);
+		}
 		previewLayers.erase(layer);
 	}
 }
+
+void Visualizer::trimLayer(unsigned int layer, size_t size)
+{
+	if (previewLayers.count(layer) == 1) {
+		if (previewLayers.at(layer).first.size() > size) {
+			previewLayers.at(layer).first.erase(previewLayers.at(layer).first.begin() + size, previewLayers.at(layer).first.end());
+			previewLayers.at(layer).first.shrink_to_fit();
+		}
+	}
+}
+
 void Visualizer::clearLayers()
 {
 	for (auto const& layer : previewLayers) {
 		removeLayer(layer.first);
 	}
 	glm::ivec2 emptyDimensions = glm::ivec2(0);
-	//generateVertexData_typeA(&inputPointVAO, &inputPointVBO, &emptyDimensions, nullptr);
-	//generateVertexData_typeA(&inputLineVAO, &inputLineVBO, &emptyDimensions, nullptr);
-	//generateVertexData_typeA(&inputBoundsVAO, &inputBoundsVBO, &emptyDimensions, nullptr);
 	previewLayers.clear();
 	inputPointsDirty = inputLinesDirty = inputBoundsDirty = true;
 	enablePreview_inputPoints = enablePreview_inputLines = enablePreview_inputBounds = false;
@@ -240,6 +292,9 @@ void Visualizer::dirtyVertexData(unsigned int layer)
 	else if (layer >= inputBoundsRange.first && layer < inputBoundsRange.first + inputBoundsRange.second) {
 		inputBoundsDirty = true;
 	}
+	else if (layer >= inputCurvesRange.first && layer < inputCurvesRange.first + inputCurvesRange.second) {
+		inputCurvesDirty = true;
+	}
 }
 
 void Visualizer::updateVertexData_inputPoints(glm::ivec2* windowDimensions)
@@ -276,6 +331,18 @@ void Visualizer::updateVertexData_inputBounds(glm::ivec2* windowDimensions)
 	}
 	bool result = generateVertexData_typeA(&inputBoundsVAO, &inputBoundsVBO, windowDimensions, &objList);
 	if (result) { inputBoundsDirty = false; }
+}
+
+void Visualizer::updateVertexData_inputCurves(glm::ivec2* windowDimensions)
+{
+	std::vector<PreviewObj> objList;
+	for (auto const& item : previewLayers) {
+		if (item.first >= inputCurvesRange.first && item.first < inputCurvesRange.first + inputCurvesRange.second) {
+			objList.insert(objList.end(), item.second.first.begin(), item.second.first.end());
+		}
+	}
+	bool result = generateVertexData_typeB(&inputCurvesVAO, &inputCurvesVBO, windowDimensions, &objList);
+	if (result) { inputCurvesDirty = false; }
 }
 
 bool Visualizer::generateVertexData_typeA(unsigned int* VAO, unsigned int* VBO, glm::ivec2* windowDimensions, std::vector<PreviewObj>* objList)
@@ -320,39 +387,112 @@ bool Visualizer::generateVertexData_typeA(unsigned int* VAO, unsigned int* VBO, 
 	}
 }
 
+bool Visualizer::generateVertexData_typeB(unsigned int* VAO, unsigned int* VBO, glm::ivec2* windowDimensions, std::vector<PreviewObj>* objList)
+{
+	if (objList != nullptr && objList->size() > 0) {
+		std::vector<PreviewObj>& list = *objList;
+		float* vertexData = new float[inputTypeBAttribs * objList->size()];
+		for (int i = 0; i < objList->size(); i++) {
+			vertexData[(i * inputTypeBAttribs) + 0] = list[i].p1.x;
+			vertexData[(i * inputTypeBAttribs) + 1] = list[i].p1.y;
+			vertexData[(i * inputTypeBAttribs) + 2] = list[i].p2.x;
+			vertexData[(i * inputTypeBAttribs) + 3] = list[i].p2.y;
+			vertexData[(i * inputTypeBAttribs) + 4] = list[i].p3.x;
+			vertexData[(i * inputTypeBAttribs) + 5] = list[i].p3.y;
+			vertexData[(i * inputTypeBAttribs) + 6] = list[i].p4.x;
+			vertexData[(i * inputTypeBAttribs) + 7] = list[i].p4.y;
+			vertexData[(i * inputTypeBAttribs) + 8] = list[i].bounds.p1.x;
+			vertexData[(i * inputTypeBAttribs) + 9] = list[i].bounds.p1.y;
+			vertexData[(i * inputTypeBAttribs) + 10] = list[i].bounds.p2.x;
+			vertexData[(i * inputTypeBAttribs) + 11] = list[i].bounds.p2.y;
+			vertexData[(i * inputTypeBAttribs) + 12] = list[i].bounds.p3.x;
+			vertexData[(i * inputTypeBAttribs) + 13] = list[i].bounds.p3.y;
+			vertexData[(i * inputTypeBAttribs) + 14] = list[i].bounds.p4.x;
+			vertexData[(i * inputTypeBAttribs) + 15] = list[i].bounds.p4.y;
+		}
+		// Bind vertex array and buffers with data
+		glBindVertexArray(*VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, *VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * objList->size(), vertexData, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+		delete[]vertexData;
+		return true;
+	}
+	else {
+		glBindVertexArray(*VAO);
+		glBindBuffer(GL_ARRAY_BUFFER, *VBO);
+		glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+		return false;
+	}
+	return false;
+}
+
 void Visualizer::draw(ShaderTransform* xform, glm::ivec2* windowDimensions)
 {
 	if (!enablePreview_all || previewLayers.size() == 0) { return; }
 	for (auto const& item : previewLayers) {
 		if (item.first >= inputLinesRange.first && item.first < inputLinesRange.first + inputLinesRange.second) {
 			if (inputLinesDirty) { updateVertexData_inputLines(windowDimensions); }
-			if (enablePreview_inputLines && !inputLinesDirty) {
-				drawInputData_typeA(&inputLineVAO, xform, &item.second.first, item.second.second);
+			if (enablePreview_inputLines && !inputLinesDirty && item.second.first.size() != 0) {
+				drawInputData_typeA(&inputLineVAO, xform, windowDimensions, &item.second.first, item.second.second);
 			}
 		}
 		else if (item.first >= inputPointsRange.first && item.first < inputPointsRange.first + inputPointsRange.second) {
 			if (inputPointsDirty) { updateVertexData_inputPoints(windowDimensions); }
-			if (enablePreview_inputPoints && !inputPointsDirty) {
-				drawInputData_typeA(&inputPointVAO, xform, &item.second.first, item.second.second);
+			if (enablePreview_inputPoints && !inputPointsDirty && item.second.first.size() != 0) {
+				drawInputData_typeA(&inputPointVAO, xform, windowDimensions, &item.second.first, item.second.second);
 			}
 		}
 		else if (item.first >= inputBoundsRange.first && item.first < inputBoundsRange.first + inputBoundsRange.second) {
 			if (inputBoundsDirty) { updateVertexData_inputBounds(windowDimensions); }
-			if (enablePreview_inputBounds && !inputBoundsDirty) {
-				drawInputData_typeA(&inputBoundsVAO, xform, &item.second.first, item.second.second);
+			if (enablePreview_inputBounds && !inputBoundsDirty && item.second.first.size() != 0) {
+				drawInputData_typeA(&inputBoundsVAO, xform, windowDimensions, &item.second.first, item.second.second);
+			}
+		}
+		else if (item.first >= inputCurvesRange.first && item.first < inputCurvesRange.first + inputCurvesRange.second) {
+			if (inputCurvesDirty) { updateVertexData_inputCurves(windowDimensions); }
+			if (enablePreview_inputCurves && !inputCurvesDirty && item.second.first.size() != 0) {
+				drawInputData_typeB(&inputCurvesVAO, xform, windowDimensions, &item.second.first, item.second.second);
 			}
 		}
 	}
 }
 
-void Visualizer::drawInputData_typeA(unsigned int* VAO, ShaderTransform* xform, const std::vector<PreviewObj>* layer, BlendMode blend)
+void Visualizer::drawInputData_typeA(
+	unsigned int* VAO, ShaderTransform* xform,
+	glm::ivec2* windowDimensions,
+	const std::vector<PreviewObj>* layer, BlendMode blend)
 {
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::translate(xform->m, glm::vec3(0.0f));
-	previewShader->use();
-	previewShader->setMat4("projection", xform->p);
-	previewShader->setMat4("view", xform->v);
-	previewShader->setMat4("model", modelMatrix);
+	previewShader_pointLines->use();
+	previewShader_pointLines->setMat4("projection", xform->p);
+	previewShader_pointLines->setMat4("view", xform->v);
+	previewShader_pointLines->setMat4("model", modelMatrix);
+	glBindVertexArray(*VAO);
+	glDrawArrays(GL_POINTS, 0, layer->size());
+	glBindVertexArray(0);
+}
+
+void Visualizer::drawInputData_typeB(
+	unsigned int* VAO, ShaderTransform* xform,
+	glm::ivec2* windowDimensions,
+	const std::vector<PreviewObj>* layer, BlendMode blend)
+{
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
+	modelMatrix = glm::translate(xform->m, glm::vec3(0.0f));
+	previewShader_curves->use();
+	previewShader_curves->setMat4("projection", xform->p);
+	previewShader_curves->setMat4("view", xform->v);
+	previewShader_curves->setMat4("model", modelMatrix);
+	float size = ((layer->front().size / (float)windowDimensions->x) +
+		(layer->front().size / (float)windowDimensions->y)) / 2.0f;
+	glm::vec3 color = glm::vec3(layer->front().color.r, layer->front().color.g, layer->front().color.b);
+	previewShader_curves->setVec3("colorCurve", color);
+	previewShader_curves->setFloat("sizeLine", size);
 	glBindVertexArray(*VAO);
 	glDrawArrays(GL_POINTS, 0, layer->size());
 	glBindVertexArray(0);

@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-void Out_NoOutput::preview(Application* sender, VertexData* dat)
+void Out_NoOutput::preview(Application* sender, VertexData* vertexData, InputHandlerFlag action)
 {
 
 }

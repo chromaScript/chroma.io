@@ -37,6 +37,9 @@ TSet_ContinuousControl::TSet_ContinuousControl()
 	this->isEnabled = true;
 	//
 	this->trueSpacing = anchorSpacing;
+	this->subdivide = false;
+	this->subdivideAmount = 0.2f;
+	this->countNode.controlMax = 0.0f;
 }
 std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 	std::shared_ptr<CInterpreter> interpreter, std::shared_ptr<Tool> owner,
@@ -138,11 +141,11 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 		}
 		else if (settingsSig == 406) {
 			if (isGet) {
-				if (asString) { return std::make_shared<CObject>(makeSettingString(subdivideAltMode, settingsSig, subSig, "subdivideAltMode")); }
-				return std::make_shared<CObject>(subdivideAltMode);
+				if (asString) { return std::make_shared<CObject>(makeSettingString(subdivide, settingsSig, subSig, "subdivide")); }
+				return std::make_shared<CObject>(subdivide);
 			}
 			else {
-				subdivideAltMode = std::get<bool>(object.get()->obj);
+				subdivide = std::get<bool>(object.get()->obj);
 			}
 		}
 		else if (settingsSig == 407) {
@@ -152,7 +155,7 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 					return std::make_shared<CObject>(double(
 						percentRange(pressureBoost, 0.01f, 6.0f, true)));
 				}
-				else { return std::make_shared<CObject>(double(constrainB_angle)); }
+				else { return std::make_shared<CObject>(double(pressureBoost)); }
 			}
 			else {
 				if (asPercentage) {
@@ -175,11 +178,19 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 		}
 		else if (settingsSig == 409) {
 			if (isGet) {
-				if (asString) { return std::make_shared<CObject>(makeSettingString(subdivideClose, settingsSig, subSig, "subdivideClose")); }
-				return std::make_shared<CObject>(subdivideClose);
+				if (asString) { return std::make_shared<CObject>(makeSettingString(subdivideAmount, settingsSig, subSig, "subdivideAmount")); }
+				if (asPercentage) {
+					return std::make_shared<CObject>(double(
+						percentRange_cubed(subdivideAmount, 0.001f, 1.0f, true)));
+				}
+				else { return std::make_shared<CObject>(double(subdivideAmount)); }
 			}
 			else {
-				subdivideClose = std::get<bool>(object.get()->obj);
+				if (asPercentage) {
+					subdivideAmount = percentRange_cubed(
+						(float)std::get<double>(object.get()->obj), 0.001f, 1.0f, false);
+				}
+				else { subdivideAmount = clampf((float)std::get<double>(object.get()->obj), 0.001f, 1.0f); }
 			}
 		}
 		else if (settingsSig == 410) {
@@ -198,11 +209,11 @@ std::shared_ptr<CObject> TSet_ContinuousControl::putProperty(
 		}
 		else if (settingsSig == 411) {
 			if (isGet) {
-				if (asString) { return std::make_shared<CObject>(makeSettingString(subdivideConnectLast, settingsSig, subSig, "subdivideConnectLast")); }
-				return std::make_shared<CObject>(subdivideConnectLast);
+				if (asString) { return std::make_shared<CObject>(makeSettingString(scatterConnections, settingsSig, subSig, "scatterConnections")); }
+				return std::make_shared<CObject>(scatterConnections);
 			}
 			else {
-				subdivideConnectLast = std::get<bool>(object.get()->obj);
+				scatterConnections = std::get<bool>(object.get()->obj);
 			}
 		}
 		else if (settingsSig == 415) {

@@ -66,10 +66,10 @@ InputHandlerFlag In_Vortex::move(Application* sender, Input dat)
 							HandleRel::independent,
 							data.inputEvents.back()));
 				}
-				fragData.anchors.at(fragData.anchors.size() - vortex.ringDensity).input.flagPrimary = InputFlag::point;
+				fragData.anchors.at(fragData.anchors.size() - vortex.ringDensity).input.flagSecondary = InputFlag::point;
 			}
 		}
-		fragData.anchors.at(fragData.anchors.size() - ((int)vortex.rings * vortex.ringDensity)).input.flagPrimary = InputFlag::point;
+		fragData.anchors.at(fragData.anchors.size() - ((int)vortex.rings * vortex.ringDensity)).input.flagSecondary = InputFlag::point;
 
 		if (isNew)
 		{
@@ -128,10 +128,10 @@ InputHandlerFlag In_Vortex::move(Application* sender, Input dat)
 								HandleRel::independent,
 								data.inputEvents.back()));
 					}
-					fragData.anchors.at(fragData.anchors.size() - vortex.ringDensity).input.flagPrimary = InputFlag::point;
+					fragData.anchors.at(fragData.anchors.size() - vortex.ringDensity).input.flagSecondary = InputFlag::point;
 				}
 			}
-			fragData.anchors.at(fragData.anchors.size() - ((int)vortex.rings * vortex.ringDensity)).input.flagPrimary = InputFlag::point;
+			fragData.anchors.at(fragData.anchors.size() - ((int)vortex.rings * vortex.ringDensity)).input.flagSecondary = InputFlag::point;
 		}
 	}
 
@@ -187,7 +187,6 @@ InputHandlerFlag In_Vortex::click(Application* sender, Input dat)
 			{
 				// Add the first anchor point, there is no direction yet, so a manual wait will be placed on the
 				// anchor to count off 1 more anchor before rendering.
-				continuous.anchorSpacing = 140.0f;
 				splineData.anchors.push_back(
 					FragmentAnchor(anchorIDCount, point, dir,
 						1.0f,

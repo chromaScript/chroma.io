@@ -108,7 +108,7 @@ public:
 	// Input Functions
 	InputHandlerFlag sendClick(Application* sender, Input dat);
 	InputHandlerFlag sendMove(Application* sender, Input dat);
-	void sendPreview(Application* sender);
+	void sendPreview(Application* sender, VertexData* vertexData, InputHandlerFlag action);
 	void sendFinialize(Application* sender);
 	// Callback Functions
 	bool bindCallback(std::shared_ptr<CInterpreter> interpreter,

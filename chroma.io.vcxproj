@@ -235,6 +235,7 @@
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\math\blend.cpp" />
     <ClCompile Include="source\math\Color.cpp" />
+    <ClCompile Include="source\math\curve.cpp" />
     <ClCompile Include="source\math\math.cpp" />
     <ClCompile Include="source\math\noise.cpp" />
     <ClCompile Include="source\math\string.cpp" />
@@ -458,6 +459,7 @@
     <ClInclude Include="source\include\loadImageData.h" />
     <ClInclude Include="source\include\math\blend.h" />
     <ClInclude Include="source\include\math\Color.h" />
+    <ClInclude Include="source\include\math\curve.h" />
     <ClInclude Include="source\include\math\math.h" />
     <ClInclude Include="source\include\math\noise.h" />
     <ClInclude Include="source\include\math\string.h" />
@@ -599,9 +601,12 @@
     <None Include="shaders\layerShader.vert" />
     <None Include="shaders\noiseWidgetShader.frag" />
     <None Include="shaders\noiseWidgetShader.vert" />
-    <None Include="shaders\previewShader.frag" />
-    <None Include="shaders\previewShader.geom" />
-    <None Include="shaders\previewShader.vert" />
+    <None Include="shaders\previewShader_curves.geom" />
+    <None Include="shaders\previewShader_curves.vert" />
+    <None Include="shaders\previewShader_curves.frag" />
+    <None Include="shaders\previewShader_pointLines.frag" />
+    <None Include="shaders\previewShader_pointLines.geom" />
+    <None Include="shaders\previewShader_pointLines.vert" />
     <None Include="shaders\shardShader.frag" />
     <None Include="shaders\shardShader.vert" />
     <None Include="shaders\textShader.frag" />

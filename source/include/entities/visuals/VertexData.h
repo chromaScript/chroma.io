@@ -21,6 +21,8 @@ public:
 	std::deque<FragmentAnchor> anchors;
 	float startTime = 0.0f;
 	float endTime = 0.0f;
+	int subdivCount = 0; // Manual Set Only
+	int depth = 0; // Manual Set Only
 	//BlendModes blendType;
 	void reset();
 	void resetAnchors();

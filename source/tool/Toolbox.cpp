@@ -496,9 +496,9 @@ InputHandlerFlag Toolbox::sendMove(Application* sender, Input dat)
 {
 	return activeTool.get()->input.get()->move(sender, dat);
 }
-void Toolbox::sendPreview(Application* sender)
+void Toolbox::sendPreview(Application* sender, VertexData* vertexData, InputHandlerFlag action)
 {
-	activeTool.get()->output.get()->preview(sender, &activeTool.get()->input.get()->fragData);
+	activeTool.get()->output.get()->preview(sender, vertexData, action);
 }
 void Toolbox::sendFinialize(Application* sender)
 {

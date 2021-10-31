@@ -353,13 +353,14 @@ void update_continuous()
 				global::update_tSetToggle("tsf_cont_tog_altSubdivide", 406, -1);
 				global::update_tSetSliderSingle("tsf_cont_sliderBox_pressureBoost", 
 					"tsf_cont_slider_pressureBoost", "tsf_cont_pressureBoost", 407, -1);
+				global::update_tSetSliderSingle("tsf_cont_sliderBox_subdivAmount", 
+					"tsf_cont_slider_subdivAmount", "tsf_cont_subdivAmount", 409, -1);
 					
 				global::update_tSetToggle("tsf_cont_tog_closeShape", 408, -1);
-				global::update_tSetToggle("tsf_cont_tog_closeSubdivide", 409, -1);
+				global::update_tSetToggle("tsf_cont_tog_scatterConnect", 411, -1);
 				
 				app.ui.getWidget_byID("tsf_cont_connectLastKey").setProperty("value", 
 					keybindToString(app.toolbox.getActiveToolProp(410, -1, false, false)));
-				global::update_tSetToggle("tsf_cont_tog_connectSubdivide", 411, -1);
 				
 				// Constraint Threshold
 				app.ui.getWidget_byID("tsf_cont_slider_constraintThreshold").setProperty("left", 
@@ -384,10 +385,10 @@ void update_continuous()
 					keybindToString(app.toolbox.getActiveToolProp(452, -1, false, false)));
 				app.ui.getWidget_byID("tsf_cont_constraintKeyD").setProperty("value", 
 					keybindToString(app.toolbox.getActiveToolProp(457, -1, false, false)));
-				tsf_updateCheckbox("tsf_cont_tog_constraintA", 441, -1);
-				tsf_updateCheckbox("tsf_cont_tog_constraintB", 445, -1);
-				tsf_updateCheckbox("tsf_cont_tog_constraintC", 450, -1);
-				tsf_updateCheckbox("tsf_cont_tog_constraintD", 455, -1);
+				global::update_tSetToggle("tsf_cont_tog_constraintA", 441, -1);
+				global::update_tSetToggle("tsf_cont_tog_constraintB", 445, -1);
+				global::update_tSetToggle("tsf_cont_tog_constraintC", 450, -1);
+				global::update_tSetToggle("tsf_cont_tog_constraintD", 455, -1);
 				
 				// Scattering
 				update_tSetToggle("tsf_cont_tog_angleEnable", 434, 1);
