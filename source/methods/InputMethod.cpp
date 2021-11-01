@@ -27,8 +27,7 @@ bool InputMethod::continuousMove(Application* sender, Input dat,
 	
 	
 	// Add the input data
-	if (data.inputEvents.size() < maxBufferLength) { data.inputEvents.push_back(dat); }
-	else { data.inputEvents.erase(data.inputEvents.begin()); data.inputEvents.push_back(dat); }
+	addInputData(dat);
 
 	int i;
 	float length, angle;
@@ -171,8 +170,7 @@ bool InputMethod::continuousHover(Application* sender, Input dat,
 
 
 	// Add the input data
-	if (data.inputEvents.size() < maxBufferLength) { data.inputEvents.push_back(dat); }
-	else { data.inputEvents.erase(data.inputEvents.begin()); data.inputEvents.push_back(dat); }
+	addInputData(dat);
 
 	int i;
 	float length, angle;
@@ -243,8 +241,7 @@ bool InputMethod::dragMove(Application* sender, Input dat,
 	float moveTest = (float)glm::length(glm::dvec2(dat.x, dat.y) - lastInput);
 	if (moveTest < ROOT2) { return false; }
 	// Add the input data
-	if (data.inputEvents.size() < maxBufferLength) { data.inputEvents.push_back(dat); }
-	else { data.inputEvents.erase(data.inputEvents.begin()); data.inputEvents.push_back(dat); }
+	addInputData(dat);
 	
 	// Clear InputFlag::newInput
 	if (fragData.anchors.size() != 0) { fragData.anchors.front().input.flagPrimary = InputFlag::null; }
@@ -326,8 +323,7 @@ bool InputMethod::onePointMove(Application* sender, Input dat,
 	float moveTest = (float)glm::length(glm::dvec2(dat.x, dat.y) - lastInput);
 	if (moveTest < ROOT2) { return false; }
 	// Add the input data
-	if (data.inputEvents.size() < maxBufferLength) { data.inputEvents.push_back(dat); }
-	else { data.inputEvents.erase(data.inputEvents.begin()); data.inputEvents.push_back(dat); }
+	addInputData(dat);
 
 	// Clear InputFlag::newInput
 	if (fragData.anchors.size() != 0) { fragData.anchors.front().input.flagPrimary = InputFlag::null; }
@@ -442,7 +438,7 @@ void InputMethod::resetInput(Application* sender, Input dat, glm::vec3& point, g
 	data.start = dat;
 	data.inputModKey = dat.modKey;
 	// Push back a new data point
-	data.inputEvents.push_back(dat);
+	addInputData(dat);
 	// Reset the fragData
 	fragData.reset(); splineData.reset();
 	fragData.startTime = splineData.startTime = (float)data.start.time;
@@ -457,4 +453,10 @@ void InputMethod::resetInput(Application* sender, Input dat, glm::vec3& point, g
 	anchorIDCount = 0;
 	splineIDCount = 0;
 	inputCount = 0;
+}
+
+void InputMethod::addInputData(Input dat)
+{
+	if (data.inputEvents.size() < maxBufferLength) { data.inputEvents.push_back(dat); }
+	else { data.inputEvents.erase(data.inputEvents.begin()); data.inputEvents.push_back(dat); }
 }

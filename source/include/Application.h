@@ -219,6 +219,7 @@ public:
 	IRealTimeStylus* getWinStylus();
 	double getStoredDownscaleFactor();
 	void saveDownscaleFactor(double factor);
+	bool stylusInRange();
 
 	// Camera Functions
 	void createOrthoCamera();

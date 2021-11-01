@@ -294,3 +294,8 @@ InputHandlerFlag In_Rake::click(Application* sender, Input dat)
 	//std::cout << "MethodType::in_vortex::CLICK::TIME=" << dat.time << "::TYPE=" << data.inputModKey << std::endl;
 	return wasHandled;
 }
+
+InputHandlerFlag In_Rake::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+{
+	return InputHandlerFlag::noSignal;
+}

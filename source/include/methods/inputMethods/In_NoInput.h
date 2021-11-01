@@ -19,12 +19,16 @@ public:
 	virtual InputHandlerFlag move(Application* sender, Input dat)
 	{
 		std::cout << "IN_NOINPUT::MOVE" << std::endl;
-		return InputHandlerFlag::reject;
+		return InputHandlerFlag::noSignal;
 	}
 	virtual InputHandlerFlag click(Application* sender, Input dat)
 	{
 		std::cout << "IN_NOINPUT::CLICK::TIME=" << dat.time << "::TYPE=" << static_cast<int>(dat.modKey) << std::endl;
-		return InputHandlerFlag::reject;
+		return InputHandlerFlag::noSignal;
+	}
+	virtual InputHandlerFlag key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+	{
+		return InputHandlerFlag::noSignal;
 	}
 };
 

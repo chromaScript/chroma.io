@@ -110,6 +110,26 @@ bool compareModKeyComponent(Keybind left, InputModKey right, bool allowNone)
 	return compareModKeyComponent(left.modKey, right, allowNone);
 }
 
+InputModKey convertKeybind_modKey(Keybind keybind)
+{
+	switch (keybind.glfwKey) {
+	case InputKey::leftctrl:
+	case InputKey::rightctrl:
+		return InputModKey::ctrl;
+		break;
+	case InputKey::leftalt:
+	case InputKey::rightalt:
+		return InputModKey::alt;
+		break;
+	case InputKey::leftshift:
+	case InputKey::rightshift:
+		return InputModKey::shift;
+		break;
+	default:
+		return InputModKey::none;
+	}
+}
+
 bool isKeybindModOnly(Keybind keybind, bool acceptNoneMod)
 {
 	if (keybind.glfwKey != InputKey::unknown && 

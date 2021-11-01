@@ -108,6 +108,7 @@ public:
 	// Input Functions
 	InputHandlerFlag sendClick(Application* sender, Input dat);
 	InputHandlerFlag sendMove(Application* sender, Input dat);
+	InputHandlerFlag sendKey(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys);
 	void sendPreview(Application* sender, VertexData* vertexData, InputHandlerFlag action);
 	void sendFinialize(Application* sender);
 	// Callback Functions

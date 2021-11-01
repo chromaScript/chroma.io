@@ -49,6 +49,7 @@ InputHandlerFlag In_Draw::move(Application* sender, Input dat)
 		dat.action == InputAction::press && 
 		compareModKeyComponent(dat.modKey, continuous.alternateSubModeKey.modKey, false))
 	{
+		addInputData(dat);
 		size_t size = splineData.anchors.size();
 		// Update the start/end curve vertices metadata
 		splineData.anchors[size - 3].headControl = splineData.anchors[size - 1].tailControl = true;
@@ -62,15 +63,27 @@ InputHandlerFlag In_Draw::move(Application* sender, Input dat)
 			dat);
 		// Move the handle points for the adjacent points
 		glm::vec3 lineDir = makeDir(splineData.anchors[size - 3].pos, splineData.anchors[size - 1].pos);
-		glm::vec3 leftDir = makeDir(splineData.anchors[size - 3].pos, pos);
-		glm::vec3 leftPos = pos - (leftDir * 45.0f) - (lineDir * 50.0f);
-		glm::vec3 rightDir = makeDir(pos, splineData.anchors[size - 1].pos);
-		glm::vec3 rightPos = pos + (rightDir * 45.0f) + (lineDir * 50.0f);
+		float lineLen = glm::length(splineData.anchors[size - 1].pos - splineData.anchors[size - 3].pos) / 2.0f;
+		float pressure = clampf(pow((sender->stylusInRange()) ? averageInputs(&data, 12, 0.15f, 0.6f, true).pressure : 0.8f, 3.2f) / 0.85f, 0.0f, 1.0f);
+		lineLen = lerpf(0.0f, lineLen, pressure);
+		// Update the positions/directions
+		glm::vec3 leftPos = pos - (lineDir * lineLen);
+		glm::vec3 leftDir = makeDir(splineData.anchors[size - 3].pos, leftPos);
+		glm::vec3 rightPos = pos + (lineDir * lineLen);
+		glm::vec3 rightDir = makeDir(rightPos, splineData.anchors[size - 1].pos);
 		splineData.anchors[size - 3].headHandle = leftPos;
 		splineData.anchors[size - 3].dir = leftDir;
 		splineData.anchors[size - 1].tailHandle = rightPos;
 		splineData.anchors[size - 1].dir = rightDir;
 		return InputHandlerFlag::previewCurves;
+	}
+	else if (activeMode == TSetProp::editHandles &&
+		compareModKeyComponent(dat.modKey, continuous.alternateSubModeKey.modKey, false))
+	{
+		if (activePoint != nullptr) {
+			*activePoint = pos;
+		}
+		return InputHandlerFlag::editMode;
 	}
 	// Continuous :: Draw Mode
 	else {
@@ -125,15 +138,38 @@ InputHandlerFlag In_Draw::click(Application* sender, Input dat)
 		continuous.clearConstraint();
 		fragData.activeModKey = dat.modKey;
 		splineData.activeModKey = dat.modKey;
+		
+		if (activeMode == TSetProp::editHandles) {
+			glm::vec3 pos = sender->pickScreenCoord(dat.x, dat.y);
+			glm::vec3 dir = makeDir(splineData.anchors.back().pos, pos);
+			size_t size = splineData.anchors.size();
+			glm::vec3* points[3] = { &splineData.anchors.at(size - 3).headHandle, &splineData.anchors.at(size - 1).tailHandle, &splineData.anchors.at(size - 1).pos };
+			float distances[3] = { glm::length(pos - *points[0]), glm::length(pos - *points[1]), glm::length(pos - *points[2]) };
+			float minDist = 1e8;
+			size_t minIndex = 0;
+			for (size_t i = 0; i < 3; i++) {
+				if (distances[i] < minDist) {
+					minDist = distances[i];
+					minIndex = i;
+				}
+			}
+			if (minDist <= 25.0f) {
+				activePoint = points[minIndex];
+			}
+			else {
+				activePoint = nullptr;
+			}
+			wasHandled = InputHandlerFlag::editMode;
+		}
 		// Scenario in which 'Shift' is used to connect the end of the anchors to the next one
 		// Keep previous anchor data and simply continue adding to it
-		if (fragData.anchors.size() != 0 && compareModKey(dat.modKey, continuous.connectLastStrokeKey.modKey, false))
+		else if (fragData.anchors.size() != 0 && compareModKey(dat.modKey, continuous.connectLastStrokeKey.modKey, false))
 		{
 			// Reset the end-input && end-time
 			data.end.resetAll();
 			fragData.endTime = 0.0;
 			// Push back a new data point
-			data.inputEvents.push_back(dat);
+			addInputData(dat);
 			// Determine the anchor position and direction
 			glm::vec3 pos = sender->pickScreenCoord(dat.x, dat.y);
 			glm::vec3 dir = makeDir(splineData.anchors.back().pos, pos);
@@ -209,7 +245,7 @@ InputHandlerFlag In_Draw::click(Application* sender, Input dat)
 			data.start = dat;
 			data.inputModKey = dat.modKey;
 			// Push back a new data point
-			data.inputEvents.push_back(dat);
+			addInputData(dat);
 			// Reset the fragData
 			fragData.reset();
 			splineData.reset();
@@ -248,13 +284,21 @@ InputHandlerFlag In_Draw::click(Application* sender, Input dat)
 		if (fragData.anchors.size() == 1) { fragData.anchors.back().input.flagPrimary = InputFlag::null; }
 		fragData.activeModKey = splineData.activeModKey = dat.modKey;
 		fragData.endTime = splineData.endTime = (float)data.end.time;
-		if (activeMode == TSetProp::curves) {
-			activeMode = TSetProp::draw;
-			fragData.anchors.back() = splineData.anchors[splineData.anchors.size() - 3];
-			fragData.anchors.push_back(splineData.anchors.back());
-			fragData.depth = 1;
-			fragData.anchors.back().input.flagSecondary = InputFlag::updateData;
-			wasHandled = InputHandlerFlag::releaseCurve;
+		if (activeMode == TSetProp::curves || activeMode == TSetProp::editHandles) {
+			if (compareModKeyComponent(dat.modKey, continuous.alternateSubModeKey.modKey, false) && 
+				compareModKeyComponent(dat.modKey, continuous.alternateModeKey.modKey, false)) {
+				activeMode = TSetProp::editHandles;
+				activePoint = nullptr;
+				wasHandled = InputHandlerFlag::editMode;
+			}
+			else {
+				activeMode = TSetProp::draw;
+				fragData.anchors.back() = splineData.anchors[splineData.anchors.size() - 3];
+				fragData.anchors.push_back(splineData.anchors.back());
+				fragData.depth = 1;
+				fragData.anchors.back().input.flagSecondary = InputFlag::updateData;
+				wasHandled = InputHandlerFlag::releaseCurve;
+			}
 		}
 		else if (compareModKeyComponent(dat.modKey, continuous.alternateModeKey, false) && fragData.anchors.size() != 0) {
 			activeMode = TSetProp::line;
@@ -292,6 +336,37 @@ InputHandlerFlag In_Draw::click(Application* sender, Input dat)
 		//std::cout << "MethodType::in_draw::CLICK::NOSIGNAL" << std::endl;
 	}
 	//std::cout << "MethodType::in_draw::CLICK::TIME=" << dat.time << "::TYPE=" << keybindToString(Keybind(InputKey::unknown, data.inputModKey)) << std::endl;
+	return wasHandled;
+}
+
+InputHandlerFlag In_Draw::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+{
+	InputHandlerFlag wasHandled = InputHandlerFlag::noSignal;
+	if (action == InputAction::release) {
+		if (activeMode == TSetProp::curves || activeMode == TSetProp::editHandles) {
+			if (compareModKey(continuous.alternateSubModeKey, convertKeybind_modKey(key), false)) {
+				if (compareModKeyComponent(continuous.alternateModeKey, modKeys, false)) {
+					// Terminate current curve
+					activeMode = TSetProp::line;
+					fragData.anchors.back() = splineData.anchors[splineData.anchors.size() - 3];
+					fragData.anchors.push_back(splineData.anchors.back());
+					fragData.depth = 1;
+					fragData.anchors.back().input.flagSecondary = InputFlag::updateData;
+					// Begin next line
+					glm::vec3 pos = sender->pickScreenCoord(dat.x, dat.y);
+					glm::vec3 dir = makeDir(fragData.anchors.back().pos, pos);
+					splineData.anchors.push_back(FragmentAnchor(splineIDCount, pos, dir,
+						1.0f,
+						HandleType::linear, false, pos,
+						HandleType::linear, false, pos,
+						HandleRel::independent,
+						dat));
+					wasHandled = InputHandlerFlag::releaseCurve;
+				}
+			}
+			
+		}
+	}
 	return wasHandled;
 }
 

@@ -98,11 +98,20 @@ struct Input
 	float velocity = 0.0f;
 	//
 	Input();
+	Input(float uniform);
 	Input(float pressure, float rotation, float tiltX, float tiltY, float velocity);
 	Input(InputModKey modKey, InputMouseButton button, InputAction action,
 		InputFlag flagPrimary, InputFlag flagSecondary,
 		double x, double y, float time, 
 		float pressure, float rotation, float tiltX, float tiltY, float velocity);
+	Input operator*(const float& in);
+	Input operator*=(const float& in);
+	Input operator/(const Input& in);
+	Input operator/(const float& in);
+	Input operator/=(const Input& in);
+	Input operator/=(const float& in);
+	Input operator+(const Input& in);
+	Input operator+=(const Input& in);
 	void resetAll();
 	void resetAction();
 	void resetPos();
@@ -123,5 +132,8 @@ public:
 	InputData();
 	void reset();
 };
+
+Input lerpInputs(Input* inputA, Input* inputB, float t);
+Input averageInputs(InputData* input, size_t size, float weight, float intensity, bool fromBack);
 
 #endif

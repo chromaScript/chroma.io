@@ -196,3 +196,8 @@ InputHandlerFlag In_ShapeLine::click(Application* sender, Input dat)
 
 	return wasHandled;
 }
+
+InputHandlerFlag In_ShapeLine::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+{
+	return InputHandlerFlag::noSignal;
+}

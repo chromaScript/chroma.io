@@ -132,7 +132,7 @@ void Out_Stroke::preview(Application* sender, VertexData* dat, InputHandlerFlag 
 			}
 			return;
 		}
-		else if (action == InputHandlerFlag::previewCurves)
+		else if (action == InputHandlerFlag::previewCurves || action == InputHandlerFlag::editMode)
 		{
 			if (activeFrag == nullptr) {
 				sender->ui->visualizer->setPreview(PreviewLayerType::inputPoint, false);
@@ -185,10 +185,6 @@ void Out_Stroke::preview(Application* sender, VertexData* dat, InputHandlerFlag 
 					PreviewObj(dat->anchors[size - 1].ID, pos1, makeDir(pos1, pos2),
 						sender->ui->fgColor, ShapeType::square,
 						3.0f + (pressure1 * (4.0f))));
-				//sender->ui->visualizer->putLayerObject(activePointsLayer, 1,
-				//	PreviewObj(dat->anchors[size - 2].ID, pos2, makeDir(pos2, pos3),
-				//		sender->ui->fgColor, ShapeType::square,
-				//		3.0f + (pressure2 * (4.0f))));
 				sender->ui->visualizer->putLayerObject(activePointsLayer, 1,
 					PreviewObj(dat->anchors[size - 3].ID, pos3, makeDir(pos2, pos3),
 						sender->ui->fgColor, ShapeType::square,
@@ -207,14 +203,6 @@ void Out_Stroke::preview(Application* sender, VertexData* dat, InputHandlerFlag 
 				sender->ui->visualizer->trimLayer(activePointsLayer, 4);
 			}
 			if (activeLinesLayer != 0) {
-				// Lines to Cursor Point
-				//sender->ui->visualizer->putLayerObject(activeLinesLayer, 0,
-				//	PreviewObj(dat->anchors[size - 2].ID,
-				//		dat->anchors[size - 3].pos, dat->anchors[size - 2].pos, sender->ui->fgColor, ShapeType::line, 2.0f));
-				//sender->ui->visualizer->putLayerObject(activeLinesLayer, 1,
-				//	PreviewObj(dat->anchors[size - 1].ID,
-				//		dat->anchors[size - 2].pos, dat->anchors[size - 1].pos, sender->ui->fgColor, ShapeType::line, 2.0f));
-				// Lines to Handles
 				sender->ui->visualizer->putLayerObject(activeLinesLayer, 0,
 					PreviewObj(dat->anchors[size - 1].ID,
 						dat->anchors[size - 3].pos, dat->anchors[size - 3].headHandle,

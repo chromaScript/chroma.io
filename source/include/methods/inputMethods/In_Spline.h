@@ -61,6 +61,7 @@ public:
 	void stopRecording();
 	virtual InputHandlerFlag move(Application* sender, Input dat);
 	virtual InputHandlerFlag click(Application* sender, Input dat);
+	virtual InputHandlerFlag key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys);
 };
 
 #endif

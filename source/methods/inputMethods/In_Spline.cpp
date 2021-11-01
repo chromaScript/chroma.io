@@ -380,3 +380,8 @@ InputHandlerFlag In_Spline::click(Application* sender, Input dat)
 	std::cout << "IN_SPLINE::CLICK::TIME=" << dat.time << "::TYPE=" << keybindToString(Keybind(InputKey::unknown, data.inputModKey)) << std::endl;
 	return wasHandled;
 }
+
+InputHandlerFlag In_Spline::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+{
+	return InputHandlerFlag::noSignal;
+}

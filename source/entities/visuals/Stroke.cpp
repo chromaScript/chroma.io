@@ -573,13 +573,7 @@ void Stroke::processNewAnchor()
 			{
 				// B1. Calculate the lerp values for the pen data first. They are needed to fix the spacing value.
 				float t = usedLen / segLen;
-
-				float outPressure = faPrev->input.pressure + (t * (faNew->input.pressure - faPrev->input.pressure));
-				float outRotation = faPrev->input.rotation + (t * (faNew->input.rotation - faPrev->input.rotation));
-				float outTiltx = faPrev->input.tiltX + (t * (faNew->input.tiltX - faPrev->input.tiltX));
-				float outTilty = faPrev->input.tiltY + (t * (faNew->input.tiltY - faPrev->input.tiltY));
-				float outVelocity = faPrev->input.velocity + (t * (faNew->input.velocity - faPrev->input.velocity));
-				Input input = Input(outPressure, outRotation, outTiltx, outTilty, outVelocity);
+				Input input = lerpInputs(&faPrev->input, &faNew->input, t);
 
 				// B2. Calculate the amount of length left.
 				glm::vec4 outScale = glm::vec4(1.0f);
@@ -591,8 +585,7 @@ void Stroke::processNewAnchor()
 				}
 
 				glm::vec3 outDir, dirA, dirB;
-				if (isCurve)
-				{
+				if (isCurve) {
 					if (index >= points.size()) { storedLength = abs(segLen - usedLen); break; }
 					outPos = points[index];
 					index++;
@@ -600,10 +593,8 @@ void Stroke::processNewAnchor()
 					prevPos = outPos;
 					usedLen += image.trueSpacing * outScale.z;
 				}
-				else
-				{
-					if (storedLength > 0.01)
-					{
+				else {
+					if (storedLength > 0.01) {
 						float remainder = ((spacingLen * outScale.z) - storedLength) / (spacingLen * outScale.z);
 						outPos += glm::vec3(
 							((incX * outScale.z) * remainder),
@@ -612,27 +603,20 @@ void Stroke::processNewAnchor()
 						storedLength = 0;
 						usedLen += clampf(remainder * (spacingLen * outScale.z), 0.2f, (float)INT_MAX);
 					}
-					else if (shardCount != 0)
-					{
+					else if (shardCount != 0) {
 						outPos += glm::vec3(
 							(incX * outScale.z),
 							(incY * outScale.z),
 							0.0f);
 						usedLen += clampf((spacingLen * outScale.z), 0.2f, (float)INT_MAX);
 					}
-					if (isnan(faPrev->dir.x)) { dirA = DEFAULT_DIR; }
-					else { dirA = faPrev->dir; }
-					if (isnan(faNew->dir.x)) { dirB = DEFAULT_DIR; }
-					else { dirB = faNew->dir; }
-					outDir = lerpDir(dirA, dirB, t * faNew->dirInterpFactor);
+					outDir = lerpDir(faPrev->dir, faNew->dir, t * faNew->dirInterpFactor);
 				}
-				
-				generateShards(shardCount, lastShardID, outPos, outDir, outScale,
-					Input(outPressure, outRotation, outTiltx, outTilty, outVelocity));
+
+				generateShards(shardCount, lastShardID, outPos, outDir, outScale, input);
 
 				// B7. Break if the next anchor would not be placable.
-				if (usedLen + spacingLen > segLen)
-				{
+				if (usedLen + spacingLen > segLen) {
 					storedLength = abs(segLen - usedLen); // Use abs for sign safety
 					break;
 				}

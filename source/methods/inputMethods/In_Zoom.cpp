@@ -88,3 +88,8 @@ InputHandlerFlag In_Zoom::click(Application* sender, Input dat)
 	//std::cout << "MethodType::in_zoom::CLICK::TIME=" << dat.time << "::TYPE=" << data.inputModKey << std::endl;
 	return wasHandled;
 }
+
+InputHandlerFlag In_Zoom::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+{
+	return InputHandlerFlag::noSignal;
+}

@@ -204,3 +204,8 @@ InputHandlerFlag In_Pan::click(Application* sender, Input dat)
 	std::cout << "MethodType::in_pan::CLICK::TIME=" << dat.time << "::TYPE=" << keybindToString(Keybind(InputKey::unknown, data.inputModKey)) << std::endl;
 	return wasHandled;
 }
+
+InputHandlerFlag In_Pan::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+{
+	return InputHandlerFlag::noSignal;
+}

@@ -60,6 +60,7 @@ public:
 	VertexData getFragData() { return fragData; }
 	virtual InputHandlerFlag move(Application* sender, Input dat) = 0;
 	virtual InputHandlerFlag click(Application* sender, Input dat) = 0;
+	virtual InputHandlerFlag key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys) = 0;
 	bool continuousMove(Application* sender, Input dat,
 		TSet_ContinuousControl* continuousControl,
 		TSet_Smoothing* smoothing,
@@ -77,6 +78,7 @@ public:
 		glm::vec3 &cursorPos);
 	void resetInput(Application* sender, Input dat, glm::vec3 &point, glm::vec3 &dir);
 	std::string getName() { return name; }
+	void addInputData(Input dat);
 };
 
 #endif

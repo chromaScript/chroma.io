@@ -197,3 +197,8 @@ InputHandlerFlag In_ShapeField::click(Application* sender, Input dat)
 
 	return wasHandled;
 }
+
+InputHandlerFlag In_ShapeField::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+{
+	return InputHandlerFlag::noSignal;
+}

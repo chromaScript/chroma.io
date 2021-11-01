@@ -401,6 +401,14 @@ void Application::saveDownscaleFactor(double factor)
 	}
 }
 
+bool Application::stylusInRange()
+{
+	return stylusHandler_win->getStylusIsHover();
+}
+
+// Undo Functions
+
+
 void Application::clearUndoRequests()
 {
 	if (undoRequestCount == 0) { return; }
@@ -856,48 +864,50 @@ void Application::keyEventHandler(Keybind keybind, InputAction action)
 
 	// Do immediate filtering by Esc/Backspace or any other static keybinds
 	// Do basic filtering by range/exact >= , <= or == (Cull Ctrl/Shift/Alt/CapsLock/Tab/PgUp/PgUp/PgDn/End/Prtsc/Enter/Backspace/F10/F11/F12/Fn/Del)
+	bool reservedKey = false;
 	if (isKeybind_escape(keybind)) // ESCAPE
 	{
 		// Should only ever trigger ESCAPE on key press
-		if (action == InputAction::press || action == InputAction::repeat) { return; }
-		if (ui.get()->sendPopupEscape()) { return; }
+		if (action == InputAction::release) { 
+			if (ui.get()->sendPopupEscape()) { return; }
+		}
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "ESCAPE" << std::endl; }
-		return;
+		reservedKey = true;
 	}
 	if (isKeybind_delete(keybind)) // DELETE
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "DELETE" << std::endl; }
-		return;
+		reservedKey = true;
 	}
 	if (isKeybind_arrows(keybind)) // RIGHT / LEFT / DOWN / UP ARROWS
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "RIGHT / LEFT / DOWN / UP ARROWS" << std::endl; }
-		return;
+		reservedKey = true;
 	}
 	if (isKeybind_f10f11f12(keybind)) // F10 / F11 / F12
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "F10 / F11 / F12" << std::endl; }
-		return;
+		reservedKey = true;
 	}
 	if (isKeybind_enterTabBackInsert(keybind)) // ENTER / TAB / BACKSPACE / INSERT
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "ENTER / TAB / BACKSPACE / INSERT" << std::endl; }
-		return;
+		reservedKey = true;
 	}
 	if (isKeybind_pagination(keybind)) // PAGE_UP / PAGE_DOWN / HOME / END / CAPS_LOCK / SCROLL_LOCK / NUM_LOCK / PRINT_SCREEN / PAUSE
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "PAGE_UP / PAGE_DOWN / HOME / END / CAPS_LOCK / SCROLL_LOCK / NUM_LOCK / PRINT_SCREEN / PAUSE" << std::endl; }
-		return;
+		reservedKey = true;
 	}
 	if (isKeybind_modKey(keybind)) // RIGHT & LEFT SHIFT / CTRL / ALT / SUPER / MENU
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "RIGHT & LEFT SHIFT / CTRL / ALT / SUPER / MENU" << std::endl; }
-		return;
+		reservedKey = true;
 	}
 	if (isKeybind_outOfBounds(keybind)) // OUT OF BOUNDS SIGNATURE
 	{
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "OUT OF BOUNDS SIGNATURE" << std::endl; }
-		return;
+		reservedKey = true;
 	}
 	// Want to do actions on press, rather than release
 	if (action == InputAction::press)
@@ -906,6 +916,16 @@ void Application::keyEventHandler(Keybind keybind, InputAction action)
 		// The modifier bit is always set regardless of application state, so tools will still know the modifier state
 		keyWatch = keybind.glfwKey;
 		if (debugPrint == true) { std::cout << "KEYEVENTHANDLER::KEYWATCHSIG::SET::=" << static_cast<int>(keyWatch) << std::endl; }
+	}
+	if (reservedKey) {
+		InputHandlerFlag result = toolbox->sendKey(this, *getMouseBuffer_back(), keybind, action, getModKeys());
+		// React based on result
+		switch (result) {
+		case InputHandlerFlag::releaseCurve:
+			toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, result);
+			break;
+		}
+		if (result != InputHandlerFlag::noSignal) { return; }
 	}
 
 	
@@ -1291,6 +1311,7 @@ void Application::clickEventHandler(InputMouseButton button, InputAction action,
 		break;
 	case InputHandlerFlag::previewLine:
 	case InputHandlerFlag::previewCurves:
+	case InputHandlerFlag::editMode:
 		toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->splineData, i);
 		isDoingInput = true;
 		break;
@@ -1382,6 +1403,7 @@ void Application::mousePosEventHandler(Input inputEvent)
 			case InputHandlerFlag::wait: return; break;
 			case InputHandlerFlag::previewLine:
 			case InputHandlerFlag::previewCurves:
+			case InputHandlerFlag::editMode:
 				toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->splineData, result);
 				break;
 			default:

@@ -28,6 +28,9 @@ private:
 	TSet_Smoothing smoothing;
 	TSet_Image image;
 	TSetProp activeMode = TSetProp::draw;
+	glm::vec3* activePoint = nullptr;
+	glm::vec3 activeOrigin = glm::vec3(0.0f);
+	FragmentAnchor* activeVertex = nullptr;
 protected:
 public:
 	In_Draw(MethodType id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
@@ -55,6 +58,7 @@ public:
 	};
 	virtual InputHandlerFlag move(Application* sender, Input dat);
 	virtual InputHandlerFlag click(Application* sender, Input dat);
+	virtual InputHandlerFlag key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys);
 	void addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
 	void generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
 };

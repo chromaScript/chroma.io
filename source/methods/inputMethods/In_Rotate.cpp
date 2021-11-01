@@ -91,3 +91,8 @@ InputHandlerFlag In_Rotate::click(Application* sender, Input dat)
 	//std::cout << "MethodType::in_rotate::CLICK::TIME=" << dat.time << "::TYPE=" << data.inputModKey << std::endl;
 	return wasHandled;
 }
+
+InputHandlerFlag In_Rotate::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+{
+	return InputHandlerFlag::noSignal;
+}

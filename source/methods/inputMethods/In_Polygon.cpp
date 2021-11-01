@@ -183,3 +183,8 @@ InputHandlerFlag In_Polygon::click(Application* sender, Input dat)
 	//std::cout << "MethodType::in_polygon::CLICK::TIME=" << dat.time << "::TYPE=" << data.inputModKey << std::endl;
 	return wasHandled;
 }
+
+InputHandlerFlag In_Polygon::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+{
+	return InputHandlerFlag::noSignal;
+}

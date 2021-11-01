@@ -496,6 +496,10 @@ InputHandlerFlag Toolbox::sendMove(Application* sender, Input dat)
 {
 	return activeTool.get()->input.get()->move(sender, dat);
 }
+InputHandlerFlag Toolbox::sendKey(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+{
+	return activeTool.get()->input.get()->key(sender, dat, key, action, modKeys);
+}
 void Toolbox::sendPreview(Application* sender, VertexData* vertexData, InputHandlerFlag action)
 {
 	activeTool.get()->output.get()->preview(sender, vertexData, action);

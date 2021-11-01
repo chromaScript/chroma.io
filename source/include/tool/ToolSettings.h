@@ -83,6 +83,7 @@ enum class TSetProp
 	polyCircle,
 	curveCircle,
 	customShape,
+	editHandles,
 	// color channels
 	red,
 	green,
@@ -190,6 +191,7 @@ inline std::map<std::string, TSetProp> TSetPropNamesMap = {
 	{"polycircle", TSetProp::polyCircle },
 	{"curvecircle", TSetProp::curveCircle },
 	{"customshape", TSetProp::customShape },
+	{"editHandles", TSetProp::editHandles },
 	// color channels
 	{"red", TSetProp::red },
 	{"green", TSetProp::green },

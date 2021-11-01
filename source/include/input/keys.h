@@ -29,7 +29,10 @@ enum class InputHandlerFlag : int {
 	previewLine = 13,
 	releaseConnect = 14,
 	previewCurves = 15,
-	releaseCurve = 16
+	releaseCurve = 16,
+	editMode = 17,
+	preview = 18,
+	finalize = 19
 };
 // Documentation: Use these to define mod-key combinations, these match the GLFW macros
 enum class InputModKey : int {
@@ -241,6 +244,7 @@ enum class TextInputCmd
 
 Keybind createKeybind(int modBit, int glfwKey);
 TextInputCmd keybind_toInputCmd(Keybind keybind);
+InputModKey convertKeybind_modKey(Keybind keybind);
 
 // Check Key Signatures Warning : Need to change all INTEGERS to InputKey as argument later. Tedius but good to do.
 // To support changing to InputKey, must fill out all modifer key combinations in the InputKey emum (0 - 7)

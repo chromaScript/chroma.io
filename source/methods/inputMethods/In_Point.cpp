@@ -91,3 +91,8 @@ InputHandlerFlag In_Point::click(Application* sender, Input dat)
 	*/
 	return InputHandlerFlag::noSignal;
 }
+
+InputHandlerFlag In_Point::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+{
+	return InputHandlerFlag::noSignal;
+}

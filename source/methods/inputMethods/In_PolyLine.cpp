@@ -367,3 +367,8 @@ InputHandlerFlag In_PolyLine::click(Application* sender, Input dat)
 	//std::cout << "MethodType::in_polyLine::CLICK::TIME=" << dat.time << "::TYPE=" << data.inputModKey << std::endl;
 	return wasHandled;
 }
+
+InputHandlerFlag In_PolyLine::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
+{
+	return InputHandlerFlag::noSignal;
+}
