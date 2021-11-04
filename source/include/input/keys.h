@@ -32,7 +32,10 @@ enum class InputHandlerFlag : int {
 	releaseCurve = 16,
 	editMode = 17,
 	preview = 18,
-	finalize = 19
+	finalize = 19,
+	finalizeCurve = 20,
+	cancelInput = 21,
+	terminateInput = 22,
 };
 // Documentation: Use these to define mod-key combinations, these match the GLFW macros
 enum class InputModKey : int {
@@ -201,6 +204,10 @@ struct Keybind
 	Keybind(int keySig);
 };
 
+bool compareKey(Keybind left, Keybind right, bool allowNone);
+bool compareKey(InputKey left, Keybind right, bool allowNone);
+bool compareKey(Keybind left, InputKey right, bool allowNone);
+bool compareKey(InputKey left, InputKey right, bool allowNone);
 bool compareKeybind(Keybind left, Keybind right, bool allowNone);
 bool compareKeybind(Keybind left, InputKey rightKey, InputModKey rightModKey, bool allowNone);
 bool compareModKey(Keybind left, Keybind right, bool allowNone);

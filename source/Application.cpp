@@ -845,7 +845,7 @@ void Application::keyEventHandler(Keybind keybind, InputAction action)
 		{
 			if (debugPrint) { std::cout << "KEYEVENTHANDLER::KEYWATCHSIG::RELEASED::=" << static_cast<int>(keyWatch) << std::endl; }
 			keyWatch = InputKey::unknown;
-			return;
+			//return;
 		}
 	}
 	// Handle Key Events By Object List Query and Signature Match
@@ -868,7 +868,7 @@ void Application::keyEventHandler(Keybind keybind, InputAction action)
 	if (isKeybind_escape(keybind)) // ESCAPE
 	{
 		// Should only ever trigger ESCAPE on key press
-		if (action == InputAction::release) { 
+		if (!isDoingInput && action == InputAction::release) { 
 			if (ui.get()->sendPopupEscape()) { return; }
 		}
 		if (debugPrint == true) { std::cout << "KEYHANDLER::" << "ESCAPE" << std::endl; }
@@ -921,6 +921,13 @@ void Application::keyEventHandler(Keybind keybind, InputAction action)
 		InputHandlerFlag result = toolbox->sendKey(this, *getMouseBuffer_back(), keybind, action, getModKeys());
 		// React based on result
 		switch (result) {
+		case InputHandlerFlag::terminateInput:
+			toolbox->sendFinialize(this);
+			break;
+		case InputHandlerFlag::finalizeCurve:
+			toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, result);
+			toolbox->sendFinialize(this);
+			break;
 		case InputHandlerFlag::releaseCurve:
 			toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, result);
 			break;

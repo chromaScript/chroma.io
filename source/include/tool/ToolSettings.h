@@ -276,6 +276,7 @@ inline std::map<TSetProp, std::string> TSetPropStringMap = {
 	{ TSetProp::shuffleOrder, "Shuffle Order" },
 	{ TSetProp::pointsShuffle, "Points Shuffle" },
 	// misc
+	{ TSetProp::line, "Line" },
 	{ TSetProp::draw, "Draw" },
 	{ TSetProp::polyLine, "Poly Line" },
 	{ TSetProp::polyDraw, "Poly Draw" },
@@ -297,6 +298,7 @@ inline std::map<TSetProp, std::string> TSetPropStringMap = {
 	{ TSetProp::polyCircle, "Poly Circle" },
 	{ TSetProp::curveCircle, "Curve Circle" },
 	{ TSetProp::customShape, "Custom Shape" },
+	{ TSetProp::editHandles, "Edit Handles" },
 	// color channels
 	{ TSetProp::red, "Red" },
 	{ TSetProp::green, "Green" },

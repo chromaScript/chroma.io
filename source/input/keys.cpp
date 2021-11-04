@@ -25,6 +25,40 @@ Keybind::Keybind(int keySig)
 	this->modKey = static_cast<InputModKey>(modKey);
 }
 
+bool compareKey(Keybind left, Keybind right, bool allowNone)
+{
+	if ((left.glfwKey == InputKey::unknown || right.glfwKey == InputKey::unknown) && !allowNone) { return false; }
+	if (left.glfwKey == right.glfwKey) {
+		return true;
+	}
+	return false;
+}
+
+bool compareKey(InputKey left, Keybind right, bool allowNone)
+{
+	if ((left == InputKey::unknown || right.glfwKey == InputKey::unknown) && !allowNone) { return false; }
+	if (left == right.glfwKey) {
+		return true;
+	}
+	return false;
+}
+bool compareKey(Keybind left, InputKey right, bool allowNone)
+{
+	if ((left.glfwKey == InputKey::unknown || right == InputKey::unknown) && !allowNone) { return false; }
+	if (left.glfwKey == right) {
+		return true;
+	}
+	return false;
+}
+bool compareKey(InputKey left, InputKey right, bool allowNone)
+{
+	if ((left == InputKey::unknown || right == InputKey::unknown) && !allowNone) { return false; }
+	if (left == right) {
+		return true;
+	}
+	return false;
+}
+
 bool compareKeybind(Keybind left, Keybind right, bool allowNone)
 {
 	if ((left.glfwKey == InputKey::unknown || right.glfwKey == InputKey::unknown) && !allowNone) { return false; }

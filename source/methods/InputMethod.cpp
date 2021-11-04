@@ -233,6 +233,33 @@ bool InputMethod::continuousHover(Application* sender, Input dat,
 	return true;
 }
 
+bool InputMethod::continuousEditHandles(InputHandlerFlag& result, Application* sender, Input dat)
+{
+	glm::vec3 pos = sender->pickScreenCoord(dat.x, dat.y);
+	glm::vec3 dir = makeDir(splineData.anchors.back().pos, pos);
+	size_t size = splineData.anchors.size();
+	glm::vec3* points[3] = { &splineData.anchors.at(size - 3).headHandle, &splineData.anchors.at(size - 1).tailHandle, &splineData.anchors.at(size - 1).pos };
+	float distances[3] = { glm::length(pos - *points[0]), glm::length(pos - *points[1]), glm::length(pos - *points[2]) };
+	float minDist = 1e8;
+	size_t minIndex = 0;
+	for (size_t i = 0; i < 3; i++) {
+		if (distances[i] < minDist) {
+			minDist = distances[i];
+			minIndex = i;
+		}
+	}
+	if (minDist <= 25.0f) {
+		activePoint = points[minIndex];
+		result = InputHandlerFlag::editMode;
+		return true;
+	}
+	else {
+		activePoint = nullptr;
+		result = InputHandlerFlag::editMode;
+		return false;
+	}
+}
+
 bool InputMethod::dragMove(Application* sender, Input dat, 
 	TSet_DragControl* dragControl, glm::vec3& cursorPos)
 {

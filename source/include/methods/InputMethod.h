@@ -33,6 +33,11 @@ protected:
 	float currentLength = 0.0f;
 	glm::vec3 lastCursor = glm::vec3(0);
 	int storedEntityCount = 0;
+	//
+	TSetProp activeMode = TSetProp::draw;
+	glm::vec3* activePoint = nullptr;
+	glm::vec3 activeOrigin = glm::vec3(0.0f);
+	FragmentAnchor* activeVertex = nullptr;
 public:
 	MethodType type = MethodType::in_noInput;
 	// SplineData is the public spline data management structure that is used internally
@@ -70,6 +75,7 @@ public:
 		TSet_ContinuousControl* continuousControl, TSet_Smoothing* smoothing,
 		VertexData* target, float vertexSpacing,
 		glm::vec3& outPos, glm::vec3& outDir);
+	bool continuousEditHandles(InputHandlerFlag& result, Application* sender, Input dat);
 	bool dragMove(Application* sender, Input dat,
 		TSet_DragControl* dragControl,
 		glm::vec3& cursorPos);

@@ -15,6 +15,11 @@
 #include <algorithm>
 #include <iostream>
 
+////////////////////////////////////////////////////////////////
+//
+// Move Function
+//
+////////////////////////////////////////////////////////////////
 InputHandlerFlag In_Draw::move(Application* sender, Input dat)
 {
 	//std::cout << "MethodType::in_draw::MOVE" << std::endl;
@@ -128,8 +133,15 @@ InputHandlerFlag In_Draw::move(Application* sender, Input dat)
 		return InputHandlerFlag::allowPress;
 	}
 }
+
+////////////////////////////////////////////////////////////////
+//
+// Click Function
+//
+////////////////////////////////////////////////////////////////
 InputHandlerFlag In_Draw::click(Application* sender, Input dat)
 {
+	std::cout << "CLICK::" << static_cast<int>(dat.action) << " :: " << TSetPropToString(activeMode) << std::endl;
 	InputHandlerFlag wasHandled = InputHandlerFlag::noSignal;
 	if (dat.action == InputAction::press && dat.button == InputMouseButton::left)
 	{
@@ -140,26 +152,7 @@ InputHandlerFlag In_Draw::click(Application* sender, Input dat)
 		splineData.activeModKey = dat.modKey;
 		
 		if (activeMode == TSetProp::editHandles) {
-			glm::vec3 pos = sender->pickScreenCoord(dat.x, dat.y);
-			glm::vec3 dir = makeDir(splineData.anchors.back().pos, pos);
-			size_t size = splineData.anchors.size();
-			glm::vec3* points[3] = { &splineData.anchors.at(size - 3).headHandle, &splineData.anchors.at(size - 1).tailHandle, &splineData.anchors.at(size - 1).pos };
-			float distances[3] = { glm::length(pos - *points[0]), glm::length(pos - *points[1]), glm::length(pos - *points[2]) };
-			float minDist = 1e8;
-			size_t minIndex = 0;
-			for (size_t i = 0; i < 3; i++) {
-				if (distances[i] < minDist) {
-					minDist = distances[i];
-					minIndex = i;
-				}
-			}
-			if (minDist <= 25.0f) {
-				activePoint = points[minIndex];
-			}
-			else {
-				activePoint = nullptr;
-			}
-			wasHandled = InputHandlerFlag::editMode;
+			bool result = continuousEditHandles(wasHandled, sender, dat);
 		}
 		// Scenario in which 'Shift' is used to connect the end of the anchors to the next one
 		// Keep previous anchor data and simply continue adding to it
@@ -285,8 +278,9 @@ InputHandlerFlag In_Draw::click(Application* sender, Input dat)
 		fragData.activeModKey = splineData.activeModKey = dat.modKey;
 		fragData.endTime = splineData.endTime = (float)data.end.time;
 		if (activeMode == TSetProp::curves || activeMode == TSetProp::editHandles) {
-			if (compareModKeyComponent(dat.modKey, continuous.alternateSubModeKey.modKey, false) && 
-				compareModKeyComponent(dat.modKey, continuous.alternateModeKey.modKey, false)) {
+			bool subModeKey = compareModKeyComponent(dat.modKey, continuous.alternateSubModeKey.modKey, false);
+			bool altModeKey = compareModKeyComponent(dat.modKey, continuous.alternateModeKey.modKey, false);
+			if (subModeKey && altModeKey) {
 				activeMode = TSetProp::editHandles;
 				activePoint = nullptr;
 				wasHandled = InputHandlerFlag::editMode;
@@ -335,16 +329,26 @@ InputHandlerFlag In_Draw::click(Application* sender, Input dat)
 		wasHandled = InputHandlerFlag::noSignal;
 		//std::cout << "MethodType::in_draw::CLICK::NOSIGNAL" << std::endl;
 	}
+	std::cout << "END-CLICK::" << static_cast<int>(dat.action) << " :: " << TSetPropToString(activeMode) << std::endl;
 	//std::cout << "MethodType::in_draw::CLICK::TIME=" << dat.time << "::TYPE=" << keybindToString(Keybind(InputKey::unknown, data.inputModKey)) << std::endl;
 	return wasHandled;
 }
 
 InputHandlerFlag In_Draw::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
 {
+	std::cout << "KEY::" << static_cast<int>(key.glfwKey) << " ACTION::" << static_cast<int>(action) << " :: " << TSetPropToString(activeMode) << std::endl;
+	if (static_cast<int>(dat.action) == 1 && activeMode == TSetProp::editHandles) {
+		int k = 5;
+	}
+	if (static_cast<int>(key.glfwKey) == 3410 && action == InputAction::release && activeMode == TSetProp::editHandles) {
+		int k = 5;
+	}
 	InputHandlerFlag wasHandled = InputHandlerFlag::noSignal;
 	if (action == InputAction::release) {
 		if (activeMode == TSetProp::curves || activeMode == TSetProp::editHandles) {
+			// If the key released is the sub-mode key
 			if (compareModKey(continuous.alternateSubModeKey, convertKeybind_modKey(key), false)) {
+				// If the alt mode key is currently held
 				if (compareModKeyComponent(continuous.alternateModeKey, modKeys, false)) {
 					// Terminate current curve
 					activeMode = TSetProp::line;
@@ -363,10 +367,24 @@ InputHandlerFlag In_Draw::key(Application* sender, Input dat, Keybind key, Input
 						dat));
 					wasHandled = InputHandlerFlag::releaseCurve;
 				}
+				else if (!compareModKeyComponent(continuous.alternateModeKey, modKeys, false)) {
+					// If now neither key is held, finalize the curve and end input
+					activeMode = TSetProp::draw;
+					fragData.anchors.back() = splineData.anchors[splineData.anchors.size() - 3];
+					fragData.anchors.push_back(splineData.anchors.back());
+					fragData.depth = 1;
+					fragData.anchors.back().input.flagSecondary = InputFlag::updateData;
+					wasHandled = InputHandlerFlag::finalizeCurve;
+				}
 			}
-			
+		}
+		if (compareKey(key, InputKey::escape, false)) {
+			activeMode = TSetProp::draw;
+			wasHandled = InputHandlerFlag::terminateInput;
 		}
 	}
+	std::cout << "END-KEY::" << static_cast<int>(key.glfwKey) << " ACTION::" << static_cast<int>(action) << " :: " << TSetPropToString(activeMode) << std::endl;
+	
 	return wasHandled;
 }
 
