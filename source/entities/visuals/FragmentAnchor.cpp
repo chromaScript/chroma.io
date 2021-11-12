@@ -58,6 +58,19 @@ FragmentAnchor::FragmentAnchor(int ID, glm::vec3 pos, glm::vec3 dir, float dirIn
 	this->handleRelationship = handleRelationship;
 	this->input = input;
 }
+FragmentAnchor::FragmentAnchor(int ID, glm::vec3 pos, glm::vec3 dir, float dirInterpFactor, Input input)
+{
+	this->ID = ID;
+	this->pos = pos;
+	this->dir = dir;
+	this->dirInterpFactor = dirInterpFactor;
+	this->headType = this->tailType = HandleType::linear;
+	this->headControl = this->tailControl = false;
+	this->headHandle = this->tailHandle = pos;
+	this->handleRelationship = HandleRel::independent;
+	this->input = input;
+}
+
 void FragmentAnchor::copyStylusData(FragmentAnchor* target)
 {
 	this->input = target->input;

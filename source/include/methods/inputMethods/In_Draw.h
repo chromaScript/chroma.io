@@ -14,19 +14,6 @@ class Application;
 class In_Draw : public InputMethod
 {
 private:
-	//double constraintOriginX = 0.0;
-	//double constraintOriginY = 0.0;
-	//glm::vec3 constOriginX = glm::vec3(0, 0, 0);
-	//glm::vec3 constOriginY = glm::vec3(0, 0, 0);
-	//int constraintAxis = AXIS_NONE;
-	//int constraintDetectionThreshold = 3; // Should incrememnt only on movement, not pauses.
-	// 
-	//glm::vec3 constraintOrigin = glm::vec3(0, 0, 0);
-	//bool constraintDirty = false;
-	//float constraintAngle = AXIS_EMPTY;
-	// Tool Settings
-	TSet_Smoothing smoothing;
-	TSet_Image image;
 protected:
 public:
 	In_Draw(MethodType id, TSetType controlScheme, std::shared_ptr<Tool> owner) : InputMethod{ id, controlScheme, owner }
@@ -52,11 +39,13 @@ public:
 		this->anchorIDCount = 0;
 		this->name = "Draw";
 	};
+	virtual void newInput(Application* sender, Input dat);
 	virtual InputHandlerFlag move(Application* sender, Input dat);
 	virtual InputHandlerFlag click(Application* sender, Input dat);
 	virtual InputHandlerFlag key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys);
-	void addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
-	void generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
+	virtual void addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
+	virtual void generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
+	virtual void generateCurve();
 };
 
 #endif

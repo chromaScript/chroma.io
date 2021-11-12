@@ -23,9 +23,6 @@ class ToolSettings;
 class TSet_Fan : public ToolSettings // 5500
 {
 public:
-	TSetProp waitMode;
-	float waitAmount;
-	bool stopWait = false;
 	int subdivisionCount;
 	TSetProp scatteringMode;
 	float angleVariance_simple;

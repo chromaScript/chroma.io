@@ -26,6 +26,7 @@ num modOnly_key_targetKeyID = -1;
 bool sliderBeingDragged = false;
 
 num tsf_currentSettingsPage = 0;
+string tsf_currentSettingsWrapper = "tsf_bodyMetadata";
 
 num currentMaxTop = 0;
 num currentSlideBoxHeight = 0;
@@ -47,28 +48,41 @@ string lastControlPage = "";
 string activeEffectsID = "";
 num activeEffectsToggleID = 0;
 
-void tsf_dragBodyScroll(num selector)
+void tsf_dragBodyScroll(num selector, num override)
 {
 	num ypos = getMousePos_relative()[1];
-	if (selector == 0)
-	{
-		sliderBeingDragged = true;
-		currentMaxTop = getProperty("size-Y");
-		currentSlideBoxHeight = app.ui.getWidget_byID("tsf_settingsContainer").getProperty("size-Y");
-	}
-	else if (selector == 1)
-	{
-		// Fix ypos value
+	if (override >= 0) { 
+		ypos = override; 
+		currentMaxTop = app.ui.getWidget_byID("tsf_body_scrollWrapper").getProperty("size-Y");
+		currentSlideBoxHeight = app.ui.getWidget_byID(tsf_currentSettingsWrapper).getProperty("size-Y") / 1.9;
 		ypos = clamp(ypos, 0, currentMaxTop - tsf_bodyScroll_height);
-		
-		setChildProperty_byID("tsf_body_scrollBar", "top", ypos);
+		app.ui.getWidget_byID("tsf_body_scrollBar").setProperty("top", ypos);
 		num amount = ypos / (currentMaxTop - tsf_bodyScroll_height);
-		num topPos = amount * (currentSlideBoxHeight + (48 * amount));
+		num topPos = amount * currentSlideBoxHeight;
 		app.ui.getWidget_byID("tsf_settingsContainer").setProperty("margin-top", -topPos);
 	}
-	else if (selector == 2)
+	else
 	{
-		sliderBeingDragged = false;
+		if (selector == 0)
+		{
+			sliderBeingDragged = true;
+			currentMaxTop = app.ui.getWidget_byID("tsf_body_scrollWrapper").getProperty("size-Y");
+			currentSlideBoxHeight = app.ui.getWidget_byID(tsf_currentSettingsWrapper).getProperty("size-Y") / 1.9;
+			print tsf_currentSettingsWrapper;
+			print currentSlideBoxHeight;
+		}
+		else if (selector == 1)
+		{
+			ypos = clamp(ypos, 0, currentMaxTop - tsf_bodyScroll_height);
+			setChildProperty_byID("tsf_body_scrollBar", "top", ypos);
+			num amount = ypos / (currentMaxTop - tsf_bodyScroll_height);
+			num topPos = amount * currentSlideBoxHeight;
+			app.ui.getWidget_byID("tsf_settingsContainer").setProperty("margin-top", -topPos);
+		}
+		else if (selector == 2)
+		{
+			sliderBeingDragged = false;
+		}
 	}
 }
 

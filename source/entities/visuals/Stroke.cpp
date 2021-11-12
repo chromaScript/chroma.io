@@ -487,7 +487,7 @@ void Stroke::processNewAnchor()
 	else
 	{
 		faNew = &fragData.anchors[size_t(size) - 1];
-		switch (faNew->input.flagPrimary)
+		switch (faNew->input.flagSecondary)
 		{
 		case InputFlag::null:
 			faPrev = &fragData.anchors[size_t(size) - 2];

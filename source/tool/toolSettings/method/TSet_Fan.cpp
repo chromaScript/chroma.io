@@ -24,8 +24,6 @@ TSet_Fan::TSet_Fan()
 {
 	this->type = TSetType::fan;
 	this->isEnabled = false;
-	this->waitMode = TSetProp::distance;
-	this->waitAmount = 0.0f;
 	this->subdivisionCount = 0;
 	this->scatteringMode = TSetProp::circular;
 	this->angleVariance_simple = 0.0f;

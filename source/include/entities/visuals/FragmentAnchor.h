@@ -46,6 +46,7 @@ struct FragmentAnchor
 		HandleType tailType, bool tailControl, glm::vec3 tailHandle,
 		HandleRel handleRelationship,
 		Input input);
+	FragmentAnchor(int ID, glm::vec3 pos, glm::vec3 dir, float dirInterpFactor, Input input);
 	void copyStylusData(FragmentAnchor* target);
 	void swapStylusData(FragmentAnchor* target);
 	void clearStylusData();

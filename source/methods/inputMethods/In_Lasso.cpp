@@ -27,7 +27,7 @@ InputHandlerFlag In_Lasso::move(Application* sender, Input dat)
 	bool isNew = (fragData.anchors.front().input.flagPrimary == InputFlag::newInput) ? true : false;
 	if (controlScheme == TSetType::continuous)
 	{
-		if (!continuousMove(sender, dat, &continuous, nullptr, &fragData, continuous.anchorSpacing, pos, dir)) { return InputHandlerFlag::wait; }
+		if (!continuousDraw(sender, dat, &continuous, nullptr, &fragData, continuous.anchorSpacing, pos, dir)) { return InputHandlerFlag::wait; }
 	}
 
 	anchorIDCount++;
@@ -146,4 +146,24 @@ InputHandlerFlag In_Lasso::click(Application* sender, Input dat)
 InputHandlerFlag In_Lasso::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
 {
 	return InputHandlerFlag::noSignal;
+}
+
+void In_Lasso::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_Lasso::generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_Lasso::generateCurve()
+{
+
+}
+
+void In_Lasso::newInput(Application* sender, Input dat)
+{
+
 }

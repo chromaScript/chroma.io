@@ -43,7 +43,7 @@ InputHandlerFlag In_Spline::move(Application* sender, Input dat)
 		bool isNew = (activeSpline.anchors.front().input.flagPrimary == InputFlag::newInput) ? true : false;
 		if (controlScheme == TSetType::continuous)
 		{
-			if (!continuousMove(sender, dat, &continuous, &smoothing, &activeSpline, continuous.trueSpacing, pos, dir)) { return InputHandlerFlag::wait; }
+			if (!continuousDraw(sender, dat, &continuous, &smoothing, &activeSpline, continuous.trueSpacing, pos, dir)) { return InputHandlerFlag::wait; }
 		}
 		anchorIDCount++;
 		activeSpline.anchors.push_back(FragmentAnchor(anchorIDCount, pos, dir,
@@ -77,7 +77,7 @@ InputHandlerFlag In_Spline::move(Application* sender, Input dat)
 
 			if (controlScheme == TSetType::continuous)
 			{
-				if (!continuousMove(sender, dat, &continuous, nullptr, &splineData, continuous.anchorSpacing, pos, splineDir)) { return InputHandlerFlag::wait; }
+				if (!continuousDraw(sender, dat, &continuous, nullptr, &splineData, continuous.anchorSpacing, pos, splineDir)) { return InputHandlerFlag::wait; }
 			}
 			bool isNew = (splineData.anchors.front().input.flagPrimary == InputFlag::newInput);
 			splineIDCount++;
@@ -129,7 +129,7 @@ InputHandlerFlag In_Spline::move(Application* sender, Input dat)
 			bool isNew = (fragData.anchors.front().input.flagPrimary == InputFlag::newInput) ? true : false;
 			if (controlScheme == TSetType::continuous)
 			{
-				if (!continuousMove(sender, dat, &continuous, &smoothing, &fragData, continuous.trueSpacing, pos, dir)) { return InputHandlerFlag::wait; }
+				if (!continuousDraw(sender, dat, &continuous, &smoothing, &fragData, continuous.trueSpacing, pos, dir)) { return InputHandlerFlag::wait; }
 			}
 			anchorIDCount++;
 			fragData.anchors.push_back(FragmentAnchor(anchorIDCount, pos, dir,
@@ -384,4 +384,24 @@ InputHandlerFlag In_Spline::click(Application* sender, Input dat)
 InputHandlerFlag In_Spline::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
 {
 	return InputHandlerFlag::noSignal;
+}
+
+void In_Spline::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_Spline::generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_Spline::generateCurve()
+{
+
+}
+
+void In_Spline::newInput(Application* sender, Input dat)
+{
+
 }

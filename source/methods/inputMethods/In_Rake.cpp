@@ -30,7 +30,7 @@ InputHandlerFlag In_Rake::move(Application* sender, Input dat)
 	bool isNew = (splineData.anchors.front().input.flagPrimary == InputFlag::newInput) ? true : false;
 	if (controlScheme == TSetType::continuous)
 	{
-		if (!continuousMove(sender, dat, &continuous, &smoothing, &splineData, continuous.anchorSpacing, splinePos, splineDir)) 
+		if (!continuousDraw(sender, dat, &continuous, &smoothing, &splineData, continuous.anchorSpacing, splinePos, splineDir)) 
 		{ 
 			return InputHandlerFlag::wait;
 		}
@@ -298,4 +298,24 @@ InputHandlerFlag In_Rake::click(Application* sender, Input dat)
 InputHandlerFlag In_Rake::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
 {
 	return InputHandlerFlag::noSignal;
+}
+
+void In_Rake::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_Rake::generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_Rake::generateCurve()
+{
+
+}
+
+void In_Rake::newInput(Application* sender, Input dat)
+{
+
 }

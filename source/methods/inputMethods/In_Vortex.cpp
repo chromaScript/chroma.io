@@ -29,7 +29,7 @@ InputHandlerFlag In_Vortex::move(Application* sender, Input dat)
 			point.y - splineData.anchors.back().pos.y,
 			0.0f));
 		bool isNew = (splineData.anchors.front().input.flagPrimary == InputFlag::newInput) ? true : false;
-		if (!continuousMove(sender, dat, &continuous, nullptr, &splineData, continuous.anchorSpacing, point, splineDir)) { return InputHandlerFlag::wait; }
+		if (!continuousDraw(sender, dat, &continuous, nullptr, &splineData, continuous.anchorSpacing, point, splineDir)) { return InputHandlerFlag::wait; }
 		splineIDCount++;
 		splineData.anchors.push_back(
 			FragmentAnchor(anchorIDCount, point, splineDir,
@@ -238,4 +238,24 @@ InputHandlerFlag In_Vortex::click(Application* sender, Input dat)
 InputHandlerFlag In_Vortex::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
 {
 	return InputHandlerFlag::noSignal;
+}
+
+void In_Vortex::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_Vortex::generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_Vortex::generateCurve()
+{
+
+}
+
+void In_Vortex::newInput(Application* sender, Input dat)
+{
+
 }

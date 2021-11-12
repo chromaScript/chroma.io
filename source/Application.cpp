@@ -918,15 +918,22 @@ void Application::keyEventHandler(Keybind keybind, InputAction action)
 		if (debugPrint == true) { std::cout << "KEYEVENTHANDLER::KEYWATCHSIG::SET::=" << static_cast<int>(keyWatch) << std::endl; }
 	}
 	if (reservedKey) {
-		InputHandlerFlag result = toolbox->sendKey(this, *getMouseBuffer_back(), keybind, action, getModKeys());
+		Input dat = *getMouseBuffer_back();
+		InputHandlerFlag result = toolbox->sendKey(this, dat, keybind, action, getModKeys());
 		// React based on result
 		switch (result) {
 		case InputHandlerFlag::terminateInput:
+			ui->updateCursorImage(toolbox->getActiveTool().get()->getCursorUp());
+			// Do finalize, then postprocess. Tools without either step simply have blank functions.
 			toolbox->sendFinialize(this);
+			toolbox->endCallback(scriptConsole.get()->getInterpreter(), dat.x, dat.y);
+			isDoingInput = false;
 			break;
 		case InputHandlerFlag::finalizeCurve:
 			toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, result);
 			toolbox->sendFinialize(this);
+			toolbox->endCallback(scriptConsole.get()->getInterpreter(), dat.x, dat.y);
+			isDoingInput = false;
 			break;
 		case InputHandlerFlag::releaseCurve:
 			toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, result);

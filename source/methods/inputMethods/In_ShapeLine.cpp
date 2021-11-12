@@ -201,3 +201,23 @@ InputHandlerFlag In_ShapeLine::key(Application* sender, Input dat, Keybind key, 
 {
 	return InputHandlerFlag::noSignal;
 }
+
+void In_ShapeLine::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_ShapeLine::generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_ShapeLine::generateCurve()
+{
+
+}
+
+void In_ShapeLine::newInput(Application* sender, Input dat)
+{
+
+}

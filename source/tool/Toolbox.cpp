@@ -273,6 +273,7 @@ void Toolbox::createDefaultTools()
 			Keybind(InputKey::f, InputModKey::none), shared_from_this(),
 			tags, "Default Tools", "Default", "08.15.21", "chromaTinker"));
 	tools.back().get()->initializeTool(TSetType::continuous);
+	tools.back().get()->getContinuousControl()->anchorSpacing = 12.5f;
 	//
 	tools.emplace_back(
 		std::make_shared<Tool>(brush, circleSmall, 65, "Fan Airbrush",

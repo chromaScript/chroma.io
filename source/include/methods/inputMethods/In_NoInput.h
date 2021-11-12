@@ -16,6 +16,7 @@ public:
 		this->type = MethodType::in_noInput;
 		this->name = "No Input";
 	}
+	virtual void newInput(Application* sender, Input dat) {}
 	virtual InputHandlerFlag move(Application* sender, Input dat)
 	{
 		std::cout << "IN_NOINPUT::MOVE" << std::endl;
@@ -30,6 +31,9 @@ public:
 	{
 		return InputHandlerFlag::noSignal;
 	}
+	virtual void addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat) {}
+	virtual void generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat) {}
+	virtual void generateCurve() {}
 };
 
 #endif

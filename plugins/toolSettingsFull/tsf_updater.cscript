@@ -22,6 +22,8 @@ void update_meta()
 	if (tsf_currentSettingsPage == 0)
 	{
 		app.ui.getWidget_byID("tsf_bodyMetadata").setProperty("visibility", "visible");
+		tsf_currentSettingsWrapper = "tsf_bodyMetadata";
+		tsf_dragBodyScroll(0, 0);
 		if (true) // If the page is dirty, update it
 		{
 			// Text and ID Data
@@ -88,6 +90,8 @@ void update_zoom()
 		if (tsf_currentSettingsPage == 6)
 		{
 			app.ui.getWidget_byID("tsf_bodyControl_zoom").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyControl_zoom";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				// Zoom Factor Sliders
@@ -134,6 +138,8 @@ void update_rotate()
 		if (tsf_currentSettingsPage == 8)
 		{
 			app.ui.getWidget_byID("tsf_bodyControl_rotate").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyControl_rotate";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				// Rotate Speed Sliders
@@ -181,6 +187,8 @@ void update_pan()
 		if (tsf_currentSettingsPage == 7)
 		{
 			app.ui.getWidget_byID("tsf_bodyControl_pan").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyControl_pan";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				//
@@ -251,6 +259,8 @@ void update_sampler()
 		if (tsf_currentSettingsPage == 9)
 		{
 			app.ui.getWidget_byID("tsf_bodyControl_sampler").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyControl_sampler";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				app.ui.getWidget_byID("tsf_sampler_sampleBGKey").setProperty("value", 
@@ -323,6 +333,8 @@ void update_continuous()
 		if (tsf_currentSettingsPage == 1)
 		{
 			app.ui.getWidget_byID("tsf_bodyControl_continuous").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyControl_continuous";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				// Spacing
@@ -449,6 +461,8 @@ void update_drag()
 		if (tsf_currentSettingsPage == 2)
 		{
 			// app.ui.getWidget_byID("tsf_bodyControl_drag").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyControl_drag";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				// currentMaxLeft = app.ui.getWidget_byID("tsf_cont_sliderBox_spacing").getProperty("size-X");
@@ -475,6 +489,8 @@ void update_onepoint()
 		if (tsf_currentSettingsPage == 3)
 		{
 			// app.ui.getWidget_byID("tsf_bodyControl_onePoint").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyControl_onePoint";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				//currentMaxLeft = app.ui.getWidget_byID("tsf_cont_sliderBox_spacing").getProperty("size-X");
@@ -501,6 +517,8 @@ void update_twopoint()
 		if (tsf_currentSettingsPage == 4)
 		{
 			// app.ui.getWidget_byID("tsf_bodyControl_onePoint").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyControl_twoPoint";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				//currentMaxLeft = app.ui.getWidget_byID("tsf_cont_sliderBox_spacing").getProperty("size-X");
@@ -527,6 +545,8 @@ void update_threepoint()
 		if (tsf_currentSettingsPage == 5)
 		{
 			// app.ui.getWidget_byID("tsf_bodyControl_onePoint").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyControl_threePoint";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				//currentMaxLeft = app.ui.getWidget_byID("tsf_cont_sliderBox_spacing").getProperty("size-X");
@@ -553,6 +573,8 @@ void update_rake()
 		if (tsf_currentSettingsPage == 30)
 		{
 			app.ui.getWidget_byID("tsf_bodyRake").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyRake";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				//currentMaxLeft = app.ui.getWidget_byID("tsf_cont_sliderBox_spacing").getProperty("size-X");
@@ -613,6 +635,8 @@ void update_basic()
 		if (tsf_currentSettingsPage == 11)
 		{
 			app.ui.getWidget_byID("tsf_bodyBasic").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyBasic";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				//currentMaxLeft = app.ui.getWidget_byID("tsf_alpha_sliderBox_opacity").getProperty("size-X");
@@ -638,6 +662,8 @@ void update_image()
 		if (tsf_currentSettingsPage == 12)
 		{
 			app.ui.getWidget_byID("tsf_bodyImage").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyImage";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				// Tip Size
@@ -680,6 +706,8 @@ void update_character()
 		if (tsf_currentSettingsPage == 13)
 		{
 			app.ui.getWidget_byID("tsf_bodyCharacter").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyCharacter";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 			
@@ -795,6 +823,8 @@ void update_alpha()
 		if (tsf_currentSettingsPage == 15)
 		{
 			app.ui.getWidget_byID("tsf_bodyAlpha").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyAlpha";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				update_tSetToggle("tsf_alpha_tog_opacityControl", 2800, 1);
@@ -830,6 +860,8 @@ void update_color()
 		if (tsf_currentSettingsPage == 16)
 		{
 			app.ui.getWidget_byID("tsf_bodyColor").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyColor";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				app.ui.getWidget_byID("tsf_color_finalTypeText").setProperty("value", app.toolbox.getActiveToolProp(2777, -1, false, false));
@@ -890,6 +922,8 @@ void update_scatter()
 		if (tsf_currentSettingsPage == 17)
 		{
 			app.ui.getWidget_byID("tsf_bodyScatter").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyScatter";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				update_tSetToggle("tsf_scatter_tog_angleEnable", 2660, 1);
@@ -945,6 +979,8 @@ void update_effects()
 		if (tsf_currentSettingsPage == 24)
 		{
 			app.ui.getWidget_byID("tsf_bodyEffects").setProperty("visibility", "visible");
+			tsf_currentSettingsWrapper = "tsf_bodyEffects";
+			tsf_dragBodyScroll(0, 0);
 			if (true) // If the page is dirty, update it
 			{
 				app.ui.sortTargetWidgetChildren_byMacro("tsf_effects_scrollBox_list", "id", "effectsOrdering", true);

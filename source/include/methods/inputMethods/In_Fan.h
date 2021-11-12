@@ -15,7 +15,6 @@ class In_Fan : public InputMethod
 {
 private:
 	// Tool Settings
-	TSet_Smoothing smoothing;
 	TSet_Fan fan;
 protected:
 public:
@@ -41,9 +40,14 @@ public:
 		this->anchorIDCount = 0;
 		this->name = "Fan";
 	};
+	virtual void newInput(Application* sender, Input dat);
 	virtual InputHandlerFlag move(Application* sender, Input dat);
 	virtual InputHandlerFlag click(Application* sender, Input dat);
 	virtual InputHandlerFlag key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys);
+	virtual void addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
+	virtual void generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
+	virtual void generateCurve();
+	void fillVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
 };
 
 #endif

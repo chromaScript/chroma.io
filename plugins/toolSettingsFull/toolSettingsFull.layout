@@ -4061,9 +4061,9 @@
 			</V_BOX>
 		</V_BOX>
 		<V_BOX id="tsf_body_scrollWrapper" 
-			ondragstart="tsf_dragBodyScroll(0)"
-			ondrag="tsf_dragBodyScroll(1)"
-			ondragend="tsf_dragBodyScroll(2)">
+			ondragstart="tsf_dragBodyScroll(0, -1)"
+			ondrag="tsf_dragBodyScroll(1, -1)"
+			ondragend="tsf_dragBodyScroll(2, -1)">
 			<V_BOX id="tsf_body_scrollBar"></V_BOX>
 		</V_BOX>
 		

@@ -174,25 +174,19 @@ void Out_Stroke::preview(Application* sender, VertexData* dat, InputHandlerFlag 
 			}
 			size_t size = dat->anchors.size();
 			if (activePointsLayer != 0) {
-				glm::vec3 pos1 = dat->anchors[size - 3].pos;
-				glm::vec3 pos2 = dat->anchors[size - 2].pos;
-				glm::vec3 pos3 = dat->anchors[size - 1].pos;
-				float pressure1 = dat->anchors[size - 3].input.pressure;
-				float pressure2 = dat->anchors[size - 2].input.pressure;
-				float pressure3 = dat->anchors[size - 1].input.pressure;
 				// Start / End Points
 				sender->ui->visualizer->putLayerObject(activePointsLayer, 0,
-					PreviewObj(dat->anchors[size - 1].ID, pos1, makeDir(pos1, pos2),
+					PreviewObj(dat->anchors[size - 1].ID, dat->anchors[size - 2].pos, makeDir(dat->anchors[size - 2].pos, dat->anchors[size - 2].headHandle),
 						sender->ui->fgColor, ShapeType::square,
-						3.0f + (pressure1 * (4.0f))));
+						3.0f + (dat->anchors[size - 2].input.pressure * (4.0f))));
 				sender->ui->visualizer->putLayerObject(activePointsLayer, 1,
-					PreviewObj(dat->anchors[size - 3].ID, pos3, makeDir(pos2, pos3),
+					PreviewObj(dat->anchors[size - 2].ID, dat->anchors[size - 1].pos, makeDir(dat->anchors[size - 1].tailHandle, dat->anchors[size - 1].pos),
 						sender->ui->fgColor, ShapeType::square,
-						3.0f + (pressure3 * (4.0f))));
+						3.0f + (dat->anchors[size - 1].input.pressure * (4.0f))));
 				// Handle Points
 				sender->ui->visualizer->putLayerObject(activePointsLayer, 2,
-					PreviewObj(dat->anchors[size - 3].ID, 
-						dat->anchors[size - 3].headHandle, dat->anchors[size - 3].dir,
+					PreviewObj(dat->anchors[size - 2].ID, 
+						dat->anchors[size - 2].headHandle, dat->anchors[size - 2].dir,
 						blue, ShapeType::square,
 						4.0f));
 				sender->ui->visualizer->putLayerObject(activePointsLayer, 3,
@@ -205,7 +199,7 @@ void Out_Stroke::preview(Application* sender, VertexData* dat, InputHandlerFlag 
 			if (activeLinesLayer != 0) {
 				sender->ui->visualizer->putLayerObject(activeLinesLayer, 0,
 					PreviewObj(dat->anchors[size - 1].ID,
-						dat->anchors[size - 3].pos, dat->anchors[size - 3].headHandle,
+						dat->anchors[size - 2].pos, dat->anchors[size - 2].headHandle,
 						blue, ShapeType::line, 1.0f));
 				sender->ui->visualizer->putLayerObject(activeLinesLayer, 1,
 					PreviewObj(dat->anchors[size - 1].ID,
@@ -216,10 +210,10 @@ void Out_Stroke::preview(Application* sender, VertexData* dat, InputHandlerFlag 
 			if (activeCurvesLayer != 0) {
 				// Construct the bounds and points data for the curves preview object
 				RectBounds bezierBounds = RectBounds();
-				getCubicBezierOBB(bezierBounds, &dat->anchors[size - 3], &dat->anchors[size - 1], true, 50.0f);
+				getCubicBezierOBB(bezierBounds, &dat->anchors[size - 2], &dat->anchors[size - 1], true, 50.0f);
 				sender->ui->visualizer->putLayerObject(activeCurvesLayer, 0,
 					PreviewObj(dat->anchors[size - 1].ID,
-						dat->anchors[size - 3].pos, dat->anchors[size - 3].headHandle, 
+						dat->anchors[size - 2].pos, dat->anchors[size - 2].headHandle, 
 						dat->anchors[size - 1].tailHandle, dat->anchors[size - 1].pos,
 						bezierBounds, sender->ui->fgColor, ShapeType::curve, 2.0f));
 			}
@@ -288,8 +282,9 @@ void Out_Stroke::preview(Application* sender, VertexData* dat, InputHandlerFlag 
 				{
 					if (dat->anchors[lastAnchorArrayIndex].input.flagSecondary == InputFlag::updateData) {
 						size_t size = activeFrag.get()->fragData.anchors.size();
-						for (int i = size - 1; i > size - ((size_t)dat->depth + 1); i--) {
-							size_t depth = 1;
+						size_t depth = 1;
+						for (int i = size - 1; i >= size - ((size_t)dat->depth + 0); --i) {
+							if ((int)lastAnchorArrayIndex - (int)depth < 0) { break; }
 							activeFrag.get()->fragData.anchors[i] = dat->anchors[(size_t)lastAnchorArrayIndex - depth];
 							depth++;
 						}

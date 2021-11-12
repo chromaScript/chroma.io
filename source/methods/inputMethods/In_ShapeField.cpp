@@ -202,3 +202,23 @@ InputHandlerFlag In_ShapeField::key(Application* sender, Input dat, Keybind key,
 {
 	return InputHandlerFlag::noSignal;
 }
+
+void In_ShapeField::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_ShapeField::generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_ShapeField::generateCurve()
+{
+
+}
+
+void In_ShapeField::newInput(Application* sender, Input dat)
+{
+
+}

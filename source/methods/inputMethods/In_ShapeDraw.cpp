@@ -28,7 +28,7 @@ InputHandlerFlag In_ShapeDraw::move(Application* sender, Input dat)
 	//bool isNew = (splineData.anchors.front().input.flagPrimary == InputFlag::newInput) ? true : false;
 	if (controlScheme == TSetType::continuous)
 	{
-		if (!continuousMove(sender, dat, &continuous, nullptr, &splineData, continuous.anchorSpacing, splinePos, splineDir)) { return InputHandlerFlag::wait; }
+		if (!continuousDraw(sender, dat, &continuous, nullptr, &splineData, continuous.anchorSpacing, splinePos, splineDir)) { return InputHandlerFlag::wait; }
 	}
 	bool isNew = (splineData.anchors.front().input.flagPrimary == InputFlag::newInput);
 	splineIDCount++;
@@ -211,4 +211,24 @@ InputHandlerFlag In_ShapeDraw::click(Application* sender, Input dat)
 InputHandlerFlag In_ShapeDraw::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
 {
 	return InputHandlerFlag::noSignal;
+}
+
+void In_ShapeDraw::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_ShapeDraw::generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_ShapeDraw::generateCurve()
+{
+
+}
+
+void In_ShapeDraw::newInput(Application* sender, Input dat)
+{
+
 }

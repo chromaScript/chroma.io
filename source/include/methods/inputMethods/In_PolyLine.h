@@ -39,9 +39,13 @@ public:
 		this->anchorIDCount = 0;
 		this->name = "Poly Line";
 	};
+	virtual void newInput(Application* sender, Input dat);
 	virtual InputHandlerFlag move(Application* sender, Input dat);
 	virtual InputHandlerFlag click(Application* sender, Input dat);
 	virtual InputHandlerFlag key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys);
+	virtual void addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
+	virtual void generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
+	virtual void generateCurve();
 };
 
 #endif

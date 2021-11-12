@@ -372,3 +372,23 @@ InputHandlerFlag In_PolyLine::key(Application* sender, Input dat, Keybind key, I
 {
 	return InputHandlerFlag::noSignal;
 }
+
+void In_PolyLine::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_PolyLine::generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_PolyLine::generateCurve()
+{
+
+}
+
+void In_PolyLine::newInput(Application* sender, Input dat)
+{
+
+}

@@ -188,3 +188,23 @@ InputHandlerFlag In_Polygon::key(Application* sender, Input dat, Keybind key, In
 {
 	return InputHandlerFlag::noSignal;
 }
+
+void In_Polygon::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_Polygon::generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
+{
+
+}
+
+void In_Polygon::generateCurve()
+{
+
+}
+
+void In_Polygon::newInput(Application* sender, Input dat)
+{
+
+}

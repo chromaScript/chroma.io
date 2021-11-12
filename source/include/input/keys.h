@@ -36,6 +36,7 @@ enum class InputHandlerFlag : int {
 	finalizeCurve = 20,
 	cancelInput = 21,
 	terminateInput = 22,
+	error = 23,
 };
 // Documentation: Use these to define mod-key combinations, these match the GLFW macros
 enum class InputModKey : int {

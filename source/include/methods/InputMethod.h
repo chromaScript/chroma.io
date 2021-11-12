@@ -36,8 +36,14 @@ protected:
 	//
 	TSetProp activeMode = TSetProp::draw;
 	glm::vec3* activePoint = nullptr;
+	glm::vec3* activePointLinked = nullptr;
 	glm::vec3 activeOrigin = glm::vec3(0.0f);
 	FragmentAnchor* activeVertex = nullptr;
+	//
+	bool forceNewInput = false;
+	//
+	TSet_Smoothing smoothing;
+	TSet_Image image;
 public:
 	MethodType type = MethodType::in_noInput;
 	// SplineData is the public spline data management structure that is used internally
@@ -63,10 +69,18 @@ public:
 	MethodType getID() { return id; }
 	InputData getData() { return data; }
 	VertexData getFragData() { return fragData; }
+	virtual void newInput(Application* sender, Input dat) = 0;
 	virtual InputHandlerFlag move(Application* sender, Input dat) = 0;
 	virtual InputHandlerFlag click(Application* sender, Input dat) = 0;
 	virtual InputHandlerFlag key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys) = 0;
-	bool continuousMove(Application* sender, Input dat,
+	virtual void addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat) = 0;
+	virtual void generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat) = 0;
+	virtual void generateCurve() = 0;
+	//
+	InputHandlerFlag continuousClick(Application* sender, Input dat);
+	InputHandlerFlag continuousMove(Application* sender, Input dat, glm::vec3* pos, glm::vec3* dir);
+	InputHandlerFlag continuousKey(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys);
+	bool continuousDraw(Application* sender, Input dat,
 		TSet_ContinuousControl* continuousControl,
 		TSet_Smoothing* smoothing,
 		VertexData* target, float vertexSpacing,
@@ -85,6 +99,12 @@ public:
 	void resetInput(Application* sender, Input dat, glm::vec3 &point, glm::vec3 &dir);
 	std::string getName() { return name; }
 	void addInputData(Input dat);
+	void clearFlagNew(bool clear);
+	void resetData(Input dat, bool linearStream, bool centerAboutOrigin, bool connectEnds, bool constantSize);
+	InputHandlerFlag newInput_continuous(Application* sender, Input dat, 
+		int waitCount, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary);
+	InputHandlerFlag connectInput_continuous(Application* sender, Input* dat);
+
 };
 
 #endif
