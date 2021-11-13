@@ -109,7 +109,7 @@ public:
 	InputHandlerFlag sendClick(Application* sender, Input dat);
 	InputHandlerFlag sendMove(Application* sender, Input dat);
 	InputHandlerFlag sendKey(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys);
-	void sendPreview(Application* sender, VertexData* vertexData, InputHandlerFlag action);
+	void sendPreview(Application* sender, InputHandlerFlag action);
 	void sendFinialize(Application* sender);
 	// Callback Functions
 	bool bindCallback(std::shared_ptr<CInterpreter> interpreter,

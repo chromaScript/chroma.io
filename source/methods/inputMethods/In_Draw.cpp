@@ -33,7 +33,7 @@ InputHandlerFlag In_Draw::move(Application* sender, Input dat)
 		wasHandled = continuousMove(sender, dat, &pos, &dir);
 	}
 
-	clearFlagNew(isNew);
+	//clearFlagNew(isNew);
 	return wasHandled;
 }
 
@@ -47,9 +47,8 @@ InputHandlerFlag In_Draw::click(Application* sender, Input dat)
 	InputHandlerFlag wasHandled = InputHandlerFlag::noSignal;
 	if (controlScheme == TSetType::continuous) 
 	{
-		wasHandled = continuousClick(sender, dat);
+		wasHandled = continuousClick(sender, dat, 1, 1, InputFlag::null, InputFlag::null);
 	}
-	
 	return wasHandled;
 }
 
@@ -61,6 +60,22 @@ InputHandlerFlag In_Draw::key(Application* sender, Input dat, Keybind key, Input
 		wasHandled = continuousKey(sender, dat, key, action, modKeys);
 	}
 	return wasHandled;
+}
+
+void In_Draw::initializeVertices(glm::vec3* pos, glm::vec3* dir, Input* dat,
+	int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary)
+{
+	fragData.anchors.push_back(FragmentAnchor(anchorIDCount, *pos, *dir, 1.0f, *dat));
+	splineData.anchors.push_back(FragmentAnchor(splineIDCount, *pos, *dir, 1.0f, *dat));
+	if (activeMode == TSetProp::line) {
+		splineIDCount++;
+		splineData.anchors.push_back(FragmentAnchor(splineIDCount, *pos, *dir, 1.0f, *dat));
+	}
+	fragData.anchors.back().wait = waitCountVertex;
+	splineData.anchors.back().wait = waitCountSpline;
+	fragData.anchors.front().input.flagSecondary = vertexFlagSecondary;
+	splineData.anchors.front().input.flagPrimary = InputFlag::newInput;
+	splineData.anchors.front().input.flagSecondary = splineFlagSecondary;
 }
 
 void In_Draw::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)

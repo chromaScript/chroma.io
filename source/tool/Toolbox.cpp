@@ -501,14 +501,14 @@ InputHandlerFlag Toolbox::sendKey(Application* sender, Input dat, Keybind key, I
 {
 	return activeTool.get()->input.get()->key(sender, dat, key, action, modKeys);
 }
-void Toolbox::sendPreview(Application* sender, VertexData* vertexData, InputHandlerFlag action)
+void Toolbox::sendPreview(Application* sender, InputHandlerFlag action)
 {
-	activeTool.get()->output.get()->preview(sender, vertexData, action);
+	activeTool.get()->output.get()->preview(sender, &activeTool.get()->input.get()->fragData, &activeTool.get()->input.get()->splineData, action);
 }
 void Toolbox::sendFinialize(Application* sender)
 {
-	activeTool.get()->output.get()->finalize(sender, &activeTool.get()->input.get()->fragData);
-	activeTool.get()->output.get()->postprocess(sender, &activeTool.get()->input.get()->fragData);
+	activeTool.get()->output.get()->finalize(sender, &activeTool.get()->input.get()->fragData, &activeTool.get()->input.get()->splineData);
+	activeTool.get()->output.get()->postprocess(sender, &activeTool.get()->input.get()->fragData, &activeTool.get()->input.get()->splineData);
 }
 
 // Validation Functions

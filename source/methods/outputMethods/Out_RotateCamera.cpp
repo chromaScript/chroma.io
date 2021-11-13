@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-void Out_RotateCamera::preview(Application* sender, VertexData* dat, InputHandlerFlag action)
+void Out_RotateCamera::preview(Application* sender, VertexData* dat, VertexData* splineData, InputHandlerFlag action)
 {
 	if (dat->anchors.empty()) { return; }
 	std::shared_ptr<Camera> camera = sender->getCamera();
@@ -74,7 +74,7 @@ void Out_RotateCamera::preview(Application* sender, VertexData* dat, InputHandle
 		camera.get()->setRoll(outRoll);
 	}
 }
-void Out_RotateCamera::finalize(Application* sender, VertexData* dat)
+void Out_RotateCamera::finalize(Application* sender, VertexData* dat, VertexData* splineData)
 {
 	float roll = sender->getCamera()->getRoll();
 	float rollOrig = roll;
@@ -96,7 +96,7 @@ void Out_RotateCamera::finalize(Application* sender, VertexData* dat)
 	}
 	snapRoll = -720.0f;
 }
-void Out_RotateCamera::postprocess(Application* sender, VertexData* dat)
+void Out_RotateCamera::postprocess(Application* sender, VertexData* dat, VertexData* splineData)
 {
 
 }

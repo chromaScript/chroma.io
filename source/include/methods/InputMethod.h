@@ -73,11 +73,14 @@ public:
 	virtual InputHandlerFlag move(Application* sender, Input dat) = 0;
 	virtual InputHandlerFlag click(Application* sender, Input dat) = 0;
 	virtual InputHandlerFlag key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys) = 0;
+	virtual void initializeVertices(glm::vec3* pos, glm::vec3* dir, Input* dat,
+		int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary) = 0;
 	virtual void addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat) = 0;
 	virtual void generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat) = 0;
 	virtual void generateCurve() = 0;
 	//
-	InputHandlerFlag continuousClick(Application* sender, Input dat);
+	InputHandlerFlag continuousClick(Application* sender, Input dat,
+		int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary);
 	InputHandlerFlag continuousMove(Application* sender, Input dat, glm::vec3* pos, glm::vec3* dir);
 	InputHandlerFlag continuousKey(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys);
 	bool continuousDraw(Application* sender, Input dat,
@@ -102,7 +105,7 @@ public:
 	void clearFlagNew(bool clear);
 	void resetData(Input dat, bool linearStream, bool centerAboutOrigin, bool connectEnds, bool constantSize);
 	InputHandlerFlag newInput_continuous(Application* sender, Input dat, 
-		int waitCount, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary);
+		int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary);
 	InputHandlerFlag connectInput_continuous(Application* sender, Input* dat);
 
 };

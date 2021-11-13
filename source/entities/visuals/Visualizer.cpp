@@ -189,7 +189,7 @@ void Visualizer::addLayerObject(unsigned int layer, PreviewObj obj)
 	}
 }
 
-void Visualizer::removeLayer(unsigned int layer)
+void Visualizer::removeLayer(bool eraseLayer, unsigned int layer)
 {
 	if (previewLayers.count(layer) == 1) {
 		if (layer >= inputLinesRange.first && layer < inputLinesRange.first + inputLinesRange.second) {
@@ -204,7 +204,7 @@ void Visualizer::removeLayer(unsigned int layer)
 		else if (layer >= inputCurvesRange.first && layer < inputCurvesRange.first + inputCurvesRange.second) {
 			inputCurvesAlloc.push_back(layer);
 		}
-		previewLayers.erase(layer);
+		if (eraseLayer) { previewLayers.erase(layer); }
 	}
 }
 
@@ -220,8 +220,10 @@ void Visualizer::trimLayer(unsigned int layer, size_t size)
 
 void Visualizer::clearLayers()
 {
-	for (auto const& layer : previewLayers) {
-		removeLayer(layer.first);
+	if (previewLayers.size() != 0) {
+		for (auto const& layer : previewLayers) {
+			removeLayer(false, layer.first);
+		}
 	}
 	glm::ivec2 emptyDimensions = glm::ivec2(0);
 	previewLayers.clear();
@@ -249,7 +251,7 @@ void Visualizer::putLayerObject(unsigned int layer, size_t index, PreviewObj obj
 		}
 	}
 }
-void Visualizer::putBoundsObject(unsigned int layer, EntityTransform transform)
+void Visualizer::putBoundsObject(unsigned int layer, size_t index, EntityTransform transform)
 {
 	if (previewLayers.count(layer) == 1) {
 		float rad = glm::radians(transform.roll);
@@ -261,23 +263,49 @@ void Visualizer::putBoundsObject(unsigned int layer, EntityTransform transform)
 		glm::vec3 p3 = origin + (rotation * (transform.bounds.p3 - origin));
 		glm::vec3 p4 = origin + (rotation * (transform.bounds.p4 - origin));
 		// Create Lines
-		putLayerObject(layer, 0,
+		putLayerObject(layer, index + 0,
 			PreviewObj(0, p1, p2, blue, ShapeType::line, 1.0f));
-		putLayerObject(layer, 1,
+		putLayerObject(layer, index + 1,
 			PreviewObj(0, p2, p3, blue, ShapeType::line, 1.0f));
-		putLayerObject(layer, 2,
+		putLayerObject(layer, index + 2,
 			PreviewObj(0, p3, p4, blue, ShapeType::line, 1.0f));
-		putLayerObject(layer, 3,
+		putLayerObject(layer, index + 3,
 			PreviewObj(0, p4, p1, blue, ShapeType::line, 1.0f));
 		// Create Points
-		putLayerObject(layer, 4,
+		putLayerObject(layer, index + 4,
 			PreviewObj(4, p1, boundsDir, blue, ShapeType::square, 6.0f));
-		putLayerObject(layer, 5,
+		putLayerObject(layer, index + 5,
 			PreviewObj(4, p2, boundsDir, blue, ShapeType::square, 6.0f));
-		putLayerObject(layer, 6,
+		putLayerObject(layer, index + 6,
 			PreviewObj(4, p3, boundsDir, blue, ShapeType::square, 6.0f));
-		putLayerObject(layer, 7,
+		putLayerObject(layer, index + 7,
 			PreviewObj(4, p4, boundsDir, blue, ShapeType::square, 6.0f));
+	}
+}
+void Visualizer::putBoundsObject(unsigned int layer, size_t index, glm::vec3 p1, glm::vec3 p3, glm::vec2 size, glm::vec3 dir, CColor color)
+{
+	if (previewLayers.count(layer) == 1) {
+		glm::vec3 boundsNormal = dir * glm::quat(glm::vec3(0.0f, 0.0f, MATH_PI / 2.0f));
+		glm::vec3 p2 = p1 + (dir * size.x);
+		glm::vec3 p4 = p1 - (boundsNormal * size.y);
+		// Create Lines
+		putLayerObject(layer, index + 0,
+			PreviewObj(0, p1, p2, color, ShapeType::line, 1.0f));
+		putLayerObject(layer, index + 1,
+			PreviewObj(0, p2, p3, color, ShapeType::line, 1.0f));
+		putLayerObject(layer, index + 2,
+			PreviewObj(0, p3, p4, color, ShapeType::line, 1.0f));
+		putLayerObject(layer, index + 3,
+			PreviewObj(0, p4, p1, color, ShapeType::line, 1.0f));
+		// Create Points
+		putLayerObject(layer, index + 4,
+			PreviewObj(4, p1, dir, color, ShapeType::square, 6.0f));
+		putLayerObject(layer, index + 5,
+			PreviewObj(4, p2, dir, color, ShapeType::square, 6.0f));
+		putLayerObject(layer, index + 6,
+			PreviewObj(4, p3, dir, color, ShapeType::square, 6.0f));
+		putLayerObject(layer, index + 7,
+			PreviewObj(4, p4, dir, color, ShapeType::square, 6.0f));
 	}
 }
 

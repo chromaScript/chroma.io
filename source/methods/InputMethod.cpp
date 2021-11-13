@@ -18,109 +18,6 @@
 #include <algorithm>
 #include <iostream>
 
-InputHandlerFlag InputMethod::continuousClick(Application* sender, Input dat)
-{
-	InputHandlerFlag wasHandled = InputHandlerFlag::noSignal;
-	if (dat.action == InputAction::press && dat.button == InputMouseButton::left)
-	{
-		// Clear any constraint variables, these should not remain constant between different
-		// press events of the same stroke
-		continuous.clearConstraint();
-		fragData.activeModKey = dat.modKey;
-		splineData.activeModKey = dat.modKey;
-
-		if (activeMode == TSetProp::editHandles) {
-			bool result = continuousEditHandles(wasHandled, sender, dat);
-		}
-		else if (activeMode == TSetProp::line && !forceNewInput)
-		{
-			if (compareModKeyComponent(dat.modKey, continuous.alternateSubModeKey.modKey, false))
-			{
-				activeMode = TSetProp::curves;
-				wasHandled = InputHandlerFlag::allowPress;
-			}
-			else {
-				glm::vec3 pos = splineData.anchors.back().pos;
-				glm::vec3 dir = makeDir(splineData.anchors.at(splineData.anchors.size() - 2).pos, pos);
-				bool altMode = compareModKey(dat.modKey, continuous.alternateModeKey.modKey, false);
-				if (!altMode) { activeMode = continuous.defaultMode; }
-				else if (altMode && continuous.defaultMode == TSetProp::line) { activeMode = TSetProp::draw; }
-				else if (altMode && continuous.defaultMode == TSetProp::draw) { activeMode = TSetProp::draw; }
-				if (activeMode == TSetProp::draw) {
-					this->generateVertices(&pos, &dir, &dat);
-					wasHandled = InputHandlerFlag::allowPress;
-				}
-				else {
-					this->generateVertices(&pos, &dir, &dat);
-					splineIDCount++;
-					splineData.anchors.push_back(FragmentAnchor(splineIDCount, pos, dir, 1.0f, dat));
-					wasHandled = InputHandlerFlag::allowPress;
-				}
-			}
-		}
-		// Connection of previous input to next input
-		else if (fragData.anchors.size() != 0 && compareModKey(dat.modKey, continuous.connectLastStrokeKey.modKey, false))
-		{
-			wasHandled = connectInput_continuous(sender, &dat);
-		}
-		// A new set of anchors is started
-		else
-		{
-			newInput(sender, dat);
-			wasHandled = newInput_continuous(sender, dat, 1, InputFlag::null, InputFlag::null);
-		}
-	}
-	// Handle Click Release
-	else if (dat.action == InputAction::release && dat.button == InputMouseButton::left)
-	{
-		data.end = dat;
-		if (fragData.anchors.size() == 1) { fragData.anchors.back().input.flagPrimary = InputFlag::null; }
-		fragData.activeModKey = splineData.activeModKey = dat.modKey;
-		fragData.endTime = splineData.endTime = (float)data.end.time;
-
-		if (activeMode == TSetProp::curves || activeMode == TSetProp::editHandles) {
-			bool subModeKey = compareModKeyComponent(dat.modKey, continuous.alternateSubModeKey.modKey, false);
-			bool altModeKey = (continuous.defaultMode == TSetProp::line) ?
-				true : compareModKeyComponent(dat.modKey, continuous.alternateModeKey.modKey, false);
-			if (subModeKey && altModeKey) {
-				activeMode = TSetProp::editHandles;
-				activePoint = nullptr;
-				wasHandled = InputHandlerFlag::editMode;
-			}
-			else {
-				activeMode = TSetProp::draw;
-				generateCurve();
-				wasHandled = InputHandlerFlag::releaseCurve;
-			}
-		}
-		else if (activeMode != TSetProp::line &&
-			compareModKeyComponent(dat.modKey, continuous.alternateModeKey, false) &&
-			fragData.anchors.size() != 0)
-		{
-			activeMode = TSetProp::line;
-			glm::vec3 pos = sender->pickScreenCoord(dat.x, dat.y);
-			glm::vec3 dir = makeDir(fragData.anchors.back().pos, pos);
-			splineData.anchors.push_back(FragmentAnchor(splineIDCount, pos, dir, 1.0f, dat));
-			wasHandled = InputHandlerFlag::release_continueInput;
-		}
-		else if (activeMode == TSetProp::line) {
-			wasHandled = InputHandlerFlag::previewLine;
-		}
-		else {
-			if (continuous.closeShape) {
-				glm::vec3 pos = splineData.anchors.front().pos;
-				glm::vec3 dir = makeDir(splineData.anchors.back().pos, pos);
-				splineIDCount++;
-				splineData.anchors.push_back(FragmentAnchor(splineIDCount, pos, dir, 1.0f, dat));
-				generateVertices(&pos, &dir, &dat);
-				wasHandled = InputHandlerFlag::releaseConnect;
-			}
-			else { wasHandled = InputHandlerFlag::release; }
-		}
-	}
-	else { wasHandled = InputHandlerFlag::noSignal; }
-	return wasHandled;
-}
 InputHandlerFlag InputMethod::continuousMove(Application* sender, Input dat, glm::vec3* pos, glm::vec3* dir)
 {
 	InputHandlerFlag wasHandled = InputHandlerFlag::noSignal;
@@ -193,6 +90,112 @@ InputHandlerFlag InputMethod::continuousMove(Application* sender, Input dat, glm
 	}
 	return wasHandled;
 }
+
+InputHandlerFlag InputMethod::continuousClick(Application* sender, Input dat, 
+	int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary)
+{
+	InputHandlerFlag wasHandled = InputHandlerFlag::noSignal;
+	if (dat.action == InputAction::press && dat.button == InputMouseButton::left)
+	{
+		// Clear any constraint variables, these should not remain constant between different
+		// press events of the same stroke
+		continuous.clearConstraint();
+		fragData.activeModKey = dat.modKey;
+		splineData.activeModKey = dat.modKey;
+
+		if (activeMode == TSetProp::editHandles) {
+			bool result = continuousEditHandles(wasHandled, sender, dat);
+		}
+		else if (activeMode == TSetProp::line && !forceNewInput)
+		{
+			if (compareModKeyComponent(dat.modKey, continuous.alternateSubModeKey.modKey, false))
+			{
+				activeMode = TSetProp::curves;
+				wasHandled = InputHandlerFlag::allowPress;
+			}
+			else {
+				glm::vec3 pos = splineData.anchors.back().pos;
+				glm::vec3 dir = makeDir(splineData.anchors.at(splineData.anchors.size() - 2).pos, pos);
+				bool altMode = compareModKey(dat.modKey, continuous.alternateModeKey.modKey, false);
+				if (!altMode) { activeMode = continuous.defaultMode; }
+				else if (altMode && continuous.defaultMode == TSetProp::line) { activeMode = TSetProp::draw; }
+				else if (altMode && continuous.defaultMode == TSetProp::draw) { activeMode = TSetProp::draw; }
+				if (activeMode == TSetProp::draw) {
+					this->generateVertices(&pos, &dir, &dat);
+					wasHandled = InputHandlerFlag::allowPress;
+				}
+				else {
+					this->generateVertices(&pos, &dir, &dat);
+					splineIDCount++;
+					splineData.anchors.push_back(FragmentAnchor(splineIDCount, pos, dir, 1.0f, dat));
+					wasHandled = InputHandlerFlag::allowPress;
+				}
+			}
+		}
+		// Connection of previous input to next input
+		else if (fragData.anchors.size() != 0 && compareModKey(dat.modKey, continuous.connectLastStrokeKey.modKey, false))
+		{
+			wasHandled = connectInput_continuous(sender, &dat);
+		}
+		// A new set of anchors is started
+		else
+		{
+			newInput(sender, dat);
+			wasHandled = newInput_continuous(sender, dat, waitCountVertex, waitCountSpline, vertexFlagSecondary, splineFlagSecondary);
+		}
+	}
+	// Handle Click Release
+	else if (dat.action == InputAction::release && dat.button == InputMouseButton::left)
+	{
+		data.end = dat;
+		if (fragData.anchors.size() == 1) { fragData.anchors.back().input.flagPrimary = InputFlag::null; }
+		fragData.activeModKey = splineData.activeModKey = dat.modKey;
+		fragData.endTime = splineData.endTime = (float)data.end.time;
+
+		if (activeMode == TSetProp::curves || activeMode == TSetProp::editHandles) {
+			bool subModeKey = compareModKeyComponent(dat.modKey, continuous.alternateSubModeKey.modKey, false);
+			bool altModeKey = (continuous.defaultMode == TSetProp::line) ?
+				true : compareModKeyComponent(dat.modKey, continuous.alternateModeKey.modKey, false);
+			if (subModeKey && altModeKey) {
+				activeMode = TSetProp::editHandles;
+				activePoint = nullptr;
+				wasHandled = InputHandlerFlag::editMode;
+			}
+			else {
+				activeMode = TSetProp::draw;
+				generateCurve();
+				wasHandled = InputHandlerFlag::releaseCurve;
+			}
+		}
+		else if (activeMode != TSetProp::line &&
+			compareModKeyComponent(dat.modKey, continuous.alternateModeKey, false) &&
+			fragData.anchors.size() != 0)
+		{
+			activeMode = TSetProp::line;
+			glm::vec3 pos = sender->pickScreenCoord(dat.x, dat.y);
+			glm::vec3 dir = makeDir(fragData.anchors.back().pos, pos);
+			splineData.anchors.push_back(FragmentAnchor(splineIDCount, pos, dir, 1.0f, dat));
+			wasHandled = InputHandlerFlag::release_continueInput;
+		}
+		else if (activeMode == TSetProp::line) {
+			wasHandled = InputHandlerFlag::previewLine;
+		}
+		else {
+			if (continuous.closeShape) {
+				glm::vec3 pos = splineData.anchors.front().pos;
+				glm::vec3 dir = makeDir(splineData.anchors.back().pos, pos);
+				splineIDCount++;
+				splineData.anchors.push_back(FragmentAnchor(splineIDCount, pos, dir, 1.0f, dat));
+				generateVertices(&pos, &dir, &dat);
+				wasHandled = InputHandlerFlag::releaseConnect;
+			}
+			else { wasHandled = InputHandlerFlag::release; }
+		}
+	}
+	else { wasHandled = InputHandlerFlag::noSignal; }
+	return wasHandled;
+}
+
 
 InputHandlerFlag InputMethod::continuousKey(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
 {
@@ -695,7 +698,7 @@ void InputMethod::resetInput(Application* sender, Input dat, glm::vec3& point, g
 }
 
 InputHandlerFlag InputMethod::newInput_continuous(Application* sender, Input dat, 
-	int waitCount, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary)
+	int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary)
 {
 	InputHandlerFlag result = InputHandlerFlag::noSignal;
 	if (owner.get()->checkInterestMask(TSetType::image)) { image = *owner.get()->getImage(); }
@@ -716,36 +719,9 @@ InputHandlerFlag InputMethod::newInput_continuous(Application* sender, Input dat
 	// Set the upper left corner for the entity 
 	glm::vec3 origin = sender->pickScreenCoord(dat.x, dat.y);
 	fragData.transform.origin = splineData.transform.origin = origin;
-	// Add the first anchor point, there is no direction yet, so a manual wait will be placed on the
-	// anchor to count off 1 more anchor before rendering.
-	fragData.anchors.push_back(FragmentAnchor(anchorIDCount, origin, DEFAULT_DIR,
-		1.0f,
-		HandleType::linear, false, origin,
-		HandleType::linear, false, origin,
-		HandleRel::independent,
-		dat));
-	splineData.anchors.push_back(FragmentAnchor(splineIDCount, origin, DEFAULT_DIR,
-		1.0f,
-		HandleType::linear, false, origin,
-		HandleType::linear, false, origin,
-		HandleRel::independent,
-		dat));
-	if (activeMode == TSetProp::line) {
-		splineIDCount++;
-		splineData.anchors.push_back(FragmentAnchor(splineIDCount, origin, DEFAULT_DIR,
-			1.0f,
-			HandleType::linear, false, origin,
-			HandleType::linear, false, origin,
-			HandleRel::independent,
-			dat));
-	}
-	fragData.anchors.back().wait = waitCount;
-	splineData.anchors.back().wait = waitCount;
-	fragData.anchors.front().input.flagPrimary = InputFlag::newInput;
-	fragData.anchors.front().input.flagSecondary = vertexFlagSecondary;
-	splineData.anchors.front().input.flagPrimary = InputFlag::newInput;
-	splineData.anchors.front().input.flagSecondary = splineFlagSecondary;
+	glm::vec3 dir = sender->getMouseDirection(0.75f);
 
+	this->initializeVertices(&origin, &dir, &dat, waitCountVertex, waitCountSpline, vertexFlagSecondary, splineFlagSecondary);
 	result = InputHandlerFlag::allowPress_updateCursor;
 
 	return result;
@@ -801,5 +777,5 @@ void InputMethod::resetData(Input dat, bool linearStream, bool centerAboutOrigin
 
 void InputMethod::clearFlagNew(bool clear)
 {
-	if (clear) { splineData.anchors.front().input.flagPrimary = fragData.anchors.front().input.flagPrimary = InputFlag::null; }
+	if (clear) { splineData.anchors.front().input.flagPrimary = InputFlag::null; }
 }

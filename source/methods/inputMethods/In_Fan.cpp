@@ -30,7 +30,7 @@ InputHandlerFlag In_Fan::move(Application* sender, Input dat)
 		wasHandled = continuousMove(sender, dat, &pos, &dir);
 	}
 
-	clearFlagNew(isNew);
+	//clearFlagNew(isNew);
 	return wasHandled;
 }
 InputHandlerFlag In_Fan::click(Application* sender, Input dat)
@@ -38,7 +38,7 @@ InputHandlerFlag In_Fan::click(Application* sender, Input dat)
 	InputHandlerFlag wasHandled = InputHandlerFlag::noSignal;
 	if (controlScheme == TSetType::continuous) 
 	{
-		wasHandled = continuousClick(sender, dat);
+		wasHandled = continuousClick(sender, dat, 1, 1, InputFlag::null, InputFlag::null);
 	}
 	
 	return wasHandled;
@@ -52,6 +52,22 @@ InputHandlerFlag In_Fan::key(Application* sender, Input dat, Keybind key, InputA
 		wasHandled = continuousKey(sender, dat, key, action, modKeys);
 	}
 	return wasHandled;
+}
+
+void In_Fan::initializeVertices(glm::vec3* pos, glm::vec3* dir, Input* dat,
+	int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary)
+{
+	fragData.anchors.push_back(FragmentAnchor(anchorIDCount, *pos, *dir, 1.0f, *dat));
+	splineData.anchors.push_back(FragmentAnchor(splineIDCount, *pos, *dir, 1.0f, *dat));
+	if (activeMode == TSetProp::line) {
+		splineIDCount++;
+		splineData.anchors.push_back(FragmentAnchor(splineIDCount, *pos, *dir, 1.0f, *dat));
+	}
+	fragData.anchors.back().wait = waitCountVertex;
+	splineData.anchors.back().wait = waitCountSpline;
+	fragData.anchors.front().input.flagSecondary = vertexFlagSecondary;
+	splineData.anchors.front().input.flagPrimary = InputFlag::newInput;
+	splineData.anchors.front().input.flagSecondary = splineFlagSecondary;
 }
 
 void In_Fan::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
@@ -90,7 +106,7 @@ void In_Fan::generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
 		for (int i = 1; i < subdivCount + 1; i++) {
 			float t = float(i) / float(subdivCount);
 			subPos = lerpPos(vertex1->pos, *pos, t);
-			subDir = makeDir(fragData.anchors.back().pos, subPos);
+			subDir = makeDir(splineData.anchors.at(splineData.anchors.size() - 2).pos, subPos);
 			Input lerpDat = *dat;
 			lerpDat.pressure = lerpf(vertex1->input.pressure, dat->pressure, t);
 			addVertices(&subPos, &subDir, &lerpDat);
@@ -141,7 +157,7 @@ void In_Fan::generateCurve()
 			dir = makeDir(pos, vertex2->pos);
 		}
 		else if (points.size() >= 2) {
-			dir = makeDir(points[i - 1], points[i]);
+			dir = makeDir(points[(size_t)i - 1], points[i]);
 		}
 		else {
 			dir = makeDir(pos, vertex2->pos);
@@ -154,5 +170,6 @@ void In_Fan::generateCurve()
 
 void In_Fan::newInput(Application* sender, Input dat)
 {
-	fan = *owner.get()->getFan();
+	if (owner.get()->checkInterestMask(TSetType::fan)) { fan = *owner.get()->getFan(); }
+	else { fan.isEnabled = false; }
 }

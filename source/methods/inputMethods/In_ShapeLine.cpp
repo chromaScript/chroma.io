@@ -202,6 +202,12 @@ InputHandlerFlag In_ShapeLine::key(Application* sender, Input dat, Keybind key, 
 	return InputHandlerFlag::noSignal;
 }
 
+void In_ShapeLine::initializeVertices(glm::vec3* pos, glm::vec3* dir, Input* dat,
+	int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary)
+{
+
+}
+
 void In_ShapeLine::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
 {
 

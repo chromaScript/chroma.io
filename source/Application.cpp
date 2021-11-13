@@ -21,6 +21,7 @@
 #include "include/WinStylusHandler.h"
 #include "include/input/keys.h"
 #include "include/entities/layers/Canvas.h"
+#include "include/analytics/AutoShape.h"
 
 #include "include/entities/widgets/WidgetStyle.h"
 #include "include/entities/widgets/Line.h"
@@ -42,6 +43,7 @@ Application::Application()
 Application::Application(int width, int height)
 {
 	mousePosBufferMax = 12;
+	autoShape = std::make_shared<AutoShape>();
 	// Read the config.txt file into a string
 	std::filesystem::path root = std::filesystem::current_path() /= std::filesystem::path("config");
 	if (std::filesystem::exists(root) && std::filesystem::is_directory(root))
@@ -930,13 +932,13 @@ void Application::keyEventHandler(Keybind keybind, InputAction action)
 			isDoingInput = false;
 			break;
 		case InputHandlerFlag::finalizeCurve:
-			toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, result);
+			toolbox->sendPreview(this, result);
 			toolbox->sendFinialize(this);
 			toolbox->endCallback(scriptConsole.get()->getInterpreter(), dat.x, dat.y);
 			isDoingInput = false;
 			break;
 		case InputHandlerFlag::releaseCurve:
-			toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, result);
+			toolbox->sendPreview(this, result);
 			break;
 		}
 		if (result != InputHandlerFlag::noSignal) { return; }
@@ -1089,6 +1091,32 @@ float Application::getMouseVelocity(float averagingStrength)
 		return mix(mouseVelocity, sumVelocity / (float)mousePosBuffer.size(), averagingStrength);
 	}
 }
+glm::vec3 Application::getMouseDirection(float averagingStrength)
+{
+	if (averagingStrength <= 0.001f || mousePosBuffer.size() < 2) {
+		return DEFAULT_DIR;
+	}
+	else {
+		size_t buf = mousePosBuffer.size();
+		float buf_f = (float)buf;
+
+		glm::vec3 lastDir = makeDir(
+			glm::vec3(mousePosBuffer.at(buf - 2).x, mousePosBuffer.at(buf - 2).y, 0.0f),
+			glm::vec3(mousePosBuffer.at(buf - 1).x, mousePosBuffer.at(buf - 1).y, 0.0f));
+		
+		glm::vec3 sumDir = lastDir;
+
+		for (size_t i = 1; i <= buf; i++) {
+			glm::vec3 nextDir = makeDir(
+				glm::vec3(mousePosBuffer.at(buf - (i + 1)).x, mousePosBuffer.at(buf - (i + 1)).y, 0.0f),
+				glm::vec3(mousePosBuffer.at(buf - i).x, mousePosBuffer.at(buf - i).y, 0.0f));
+			sumDir += nextDir * pow((float(buf_f - i) / float(buf_f + 1)), 1.45f);
+			i++;
+		}
+		
+		return mix(lastDir, sumDir / buf_f, averagingStrength);
+	}
+}
 void Application::updateMouseBuffer(Input inputEvent)
 {
 	if (mousePosBuffer.size() < mousePosBufferMax)
@@ -1109,7 +1137,7 @@ void Application::updateMouseBuffer(Input inputEvent)
 		{
 			lenSum += glm::length(
 				glm::vec2((float)e.x, (float)e.y) -
-				glm::vec2((float)mousePosBuffer[i - 1].x, (float)mousePosBuffer[i - 1].y));
+				glm::vec2((float)mousePosBuffer[(size_t)i - 1].x, (float)mousePosBuffer[(size_t)i - 1].y));
 		}
 		i++;
 	}
@@ -1317,8 +1345,8 @@ void Application::clickEventHandler(InputMouseButton button, InputAction action,
 	// 1b. Also allow accounting for tools that should not update the cursor through their I/O functions
 	//int i = toolbox->getActiveTool()->getInput()->click(inputEvent);
 	if (ui.get()->activeCanvas == nullptr) { return; }
-	InputHandlerFlag i = toolbox->sendClick(this, inputEvent);
-	switch (i)
+	InputHandlerFlag result = toolbox->sendClick(this, inputEvent);
+	switch (result)
 	{
 	case InputHandlerFlag::reject:
 		isDoingInput = false;
@@ -1326,33 +1354,33 @@ void Application::clickEventHandler(InputMouseButton button, InputAction action,
 	case InputHandlerFlag::previewLine:
 	case InputHandlerFlag::previewCurves:
 	case InputHandlerFlag::editMode:
-		toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->splineData, i);
+		toolbox->sendPreview(this, result);
 		isDoingInput = true;
 		break;
 	case InputHandlerFlag::continueInput:
 	case InputHandlerFlag::release_continueInput:
 	case InputHandlerFlag::allowMove_updateCursor:
 	case InputHandlerFlag::allowMove:
-		if (i == InputHandlerFlag::allowMove_updateCursor) {
+		if (result == InputHandlerFlag::allowMove_updateCursor) {
 			ui->updateCursorImage(toolbox->getActiveTool()->getCursorDown());
 		}
-		toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, i);
+		toolbox->sendPreview(this, result);
 		isDoingInput = true;
 		return;
 	case InputHandlerFlag::allowPress:
 	case InputHandlerFlag::allowPress_updateCursor:
-		if (i == InputHandlerFlag::allowPress_updateCursor) {
+		if (result == InputHandlerFlag::allowPress_updateCursor) {
 			ui->updateCursorImage(toolbox->getActiveTool()->getCursorDown());
 		}
-		toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, i);
+		toolbox->sendPreview(this, result);
 		toolbox->startCallback(scriptConsole.get()->getInterpreter(), inputEvent.x, inputEvent.y);
 		isDoingInput = true;
 		return;
 	case InputHandlerFlag::releaseConnect:
 	case InputHandlerFlag::releaseCurve:
 	case InputHandlerFlag::release:
-		if (i == InputHandlerFlag::releaseConnect || i == InputHandlerFlag::releaseCurve) {
-			toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, i);
+		if (result == InputHandlerFlag::releaseConnect || result == InputHandlerFlag::releaseCurve) {
+			toolbox->sendPreview(this, result);
 		}
 		ui->updateCursorImage(toolbox->getActiveTool().get()->getCursorUp());
 		// Do finalize, then postprocess. Tools without either step simply have blank functions.
@@ -1418,10 +1446,10 @@ void Application::mousePosEventHandler(Input inputEvent)
 			case InputHandlerFlag::previewLine:
 			case InputHandlerFlag::previewCurves:
 			case InputHandlerFlag::editMode:
-				toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->splineData, result);
+				toolbox->sendPreview(this, result);
 				break;
 			default:
-				toolbox->sendPreview(this, &toolbox->getActiveTool()->input.get()->fragData, result);
+				toolbox->sendPreview(this, result);
 				toolbox->moveCallback(scriptConsole.get()->getInterpreter(), inputEvent.x, inputEvent.y);
 			}
 		}

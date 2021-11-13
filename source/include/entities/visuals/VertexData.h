@@ -23,6 +23,8 @@ public:
 	float endTime = 0.0f;
 	int subdivCount = 0; // Manual Set Only
 	int depth = 0; // Manual Set Only
+	// Stored Analytics Data
+	float averageSegLen = 0.0f;
 	//BlendModes blendType;
 	void reset();
 	void resetAnchors();

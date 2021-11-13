@@ -145,6 +145,9 @@ int main()
 	// Use set window width / height by getFramebufferSize
 	chromaIO.get()->setWindowProperties(); 
 
+	// Initialize AutoShape
+	chromaIO.get()->autoShape.get()->initialize(chromaIO);
+
 	// Create uninitialized UI object
 	chromaIO.get()->createUI();
 

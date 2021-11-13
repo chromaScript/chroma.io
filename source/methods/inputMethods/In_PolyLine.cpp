@@ -373,6 +373,12 @@ InputHandlerFlag In_PolyLine::key(Application* sender, Input dat, Keybind key, I
 	return InputHandlerFlag::noSignal;
 }
 
+void In_PolyLine::initializeVertices(glm::vec3* pos, glm::vec3* dir, Input* dat,
+	int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary)
+{
+
+}
+
 void In_PolyLine::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
 {
 

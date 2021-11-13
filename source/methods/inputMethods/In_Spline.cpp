@@ -386,6 +386,12 @@ InputHandlerFlag In_Spline::key(Application* sender, Input dat, Keybind key, Inp
 	return InputHandlerFlag::noSignal;
 }
 
+void In_Spline::initializeVertices(glm::vec3* pos, glm::vec3* dir, Input* dat,
+	int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary)
+{
+
+}
+
 void In_Spline::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
 {
 

@@ -68,9 +68,9 @@ public:
 			TSetType::effects };
 		this->name = "Stroke";
 	}
-	virtual void preview(Application* sender, VertexData* dat, InputHandlerFlag action);
-	virtual void finalize(Application* sender, VertexData* dat);
-	virtual void postprocess(Application* sender, VertexData* dat);
+	virtual void preview(Application* sender, VertexData* dat, VertexData* splineData, InputHandlerFlag action);
+	virtual void finalize(Application* sender, VertexData* dat, VertexData* splineData);
+	virtual void postprocess(Application* sender, VertexData* dat, VertexData* splineData);
 	bool compareInputByProperties(FragmentAnchor* anchor1, FragmentAnchor* anchor2);
 	FragmentAnchor average2Anchors(FragmentAnchor* anchor1, FragmentAnchor* anchor2);
 };

@@ -193,6 +193,12 @@
     <Filter Include="Header Files\presets\noise">
       <UniqueIdentifier>{6dd7142a-b75f-4675-9d13-aa521fb95c5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\analytics">
+      <UniqueIdentifier>{e98c5592-7c9d-463a-a563-6b893341e453}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\analytics">
+      <UniqueIdentifier>{d2dc76fe-c8d9-4fb5-8f15-8266613e57b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\glad.c">
@@ -820,6 +826,12 @@
       <Filter>Source Files\entities\visuals</Filter>
     </ClCompile>
     <ClCompile Include="source\math\curve.cpp">
+      <Filter>Source Files\math</Filter>
+    </ClCompile>
+    <ClCompile Include="source\analytics\AutoShape.cpp">
+      <Filter>Source Files\analytics</Filter>
+    </ClCompile>
+    <ClCompile Include="source\math\collision.cpp">
       <Filter>Source Files\math</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1503,6 +1515,15 @@
       <Filter>Header Files\entities\visuals</Filter>
     </ClInclude>
     <ClInclude Include="source\include\math\curve.h">
+      <Filter>Header Files\math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\analytics\AutoShape.h">
+      <Filter>Header Files\analytics</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\analytics\AutoShapeType.h">
+      <Filter>Header Files\analytics</Filter>
+    </ClInclude>
+    <ClInclude Include="source\include\math\collision.h">
       <Filter>Header Files\math</Filter>
     </ClInclude>
   </ItemGroup>

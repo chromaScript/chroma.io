@@ -26,9 +26,9 @@ public:
 	std::vector<TSetType> interestMask;
 	OutputMethod(MethodType id, std::shared_ptr<Tool> owner);
 	MethodType getID() { return id; }
-	virtual void preview(Application* sender, VertexData* vertexData, InputHandlerFlag action) = 0;
-	virtual void finalize(Application* sender, VertexData* fragDat) = 0;
-	virtual void postprocess(Application* sender, VertexData* fragDat) = 0;
+	virtual void preview(Application* sender, VertexData* vertexData, VertexData* splineData, InputHandlerFlag action) = 0;
+	virtual void finalize(Application* sender, VertexData* vertexData, VertexData* splineData) = 0;
+	virtual void postprocess(Application* sender, VertexData* vertexData, VertexData* splineData) = 0;
 	std::string getName() { return name; }
 	int increaseEntityCount();
 };

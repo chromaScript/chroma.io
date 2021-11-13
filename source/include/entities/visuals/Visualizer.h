@@ -95,7 +95,8 @@ public:
 	void addLayerObject(unsigned int layer, PreviewObj obj);
 	void updateLayerObject(unsigned int layer, size_t index, PreviewObj obj);
 	void putLayerObject(unsigned int layer, size_t index, PreviewObj obj);
-	void putBoundsObject(unsigned int layer, EntityTransform transform);
+	void putBoundsObject(unsigned int layer, size_t index, EntityTransform transform);
+	void putBoundsObject(unsigned int layer, size_t index, glm::vec3 p1, glm::vec3 p3, glm::vec2 size, glm::vec3 dir, CColor color);
 	void dirtyVertexData(unsigned int layer);
 	void updateVertexData_inputPoints(glm::ivec2* windowDimensions);
 	void updateVertexData_inputLines(glm::ivec2* windowDimensions);
@@ -105,7 +106,7 @@ public:
 		glm::ivec2* windowDimensions, std::vector<PreviewObj>* objList);
 	bool generateVertexData_typeB(unsigned int* VAO, unsigned int* VBO,
 		glm::ivec2* windowDimensions, std::vector<PreviewObj>* objList);
-	void removeLayer(unsigned int layer);
+	void removeLayer(bool eraseLayer, unsigned int layer);
 	void trimLayer(unsigned int layer, size_t size);
 	// removeLayerObject
 	// toggleDraw

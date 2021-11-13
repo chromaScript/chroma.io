@@ -240,6 +240,12 @@ InputHandlerFlag In_Vortex::key(Application* sender, Input dat, Keybind key, Inp
 	return InputHandlerFlag::noSignal;
 }
 
+void In_Vortex::initializeVertices(glm::vec3* pos, glm::vec3* dir, Input* dat,
+	int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary)
+{
+
+}
+
 void In_Vortex::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
 {
 

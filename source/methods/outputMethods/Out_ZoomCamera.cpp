@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-void Out_ZoomCamera::preview(Application* sender, VertexData* dat, InputHandlerFlag action)
+void Out_ZoomCamera::preview(Application* sender, VertexData* dat, VertexData* splineData, InputHandlerFlag action)
 {
 	
 	// Kick bad-calls. In_Zoom should always send at least the origin + 1 anchor point
@@ -49,7 +49,7 @@ void Out_ZoomCamera::preview(Application* sender, VertexData* dat, InputHandlerF
 	}
 	sender->getCamera()->setOrthoZoom(camZoom);
 }
-void Out_ZoomCamera::finalize(Application* sender, VertexData* dat)
+void Out_ZoomCamera::finalize(Application* sender, VertexData* dat, VertexData* splineData)
 {
 	if (dat->anchors.size() == 0) { return; }
 	std::shared_ptr<Camera> camera = sender->getCamera();
@@ -119,7 +119,7 @@ void Out_ZoomCamera::finalize(Application* sender, VertexData* dat)
 	}
 	else { return; }
 }
-void Out_ZoomCamera::postprocess(Application* sender, VertexData* dat)
+void Out_ZoomCamera::postprocess(Application* sender, VertexData* dat, VertexData* splineData)
 {
 
 }

@@ -14,7 +14,7 @@
 #include <iostream>
 #include <cmath>
 
-void Out_PanCamera::preview(Application* sender, VertexData* dat, InputHandlerFlag action)
+void Out_PanCamera::preview(Application* sender, VertexData* dat, VertexData* splineData, InputHandlerFlag action)
 {
 	if (dat->anchors.front().input.flagPrimary == InputFlag::newInput) { 
 		pan = *sender->toolbox.get()->getActiveTool().get()->getPan(); 
@@ -41,7 +41,7 @@ void Out_PanCamera::preview(Application* sender, VertexData* dat, InputHandlerFl
 		sender->getCamera()->setPosition(sender->pickScreenCoord(x1, y1), sender->pickScreenCoord(x2, y2));
 	}
 }
-void Out_PanCamera::finalize(Application* sender, VertexData* dat)
+void Out_PanCamera::finalize(Application* sender, VertexData* dat, VertexData* splineData)
 {
 	if (dat->anchors.back().input.flagSecondary == InputFlag::connect) {
 		std::shared_ptr<Camera> camera = sender->getCamera();
@@ -98,7 +98,7 @@ void Out_PanCamera::finalize(Application* sender, VertexData* dat)
 	}
 	*/
 }
-void Out_PanCamera::postprocess(Application* sender, VertexData* dat)
+void Out_PanCamera::postprocess(Application* sender, VertexData* dat, VertexData* splineData)
 {
 
 }

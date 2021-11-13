@@ -23,9 +23,9 @@ public:
 		interestMask = { TSetType::rotate };
 		this->name = "Camera Rotate";
 	}
-	virtual void preview(Application* sender, VertexData* dat, InputHandlerFlag action);
-	virtual void finalize(Application* sender, VertexData* dat);
-	virtual void postprocess(Application* sender, VertexData* dat);
+	virtual void preview(Application* sender, VertexData* dat, VertexData* splineData, InputHandlerFlag action);
+	virtual void finalize(Application* sender, VertexData* dat, VertexData* splineData);
+	virtual void postprocess(Application* sender, VertexData* dat, VertexData* splineData);
 };
 
 #endif

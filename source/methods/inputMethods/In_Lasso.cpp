@@ -24,7 +24,7 @@ InputHandlerFlag In_Lasso::move(Application* sender, Input dat)
 		pos.y - fragData.anchors.back().pos.y,
 		0.0f));
 
-	bool isNew = (fragData.anchors.front().input.flagPrimary == InputFlag::newInput) ? true : false;
+	bool isNew = (splineData.anchors.front().input.flagPrimary == InputFlag::newInput) ? true : false;
 	if (controlScheme == TSetType::continuous)
 	{
 		if (!continuousDraw(sender, dat, &continuous, nullptr, &fragData, continuous.anchorSpacing, pos, dir)) { return InputHandlerFlag::wait; }
@@ -40,7 +40,7 @@ InputHandlerFlag In_Lasso::move(Application* sender, Input dat)
 
 	if (isNew)
 	{
-		fragData.anchors.front().input.flagPrimary = InputFlag::null;
+		splineData.anchors.front().input.flagPrimary = InputFlag::null;
 	}
 
 	return InputHandlerFlag::allowPress_updateCursor;
@@ -146,6 +146,12 @@ InputHandlerFlag In_Lasso::click(Application* sender, Input dat)
 InputHandlerFlag In_Lasso::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
 {
 	return InputHandlerFlag::noSignal;
+}
+
+void In_Lasso::initializeVertices(glm::vec3* pos, glm::vec3* dir, Input* dat,
+	int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary)
+{
+
 }
 
 void In_Lasso::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)

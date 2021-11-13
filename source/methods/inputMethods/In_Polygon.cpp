@@ -189,6 +189,12 @@ InputHandlerFlag In_Polygon::key(Application* sender, Input dat, Keybind key, In
 	return InputHandlerFlag::noSignal;
 }
 
+void In_Polygon::initializeVertices(glm::vec3* pos, glm::vec3* dir, Input* dat,
+	int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary)
+{
+
+}
+
 void In_Polygon::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)
 {
 

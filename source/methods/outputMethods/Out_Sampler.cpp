@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-void Out_Sampler::preview(Application* sender, VertexData* dat, InputHandlerFlag action)
+void Out_Sampler::preview(Application* sender, VertexData* dat, VertexData* splineData, InputHandlerFlag action)
 {
 	// Kick bad calls
 	if (dat->anchors.size() < 2) { return; }
@@ -73,11 +73,11 @@ void Out_Sampler::preview(Application* sender, VertexData* dat, InputHandlerFlag
 
 	return;
 }
-void Out_Sampler::finalize(Application* sender, VertexData* dat)
+void Out_Sampler::finalize(Application* sender, VertexData* dat, VertexData* splineData)
 {
 	return;
 }
-void Out_Sampler::postprocess(Application* sender, VertexData* dat)
+void Out_Sampler::postprocess(Application* sender, VertexData* dat, VertexData* splineData)
 {
 	return;
 }

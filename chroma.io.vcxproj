@@ -138,6 +138,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\analytics\AutoShape.cpp" />
     <ClCompile Include="source\Application.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\clayout\ChromaLayout.cpp" />
@@ -234,6 +235,7 @@
     <ClCompile Include="source\loadImageData.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\math\blend.cpp" />
+    <ClCompile Include="source\math\collision.cpp" />
     <ClCompile Include="source\math\Color.cpp" />
     <ClCompile Include="source\math\curve.cpp" />
     <ClCompile Include="source\math\math.cpp" />
@@ -349,6 +351,8 @@
     <ClCompile Include="source\WinStylusHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\include\analytics\AutoShape.h" />
+    <ClInclude Include="source\include\analytics\AutoShapeType.h" />
     <ClInclude Include="source\include\Application.h" />
     <ClInclude Include="source\include\Camera.h" />
     <ClInclude Include="source\include\clayout\ChromaLayout.h" />
@@ -458,6 +462,7 @@
     <ClInclude Include="source\include\input\keys.h" />
     <ClInclude Include="source\include\loadImageData.h" />
     <ClInclude Include="source\include\math\blend.h" />
+    <ClInclude Include="source\include\math\collision.h" />
     <ClInclude Include="source\include\math\Color.h" />
     <ClInclude Include="source\include\math\curve.h" />
     <ClInclude Include="source\include\math\math.h" />

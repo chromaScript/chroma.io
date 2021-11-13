@@ -24,6 +24,7 @@ class WidgetStyle;
 #include "entities/layers/Layer.h"
 #include "entities/visuals/Stroke.h"
 #include "CustomCursor.h"
+#include "analytics/AutoShape.h"
 
 #include <vector>
 #include <memory>
@@ -140,6 +141,9 @@ public:
 
 	// UI variables
 	std::shared_ptr<UI> ui = nullptr;
+
+	// Analytics Engines
+	std::shared_ptr<AutoShape> autoShape = nullptr;
 
 	// Tool/Toolbox variables
 	std::shared_ptr<Toolbox> toolbox = nullptr;
@@ -275,6 +279,7 @@ public:
 	void mouseScrollEventHandler(Input inputEvent);
 	Input getMousePosition(bool isUIFetch);
 	float getMouseVelocity(float averagingStrength);
+	glm::vec3 getMouseDirection(float averagingStrength);
 	std::vector<Input> getMouseBuffer();
 	Input* getMouseBuffer_back();
 	Input* getMouseBuffer_doubleBack();

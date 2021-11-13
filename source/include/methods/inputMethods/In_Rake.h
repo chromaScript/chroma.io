@@ -14,8 +14,6 @@ class Application;
 class In_Rake : public InputMethod
 {
 private:
-	// Tool Settings
-	TSet_Smoothing smoothing;
 	TSet_Rake rake;
 protected:
 public:
@@ -46,9 +44,12 @@ public:
 	virtual InputHandlerFlag move(Application* sender, Input dat);
 	virtual InputHandlerFlag click(Application* sender, Input dat);
 	virtual InputHandlerFlag key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys);
+	virtual void initializeVertices(glm::vec3* pos, glm::vec3* dir, Input* dat,
+		int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary);
 	virtual void addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
 	virtual void generateVertices(glm::vec3* pos, glm::vec3* dir, Input* dat);
 	virtual void generateCurve();
+	void fillVertices(glm::vec3* pos1, glm::vec3* pos2, glm::vec3* dir, Input* dat);
 };
 
 #endif

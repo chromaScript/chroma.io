@@ -95,7 +95,6 @@ InputHandlerFlag In_ShapeDraw::move(Application* sender, Input dat)
 		}
 		fragData.anchors.at(fragData.anchors.size() - verts.size()).input.flagSecondary = InputFlag::point;
 	}
-
 	if (isNew)
 	{
 		splineData.anchors.front().input.flagPrimary = InputFlag::null;
@@ -105,7 +104,6 @@ InputHandlerFlag In_ShapeDraw::move(Application* sender, Input dat)
 	{
 		fragData.anchors.front().input.flagPrimary = InputFlag::null;
 	}
-
 	return InputHandlerFlag::allowPress_updateCursor;
 }
 InputHandlerFlag In_ShapeDraw::click(Application* sender, Input dat)
@@ -211,6 +209,12 @@ InputHandlerFlag In_ShapeDraw::click(Application* sender, Input dat)
 InputHandlerFlag In_ShapeDraw::key(Application* sender, Input dat, Keybind key, InputAction action, InputModKey modKeys)
 {
 	return InputHandlerFlag::noSignal;
+}
+
+void In_ShapeDraw::initializeVertices(glm::vec3* pos, glm::vec3* dir, Input* dat,
+	int waitCountVertex, int waitCountSpline, InputFlag vertexFlagSecondary, InputFlag splineFlagSecondary)
+{
+
 }
 
 void In_ShapeDraw::addVertices(glm::vec3* pos, glm::vec3* dir, Input* dat)

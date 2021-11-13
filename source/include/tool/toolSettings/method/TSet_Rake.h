@@ -97,6 +97,9 @@ public:
 	// No Connect / use Given / Along Axis / Along Points / Along Points Shuffle
 	TSetProp connectionOrdering; // 5670
 
+	// Internal Variables for storage
+	glm::vec2 canvasDimensions = glm::vec2(0.0f);
+
 	virtual TSetType getType() { return type; }
 
 	virtual TSetControl_Node* getControlNode(int settingSig, int subSig);
