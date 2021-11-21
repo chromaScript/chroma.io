@@ -26,8 +26,11 @@ InputHandlerFlag InputMethod::continuousMove(Application* sender, Input dat, glm
 		bool result = continuousHover(sender, dat, &continuous, &smoothing, &splineData, continuous.trueSpacing, *pos, *dir);
 		glm::vec3 dirSpline = *dir;
 		if (!result) {
-			glm::vec3 dirSpline = *pos - splineData.anchors[splineData.anchors.size() - 2].pos;
+			dirSpline = makeDir(splineData.anchors[splineData.anchors.size() - 2].pos , *pos);
 			splineData.anchors[splineData.anchors.size() - 2].dir = dirSpline;
+		}
+		else {
+			dirSpline = makeDir(splineData.anchors[splineData.anchors.size() - 2].pos, *pos);
 		}
 		splineData.anchors.back() = FragmentAnchor(anchorIDCount, *pos, dirSpline, 1.0f, dat);
 		splineData.anchors.back().input.pressure = 1.0f;
@@ -173,7 +176,7 @@ InputHandlerFlag InputMethod::continuousClick(Application* sender, Input dat,
 		{
 			activeMode = TSetProp::line;
 			glm::vec3 pos = sender->pickScreenCoord(dat.x, dat.y);
-			glm::vec3 dir = makeDir(fragData.anchors.back().pos, pos);
+			glm::vec3 dir = makeDir(splineData.anchors.back().pos, pos);
 			splineData.anchors.push_back(FragmentAnchor(splineIDCount, pos, dir, 1.0f, dat));
 			wasHandled = InputHandlerFlag::release_continueInput;
 		}
@@ -435,8 +438,8 @@ bool InputMethod::continuousHover(Application* sender, Input dat,
 			);
 			outPos = glm::vec3(lineIntersect2D(line1, line2), 0.0f);
 			outDir = makeDir(target->anchors.at(target->anchors.size() - 2).pos, outPos);
-			return true;
 		}
+		return true;
 	}
 	return false;
 }
@@ -719,7 +722,7 @@ InputHandlerFlag InputMethod::newInput_continuous(Application* sender, Input dat
 	// Set the upper left corner for the entity 
 	glm::vec3 origin = sender->pickScreenCoord(dat.x, dat.y);
 	fragData.transform.origin = splineData.transform.origin = origin;
-	glm::vec3 dir = sender->getMouseDirection(0.75f);
+	glm::vec3 dir = sender->getMouseDirection(0.9f);
 
 	this->initializeVertices(&origin, &dir, &dat, waitCountVertex, waitCountSpline, vertexFlagSecondary, splineFlagSecondary);
 	result = InputHandlerFlag::allowPress_updateCursor;

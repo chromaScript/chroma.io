@@ -37,6 +37,7 @@ TSet_ContinuousControl::TSet_ContinuousControl()
 	this->isEnabled = true;
 	//
 	this->defaultMode = TSetProp::draw;
+	this->anchorSpacing = 4.0f;
 	this->trueSpacing = anchorSpacing;
 	this->altAngleSnapKeyB = Keybind(InputKey::unknown, InputModKey::none);
 	this->subdivide = false;

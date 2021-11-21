@@ -170,7 +170,9 @@ unsigned int Visualizer::requestNewLayer(PreviewLayerType containerType)
 
 unsigned int Visualizer::addLayer(unsigned int layer, size_t initialSize, BlendMode blendMode)
 {
-	if (previewLayers.count(layer) == 1) { return 0; }
+	if (previewLayers.count(layer) == 1) { 
+		return 0; 
+	}
 	std::vector<PreviewObj> layerObj;
 	layerObj.reserve(initialSize);
 	for (int i = 0; i < initialSize; i++) { layerObj.push_back(PreviewObj()); }
@@ -204,7 +206,10 @@ void Visualizer::removeLayer(bool eraseLayer, unsigned int layer)
 		else if (layer >= inputCurvesRange.first && layer < inputCurvesRange.first + inputCurvesRange.second) {
 			inputCurvesAlloc.push_back(layer);
 		}
-		if (eraseLayer) { previewLayers.erase(layer); }
+		if (eraseLayer) { 
+			previewLayers.at(layer).first.clear();
+			previewLayers.erase(layer); 
+		}
 	}
 }
 
@@ -221,7 +226,7 @@ void Visualizer::trimLayer(unsigned int layer, size_t size)
 void Visualizer::clearLayers()
 {
 	if (previewLayers.size() != 0) {
-		for (auto const& layer : previewLayers) {
+		for (auto& layer : previewLayers) {
 			removeLayer(false, layer.first);
 		}
 	}
@@ -250,7 +255,7 @@ void Visualizer::putLayerObject(unsigned int layer, size_t index, PreviewObj obj
 			dirtyVertexData(layer);
 		}
 	}
-}
+ }
 void Visualizer::putBoundsObject(unsigned int layer, size_t index, EntityTransform transform)
 {
 	if (previewLayers.count(layer) == 1) {
@@ -263,22 +268,22 @@ void Visualizer::putBoundsObject(unsigned int layer, size_t index, EntityTransfo
 		glm::vec3 p3 = origin + (rotation * (transform.bounds.p3 - origin));
 		glm::vec3 p4 = origin + (rotation * (transform.bounds.p4 - origin));
 		// Create Lines
-		putLayerObject(layer, index + 0,
+		putLayerObject(layer, (index * 8) + 0,
 			PreviewObj(0, p1, p2, blue, ShapeType::line, 1.0f));
-		putLayerObject(layer, index + 1,
+		putLayerObject(layer, (index * 8) + 1,
 			PreviewObj(0, p2, p3, blue, ShapeType::line, 1.0f));
-		putLayerObject(layer, index + 2,
+		putLayerObject(layer, (index * 8) + 2,
 			PreviewObj(0, p3, p4, blue, ShapeType::line, 1.0f));
-		putLayerObject(layer, index + 3,
+		putLayerObject(layer, (index * 8) + 3,
 			PreviewObj(0, p4, p1, blue, ShapeType::line, 1.0f));
 		// Create Points
-		putLayerObject(layer, index + 4,
+		putLayerObject(layer, (index * 8) + 4,
 			PreviewObj(4, p1, boundsDir, blue, ShapeType::square, 6.0f));
-		putLayerObject(layer, index + 5,
+		putLayerObject(layer, (index * 8) + 5,
 			PreviewObj(4, p2, boundsDir, blue, ShapeType::square, 6.0f));
-		putLayerObject(layer, index + 6,
+		putLayerObject(layer, (index * 8) + 6,
 			PreviewObj(4, p3, boundsDir, blue, ShapeType::square, 6.0f));
-		putLayerObject(layer, index + 7,
+		putLayerObject(layer, (index * 8) + 7,
 			PreviewObj(4, p4, boundsDir, blue, ShapeType::square, 6.0f));
 	}
 }
@@ -289,22 +294,22 @@ void Visualizer::putBoundsObject(unsigned int layer, size_t index, glm::vec3 p1,
 		glm::vec3 p2 = p1 + (dir * size.x);
 		glm::vec3 p4 = p1 - (boundsNormal * size.y);
 		// Create Lines
-		putLayerObject(layer, index + 0,
+		putLayerObject(layer, (index * 8) + 0,
 			PreviewObj(0, p1, p2, color, ShapeType::line, 1.0f));
-		putLayerObject(layer, index + 1,
+		putLayerObject(layer, (index * 8) + 1,
 			PreviewObj(0, p2, p3, color, ShapeType::line, 1.0f));
-		putLayerObject(layer, index + 2,
+		putLayerObject(layer, (index * 8) + 2,
 			PreviewObj(0, p3, p4, color, ShapeType::line, 1.0f));
-		putLayerObject(layer, index + 3,
+		putLayerObject(layer, (index * 8) + 3,
 			PreviewObj(0, p4, p1, color, ShapeType::line, 1.0f));
 		// Create Points
-		putLayerObject(layer, index + 4,
+		putLayerObject(layer, (index * 8) + 4,
 			PreviewObj(4, p1, dir, color, ShapeType::square, 6.0f));
-		putLayerObject(layer, index + 5,
+		putLayerObject(layer, (index * 8) + 5,
 			PreviewObj(4, p2, dir, color, ShapeType::square, 6.0f));
-		putLayerObject(layer, index + 6,
+		putLayerObject(layer, (index * 8) + 6,
 			PreviewObj(4, p3, dir, color, ShapeType::square, 6.0f));
-		putLayerObject(layer, index + 7,
+		putLayerObject(layer, (index * 8) + 7,
 			PreviewObj(4, p4, dir, color, ShapeType::square, 6.0f));
 	}
 }
@@ -327,49 +332,49 @@ void Visualizer::dirtyVertexData(unsigned int layer)
 
 void Visualizer::updateVertexData_inputPoints(glm::ivec2* windowDimensions)
 {
-	std::vector<PreviewObj> objList;
-	for (auto const& item : previewLayers) {
+	inputPointsBucket.clear();
+	for (auto& item : previewLayers) {
 		if (item.first >= inputPointsRange.first && item.first < inputPointsRange.first + inputPointsRange.second) {
-			objList.insert(objList.end(), item.second.first.begin(), item.second.first.end());
+			inputPointsBucket.insert(inputPointsBucket.end(), item.second.first.begin(), item.second.first.end());
 		}
 	}
-	bool result = generateVertexData_typeA(&inputPointVAO, &inputPointVBO, windowDimensions, &objList);
+	bool result = generateVertexData_typeA(&inputPointVAO, &inputPointVBO, windowDimensions, &inputPointsBucket);
 	if (result) { inputPointsDirty = false; }
 }
 
 void Visualizer::updateVertexData_inputLines(glm::ivec2* windowDimensions)
 {
-	std::vector<PreviewObj> objList;
-	for (auto const& item : previewLayers) {
+	inputLineBucket.clear();
+	for (auto& item : previewLayers) {
 		if (item.first >= inputLinesRange.first && item.first < inputLinesRange.first + inputLinesRange.second) {
-			objList.insert(objList.end(), item.second.first.begin(), item.second.first.end());
+			inputLineBucket.insert(inputLineBucket.end(), item.second.first.begin(), item.second.first.end());
 		}
 	}
-	bool result = generateVertexData_typeA(&inputLineVAO, &inputLineVBO, windowDimensions, &objList);
+	bool result = generateVertexData_typeA(&inputLineVAO, &inputLineVBO, windowDimensions, &inputLineBucket);
 	if (result) { inputLinesDirty = false; }
 }
 
 void Visualizer::updateVertexData_inputBounds(glm::ivec2* windowDimensions)
 {
-	std::vector<PreviewObj> objList;
-	for (auto const& item : previewLayers) {
+	inputBoundsBucket.clear();
+	for (auto& item : previewLayers) {
 		if (item.first >= inputBoundsRange.first && item.first < inputBoundsRange.first + inputBoundsRange.second) {
-			objList.insert(objList.end(), item.second.first.begin(), item.second.first.end());
+			inputBoundsBucket.insert(inputBoundsBucket.end(), item.second.first.begin(), item.second.first.end());
 		}
 	}
-	bool result = generateVertexData_typeA(&inputBoundsVAO, &inputBoundsVBO, windowDimensions, &objList);
+	bool result = generateVertexData_typeA(&inputBoundsVAO, &inputBoundsVBO, windowDimensions, &inputBoundsBucket);
 	if (result) { inputBoundsDirty = false; }
 }
 
 void Visualizer::updateVertexData_inputCurves(glm::ivec2* windowDimensions)
 {
-	std::vector<PreviewObj> objList;
-	for (auto const& item : previewLayers) {
+	inputCurvesBucket.clear();
+	for (auto& item : previewLayers) {
 		if (item.first >= inputCurvesRange.first && item.first < inputCurvesRange.first + inputCurvesRange.second) {
-			objList.insert(objList.end(), item.second.first.begin(), item.second.first.end());
+			inputCurvesBucket.insert(inputCurvesBucket.end(), item.second.first.begin(), item.second.first.end());
 		}
 	}
-	bool result = generateVertexData_typeB(&inputCurvesVAO, &inputCurvesVBO, windowDimensions, &objList);
+	bool result = generateVertexData_typeB(&inputCurvesVAO, &inputCurvesVBO, windowDimensions, &inputCurvesBucket);
 	if (result) { inputCurvesDirty = false; }
 }
 
@@ -377,8 +382,11 @@ bool Visualizer::generateVertexData_typeA(unsigned int* VAO, unsigned int* VBO, 
 {
 	if (objList != nullptr && objList->size() > 0) {
 		std::vector<PreviewObj>& list = *objList;
-		float* vertexData = new float[inputTypeAAttribs * objList->size()];
+		float* vertexData = new float[(size_t)inputTypeAAttribs * objList->size()];
 		for (int i = 0; i < objList->size(); i++) {
+			if (list[i].p1.x == 0.0f) {
+				int k = 5;
+			}
 			vertexData[(i * inputTypeAAttribs) + 0] = list[i].p1.x;
 			vertexData[(i * inputTypeAAttribs) + 1] = list[i].p1.y;
 			vertexData[(i * inputTypeAAttribs) + 2] = list[i].p1.z;
@@ -399,7 +407,7 @@ bool Visualizer::generateVertexData_typeA(unsigned int* VAO, unsigned int* VBO, 
 		// Bind vertex array and buffers with data
 		glBindVertexArray(*VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 14 * objList->size(), vertexData, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 14 * list.size(), vertexData, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 		delete[]vertexData;
@@ -408,10 +416,10 @@ bool Visualizer::generateVertexData_typeA(unsigned int* VAO, unsigned int* VBO, 
 	else {
 		glBindVertexArray(*VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-		glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
-		return false;
+		return true;
 	}
 }
 
@@ -419,7 +427,7 @@ bool Visualizer::generateVertexData_typeB(unsigned int* VAO, unsigned int* VBO, 
 {
 	if (objList != nullptr && objList->size() > 0) {
 		std::vector<PreviewObj>& list = *objList;
-		float* vertexData = new float[inputTypeBAttribs * objList->size()];
+		float* vertexData = new float[(size_t)inputTypeBAttribs * objList->size()];
 		for (int i = 0; i < objList->size(); i++) {
 			vertexData[(i * inputTypeBAttribs) + 0] = list[i].p1.x;
 			vertexData[(i * inputTypeBAttribs) + 1] = list[i].p1.y;
@@ -441,7 +449,7 @@ bool Visualizer::generateVertexData_typeB(unsigned int* VAO, unsigned int* VBO, 
 		// Bind vertex array and buffers with data
 		glBindVertexArray(*VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * objList->size(), vertexData, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 16 * list.size(), vertexData, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 		delete[]vertexData;
@@ -450,10 +458,10 @@ bool Visualizer::generateVertexData_typeB(unsigned int* VAO, unsigned int* VBO, 
 	else {
 		glBindVertexArray(*VAO);
 		glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-		glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, 0, NULL, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
-		return false;
+		return true;
 	}
 	return false;
 }
@@ -461,9 +469,31 @@ bool Visualizer::generateVertexData_typeB(unsigned int* VAO, unsigned int* VBO, 
 void Visualizer::draw(ShaderTransform* xform, glm::ivec2* windowDimensions)
 {
 	if (!enablePreview_all || previewLayers.size() == 0) { return; }
-	for (auto const& item : previewLayers) {
+
+	if (inputLinesDirty) { updateVertexData_inputLines(windowDimensions); }
+	if (enablePreview_inputLines && !inputLinesDirty && inputLineBucket.size() != 0) {
+		drawInputData_typeA(&inputLineVAO, xform, windowDimensions, &inputLineBucket, BlendMode::multiply);
+	}
+
+	if (inputPointsDirty) { updateVertexData_inputPoints(windowDimensions); }
+	if (enablePreview_inputPoints && !inputPointsDirty && inputPointsBucket.size() != 0) {
+		drawInputData_typeA(&inputPointVAO, xform, windowDimensions, &inputPointsBucket, BlendMode::multiply);
+	}
+
+	if (inputBoundsDirty) { updateVertexData_inputBounds(windowDimensions); }
+	if (enablePreview_inputBounds && !inputBoundsDirty && inputBoundsBucket.size() != 0) {
+		drawInputData_typeA(&inputBoundsVAO, xform, windowDimensions, &inputBoundsBucket, BlendMode::multiply);
+	}
+
+	if (inputCurvesDirty) { updateVertexData_inputCurves(windowDimensions); }
+	if (enablePreview_inputCurves && !inputCurvesDirty && inputCurvesBucket.size() != 0) {
+		drawInputData_typeB(&inputCurvesVAO, xform, windowDimensions, &inputCurvesBucket, BlendMode::multiply);
+	}
+	/*
+	for (auto& item : previewLayers) {
 		if (item.first >= inputLinesRange.first && item.first < inputLinesRange.first + inputLinesRange.second) {
 			if (inputLinesDirty) { updateVertexData_inputLines(windowDimensions); }
+			//updateVertexData_inputLines(windowDimensions);
 			if (enablePreview_inputLines && !inputLinesDirty && item.second.first.size() != 0) {
 				drawInputData_typeA(&inputLineVAO, xform, windowDimensions, &item.second.first, item.second.second);
 			}
@@ -487,12 +517,13 @@ void Visualizer::draw(ShaderTransform* xform, glm::ivec2* windowDimensions)
 			}
 		}
 	}
+	*/
 }
 
 void Visualizer::drawInputData_typeA(
 	unsigned int* VAO, ShaderTransform* xform,
 	glm::ivec2* windowDimensions,
-	const std::vector<PreviewObj>* layer, BlendMode blend)
+	std::vector<PreviewObj>* layer, BlendMode blend)
 {
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::translate(xform->m, glm::vec3(0.0f));
@@ -508,7 +539,7 @@ void Visualizer::drawInputData_typeA(
 void Visualizer::drawInputData_typeB(
 	unsigned int* VAO, ShaderTransform* xform,
 	glm::ivec2* windowDimensions,
-	const std::vector<PreviewObj>* layer, BlendMode blend)
+	std::vector<PreviewObj>* layer, BlendMode blend)
 {
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::translate(xform->m, glm::vec3(0.0f));

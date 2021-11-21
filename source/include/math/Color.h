@@ -39,36 +39,47 @@ struct CColor
 	float a = 1.0f;
 	CColor();
 	CColor(float fill);
+	CColor(std::string hexStr);
+	CColor(std::string hexStr, float alpha);
 	CColor(float red, float green, float blue);
 	CColor(float red, float green, float blue, float alpha);
+	CColor(unsigned char red, unsigned char green, unsigned char blue, bool uchar);
+	CColor(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha, bool uchar);
 	CColor(glm::vec4 rgba);
 	void setUniformly(float value);
 	CColor_uc makeCColor_uc();
 	std::string makeString();
 	glm::vec3 makeVec3();
 	glm::vec4 makeVec4();
-	void mixColor(CColor* second, float amount);
+	CColor mixColor(CColor* second, float amount);
 	float makeGreyscale();
 };
 
 
 static const CColor nullColor(-5.0f, -5.0f, -5.0f);
 
-// Keep this alphabetized
-static const CColor black(0.0f, 0.0f, 0.0f);
-static const CColor blue(0.0f, 0.0f, 1.0f);
+// CSS Colors
+static const CColor black("#000000");
+static const CColor silver("#c0c0c0");
+static const CColor gray("#808080");
+static const CColor white("#ffffff");
+static const CColor maroon("#800000");
+static const CColor red("#ff0000");
+static const CColor orange("#ffa500");
+static const CColor purple("#800080");
+static const CColor fuchsia("#ff00ff");
+static const CColor magenta("#ff00ff");
+static const CColor green("#008000");
+static const CColor lime("#00ff00");
+static const CColor olive("#808000");
+static const CColor yellow("#ffff00");
+static const CColor navy("#000080");
+static const CColor blue("#0000ff");
+static const CColor teal("#008080");
+static const CColor aqua("#00ffff");
 
-static const CColor green(0.0f, 1.0f, 0.0f);
-
-static const CColor magenta(1.0f, 0.0f, 1.0f);
-
-static const CColor orange(1.0f, 0.498f, 0.0f);
-
-static const CColor red(1.0f, 0.0f, 0.0f);
-
-static const CColor white(1.0f, 1.0f, 1.0f);
-
-static const CColor yellow(1.0f, 1.0f, 0.0f);
+// Pantone Colors
+static const CColor pantone_green(28, 172, 120, true);
 
 // Return a color by name
 CColor findColor(std::string name);

@@ -45,26 +45,34 @@ private:
 	unsigned int inputPointVAO = 0; 
 	unsigned int inputPointVBO = 0;
 	unsigned int inputPointTEX0 = 0;
+	size_t inputPointLayerCount = 0;
 	bool inputPointsDirty = true;
 	bool enablePreview_inputPoints = false;
+	std::vector<PreviewObj> inputPointsBucket;
 	//
 	unsigned int inputLineVAO = 0;
 	unsigned int inputLineVBO = 0;
 	unsigned int inputLineTEX0 = 0;
+	size_t inputLineLayerCount = 0;
 	bool inputLinesDirty = true;
 	bool enablePreview_inputLines = false;
+	std::vector<PreviewObj> inputLineBucket;
 	//
 	unsigned int inputBoundsVAO = 0;
 	unsigned int inputBoundsVBO = 0;
 	unsigned int inputBoundsTEX0 = 0;
+	size_t inputBoundsLayerCount = 0;
 	bool inputBoundsDirty = true;
 	bool enablePreview_inputBounds = false;
+	std::vector<PreviewObj> inputBoundsBucket;
 	//
 	unsigned int inputCurvesVAO = 0;
 	unsigned int inputCurvesVBO = 0;
 	unsigned int inputCurvesTEX0 = 0;
+	size_t inputCurvesLayerCount = 0;
 	bool inputCurvesDirty = true;
 	bool enablePreview_inputCurves = false;
+	std::vector<PreviewObj> inputCurvesBucket;
 	//
 	std::pair<unsigned int, unsigned int> inputCurvesRange = std::pair<unsigned int, unsigned int>(10000, 1000);
 	std::vector<unsigned int> inputCurvesAlloc;
@@ -117,10 +125,10 @@ public:
 	void drawInputData_typeA(
 		unsigned int* VAO, ShaderTransform* xform, 
 		glm::ivec2* windowDimensions, 
-		const std::vector<PreviewObj>* layer, BlendMode blend);
+		std::vector<PreviewObj>* layer, BlendMode blend);
 	void drawInputData_typeB(
 		unsigned int* VAO, ShaderTransform* xform, 
 		glm::ivec2* windowDimensions, 
-		const std::vector<PreviewObj>* layer, BlendMode blend);
+		std::vector<PreviewObj>* layer, BlendMode blend);
 };
 #endif // !VISUALIZER_H

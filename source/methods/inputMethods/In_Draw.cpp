@@ -32,7 +32,7 @@ InputHandlerFlag In_Draw::move(Application* sender, Input dat)
 	{
 		wasHandled = continuousMove(sender, dat, &pos, &dir);
 	}
-
+	
 	//clearFlagNew(isNew);
 	return wasHandled;
 }

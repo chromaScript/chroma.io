@@ -298,6 +298,8 @@ public:
 	double getTime();
 	glm::vec4 convertScreenCoord(double x, double y);
 	glm::vec3 pickScreenCoord(double x, double y);
+	glm::vec3 pickScreenCoord(glm::vec3 point);
+	glm::vec3 pickScreenCoord(glm::vec3 point, bool skipConversion);
 	void inputDataDump(InputData dat, std::string name);
 	void fragmentDataDump(std::shared_ptr<VertexData> dat, std::string name, int UEID);
 	void pluginDataDump(std::vector<std::shared_ptr<WPlugin>> pluginArray);

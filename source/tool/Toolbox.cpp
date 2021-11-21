@@ -508,7 +508,9 @@ void Toolbox::sendPreview(Application* sender, InputHandlerFlag action)
 void Toolbox::sendFinialize(Application* sender)
 {
 	activeTool.get()->output.get()->finalize(sender, &activeTool.get()->input.get()->fragData, &activeTool.get()->input.get()->splineData);
-	activeTool.get()->output.get()->postprocess(sender, &activeTool.get()->input.get()->fragData, &activeTool.get()->input.get()->splineData);
+	if (activeTool.get()->input.get()->getName() == "Draw") {
+		activeTool.get()->output.get()->postprocess(sender, &activeTool.get()->input.get()->fragData, &activeTool.get()->input.get()->splineData);
+	}
 }
 
 // Validation Functions

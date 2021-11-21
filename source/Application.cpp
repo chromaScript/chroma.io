@@ -1372,6 +1372,7 @@ void Application::clickEventHandler(InputMouseButton button, InputAction action,
 		if (result == InputHandlerFlag::allowPress_updateCursor) {
 			ui->updateCursorImage(toolbox->getActiveTool()->getCursorDown());
 		}
+		autoShape.get()->clearVisuals();
 		toolbox->sendPreview(this, result);
 		toolbox->startCallback(scriptConsole.get()->getInterpreter(), inputEvent.x, inputEvent.y);
 		isDoingInput = true;
@@ -1579,6 +1580,30 @@ glm::vec3 Application::pickScreenCoord(double x, double y)
 	outPos.z = 0.0f;
 	return outPos;
 }
+glm::vec3 Application::pickScreenCoord(glm::vec3 point)
+{
+	return pickScreenCoord(point.x, point.y);
+}
+glm::vec3 Application::pickScreenCoord(glm::vec3 point, bool skipConversion)
+{
+	if (!skipConversion) { return pickScreenCoord(point.x, point.y); }
+	else {
+		// Get the view / projection matrix
+		ShaderTransform* matrix = getCamera()->getShaderTransform();
+		// Convert the screenCoord to NDC
+		glm::vec4 screenCoord = glm::vec4(point.x, point.y, 1.0f, 1.0f);
+		// Create the inverse matrix transform and apply it to screenCoord
+		glm::mat4 inverseMatrix = matrix->v * matrix->p;
+		inverseMatrix = glm::inverse(inverseMatrix);
+		screenCoord = screenCoord * inverseMatrix;
+		glm::vec3 outPos = glm::vec3(screenCoord.x, screenCoord.y, 0.0f);
+		// Translate & Rotate the coordinate using the camera
+		outPos = getCamera()->translateWorldPos(outPos);
+		outPos.z = 0.0f;
+		return outPos;
+	}
+}
+
 
 double Application::getTime()
 {

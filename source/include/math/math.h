@@ -12,8 +12,14 @@
 #define MATH_RAD_90 90.0f * (MATH_PI / 180.0f)
 #define MATH_RAD_180 180.0f * (MATH_PI / 180.0f)
 #define DEFAULT_DIR glm::vec3(1.0f, 0.0f, 0.0f)
+#define DEFAULT_DIR_PERP glm::vec3(0.0f, 1.0f, 0.0f)
 
 glm::vec3 makeDir(glm::vec3 pos1, glm::vec3 pos2);
+float makeAngle(glm::vec3 pos1, glm::vec3 pos2);
+bool compareAngle(float angleA, float angleB, float threshold);
+bool compareParallel(float angleA, float angleB, float threshold);
+bool comparePerpendicular(float angleA, float angleB, float threshold);
+float angleDifference(float angleA, float angleB);
 
 glm::vec3 lerpDir(glm::vec3 dirA, glm::vec3 dirB, float t);
 glm::vec3 lerpPos(glm::vec3 posA, glm::vec3 posB, float t);
@@ -64,18 +70,27 @@ float percentRange_cubedCenter(float value, float min, float max, bool rawInput)
 int loopDec(int i, int min, int max);
 int loopInc(int i, int min, int max);
 glm::vec2 lineIntersect2D(glm::vec4 line1, glm::vec4 line2);
+glm::vec3 lineIntersect2D(glm::vec3 p1, glm::vec3 q1, glm::vec3 p2, glm::vec3 q2);
 glm::vec3 createDirVec2D(glm::vec3 pointA, glm::vec3 pointB, bool flipY);
 glm::vec3 createDirVec2D(float angle);
 float distancePointLine2D(glm::vec2 point, glm::vec4 line);
+float distancePointLine2D(glm::vec3 point, glm::vec4 line);
+float distancePointLine2D(glm::vec3 point, glm::vec3 q1, glm::vec3 p1);
 float distancePointLine2D(glm::vec2 point, glm::vec3 direction, glm::vec3 origin);
 float distancePointLineSegment(glm::vec2 point, glm::vec2 start, glm::vec2 end);
 
 glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec4 line, bool flipY);
 
 glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec3 lineP1, glm::vec3 dir, bool flipY);
+glm::vec3 projectPointToLine2D(glm::vec3 point, std::pair<glm::vec3, glm::vec3> line, bool flipY);
 glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec3 lineP1, float angle, bool flipY);
+
+float pointLineDeterminant(glm::vec3 pos1, glm::vec3 pos2, glm::vec3 point);
 
 float lengthPointVec(std::vector<glm::vec3>* points);
 float lengthPointVec(std::vector<std::pair<float, glm::vec3>>* points);
+
+bool lineSegCCW(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);
+bool lineSegmentIntersection(glm::vec3 p1, glm::vec3 q1, glm::vec3 p2, glm::vec3 q2);
 
 #endif

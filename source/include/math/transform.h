@@ -1,6 +1,8 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
+#include "math.h"
+
 #include <glm.hpp>
 
 // ObjectTransform is used to condense multiple direction vectors into a single container
@@ -87,8 +89,11 @@ enum class HandleRel
 // EntityTransform is used to hold the transform data for a visual entity
 struct EntityTransform
 {
-	glm::vec3 pos = glm::vec3(0, 0, 0);
-	glm::vec3 origin = glm::vec3(0, 0, 0);
+	glm::vec2 size = glm::vec2(0.0f);
+	glm::vec3 up = DEFAULT_DIR;
+	glm::vec3 fwd = DEFAULT_DIR_PERP;
+	glm::vec3 pos = glm::vec3(0.0f);
+	glm::vec3 origin = glm::vec3(0.0f);
 	Bounds boundBox = Bounds(0, 0, 0, 0); // x1, y1, x2, y2 // Corner->Corner rectangle bounds of fragment
 	bool drawCornersOnly = false;
 	RectBounds bounds = RectBounds(glm::vec3(0, 0, 0));

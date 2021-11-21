@@ -24,7 +24,7 @@ TSet_Image::TSet_Image()
 {
 	this->type = TSetType::image;
 	this->isEnabled = true;
-	this->tipSize = 30; // 2201
+	this->tipSize = 12; // 2201
 	this->relativeSpacing = true; // 2202
 	this->spacing = 15.0f; // 2203 // When in relative mode, use (spacing / 100) to get the % value
 	this->sampleRate = 0.0f; // 2205 // Performance based slider to modulate delta time between input samples

@@ -3,6 +3,8 @@
 
 #include "FragmentAnchor.h"
 #include "../../input/keys.h"
+#include "../../math/blend.h"
+#include "../../analytics/AutoShapeType.h"
 
 // VertexData is used to hold the data processed from an InputData object. This is what gets stored as history and canvas objects. The original
 // mouse input is not salvageable. VertexData should only contain information useful for all fragment types. Output asks the active tool for
@@ -25,7 +27,9 @@ public:
 	int depth = 0; // Manual Set Only
 	// Stored Analytics Data
 	float averageSegLen = 0.0f;
-	//BlendModes blendType;
+	AutoShapeType storedShape = AutoShapeType::none;
+	int polySides = 0;
+	BlendMode blend = BlendMode::normal;
 	void reset();
 	void resetAnchors();
 	void originToVertices();

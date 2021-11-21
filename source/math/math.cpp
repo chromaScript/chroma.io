@@ -19,6 +19,42 @@ glm::vec3 makeDir(glm::vec3 pos1, glm::vec3 pos2)
 		pos2.y - pos1.y,
 		0.0f));
 }
+float makeAngle(glm::vec3 pos1, glm::vec3 pos2)
+{
+	glm::vec3 dir = makeDir(pos1, pos2);
+	return glm::degrees(atan2f(dir.y, dir.x));
+}
+
+// Compare two angles from range -180 to 180
+bool compareAngle(float angleA, float angleB, float threshold)
+{
+	float dif = abs((angleA + 180.0f) - (angleB + 180.0f));
+	if (dif > 180.0f) { dif = 360.0f - dif; }
+	if (dif >= threshold) { return true; }
+	return false;
+}
+bool compareParallel(float angleA, float angleB, float threshold)
+{
+	float dif = abs((angleA + 180.0f) - (angleB + 180.0f));
+	if (dif > 180.0f) { dif = 360.0f - dif; }
+	if (abs(180.0f - dif) <= threshold) { return true; }
+	return false;
+}
+bool comparePerpendicular(float angleA, float angleB, float threshold)
+{
+	float dif = abs((angleA + 180.0f) - (angleB + 180.0f));
+	if (dif > 180.0f) { dif = 360.0f - dif; }
+	if (abs(90.0f - dif) <= threshold) { return true; }
+	return false;
+}
+
+// Return the difference between two angles in +/-180 range
+float angleDifference(float angleA, float angleB)
+{
+	float dif = abs((angleA + 180.0f) - (angleB + 180.0f));
+	if (dif > 180.0f) { dif = 360.0f - dif; }
+	return dif;
+}
 
 glm::vec3 lerpDir(glm::vec3 dirA, glm::vec3 dirB, float t)
 {
@@ -488,6 +524,9 @@ glm::vec2 lineIntersect2D(glm::vec4 line1, glm::vec4 line2)
 		((a1 * c2) - (b2 * c1)) / ((a1 * b2) - (a2 * b1)),
 		((a2 * c1) - (a1 * c2)) / ((a1 * b2) - (a2 * b1)));
 }
+glm::vec3 lineIntersect2D(glm::vec3 p1, glm::vec3 q1, glm::vec3 p2, glm::vec3 q2) {
+	return glm::vec3(lineIntersect2D(glm::vec4(p1.x, p1.y, q1.x, q1.y), glm::vec4(p2.x, p2.y, q2.x, q2.y)), 0.0f);
+}
 // Create normalized direction vector from two points
 glm::vec3 createDirVec2D(glm::vec3 pointA, glm::vec3 pointB, bool flipY)
 {
@@ -514,6 +553,18 @@ float distancePointLine2D(glm::vec2 point, glm::vec4 line)
 	float c = (line.x * line.w) - (line.z * line.y);
 	float d = abs((a * point.x) + (b * point.y) + c) / sqrt((a * a) + (b * b));
 	return d;
+}
+float distancePointLine2D(glm::vec3 point, glm::vec4 line)
+{
+	float a = line.y - line.w;
+	float b = line.z - line.x;
+	float c = (line.x * line.w) - (line.z * line.y);
+	float d = abs((a * point.x) + (b * point.y) + c) / sqrt((a * a) + (b * b));
+	return d;
+}
+float distancePointLine2D(glm::vec3 point, glm::vec3 q1, glm::vec3 p1)
+{
+	return distancePointLine2D(point, glm::vec4(q1.x, q1.y, p1.x, p1.y));
 }
 float distancePointLine2D(glm::vec2 point, glm::vec3 direction, glm::vec3 origin)
 {
@@ -562,6 +613,11 @@ glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec4 line, bool flipY)
 	return point + (dir * d);
 }
 
+glm::vec3 projectPointToLine2D(glm::vec3 point, std::pair<glm::vec3, glm::vec3> line, bool flipY)
+{
+	return projectPointToLine2D(point, glm::vec4(line.first.x, line.first.y, line.second.x, line.second.y), flipY);
+}
+
 glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec3 lineP1, glm::vec3 dir, bool flipY)
 {
 	glm::vec3 lineP2 = lineP1 + (dir * 100.0f);
@@ -594,4 +650,18 @@ float lengthPointVec(std::vector<std::pair<float, glm::vec3>>* points)
 		outLen += glm::length(points->at(i).second - points->at(i - 1).second);
 	}
 	return outLen;
+}
+
+float pointLineDeterminant(glm::vec3 pos1, glm::vec3 pos2, glm::vec3 point)
+{
+	return ((pos2.x - pos1.x) * (point.y - pos1.y)) - ((pos2.y - pos1.y) * (point.x - pos1.x));
+}
+
+bool lineSegCCW(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3)
+{
+	return (p3.y - p1.y) * (p2.x - p1.x) > (p2.y - p1.y) * (p3.x - p1.x);
+}
+bool lineSegmentIntersection(glm::vec3 p1, glm::vec3 q1, glm::vec3 p2, glm::vec3 q2)
+{
+	return lineSegCCW(p1, p2, q2) != lineSegCCW(q1, p2, q2) && lineSegCCW(p1, q1, p2) != lineSegCCW(p1, q1, q2);
 }

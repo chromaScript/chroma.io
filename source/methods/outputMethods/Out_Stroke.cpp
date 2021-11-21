@@ -58,7 +58,6 @@ void Out_Stroke::preview(Application* sender, VertexData* dat, VertexData* splin
 				lastAnchorIndex = 0;
 				activePointsLayer = activeLinesLayer = activeBoundsLayer = activeCurvesLayer = 0;
 				lastAnchorArrayIndex = 0;
-				sender->autoShape->clearVisuals();
 				std::cout << "OUT_STROKE::CREATENEWSTROKE::CONST_POSITION= " << std::endl;
 			}
 			if (spline->anchors.size() != 0) { spline->anchors.front().input.flagPrimary = InputFlag::null; }
@@ -320,6 +319,10 @@ void Out_Stroke::preview(Application* sender, VertexData* dat, VertexData* splin
 			{
 				activeFrag = sender->getUI()->getCanvas()->getActiveLayer().lock()->createNewStroke(
 					sender->getShardShader(), owner, increaseEntityCount());
+				activeFrag.get()->fragData.transform = dat->transform;
+				activeFrag.get()->fragData.constantSize = dat->constantSize;
+				activeFrag.get()->fragData.linearStream = dat->linearStream;
+				activeFrag.get()->fragData.connectEnds = dat->connectEnds;
 				activePointsLayer = activeLinesLayer = activeBoundsLayer = 0; lastAnchorIndex = -1;
 				copyVertexData(activeFrag.get()->fragData, dat);
 				// Create Preview Layers
@@ -400,6 +403,10 @@ void Out_Stroke::preview(Application* sender, VertexData* dat, VertexData* splin
 			{
 				activeFrag = sender->getUI()->getCanvas()->getActiveLayer().lock()->createNewStroke(
 					sender->getShardShader(), owner, increaseEntityCount());
+				activeFrag.get()->fragData.transform = dat->transform;
+				activeFrag.get()->fragData.constantSize = dat->constantSize;
+				activeFrag.get()->fragData.linearStream = dat->linearStream;
+				activeFrag.get()->fragData.connectEnds = dat->connectEnds;
 				activePointsLayer = activeLinesLayer = activeBoundsLayer = 0; lastAnchorIndex = -1;
 				copyVertexData(activeFrag.get()->fragData, dat);
 				// Create Preview Layers
@@ -492,11 +499,10 @@ void Out_Stroke::finalize(Application* sender, VertexData* dat, VertexData* spli
 	sender->ui->visualizer->setPreview(PreviewLayerType::inputLine, false);
 	sender->ui->visualizer->setPreview(PreviewLayerType::inputBounds, false);
 	sender->ui->visualizer->setPreview(PreviewLayerType::inputCurves, false);
-	if (activePointsLayer != 0) { sender->ui->visualizer->removeLayer(true, activePointsLayer); }
-	if (activeLinesLayer != 0) { sender->ui->visualizer->removeLayer(true, activeLinesLayer); }
-	if (activeBoundsLayer != 0) { sender->ui->visualizer->removeLayer(true, activeBoundsLayer); }
-	if (activeCurvesLayer != 0) { sender->ui->visualizer->removeLayer(true, activeCurvesLayer); }
-	activePointsLayer = activeLinesLayer = activeBoundsLayer = activeCurvesLayer = 0;
+	if (activePointsLayer != 0) { sender->ui->visualizer->removeLayer(true, activePointsLayer); activePointsLayer = 0; }
+	if (activeLinesLayer != 0) { sender->ui->visualizer->removeLayer(true, activeLinesLayer); activeLinesLayer = 0; }
+	if (activeBoundsLayer != 0) { sender->ui->visualizer->removeLayer(true, activeBoundsLayer); activeBoundsLayer = 0; }
+	if (activeCurvesLayer != 0) { sender->ui->visualizer->removeLayer(true, activeCurvesLayer); activeCurvesLayer = 0; }
 
 	// Kick bad-calls
 	if (dat->anchors.size() == 0 || activeFrag == nullptr) { return; }
@@ -558,10 +564,13 @@ void Out_Stroke::finalize(Application* sender, VertexData* dat, VertexData* spli
 void Out_Stroke::postprocess(Application* sender, VertexData* dat, VertexData* splineData)
 {
 	VertexData shape = VertexData();
-	sender->autoShape->visualizeData(splineData);
+
+	splineData->averageSegLen = sender->autoShape->averageVertexSpacing(splineData);
+	//sender->autoShape->visualizeData(splineData);
 	AutoShapeType type = sender->autoShape->analyzeData(
 		shape, sender->getCanvasDimensions(), sender->getCamera()->getOrthoZoom(), splineData);
-	sender->autoShape->visualizeShape(&shape);
+
+	//sender->autoShape->visualizeShape(&shape);
 }
 
 bool Out_Stroke::compareInputByProperties(FragmentAnchor* anchor1, FragmentAnchor* anchor2)

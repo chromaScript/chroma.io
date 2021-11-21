@@ -69,6 +69,26 @@ CColor::CColor(float red, float green, float blue, float alpha)
 	b = blue;
 	a = alpha;
 }
+CColor::CColor(std::string hexStr)
+{
+	std::string hexString = hexStr;
+	if (hexString.find("#") != std::string::npos) { hexString.erase(hexString.find("#"), 1); }
+	int hex = std::stoi(hexString, nullptr, 16);
+	r = ((hex >> 16) & 0xFF) / 255.0;
+	g = ((hex >> 8) & 0xFF) / 255.0;
+	b = ((hex) & 0xFF) / 255.0;
+	a = 1.0f;
+}
+CColor::CColor(std::string hexStr, float alpha)
+{
+	std::string hexString = hexStr;
+	if (hexString.find("#") != std::string::npos) { hexString.erase(hexString.find("#")); }
+	int hex = std::stoi(hexString, nullptr, 16);
+	r = ((hex >> 16) & 0xFF) / 255.0;
+	g = ((hex >> 8) & 0xFF) / 255.0;
+	b = ((hex) & 0xFF) / 255.0;
+	a = alpha;
+}
 CColor::CColor(glm::vec4 rgba)
 {
 	r = rgba.r;
@@ -76,6 +96,21 @@ CColor::CColor(glm::vec4 rgba)
 	b = rgba.b;
 	a = rgba.a;
 }
+CColor::CColor(unsigned char red, unsigned char green, unsigned char blue, bool uchar)
+{
+	r = (float)red / 255.0f;
+	g = (float)green / 255.0f;
+	b = (float)blue / 255.0f;
+	a = 1.0f;
+}
+CColor::CColor(unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha, bool uchar)
+{
+	r = (float)red / 255.0f;
+	g = (float)green / 255.0f;
+	b = (float)blue / 255.0f;
+	a = (float)alpha / 255.0f;
+}
+
 void CColor::setUniformly(float value)
 {
 	r = value;
@@ -99,11 +134,12 @@ glm::vec4 CColor::makeVec4()
 {
 	return glm::vec4(r, g, b, a);
 }
-void CColor::mixColor(CColor* second, float amount)
+CColor CColor::mixColor(CColor* second, float amount)
 {
 	this->r = lerpf(this->r, second->r, amount);
 	this->g = lerpf(this->g, second->g, amount);
 	this->b = lerpf(this->b, second->b, amount);
+	return *this;
 }
 float CColor::makeGreyscale()
 {
