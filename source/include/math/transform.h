@@ -45,6 +45,7 @@ struct RectBounds
 	RectBounds(float p1x, float p1y, float p2x, float p2y, float p3x, float p3y, float p4x, float p4y);
 	void reset();
 };
+glm::vec2 sizeFromBounds(RectBounds bounds, float roll, bool isRotated, bool isScreenSpace);
 
 
 /*

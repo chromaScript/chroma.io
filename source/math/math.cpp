@@ -572,7 +572,13 @@ float distancePointLine2D(glm::vec2 point, glm::vec3 direction, glm::vec3 origin
 	glm::vec4 line = glm::vec4(origin.x, origin.y, lineP2.x, lineP2.y);
 	return distancePointLine2D(point, line);
 }
-float distancePointLineSegment(glm::vec2 point, glm::vec2 start, glm::vec2 end) {
+
+float distancePointLineSegment(glm::vec3 point, glm::vec3 start, glm::vec3 end) 
+{
+	return distancePointLineSegment(glm::vec2(point), glm::vec2(start), glm::vec2(end));
+}
+float distancePointLineSegment(glm::vec2 point, glm::vec2 start, glm::vec2 end) 
+{
 	float A = point.x - start.x;
 	float B = point.y - start.y;
 	float C = end.x - start.x;
@@ -609,7 +615,7 @@ glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec4 line, bool flipY)
 {
 	float d = distancePointLine2D(point, line);
 	glm::vec3 dir = glm::vec3(createDirVec2D(glm::vec3(line.x, line.y, 0.0f), glm::vec3(line.z, line.w, 0.0f), flipY));
-	dir = dir * glm::quat(glm::vec3(0.0f, 0.0f, 90.0f));
+	dir = dir * glm::quat(glm::vec3(0.0f, 0.0f, MATH_PI / 2.0f));
 	return point + (dir * d);
 }
 
@@ -624,7 +630,7 @@ glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec3 lineP1, glm::vec3 dir,
 	glm::vec4 line = glm::vec4(lineP1.x, lineP1.y, lineP2.x, lineP2.y);
 	float d = (float)distancePointLine2D(point, line);
 	glm::vec3 direction = createDirVec2D(glm::vec3(line.x, line.y, 0.0), glm::vec3(line.z, line.w, 0.0f), flipY);
-	direction = direction * glm::quat(glm::vec3(0.0f, 0.0f, 90.0f));
+	direction = direction * glm::quat(glm::vec3(0.0f, 0.0f, MATH_PI / 2.0f));
 	return point + (direction * d);
 }
 glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec3 lineP1, float angle, bool flipY)

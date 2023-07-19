@@ -34,9 +34,13 @@ public:
 	void resetAnchors();
 	void originToVertices();
 	void centerVertsToOrigin();
+	void setDir();
 };
 
 void copyVertexData(VertexData& target, VertexData* copy);
 void copyVertices(VertexData& target, VertexData* copy);
+RectBounds createVertexBounds(VertexData* data);
+RectBounds createVertexBounds_uv(VertexData* data, ShaderTransform* xform);
+void createVertexBounds_compound(RectBounds& bounds, RectBounds& bounds_uv, VertexData* data, ShaderTransform* xform);
 
 #endif // !VERTEXDATA_H

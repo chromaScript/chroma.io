@@ -292,7 +292,7 @@ void Visualizer::putBoundsObject(unsigned int layer, size_t index, glm::vec3 p1,
 	if (previewLayers.count(layer) == 1) {
 		glm::vec3 boundsNormal = dir * glm::quat(glm::vec3(0.0f, 0.0f, MATH_PI / 2.0f));
 		glm::vec3 p2 = p1 + (dir * size.x);
-		glm::vec3 p4 = p1 - (boundsNormal * size.y);
+		glm::vec3 p4 = p1 + (boundsNormal * size.y);
 		// Create Lines
 		putLayerObject(layer, (index * 8) + 0,
 			PreviewObj(0, p1, p2, color, ShapeType::line, 1.0f));

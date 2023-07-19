@@ -476,14 +476,17 @@ public:
 	float constructSegments(VertexData& outData, float minSegLen_uv, float backFactor, float forwardFactor,
 		float backAngleThreshold, float forwardAngleThreshold, bool doRender,
 		glm::ivec2 canvasDimensions, float zoomAmount, VertexData* splineData);
-	float smoothSegments(VertexData& outData, float minSegLen_uv, float backFactor, float forwardFactor,
-		float backAngleThreshold, float forwardAngleThreshold, bool doRender,
-		glm::ivec2 canvasDimensions, float zoomAmount, VertexData* splineData);
+	float smoothSegments(VertexData& outData, float minSegLen_uv, float breakThreshold,
+		VertexData* splineData);
 	float closeShape(VertexData& outData, float minSegLen_uv, float backFactor, float forwardFactor,
 		float backAngleThreshold, float forwardAngleThreshold, bool doRender,
 		glm::ivec2 canvasDimensions, float zoomAmount, VertexData* splineData,
 		std::vector<std::tuple<float, glm::vec3, float>>& screenPoints);
 	float removeOverlap(VertexData& outData, float minSegLen_uv, float backFactor, float forwardFactor,
+		float backAngleThreshold, float forwardAngleThreshold, bool doRender,
+		glm::ivec2 canvasDimensions, float zoomAmount, VertexData* splineData,
+		std::vector<std::tuple<float, glm::vec3, float>>& screenPoints);
+	float cleanShape(VertexData& outData, float minSegLen_uv, float backFactor, float forwardFactor,
 		float backAngleThreshold, float forwardAngleThreshold, bool doRender,
 		glm::ivec2 canvasDimensions, float zoomAmount, VertexData* splineData,
 		std::vector<std::tuple<float, glm::vec3, float>>& screenPoints);
@@ -511,14 +514,14 @@ public:
 	std::vector<std::tuple<float, glm::vec3, float>> generateScreenPoints(VertexData* splineData);
 	std::tuple<float, float, float> screenSpaceLengthAttributes(std::vector<std::tuple<float, glm::vec3, float>>* screenPoints);
 	std::tuple<float, glm::vec3, float> screenSpaceLengthAttributes(VertexData* splineData);
-	float generateAverageAttribs(VertexData* splineData);
+	float generateAverageAttribs(VertexData* splineData, bool countLast);
 	glm::vec3 averagePosition_byCorner(VertexData* splineData, bool filter);
 	glm::vec3 averagePosition_bySides(VertexData* splineData, bool filter);
 	//
 	void sortDistanceTuple(std::vector<std::tuple<float, glm::vec3, float>>& vector);
 	void sortFloatPair(std::vector<std::pair<float, size_t>>& vector);
 	float nextSegmentAngle(VertexData* splineData, size_t index);
-	void smoothIterate(VertexData& outData, VertexData* splineData, float angleThreshold, float breakThreshold);
+	void smoothIterate(VertexData& outData, VertexData* splineData, float breakThreshold);
 };
 
 #endif

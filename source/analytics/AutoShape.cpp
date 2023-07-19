@@ -13,6 +13,8 @@
 #include "../include/entities/UserInterface.h"
 #endif
 
+#include <deque>
+
 AutoShape::AutoShape()
 {
 	preview.insert(std::pair<std::string, unsigned int>("directionLines", 0));
@@ -73,8 +75,8 @@ AutoShapeType AutoShape::visualizeData(VertexData* splineData)
 
 void AutoShape::visualizeShape(VertexData* rawShape, VertexData* regularShape, bool renderRaw, bool renderRegular)
 {
-	size_t vertCount = rawShape->anchors.size();
 	if (renderRaw) {
+		size_t vertCount = rawShape->anchors.size();
 		if (preview.at("shape_rawLines") == 0) {
 			unsigned int linesLayer = owner->ui->visualizer->requestNewLayer(PreviewLayerType::inputLine);
 			if (owner->ui->visualizer->addLayer(linesLayer, vertCount, BlendMode::multiply) == linesLayer) {
@@ -103,13 +105,13 @@ void AutoShape::visualizeShape(VertexData* rawShape, VertexData* regularShape, b
 			for (size_t k = 0; k < vertCount; k++) {
 				owner->ui->visualizer->putLayerObject(preview.at("shape_rawPoints"), k,
 					PreviewObj(k, rawShape->anchors[k].pos, rawShape->anchors[k].dir,
-						yellow, ShapeType::square, 8.0f));
+						lime, ShapeType::square, 8.0f));
 			}
 		}
 	}
 	
 	if (renderRegular) {
-		vertCount = regularShape->anchors.size();
+		size_t vertCount = regularShape->anchors.size();
 		if (preview.at("shape_regularLines") == 0) {
 			unsigned int linesLayer = owner->ui->visualizer->requestNewLayer(PreviewLayerType::inputLine);
 			if (owner->ui->visualizer->addLayer(linesLayer, vertCount, BlendMode::multiply) == linesLayer) {
@@ -188,6 +190,9 @@ void AutoShape::resetAvgAttribs()
 AutoShapeType AutoShape::analyzeData(VertexData& outData,
 	glm::ivec2 canvasDimensions, float zoomAmount, VertexData* splineData)
 {
+	// Prevent Bad Calls
+	if (splineData->anchors.size() < 2) { return AutoShapeType::none; }
+
 	AutoShapeType outShape = AutoShapeType::none;
 	resetData();
 	matrix = *owner->getCamera()->getShaderTransform();
@@ -206,97 +211,198 @@ AutoShapeType AutoShape::analyzeData(VertexData& outData,
 			owner->ui->visualizer->setPreview(PreviewLayerType::inputLine, true);
 		}
 	}
+	if (preview.at("debug_bounds") == 0) {
+		unsigned int boundsLayer = owner->ui->visualizer->requestNewLayer(PreviewLayerType::inputBounds);
+		if (owner->ui->visualizer->addLayer(boundsLayer, 0, BlendMode::multiply) == boundsLayer) {
+			preview.at("debug_bounds") = boundsLayer;
+			owner->ui->visualizer->setPreview(PreviewLayerType::inputBounds, true);
+		}
+	}
+
+	size_t vertCount = splineData->anchors.size() - 1;
+
+	RectBounds bounds = RectBounds();
+	RectBounds bounds_uv = RectBounds();
+	//RectBounds bounds = createVertexBounds(splineData);
+	//RectBounds bounds_uv = createVertexBounds_uv(splineData, &matrix);
+	createVertexBounds_compound(bounds, bounds_uv, splineData, &matrix);
+	printStr(vec3VecToString({ bounds_uv.p1, bounds_uv.p2, bounds_uv.p3, bounds_uv.p4 }));
+	glm::vec2 size = sizeFromBounds(bounds, 0.0f, false, false);
+	glm::vec2 size_uv = sizeFromBounds(bounds_uv, 0.0f, false, true);
+	glm::ivec2 windowDimensions = *owner->getWindowDimensions();
+	windowDimensions /= 100.0f;
+	float screenSizeRatio = abs((size_uv.x * windowDimensions.x) * (size_uv.y * windowDimensions.y));
+	float screenFactor = (clampf(screenSizeRatio, 0.02f, 0.5f) - 0.02f) / (0.5f - 0.02f);
+	glm::vec3 dir = DEFAULT_DIR;
+
+	owner->ui->visualizer->putBoundsObject(preview.at("debug_bounds"), 0, bounds.p1, bounds.p3, size, dir, magenta);
+
+	std::cout << "SIZE_UV-X:: " << size_uv.x << "  SIZE_UV-Y:: " << size_uv.y << 
+		"  SCREEN_SPACE_SIZE:: " << screenSizeRatio << std::endl;
+
+
 	// 1A Analyze for line segments and store this data
 	VertexData segments = VertexData();
-	float segmentsConfidence = constructSegments(segments, 0.012f, 1.05f, 1.0f, 5.0f, 5.0f, false, canvasDimensions, zoomAmount, splineData);
-	if (segmentsConfidence >= 0.5f) { outShape = AutoShapeType::line; }
-	if (segments.anchors.size() == 0) { return outShape; }
+	float lineConfidence = constructSegments(segments, lerpf(0.008f, 0.022f, screenFactor), 1.05f, 1.0f, 5.0f, 5.0f, false, canvasDimensions, zoomAmount, splineData);
+	if (lineConfidence >= 0.7f) { 
+		std::cout << "AUTOSHAPE :: LINE DETECTED" << std::endl; 
+		return AutoShapeType::line; 
+	}
+	if (segments.anchors.size() <= 1) { return outShape; }
 
-	// 2A Smooth out the segments to remove segments beneath the angle change threshold
+	// 2A Smooth out the segments to further remove segments beneath the angle change threshold,
+	// and double check for line detection, only for case of smoothing creating only 2 anchors.
 	VertexData smoothed = VertexData();
-	float smoothSegmentsConfidence = smoothSegments(smoothed, 0.08f, 1.2f, 1.2f, 7.2f, 3.5f, true, canvasDimensions, zoomAmount, &segments);
-	if (smoothed.anchors.size() <= 2) { return AutoShapeType::line; }
-	if (smoothed.anchors.size() == 0) { return outShape; }
+	float smoothSegmentsConfidence = smoothSegments(smoothed, 0.08f, 22.0f, &segments);
+	if (smoothed.anchors.size() <= 2) { 
+		std::cout << "AUTOSHAPE :: LINE DETECTED" << std::endl;
+		return AutoShapeType::line; 
+	}
+	//if (smoothed.anchors.size() == 0) { return outShape; }
+
+	visualizeShape(&segments, &smoothed, true, true);
+
+	// 3A Detect circle from splineData. Circle will always be found, and is the fallback shape
+	// if no closely matching polygons are found.
+	//float circleConfidence = detectCircle(outData, true, canvasDimensions, zoomAmount, splineData);
+	//if (circleConfidence >= 0.5f) { outShape = AutoShapeType::circle; }
+
+	//visualizeShape(&smoothed, &segments, true, true);
 
 	// 4A Generate Shape Analytics
 	std::vector<std::tuple<float, glm::vec3, float>> screenPoints = generateScreenPoints(&smoothed);
-	float avgResult = generateAverageAttribs(&smoothed);
+	float avgResult = generateAverageAttribs(&smoothed, true);
 	if (avgResult < 0.5f) { return outShape; }
+
+	// 4B Check For Small/Thin Rectangle from Smoothed
+	VertexData closeSmoothed = VertexData();
+	float closeSmoothedConfidence = closeShape(closeSmoothed, lerpf(0.007f, 0.014f, screenFactor), 1.2f, 1.2f, 7.2f, 3.5f, true, canvasDimensions, zoomAmount, &smoothed, screenPoints);
+	smoothIterate(closeSmoothed, &closeSmoothed, 65.0f);
+	std::vector<std::tuple<float, glm::vec3, float>> rectangleTestPoints = generateScreenPoints(&closeSmoothed);
+	avgResult = generateAverageAttribs(&closeSmoothed, true);
+	vertCount = closeSmoothed.anchors.size();
+
+	if (vertCount >= 4 && vertCount <= 6) {
+		if ((avgAngle >= 82.0f && avgAngle <= 98.0f) && 
+			(medianAngle >= 82.0f && medianAngle <= 98.0f) && 
+			(greatestAngle >= 65.0f && greatestAngle <= 135.0f && leastAngle >= 40.0f)) {
+			std::cout << "SQUARE FOUND EARLY DETECTED - " << std::endl;
+			std::cout << "POLYGON:: - SQUARE/RECTANGLE" << std::endl;
+		}
+	}
+
+	
 
 	// 5A Collapse points that occupy the same area
 	VertexData overlapSegments = VertexData();
-	float overlapConfidence = removeOverlap(overlapSegments, 0.012f, 1.2f, 1.2f, 7.2f, 3.5f, true, canvasDimensions, zoomAmount, &smoothed, screenPoints);
+	float overlapConfidence = removeOverlap(overlapSegments, 
+		lerpf(0.006f, 0.018f, screenFactor),
+		lerpf(0.008f, 0.024f, screenFactor),
+		0.032f, 2.8f, 5.2f, true, canvasDimensions, zoomAmount, &smoothed, screenPoints);
+	screenPoints = generateScreenPoints(&overlapSegments);
+	avgResult = generateAverageAttribs(&overlapSegments, true);
+	overlapConfidence = removeOverlap(overlapSegments, 
+		lerpf(0.002f, 0.008f, screenFactor),
+		lerpf(0.006f, 0.022f, screenFactor), 0.022f, 5.5f, 7.5f, true, canvasDimensions, zoomAmount, &smoothed, screenPoints);
+	screenPoints = generateScreenPoints(&overlapSegments);
 
-	visualizeShape(&smoothed, &overlapSegments, true, true);
-
-	/*
-	// 3A Close off the shape such that the beginning and end occupy the same position
+	// 6A Close off the shape such that the beginning and end occupy the same position
 	VertexData closeSegments = VertexData();
-	std::vector<std::tuple<float, glm::vec3, float>> screenPoints = generateScreenPoints(&smoothed);
-	float closeShapeConfidence = closeShape(closeSegments, 0.012f, 1.2f, 1.2f, 7.2f, 3.5f, true, canvasDimensions, zoomAmount, &smoothed, screenPoints);
+	float closeShapeConfidence = closeShape(closeSegments, 0.012f, 1.2f, 1.2f, 7.2f, 3.5f, true, canvasDimensions, zoomAmount, &overlapSegments, screenPoints);
+	closeSegments.setDir();
 	screenPoints = generateScreenPoints(&closeSegments);
-	*/
-	/*
-	// 4A Generate Shape Analytics
-	generateShapeAngles(&closeSegments, angles);
-	leastAngle = angles.front().first;
-	greatestAngle = angles.back().first;
-	medianAngle = angles.at(angles.size() / 2).first;
+	avgResult = generateAverageAttribs(&closeSegments, false);
 
-	generateShapeLengths(&closeSegments, lengths, lengths_uv);
-	leastLength_uv = lengths_uv.front().first;
-	greatestLength_uv = lengths_uv.back().first;
-	medianLength_uv = lengths_uv.at(lengths_uv.size() / 2).first;
-	leastLength = lengths.front().first;
-	greatestLength = lengths.back().first;
-	medianLength = lengths.at(lengths.size() / 2).first;
-	*/
-	// 4B Need to detect for rectangles of a wide ratio here to prevent erroneous vertex culling
+	//visualizeShape(&closeSmoothed, &closeSegments, true, true);
 
-	/*
-	if (closeShapeConfidence >= 0.01f) {
-		VertexData shape = VertexData();
-		//AutoShapeType result = analyzeShape(shape, &closeSegments, screenPoints);
+	vertCount = closeSegments.anchors.size() - 1;
+
+	std::cout << "VERT COUNT :: " << vertCount
+		<< "\n :AVG_ANGLE :: " << avgAngle << "\n :MEDIAN_ANGLE :: " << medianAngle << "\n :TOTAL_ANGLE :: " << totalAngle 
+		<< "\n :LEAST_ANGLE :: " << leastAngle << "\n :GREATEST_ANGLE :: " << greatestAngle
+		<< "\n :AVG_LEN :: " << avgLength << " / " << avgLength_uv << "\n :MEDIAN_LEN :: " << medianLength << " / " << medianLength_uv
+		<< "\n :LEAST_LEN :: " << leastLength << " / " << leastLength_uv << "\n :GREATEST_LEN :: " << greatestLength << " / " << greatestLength_uv << std::endl;
+
+	bool cleanShapeResult = true;
+	if (totalAngle >= 350.0f && totalAngle <= 370.0f) {
+		std::cout << "REGULAR POLYGON DETECTED - " << std::endl;
+		float greatAngleFactor = 1.65f;
+		if (vertCount >= 3 && vertCount <= 6) {
+			if (avgAngle >= 108.0f && avgAngle <= 138.0f && 
+				greatestAngle <= 120.0f * greatAngleFactor) {
+				std::cout << "POLYGON:: - TRIANGLE" << std::endl;
+				cleanShapeResult = false;
+			}
+		}
+		if (vertCount >= 4 && vertCount <= 6) {
+			if (avgAngle >= 82.0f && avgAngle <= 98.0f && 
+				greatestAngle <= 90.0f * greatAngleFactor) {
+				std::cout << "POLYGON:: - SQUARE/RECTANGLE" << std::endl;
+				cleanShapeResult = false;
+			}
+		}
+		if (vertCount >= 5 && vertCount <= 7) {
+			if (avgAngle >= 64.0f && avgAngle <= 81.0f && 
+				greatestAngle <= 72.0f * greatAngleFactor) {
+				std::cout << "POLYGON:: - PENGTAGON" << std::endl;
+				cleanShapeResult = false;
+			}
+		}
+		if (vertCount >= 6 && vertCount <= 9) {
+			if (avgAngle >= 53.0f && avgAngle <= 72.0f && 
+				greatestAngle <= 60.0f * greatAngleFactor) {
+				std::cout << "POLYGON:: - HEXAGON" << std::endl;
+				cleanShapeResult = false;
+			}
+		}
+		if (vertCount >= 7 && vertCount <= 10) {
+			if (avgAngle >= 46.0f && avgAngle <= 56.0f && 
+				greatestAngle <= 51.0f * greatAngleFactor) {
+				std::cout << "POLYGON:: - SEPTAGON" << std::endl;
+				cleanShapeResult = false;
+			}
+		}
+		if (vertCount >= 8 && vertCount <= 12) {
+			if (avgAngle >= 41.0f && avgAngle <= 50.0f && 
+				greatestAngle <= 45.0f * greatAngleFactor) {
+				std::cout << "POLYGON:: - OCTAGON" << std::endl;
+				cleanShapeResult = false;
+			}
+		}
+		if (vertCount >= 9 && vertCount <= 14) {
+			if (avgAngle >= 37.0f && avgAngle <= 42.0f && 
+				greatestAngle <= 40.0f * greatAngleFactor) {
+				std::cout << "POLYGON:: - NONAGON" << std::endl;
+				cleanShapeResult = false;
+			}
+		}
+		if (vertCount >= 10 && vertCount <= 16) {
+			if (avgAngle >= 32.0f && avgAngle <= 40.0f && 
+				greatestAngle <= 36.0f * greatAngleFactor) {
+				std::cout << "POLYGON:: - DECAGON" << std::endl;
+				cleanShapeResult = false;
+			}
+		}
+		VertexData cleanShapeSegments = VertexData();
+		float closeShapeConfidence = 0.0f;
+		if (cleanShapeResult) {
+			closeShapeConfidence = cleanShape(cleanShapeSegments, 0.012f, 1.2f, 1.2f, 7.2f, 3.5f, true, canvasDimensions, zoomAmount, &closeSegments, screenPoints);
+			cleanShapeSegments.setDir();
+			//visualizeShape(&closeSegments, &cleanShapeSegments, true, true);
+		}
+		else {
+			cleanShapeSegments = closeSegments;
+			closeShapeConfidence = 1.0f;
+			//visualizeShape(&segments, &closeSegments, true, true);
+		}
 	}
-	*/
-	/*
-	glm::vec3 centerPos = averagePosition_bySides(&overlapSegments, true);
-
-	glm::vec3 offsetPosA = centerPos + (DEFAULT_DIR_PERP * greatestLength * 0.6f);
-	glm::vec3 offsetPosB = centerPos + (DEFAULT_DIR_PERP * greatestLength * 0.8f);
-	glm::vec3 offsetPosC = centerPos + (DEFAULT_DIR_PERP * greatestLength * 1.0f);
-	glm::vec3 avgLenOffset = offsetPosA + (DEFAULT_DIR * avgLength);
-	glm::vec3 avgLenLowOffset = offsetPosB + (DEFAULT_DIR * (avgLength / 3.0f));
-	glm::vec3 leastLenOffset = offsetPosC + (DEFAULT_DIR * leastLength);
-
-	std::cout << " : avgAngle - " << avgAngle << " : medianAngle - " << medianAngle <<
-		" : leastAngle " << leastAngle << " : greatestAngle - " << greatestAngle << std::endl;
-	std::cout << " : avgLength - " << avgLength << " : medianLength - " << medianLength <<
-		" : leastLength " << leastLength << " : greatestLength - " << greatestLength << std::endl;
-
-	if (preview.at("debug_points") != 0) {
-		owner->ui->visualizer->addLayerObject(preview.at("debug_points"),
-			PreviewObj(0, centerPos, splineData->anchors[0].dir,
-				orange, ShapeType::square, 8.0f));
-	}
-	if (preview.at("debug_lines") != 0) {
-		owner->ui->visualizer->addLayerObject(preview.at("debug_lines"),
-			PreviewObj(0, offsetPosA, avgLenOffset,
-				blue, ShapeType::line, 2.0f));
-		owner->ui->visualizer->addLayerObject(preview.at("debug_lines"),
-			PreviewObj(0, offsetPosB, avgLenLowOffset,
-				purple, ShapeType::line, 2.0f));
-		owner->ui->visualizer->addLayerObject(preview.at("debug_lines"),
-			PreviewObj(0, offsetPosC, leastLenOffset,
-				magenta, ShapeType::line, 2.0f));
-	}
-	*/
-	//visualizeShape(&smoothed, &overlapSegments, true, true);
+	std::cout << "\n" << std::endl;
+	//visualizeShape(&segments, &closeSegments, false, true);
 
 	
-	//float circleConfidence = detectCircle(outData, true, canvasDimensions, zoomAmount, splineData);
-	//if (circleConfidence >= 0.5f) { outShape = AutoShapeType::circle; }
-	//return outShape;
+	
+	
+	return outShape;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -309,7 +415,6 @@ float AutoShape::constructSegments(VertexData& outData, float minSegLen_uv, floa
 	float backAngleThreshold, float forwardAngleThreshold, bool doRender,
 	glm::ivec2 canvasDimensions, float zoomAmount, VertexData* splineData)
 {
-	float confidence = 0.0f;
 	if (splineData->anchors.size() <= 2) { return 1.0f; }
 
 	glm::vec3 p1 = splineData->anchors.front().pos;
@@ -317,29 +422,18 @@ float AutoShape::constructSegments(VertexData& outData, float minSegLen_uv, floa
 
 	float zoomFactor = zoomAmount / ((canvasDimensions.x + canvasDimensions.y) / 2.0f);
 
-	float padding = zoomFactor * 40.0f;
+	float padding = zoomFactor * 80.0f;
 	float boxHeight = zoomFactor * 250.0f;
 	glm::vec2 size = glm::vec2(glm::length(p2 - p1) + padding, boxHeight);
 
 	glm::vec3 lineDir = makeDir(p1, p2);
-	float lineAngle = glm::degrees(atan2f(lineDir.y, lineDir.x));
 	glm::vec3 lineNormal = lineDir * glm::quat(glm::vec3(0.0f, 0.0f, MATH_PI / 2.0f));
-
-	p1 += lineNormal * (size.y / 2.0f); p1 -= lineDir * (padding / 2.0f);
-	p2 -= lineNormal * (size.y / 2.0f); p2 += lineDir * (padding / 2.0f);
 
 	if (doRender) {
 		if (preview.at("line_bounds") == 0) {
 			unsigned int boundsLayer = owner->ui->visualizer->requestNewLayer(PreviewLayerType::inputBounds);
 			if (owner->ui->visualizer->addLayer(boundsLayer, 8, BlendMode::multiply) == boundsLayer) {
 				preview.at("line_bounds") = boundsLayer;
-				owner->ui->visualizer->setPreview(PreviewLayerType::inputBounds, true);
-			}
-		}
-		if (preview.at("polyLine_bounds") == 0) {
-			unsigned int boundsLayer = owner->ui->visualizer->requestNewLayer(PreviewLayerType::inputBounds);
-			if (owner->ui->visualizer->addLayer(boundsLayer, 0, BlendMode::multiply) == boundsLayer) {
-				preview.at("polyLine_bounds") = boundsLayer;
 				owner->ui->visualizer->setPreview(PreviewLayerType::inputBounds, true);
 			}
 		}
@@ -351,11 +445,7 @@ float AutoShape::constructSegments(VertexData& outData, float minSegLen_uv, floa
 			}
 		}
 	}
-	
 
-	glm::quat rotation = glm::quat(glm::vec3(0.0f, 0.0f, atan2f(lineDir.y, lineDir.x)));
-	glm::vec3 rotP1 = p1 * rotation;
-	glm::vec3 rotP2 = p2 * rotation;
 	bool boxBroken = false;
 	bool lineBroken = false;
 	bool averageBroken = false;
@@ -381,8 +471,11 @@ float AutoShape::constructSegments(VertexData& outData, float minSegLen_uv, floa
 	size_t lastSegBackDepth = 1;
 
 	std::vector<std::tuple<glm::vec3, glm::vec3, FragmentAnchor>> cornerPoints;
+
+	// Push back first corner point (Start Anchor)
 	cornerPoints.push_back(std::tuple<glm::vec3, glm::vec3, FragmentAnchor>(splineData->anchors.front().pos, splineData->anchors.front().dir, splineData->anchors.front()));
 
+	float greatestBreakAngle = 0.0f;
 	for (size_t i = 0; i < splineData->anchors.size(); i++) {
 
 		glm::vec3 dir = splineData->anchors.at(i).dir;
@@ -450,14 +543,19 @@ float AutoShape::constructSegments(VertexData& outData, float minSegLen_uv, floa
 
 				// If the change is real, then reset the current running segment to start a new line segment.
 				if (!hitEnd && compareAngle(lookForwardAngle, avgSegmentAngle, forwardAngleThreshold)) {
-					averageBroken = true;
+
+					float dif = angleDifference(lookForwardAngle, avgSegmentAngle);
+					if (dif > greatestBreakAngle) { greatestBreakAngle = dif; }
+
 					cornerPoints.push_back(
 						std::tuple<glm::vec3, glm::vec3, FragmentAnchor>(
-							splineData->anchors[i - 1].pos, 
-							splineData->anchors[i - 1].dir, 
+							splineData->anchors[i - 1].pos,
+							splineData->anchors[i - 1].dir,
 							splineData->anchors[i - 1]));
+					averageBroken = true;
 					minSegLen_found = false;
 					runningSegLen_uv = 0.0f;
+					lastSegBackDepth = i;
 					lastSegBackDepth = i;
 					runningSegCount = 0;
 					totalSegmentDir = glm::vec3(0.0f);
@@ -465,32 +563,52 @@ float AutoShape::constructSegments(VertexData& outData, float minSegLen_uv, floa
 			}
 		}
 	}
+	// Push back ending corner point (End Anchor)
 	cornerPoints.push_back(
 		std::tuple<glm::vec3, glm::vec3, FragmentAnchor>(
 			splineData->anchors.back().pos,
 			splineData->anchors.back().dir,
 			splineData->anchors.back()));
 
-	// Build the output segment data
+	// Build the output segment data & Capture furthest point distance
+
+	float greatestDistance = 0.0f;
 	for (size_t i = 0; i < cornerPoints.size(); i++) {
 		glm::vec3 pos = std::get<0>(cornerPoints[i]);
 		glm::vec3 dir = std::get<1>(cornerPoints[i]);
+
+		// Check whether the vertex position is outside the simple line bounding box for analytics use
+		float lineDist = distancePointLine2D(pos, glm::vec4(p1.x, p1.y, p2.x, p2.y));
+		if (lineDist > (boxHeight / 2.0f)) { boxBroken = true; }
+		if (lineDist > greatestDistance) { greatestDistance = lineDist; }
+
 		if (i + 1 < cornerPoints.size()) {
 			dir = makeDir(std::get<0>(cornerPoints[i]), std::get<0>(cornerPoints[i + 1]));
 		}
 		else { dir = makeDir(std::get<0>(cornerPoints.back()), std::get<0>(cornerPoints.front())); }
+
 		outData.anchors.push_back(FragmentAnchor(i, pos, dir, 1.0f, std::get<2>(cornerPoints[i]).input));
 	}
 	outData.startTime = splineData->startTime; outData.endTime = splineData->endTime;
 	outData.averageSegLen = splineData->averageSegLen;
 
-	CColor color = green;
-	if (boxBroken) { color = red; }
-	if (lineBroken && boxBroken) { color = red; }
-	if (averageBroken) {
-		color = red;
-	}
+	// Calculate Line Confidence
+	float confidence = 1.0f;
 
+	if (outData.anchors.size() <= 3) { confidence += 0.4f; }
+	if (outData.anchors.size() <= 6) { confidence += 0.25f; }
+	else if (outData.anchors.size() <= 10) { confidence -= 0.15f; }
+	else { confidence -= 0.4f; }
+
+	float distFactor = clampf(greatestDistance / (boxHeight), 0.0f, 1.0f);
+	confidence -= distFactor;
+
+	float angleFactor = clampf(greatestBreakAngle / 160.0f, 0.0f, 1.0f);
+	confidence -= angleFactor;
+
+	if (outData.anchors.size() == 2) { confidence = clampf(confidence, 0.8f, 1.5f); }
+
+	// Rendering Assignments
 	if (doRender && preview.at("line_cornerPoints") == 0) {
 		unsigned int pointsLayer = owner->ui->visualizer->requestNewLayer(PreviewLayerType::inputPoint);
 		if (owner->ui->visualizer->addLayer(pointsLayer, 0, BlendMode::multiply) == pointsLayer) {
@@ -506,41 +624,29 @@ float AutoShape::constructSegments(VertexData& outData, float minSegLen_uv, floa
 		}
 	}
 	if (doRender && preview.at("line_bounds") != 0) {
+		// Adjust now points p1 and p2 as p1 and p3 of a bounding box for a line from spline start to end
+		p1 += -lineNormal * (size.y / 2.0f); p1 += -lineDir * (padding / 2.0f);
+		p2 += lineNormal * (size.y / 2.0f); p2 += lineDir * (padding / 2.0f);
+		CColor color = yellow;
+		CColor errorCol = red;
+		color.mixColor(&errorCol, confidence);
 		owner->ui->visualizer->putBoundsObject(preview.at("line_bounds"), 0, p1, p2, size, lineDir, color);
 	}
 
-	if (doRender && preview.at("polyLine_bounds") != 0) {
-		for (size_t i = 1; i < cornerPoints.size(); i++) {
-			p1 = std::get<0>(cornerPoints.at(i - 1));
-			p2 = std::get<0>(cornerPoints.at(i));
-
-			size = glm::vec2(glm::length(p2 - p1) + padding, boxHeight);
-
-			lineDir = makeDir(p1, p2);
-			lineAngle = glm::degrees(atan2f(lineDir.y, lineDir.x));
-			lineNormal = lineDir * glm::quat(glm::vec3(0.0f, 0.0f, MATH_PI / 2.0f));
-
-			p1 += lineNormal * (size.y / 2.0f); p1 -= lineDir * (padding / 2.0f);
-			p2 -= lineNormal * (size.y / 2.0f); p2 += lineDir * (padding / 2.0f);
-
-			rotation = glm::quat(glm::vec3(0.0f, 0.0f, atan2f(lineDir.y, lineDir.x)));
-			rotP1 = p1 * rotation;
-			rotP2 = p2 * rotation;
-
-			owner->ui->visualizer->putBoundsObject(preview.at("polyLine_bounds"), int(i - 1), p1, p2, size, lineDir, magenta);
-		}
-	}
+	std::cout << "LINE :: CONFIDENCE == " << confidence << std::endl;
 	return confidence;
 }
 
-float AutoShape::smoothSegments(VertexData& outData, float minSegLen_uv, float backFactor, float forwardFactor,
-	float backAngleThreshold, float forwardAngleThreshold, bool doRender,
-	glm::ivec2 canvasDimensions, float zoomAmount, VertexData* splineData)
+float AutoShape::smoothSegments(VertexData& outData, float minSegLen_uv, float breakThreshold, VertexData* splineData)
 {
 	float confidence = 0.0f;
 	size_t vertCount = splineData->anchors.size();
 
-	smoothIterate(outData, splineData, 0.0f, 22.0f);
+	smoothIterate(outData, splineData, breakThreshold);
+
+	// Loop through segments, to identify the angle between segments. If the shape turns away from its predominant
+	// rotation (CW or CCW), then it is likely a PolyLine
+
 
 	return confidence;
 }
@@ -610,7 +716,7 @@ float AutoShape::closeShape(VertexData& outData, float minSegLen_uv, float backF
 		if (closestPoint == nullptr) {
 			outData.anchors.push_back(splineData->anchors.front());
 			outData.anchors.at(outData.anchors.size() - 2).dir = makeDir(outData.anchors.at(outData.anchors.size() - 2).pos, outData.anchors.back().pos);
-			smoothIterate(outData, &outData, 0.0f, 18.0f);
+			//smoothIterate(outData, &outData, 0.0f, 18.0f);
 			confidence = 1.0f;
 		}
 	}
@@ -644,7 +750,7 @@ float AutoShape::removeOverlap(VertexData& outData, float minSegLen_uv, float ba
 	
 	std::vector<std::tuple<float, glm::vec3, float>> scrPointWork = screenPoints;
 
-	std::vector<std::pair<glm::vec3, int>> nodes;
+	std::deque<std::pair<glm::vec3, int>> nodes;
 	for (size_t k = 0; k < scrPointWork.size(); k++) {
 		glm::vec3 pos = std::get<1>(scrPointWork[k]);
 		if (nodes.size() == 0) {
@@ -654,37 +760,80 @@ float AutoShape::removeOverlap(VertexData& outData, float minSegLen_uv, float ba
 			bool cullVertex = false;
 			for (size_t j = 0; j < nodes.size(); j++) {
 				float len = glm::length(std::get<1>(scrPointWork[k]) - nodes[j].first);
-				if (len < avgLength_uv / 2.4f) {
-					if (len < avgLength_uv / 5.4f) {
+				if (len < avgLength_uv / backAngleThreshold) {
+					if (len < avgLength_uv / forwardAngleThreshold) {
 						nodes[j].second++;
-						nodes[j].first = mix(nodes[j].first, ((nodes[j].first * float(nodes[j].second - 1)) + pos) / float(nodes[j].second), 0.56f);
+						nodes[j].first = mix(nodes[j].first, ((nodes[j].first * float(nodes[j].second - 1)) + pos) / float(nodes[j].second), 0.32f);
 					}
 					cullVertex = true; break;
 				}
 				if (nodes.size() >= 2) {
 					for (size_t z = 0; z < nodes.size() - 1; z++) {
 						std::pair<glm::vec3, glm::vec3> line = std::pair<glm::vec3, glm::vec3>(nodes[z].first, nodes[z + 1].first);
-						float dist = distancePointLine2D(pos, line.first, line.second);
-						if (dist < 0.018f) {
+						float dist = distancePointLineSegment(pos, line.first, line.second);
+						if (dist < minSegLen_uv) {
 							glm::vec3 proj = projectPointToLine2D(pos, line, false);
-							dist = distancePointLine2D(proj, line.first, line.second);
-							if (dist < 0.031f) {
-								nodes[z + 1].first = proj;
+							dist = distancePointLineSegment(proj, line.first, line.second);
+							if (dist < backFactor) {
+								float distA = glm::length(proj - nodes[z].first);
+								float distB = glm::length(proj - nodes[z + 1].first);
+								if (distA < distB) {
+									nodes[z].first = proj;
+								}
+								else { nodes[z + 1].first = proj; }
 							}
 							cullVertex = true; break;
 						}
 					}
 				}
 			}
+			if (nodes.size() >= 2) {
+				size_t nodeCount = nodes.size() - 1;
+				glm::vec3 dirLast = makeDir(nodes[nodeCount - 1].first, nodes[nodeCount].first);
+				glm::vec3 dirNext = makeDir(nodes[nodeCount].first, pos);
+				if (compareParallel(glm::degrees(atan2f(dirLast.y, dirLast.x)), glm::degrees(atan2f(dirNext.y, dirNext.x)), 8.0f)) {
+					cullVertex = true;
+				}
+			}
 			if (!cullVertex) {
-				nodes.push_back(std::pair<glm::vec3, int>(pos, 1));
+				if (scrPointWork.size() > 1) {
+					glm::vec3 proxy = std::get<1>(scrPointWork[k - 1]);
+					float lenA = glm::length(nodes[0].first - proxy);
+					float lenB = glm::length(nodes.back().first - proxy);
+					if (lenA < lenB) {
+						std::deque<std::pair<glm::vec3, int>> nodeStore = nodes;
+						nodes.clear();
+						for (int p = nodeStore.size() - 1; p >= 0; p--) {
+							nodes.push_back(nodeStore[p]);
+						}
+						nodes.push_back(std::pair<glm::vec3, int>(pos, 1));
+					}
+					else {
+						nodes.push_back(std::pair<glm::vec3, int>(pos, 1));
+					}
+				}
+				else {
+					nodes.push_back(std::pair<glm::vec3, int>(pos, 1));
+				}
 			}
 		}
 	}
-
+	outData.anchors.clear();
 	for (size_t s = 0; s < nodes.size(); s++) {
 		outData.anchors.push_back(FragmentAnchor(s, owner->pickScreenCoord(nodes[s].first, true), DEFAULT_DIR, 1.0f, Input()));
 	}
+
+	return confidence;
+}
+
+float AutoShape::cleanShape(VertexData& outData, float minSegLen_uv, float backFactor, float forwardFactor,
+	float backAngleThreshold, float forwardAngleThreshold, bool doRender,
+	glm::ivec2 canvasDimensions, float zoomAmount, VertexData* splineData,
+	std::vector<std::tuple<float, glm::vec3, float>>& screenPoints)
+{
+	float confidence = 0.0f;
+
+
 
 	return confidence;
 }
@@ -1401,7 +1550,7 @@ float AutoShape::detectCircle(VertexData& outData, bool doRender,
 	majorAxisPointB = ellipseCenter - (majorAxis * (majorAxisLength / 2.0f));
 
 	// Render Preview Data
-	/*
+	
 	if (preview.at("circle_bounds") == 0) {
 		unsigned int boundsLayer = owner->ui->visualizer->requestNewLayer(PreviewLayerType::inputBounds);
 		if (owner->ui->visualizer->addLayer(boundsLayer, 0, BlendMode::multiply) == boundsLayer) {
@@ -1414,7 +1563,7 @@ float AutoShape::detectCircle(VertexData& outData, bool doRender,
 		glm::vec3 p2 = majorAxisPointB - (minorAxis * (minorAxisLength / 2.0f));
 		owner->ui->visualizer->putBoundsObject(
 			preview.at("circle_bounds"), 0, p1, p2, 
-			glm::vec2(majorAxisLength, -minorAxisLength), 
+			glm::vec2(majorAxisLength, minorAxisLength), 
 			makeDir(majorAxisPointA, majorAxisPointB), red);
 	}
 
@@ -1523,7 +1672,7 @@ float AutoShape::detectCircle(VertexData& outData, bool doRender,
 				minorAxisPointB,
 				blue, ShapeType::line, 2.0f));
 	}
-	*/
+	
 	return confidence;
 }
 
@@ -1639,7 +1788,7 @@ float AutoShape::nextSegmentAngle(VertexData* splineData, size_t index)
 	return nextAngle;
 }
 
-void AutoShape::smoothIterate(VertexData& outData, VertexData* splineData, float angleThreshold, float breakThreshold)
+void AutoShape::smoothIterate(VertexData& outData, VertexData* splineData, float breakThreshold)
 {
 	size_t vertCount = splineData->anchors.size();
 
@@ -1688,17 +1837,19 @@ void AutoShape::smoothIterate(VertexData& outData, VertexData* splineData, float
 	}
 }
 
-float AutoShape::generateAverageAttribs(VertexData* splineData)
+float AutoShape::generateAverageAttribs(VertexData* splineData, bool countLast)
 {
-	size_t vertCount = splineData->anchors.size();
-	size_t count = 0;
-	for (size_t i = 0; i < vertCount - 1; i++) {
+	if (splineData->anchors.size() == 0) { return 0.0f; }
+	resetAvgAttribs();
+	size_t count = (countLast) ? 0 : 0;
+	size_t vertCount = splineData->anchors.size() - 1;
+	for (size_t i = 0; i < vertCount; i++) {
 		glm::vec3 dirA, dirB;
 		if (i == 0) {
-			dirA = splineData->anchors.at(vertCount - 2).dir;
+			dirA = splineData->anchors.at(vertCount - 1).dir;
 			dirB = splineData->anchors.at(0).dir;
 		}
-		else if (i == vertCount - 1) {
+		else if (i == vertCount) {
 			dirA = splineData->anchors.at(i - 1).dir;
 			dirB = splineData->anchors.front().dir;
 		}

@@ -77,6 +77,7 @@ float distancePointLine2D(glm::vec2 point, glm::vec4 line);
 float distancePointLine2D(glm::vec3 point, glm::vec4 line);
 float distancePointLine2D(glm::vec3 point, glm::vec3 q1, glm::vec3 p1);
 float distancePointLine2D(glm::vec2 point, glm::vec3 direction, glm::vec3 origin);
+float distancePointLineSegment(glm::vec3 point, glm::vec3 start, glm::vec3 end);
 float distancePointLineSegment(glm::vec2 point, glm::vec2 start, glm::vec2 end);
 
 glm::vec3 projectPointToLine2D(glm::vec3 point, glm::vec4 line, bool flipY);

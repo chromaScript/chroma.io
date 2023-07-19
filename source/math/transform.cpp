@@ -69,6 +69,31 @@ void RectBounds::reset()
 	p4 *= p3 *= p2 *= p1 *= 0;
 }
 
+// Assumes that rectangle is given as Upper-Left::p1, Upper-Right::p2, Lower-Right::p3, Lower-Left::p4 (Clockwise point ordering)
+glm::vec2 sizeFromBounds(RectBounds bounds, float roll, bool isRotated, bool isScreenSpace)
+{
+	glm::vec2 size = glm::vec2(0.0f);
+	if (!isRotated) {
+		if (isScreenSpace) {
+			RectBounds copy = bounds;
+			copy.p1 += 1.0f; copy.p1 /= 2.0f;
+			copy.p2 += 1.0f; copy.p2 /= 2.0f;
+			copy.p3 += 1.0f; copy.p3 /= 2.0f;
+			copy.p4 += 1.0f; copy.p4 /= 2.0f;
+			size.x = abs(copy.p3.x - copy.p1.x);
+			size.y = abs(copy.p1.y - copy.p3.y);
+		}
+		else {
+			size.x = abs(bounds.p3.x - bounds.p1.x);
+			size.y = abs(bounds.p1.y - bounds.p3.y);
+		}
+	}
+	else {
+
+	}
+	return size;
+}
+
 /*
 // Camera Structs
 */
