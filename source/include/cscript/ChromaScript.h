@@ -22,8 +22,8 @@ private:
 	//
 	std::shared_ptr<Application> owner = nullptr;
 	//
-	std::vector<std::shared_ptr<CExpr>> expressions;
-	std::vector<std::shared_ptr<CStmt>> statements;
+	std::vector<std::shared_ptr<CExpr>> CachedExpressions;
+	std::vector<std::shared_ptr<CStmt>> CachedStatements;
 	//
 	std::shared_ptr<CLexer> lexer;
 	std::shared_ptr<CParser> parser;
